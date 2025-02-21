@@ -32,7 +32,7 @@ void ATitleHUD::CreateRoom()
 {
 	FString MainGameLevelName = MainGameLevel.GetLongPackageName();
 	if (!MainGameLevelName.IsEmpty())
-		UGameplayStatics::OpenLevel(GetWorld(), *MainGameLevelName, false, FString::Printf(TEXT("listen?port=%s"), *DefaultPort));
+		UGameplayStatics::OpenLevel(GetWorld(), *MainGameLevelName, false, TEXT("Listen"));
 	else
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 }
@@ -41,5 +41,5 @@ void ATitleHUD::JoinRoom(FString strIPAddress)
 {
 	FString FinalUrl = FString::Printf(TEXT("%s:%s"), *strIPAddress, *DefaultPort);
 
-	UGameplayStatics::OpenLevel(GetWorld(), *FinalUrl, false);
+	UGameplayStatics::OpenLevel(GetWorld(), *FinalUrl);
 }
