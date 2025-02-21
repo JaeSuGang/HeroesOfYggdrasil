@@ -10,6 +10,9 @@ class UStaticMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class UAttributeComponent;
+class UInputAction;
+class UInputMappingContext;
+class UInputComponent;
 struct FInputActionValue;
 
 /**
@@ -23,18 +26,12 @@ class HEROESOFYGGDRASIL_API AFreeCamPawn : public AYggPawn
 public:
 	AFreeCamPawn(const FObjectInitializer& objectInitializer);
 
-//protected:
-//	void Move(const FInputActionValue& Value);
-//
-//	void Look(const FInputActionValue& Value);
-//
-//
-//protected:
-//
-//	virtual void NotifyControllerChanged() override;
-//
-//	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-//
+protected:
+	void NotifyControllerChanged() override;
+	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+protected:
+	void Look(const FInputActionValue& Value);
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -48,4 +45,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArmComponent;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	UInputMappingContext* DefaultInputMappingContext;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	UInputAction* LookAction;
 };
