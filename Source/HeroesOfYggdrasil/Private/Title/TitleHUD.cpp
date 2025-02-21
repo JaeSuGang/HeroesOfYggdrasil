@@ -39,9 +39,5 @@ void ATitleHUD::CreateRoom()
 
 void ATitleHUD::JoinRoom(FString strIPAddress)
 {
-	FString MainGameLevelName = MainGameLevel.GetLongPackageName();
-	if (!MainGameLevelName.IsEmpty())
-		UGameplayStatics::OpenLevel(GetWorld(), *strIPAddress, false, FString::Printf(TEXT("port=%s"), *DefaultPort));
-	else
-		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+	UGameplayStatics::OpenLevel(GetWorld(), *strIPAddress, false, FString::Printf(TEXT("port=%s"), *DefaultPort));
 }

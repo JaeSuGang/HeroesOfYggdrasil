@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "GameFramework/FloatingPawnMovement.h"
 
 #include "Attribute/AttributeComponent.h"
 
@@ -18,22 +19,29 @@ AFreeCamPawn::AFreeCamPawn(const FObjectInitializer& objectInitializer)
 	bUseControllerRotationYaw = true;
 
 	/* 컴포넌트 */
+	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComp"));
+
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
 	MeshComponent->bOwnerNoSee = true;
 	RootComponent = MeshComponent;
-
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
-	CameraComponent->SetupAttachment(SpringArmComponent);
-	CameraComponent->bUsePawnControlRotation = true;
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComponent->SetupAttachment(RootComponent);
 	SpringArmComponent->bUsePawnControlRotation = true;
 	SpringArmComponent->TargetArmLength = 0.0f;
 
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
+	CameraComponent->bUsePawnControlRotation = true;
+
 	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComp"));
 
 
+}
+
+UPawnMovementComponent* AFreeCamPawn::GetMovementComponent() const
+{
+	return MovementComponent;
 }
 
 void AFreeCamPawn::NotifyControllerChanged()
@@ -54,6 +62,8 @@ void AFreeCamPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	UEnhancedInputComponent* EnhancedInputComp = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 
 	EnhancedInputComp->BindAction(LookAction, ETriggerEvent::Triggered, this, &AFreeCamPawn::Look);
+
+	EnhancedInputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AFreeCamPawn::Move);
 }
 
 void AFreeCamPawn::Look(const FInputActionValue& Value)
@@ -64,5 +74,21 @@ void AFreeCamPawn::Look(const FInputActionValue& Value)
 	{
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void AFreeCamPawn::Move(const FInputActionValue& Value)
+{
+	FVector2D MovementVector = Value.Get<FVector2D>();
+
+	if (Controller != nullptr)
+	{
+		const FRotator Rotation = Controller->GetControlRotation();
+
+		const FVector ForwardDirection = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
+		const FVector RightDirection = FRotationMatrix(Rotation).GetUnitAxis(EAxis::Y);
+
+		AddMovementInput(ForwardDirection, MovementVector.Y);
+		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }

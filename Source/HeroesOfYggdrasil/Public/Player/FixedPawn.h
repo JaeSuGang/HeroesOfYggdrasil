@@ -12,7 +12,7 @@ class USpringArmComponent;
 class UAttributeComponent;
 
 /**
- * ´ã´ç : ±è°æ¹Î
+ * ë‹´ë‹¹ : ê¹€ê²½ë¯¼
  */
 UCLASS()
 class HEROESOFYGGDRASIL_API AFixedPawn : public AYggPawn

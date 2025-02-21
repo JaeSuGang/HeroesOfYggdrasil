@@ -31,10 +31,10 @@ public:
 	void JoinRoom(FString strIPAddress);
 
 public:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> MainWidgetClass;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category = YGG)
 	TSoftObjectPtr<UWorld> MainGameLevel;
 
 	UPROPERTY(EditAnywhere, Category = YGG)

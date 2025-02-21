@@ -10,6 +10,7 @@ class UStaticMeshComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class UAttributeComponent;
+class UPawnMovementComponent;
 class UInputAction;
 class UInputMappingContext;
 class UInputComponent;
@@ -27,13 +28,18 @@ public:
 	AFreeCamPawn(const FObjectInitializer& objectInitializer);
 
 protected:
+	UPawnMovementComponent* GetMovementComponent() const override;
 	void NotifyControllerChanged() override;
 	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 protected:
 	void Look(const FInputActionValue& Value);
+	void Move(const FInputActionValue& Value);
 
 public:
+	UPROPERTY(VisibleAnywhere)
+	UPawnMovementComponent* MovementComponent;
+
 	UPROPERTY(EditAnywhere)
 	UAttributeComponent* AttributeComponent;
 
@@ -51,4 +57,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	UInputAction* LookAction;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	UInputAction* MoveAction;
 };
