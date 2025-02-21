@@ -48,14 +48,11 @@ void AFreeCamPawn::NotifyControllerChanged()
 {
 	Super::NotifyControllerChanged();
 
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (ULocalPlayer* LocalPlayer= PC->GetLocalPlayer())
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
-			{
-				Subsystem->AddMappingContext(DefaultInputMappingContext, 0);
-			}
+			Subsystem->AddMappingContext(DefaultInputMappingContext, 0);
 		}
 	}
 }
