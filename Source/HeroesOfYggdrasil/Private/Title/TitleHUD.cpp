@@ -31,8 +31,10 @@ void ATitleHUD::BeginPlay()
 void ATitleHUD::CreateRoom()
 {
 	FString MainGameLevelName = MainGameLevel.GetLongPackageName();
+	FString OpenLevel = FString::Printf(TEXT(":%s%s"), *DefaultPort, *MainGameLevelName);
+
 	if (!MainGameLevelName.IsEmpty())
-		UGameplayStatics::OpenLevel(GetWorld(), *MainGameLevelName, false, TEXT("Listen"));
+		UGameplayStatics::OpenLevel(GetWorld(), *OpenLevel, true, TEXT("listen"));
 	else
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 }
