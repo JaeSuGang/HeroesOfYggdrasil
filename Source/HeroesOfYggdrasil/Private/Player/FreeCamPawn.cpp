@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Player/FixedPawn.h"
+#include "Player/FreeCamPawn.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
 #include "Attribute/AttributeComponent.h"
 
-AFixedPawn::AFixedPawn(const FObjectInitializer& objectInitializer)
+AFreeCamPawn::AFreeCamPawn(const FObjectInitializer& objectInitializer)
 {
 	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComp"));
 
@@ -23,6 +23,4 @@ AFixedPawn::AFixedPawn(const FObjectInitializer& objectInitializer)
 	SpringArmComponent->SetupAttachment(RootComponent);
 
 	CameraComponent->SetupAttachment(SpringArmComponent);
-
-	
 }
