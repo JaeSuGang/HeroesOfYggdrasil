@@ -39,5 +39,7 @@ void ATitleHUD::CreateRoom()
 
 void ATitleHUD::JoinRoom(FString strIPAddress)
 {
-	UGameplayStatics::OpenLevel(GetWorld(), *strIPAddress, false, FString::Printf(TEXT("port=%s"), *DefaultPort));
+	FString FinalUrl = FString::Printf(TEXT("%s:%s"), *strIPAddress, *DefaultPort);
+
+	UGameplayStatics::OpenLevel(GetWorld(), *FinalUrl, false);
 }
