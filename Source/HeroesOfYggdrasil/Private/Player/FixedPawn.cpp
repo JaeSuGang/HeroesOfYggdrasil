@@ -23,4 +23,6 @@ AFixedPawn::AFixedPawn(const FObjectInitializer& objectInitializer)
 	SpringArmComponent->SetupAttachment(RootComponent);
 
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	
 }
