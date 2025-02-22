@@ -19,6 +19,7 @@ AFreeCamPlayer2::AFreeCamPlayer2(const FObjectInitializer& objectInitializer)
 	
 	GetCapsuleComponent()->SetEnableGravity(false);
 	GetMesh()->SetEnableGravity(false);
+	GetCharacterMovement()->SetGroundMovementMode(EMovementMode::MOVE_Flying);
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
 	StaticMeshComponent->SetupAttachment(RootComponent);
@@ -62,6 +63,7 @@ void AFreeCamPlayer2::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AFreeCamPlayer2::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AFreeCamPlayer2::Look);
+		EnhancedInputComponent->BindAction(ElevateAction, ETriggerEvent::Triggered, this, &AFreeCamPlayer2::Elevate);
 	}
 }
 
@@ -93,4 +95,11 @@ void AFreeCamPlayer2::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void AFreeCamPlayer2::Elevate(const FInputActionValue& Value)
+{
+	float ElevationValue = Value.Get<float>();
+
+	AddMovementInput(FVector::UpVector, ElevationValue);
 }

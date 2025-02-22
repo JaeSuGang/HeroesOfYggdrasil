@@ -31,6 +31,8 @@ protected:
 	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void Elevate(const FInputActionValue& Value);
+
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -47,6 +49,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere)
+	UInputAction* ElevateAction;
 
 	UPROPERTY(EditAnywhere)
 	UInputMappingContext* MappingContext;
