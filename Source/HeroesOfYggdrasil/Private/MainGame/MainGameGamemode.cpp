@@ -3,8 +3,9 @@
 
 #include "MainGame/MainGameGamemode.h"
 
-AMainGameGamemode::AMainGameGamemode(const FObjectInitializer& objectInitializer)
+AMainGameGamemode::AMainGameGamemode()
 {
+	DefaultPawnClass = MainPawn;
 }
 
 void AMainGameGamemode::BeginPlay()

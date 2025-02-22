@@ -15,8 +15,12 @@ class HEROESOFYGGDRASIL_API AMainGameGamemode : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-	AMainGameGamemode(const FObjectInitializer& objectInitializer);
+	AMainGameGamemode();
 
 protected:
 	void BeginPlay() override;
+
+public:
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<APawn> MainPawn;
 };

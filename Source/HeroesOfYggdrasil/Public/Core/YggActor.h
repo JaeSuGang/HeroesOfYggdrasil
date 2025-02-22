@@ -12,15 +12,12 @@ class HEROESOFYGGDRASIL_API AYggActor : public AActor
 	GENERATED_BODY()
 	
 public:	
-	// Sets default values for this actor's properties
-	AYggActor();
+	AYggActor(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 };
