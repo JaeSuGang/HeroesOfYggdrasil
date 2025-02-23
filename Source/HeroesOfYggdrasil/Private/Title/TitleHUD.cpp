@@ -5,6 +5,7 @@
 
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 ATitleHUD::ATitleHUD(const FObjectInitializer& objectInitializer)
 {
@@ -44,4 +45,11 @@ void ATitleHUD::JoinRoom(FString strIPAddress)
 	FString FinalUrl = FString::Printf(TEXT("%s:%s"), *strIPAddress, *DefaultPort);
 
 	UGameplayStatics::OpenLevel(GetWorld(), *FinalUrl);
+}
+
+void ATitleHUD::EndGameButton()
+{
+	APlayerController* PlayerController = GetOwningPlayerController();
+
+	UKismetSystemLibrary::QuitGame(GetWorld(), PlayerController, EQuitPreference::Quit, false);
 }

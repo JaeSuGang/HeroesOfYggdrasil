@@ -30,6 +30,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void JoinRoom(FString strIPAddress);
 
+	UFUNCTION(BlueprintCallable)
+	void EndGameButton();
+
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> MainWidgetClass;
