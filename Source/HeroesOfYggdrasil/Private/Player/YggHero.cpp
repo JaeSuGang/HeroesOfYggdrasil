@@ -20,23 +20,20 @@
 
 AYggHero::AYggHero()
 {
+	// 카메라에 따라 돌게 세팅
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 
-	// Create a camera boom (pulls in towards the player if there is a collision)
+	
+	// 카메라 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpring"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	CameraBoom->bUsePawnControlRotation = true; 
 
-
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	
-
-	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
+	FollowCamera->bUsePawnControlRotation = false; 
 
 	
 }
@@ -107,4 +104,5 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
+	
 }
