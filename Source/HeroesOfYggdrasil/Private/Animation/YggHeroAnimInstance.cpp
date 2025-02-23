@@ -6,6 +6,8 @@
 #include "Player/YggHero.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Kismet/KismetMathLibrary.h"
+
 
 void UYggHeroAnimInstance::NativeInitializeAnimation()
 {
@@ -25,4 +27,5 @@ void UYggHeroAnimInstance::NativeUpdateAnimation(float _DeltaTime)
 	{
 		return;
 	}
+	GroundSpeed = UKismetMathLibrary::VSizeXY(MovementComponent->Velocity);
 }

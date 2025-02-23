@@ -26,6 +26,9 @@ protected:
 	AYggHero* Hero;
 	UPROPERTY(BlueprintReadOnly)
 	UCharacterMovementComponent* MovementComponent;
+
+	UPROPERTY(BlueprintReadOnly)
+	float GroundSpeed;
 	
 private:
 	
