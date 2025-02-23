@@ -3,12 +3,12 @@
 
 #include "Core/YggActor.h"
 
-// Sets default values
-AYggActor::AYggActor()
+AYggActor::AYggActor(const FObjectInitializer& ObjectInitializer)
+	:
+	Super(ObjectInitializer)
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 }
 
 // Called when the game starts or when spawned

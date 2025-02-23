@@ -1,31 +1,28 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Player/FreeCamPawn.h"
+#include "Player/FreeCamCharacter.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/FloatingPawnMovement.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
 
 #include "Attribute/AttributeComponent.h"
 
-AFreeCamPawn::AFreeCamPawn(const FObjectInitializer& objectInitializer)
+AFreeCamCharacter::AFreeCamCharacter(const FObjectInitializer& ObjectInitializer)
+	:
+	Super(ObjectInitializer)
 {
-	 
+	GetCapsuleComponent()->InitCapsuleSize(20.0f, 0.0f);
 
 	/* Default 값 */
 	bUseControllerRotationRoll = true;
 	bUseControllerRotationPitch = true;
 	bUseControllerRotationYaw = true;
-
-	/* 컴포넌트 */
-	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComp"));
-
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
-	MeshComponent->bOwnerNoSee = true;
-	RootComponent = MeshComponent;
 
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComponent->SetupAttachment(RootComponent);
@@ -36,19 +33,16 @@ AFreeCamPawn::AFreeCamPawn(const FObjectInitializer& objectInitializer)
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = true;
 
-	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComp"));
-
-
 }
 
-UPawnMovementComponent* AFreeCamPawn::GetMovementComponent() const
+void AFreeCamCharacter::BeginPlay()
 {
-	return MovementComponent;
+	Super::BeginPlay();
 }
 
-void AFreeCamPawn::NotifyControllerChanged()
+void AFreeCamCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	Super::NotifyControllerChanged();
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -57,18 +51,15 @@ void AFreeCamPawn::NotifyControllerChanged()
 			Subsystem->AddMappingContext(DefaultInputMappingContext, 0);
 		}
 	}
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AFreeCamCharacter::Look);
+
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AFreeCamCharacter::Move);
+	}
 }
 
-void AFreeCamPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	UEnhancedInputComponent* EnhancedInputComp = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-
-	EnhancedInputComp->BindAction(LookAction, ETriggerEvent::Triggered, this, &AFreeCamPawn::Look);
-
-	EnhancedInputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AFreeCamPawn::Move);
-}
-
-void AFreeCamPawn::Look(const FInputActionValue& Value)
+void AFreeCamCharacter::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
@@ -79,17 +70,23 @@ void AFreeCamPawn::Look(const FInputActionValue& Value)
 	}
 }
 
-void AFreeCamPawn::Move(const FInputActionValue& Value)
+void AFreeCamCharacter::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
+		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		const FVector ForwardDirection = FRotationMatrix(Rotation).GetUnitAxis(EAxis::X);
-		const FVector RightDirection = FRotationMatrix(Rotation).GetUnitAxis(EAxis::Y);
+		// get forward vector
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
+		// get right vector 
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
