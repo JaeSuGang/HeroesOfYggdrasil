@@ -25,17 +25,42 @@ AYggHero::AYggHero()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 
-	
+
 	// 카메라 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpring"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->bUsePawnControlRotation = true; 
+	CameraBoom->bUsePawnControlRotation = true;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
-	FollowCamera->bUsePawnControlRotation = false; 
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->bUsePawnControlRotation = false;
 
 	
+
+
+}
+
+void AYggHero::Look(const FInputActionValue& _Value)
+{
+	FVector2D LookAxisVector = _Value.Get<FVector2D>();
+
+	AddControllerYawInput(LookAxisVector.X);
+	AddControllerPitchInput(-LookAxisVector.Y);
+}
+
+void AYggHero::Move(const FInputActionValue& _Value)
+{
+
+	FVector2D MovementVector = _Value.Get<FVector2D>();
+	FRotator ControllerRotation = GetControlRotation();
+
+	FRotator YawRotation(0, ControllerRotation.Yaw, 0);
+
+	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(ForwardDirection, MovementVector.Y);
+	AddMovementInput(RightDirection, MovementVector.X);
 }
 
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -47,25 +72,47 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
 
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) 
+	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
+	if (EnhancedInput)
 	{
-		//// Jumping
-		//EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		//EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		//// Moving
-		//EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AYggHero::Move);
-		//// Looking
-		//EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AYggHero::Look);
+		if (MoveAction)
+		{
+			EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AYggHero::Move);
+		}
+		if (LookAction)
+		{
+			EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AYggHero::Look);
+		}
+		if (JumpAction)
+		{
+			EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AYggHero::Jump);
+		}
+		// 각자 클래스에서
+	/*	if (AttackAction)
+		{
+			EnhancedInput->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AYggHero::Attack);
+		}
+		if (SkillQAction)
+		{
+			EnhancedInput->BindAction(SkillQAction, ETriggerEvent::Triggered, this, &AYggHero::SkillQ);
+		}
+		if (SkillEAction)
+		{
+			EnhancedInput->BindAction(SkillEAction, ETriggerEvent::Triggered, this, &AYggHero::SkillE);
+		}
+		if (SkillRAction)
+		{
+			EnhancedInput->BindAction(SkillRAction, ETriggerEvent::Triggered, this, &AYggHero::SkillR);
+		}*/
 	}
 }
 
 void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }

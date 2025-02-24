@@ -14,4 +14,6 @@ class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 {
 	GENERATED_BODY()
 	
+	
+	
 };

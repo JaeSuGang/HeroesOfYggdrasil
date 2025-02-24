@@ -29,14 +29,19 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 public:
 	AYggHero();
 
+
 protected:
-	virtual void BeginPlay();
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	void Look(const FInputActionValue& _Value);
+	void Move(const FInputActionValue& _Value);
 
 	virtual void Attack(const FInputActionValue& _Value){}
 	virtual void SkillQ(const FInputActionValue& _Value){}
 	virtual void SkillE(const FInputActionValue& _Value){}
 	virtual void SkillR(const FInputActionValue& _Value){}
+	virtual void BeginPlay();
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
 
 public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -49,17 +54,29 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputMappingContext* InputMappingContext;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* MoveAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* LookAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* JumpAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* AttackAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* SkillQAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* SkillEAction;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UInputAction* SkillRAction;
 
 
 
