@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
-#include "TestPlayerController_kjhg.generated.h"
+#include "YggHeroController.generated.h"
 
 UCLASS()
-class HEROESOFYGGDRASIL_API ATestPlayerController_kjhg : public APlayerController
+class HEROESOFYGGDRASIL_API AYggHeroController : public APlayerController
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 protected:
     virtual void SetupInputComponent() override;
     virtual void BeginPlay() override;
@@ -24,11 +24,11 @@ protected:
     void SkillQ(const FInputActionValue& _Value);
     void SkillE(const FInputActionValue& _Value);
     void SkillR(const FInputActionValue& _Value);
-    
+
 public:
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputMappingContext* InputMappingContext;
-    
+
     UPROPERTY(EditDefaultsOnly, Category = "Input")
     class UInputAction* MoveAction;
 
