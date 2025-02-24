@@ -90,6 +90,7 @@ void ATestPlayerController_kjhg::Attack(const FInputActionValue& _Value)
 {   
     if (APawn* ControlledPawn = GetPawn())
     {
+        
         USkeletalMeshComponent* MeshComponent = ControlledPawn->FindComponentByClass<USkeletalMeshComponent>();
         if (MeshComponent)
         {
