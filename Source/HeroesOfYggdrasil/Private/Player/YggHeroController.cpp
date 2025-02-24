@@ -13,12 +13,15 @@
 void AYggHeroController::BeginPlay()
 {
     Super::BeginPlay(); 
+
+    HeroTeamID = FGenericTeamId(0);
 }
 
-//FGenericTeamId AYggHeroController::GetGenericTeamId() const
-//{
-//    
-//}
+FGenericTeamId AYggHeroController::GetGenericTeamId() const
+{
+    return HeroTeamID;
+}
+
 
 void AYggHeroController::SetupInputComponent()
 {
