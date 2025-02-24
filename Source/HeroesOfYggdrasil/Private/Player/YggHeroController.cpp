@@ -1,14 +1,14 @@
 // Coded By AssortRock Unreal Engine Class Project
 
 
-#include "Test/TestPlayerController_kjhg.h"
+#include "Player/YggHeroController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "Test/TestAnimInstance_kjh.h"
 
-void ATestPlayerController_kjhg::BeginPlay()
+void AYggHeroController::BeginPlay()
 {
     Super::BeginPlay();
 
@@ -26,7 +26,7 @@ void ATestPlayerController_kjhg::BeginPlay()
 
 }
 
-void ATestPlayerController_kjhg::SetupInputComponent()
+void AYggHeroController::SetupInputComponent()
 {
     Super::SetupInputComponent();
 
@@ -35,41 +35,41 @@ void ATestPlayerController_kjhg::SetupInputComponent()
     {
         if (MoveAction)
         {
-            EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATestPlayerController_kjhg::Move);
+            EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AYggHeroController::Move);
         }
         if (LookAction)
         {
-            EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &ATestPlayerController_kjhg::Look);
+            EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AYggHeroController::Look);
         }
         if (JumpAction)
         {
-            EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ATestPlayerController_kjhg::Jump);
+            EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AYggHeroController::Jump);
         }
         if (AttackAction)
         {
-            EnhancedInput->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ATestPlayerController_kjhg::Attack);
+            EnhancedInput->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AYggHeroController::Attack);
         }
         if (SkillQAction)
         {
-            EnhancedInput->BindAction(SkillQAction, ETriggerEvent::Triggered, this, &ATestPlayerController_kjhg::SkillQ);
+            EnhancedInput->BindAction(SkillQAction, ETriggerEvent::Triggered, this, &AYggHeroController::SkillQ);
         }
         if (SkillEAction)
         {
-            EnhancedInput->BindAction(SkillEAction, ETriggerEvent::Triggered, this, &ATestPlayerController_kjhg::SkillE);
-        } 
+            EnhancedInput->BindAction(SkillEAction, ETriggerEvent::Triggered, this, &AYggHeroController::SkillE);
+        }
         if (SkillRAction)
         {
-            EnhancedInput->BindAction(SkillRAction, ETriggerEvent::Triggered, this, &ATestPlayerController_kjhg::SkillR);
+            EnhancedInput->BindAction(SkillRAction, ETriggerEvent::Triggered, this, &AYggHeroController::SkillR);
         }
     }
 }
 
-void ATestPlayerController_kjhg::Move(const FInputActionValue& _Value)
+void AYggHeroController::Move(const FInputActionValue& _Value)
 {
     FVector2D MovementVector = _Value.Get<FVector2D>();
 
     if (APawn* ControlledPawn = GetPawn())
-    {       
+    {
         FRotator ControllerRotation = GetControlRotation();
 
         FRotator YawRotation(0, ControllerRotation.Yaw, 0);
@@ -82,7 +82,7 @@ void ATestPlayerController_kjhg::Move(const FInputActionValue& _Value)
     }
 }
 
-void ATestPlayerController_kjhg::Look(const FInputActionValue& _Value)
+void AYggHeroController::Look(const FInputActionValue& _Value)
 {
     FVector2D LookAxisVector = _Value.Get<FVector2D>();
 
@@ -93,13 +93,13 @@ void ATestPlayerController_kjhg::Look(const FInputActionValue& _Value)
     }
 }
 
-void ATestPlayerController_kjhg::Jump(const FInputActionValue& _Value)
-{  
+void AYggHeroController::Jump(const FInputActionValue& _Value)
+{
     UE_LOG(LogTemp, Warning, TEXT("Jump"));
 }
 
-void ATestPlayerController_kjhg::Attack(const FInputActionValue& _Value)
-{   
+void AYggHeroController::Attack(const FInputActionValue& _Value)
+{
     if (APawn* ControlledPawn = GetPawn())
     {
         USkeletalMeshComponent* MeshComponent = ControlledPawn->FindComponentByClass<USkeletalMeshComponent>();
@@ -118,17 +118,17 @@ void ATestPlayerController_kjhg::Attack(const FInputActionValue& _Value)
     }
 }
 
-void ATestPlayerController_kjhg::SkillQ(const FInputActionValue& _Value)
+void AYggHeroController::SkillQ(const FInputActionValue& _Value)
 {
     UE_LOG(LogTemp, Warning, TEXT("SkillQ"));
 }
 
-void ATestPlayerController_kjhg::SkillE(const FInputActionValue& _Value)
+void AYggHeroController::SkillE(const FInputActionValue& _Value)
 {
     UE_LOG(LogTemp, Warning, TEXT("SkillE"));
 }
 
-void ATestPlayerController_kjhg::SkillR(const FInputActionValue& _Value)
+void AYggHeroController::SkillR(const FInputActionValue& _Value)
 {
     UE_LOG(LogTemp, Warning, TEXT("SkillR"));
 }

@@ -33,8 +33,10 @@ protected:
 	virtual void BeginPlay();
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
+	virtual void Attack(const FInputActionValue& _Value){}
+	virtual void SkillQ(const FInputActionValue& _Value){}
+	virtual void SkillE(const FInputActionValue& _Value){}
+	virtual void SkillR(const FInputActionValue& _Value){}
 
 public:
 	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
