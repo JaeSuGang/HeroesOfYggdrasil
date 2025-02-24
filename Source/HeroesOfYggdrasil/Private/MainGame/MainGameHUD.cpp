@@ -29,11 +29,33 @@ void AMainGameHUD::ExitRoomButton()
 
 void AMainGameHUD::StartButton()
 {
-	ShowMainGameWidget();
+	if (HasAuthority())
+	{
+		ServerStartButton();
+	}
+	else
+	{
+		ShowMainGameWidget();
+	}
 }
 
 void AMainGameHUD::ReadyButton()
 {
+}
+
+void AMainGameHUD::ServerStartButton_Implementation()
+{
+	MulticastStartButton();
+}
+
+bool AMainGameHUD::ServerStartButton_Validate()
+{
+	return true;
+}
+
+void AMainGameHUD::MulticastStartButton_Implementation()
+{
+	ShowMainGameWidget();
 }
 
 void AMainGameHUD::ShowLobbyWidget()
