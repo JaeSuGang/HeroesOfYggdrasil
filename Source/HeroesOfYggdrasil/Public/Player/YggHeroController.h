@@ -17,8 +17,8 @@ protected:
     virtual void SetupInputComponent() override;
     virtual void BeginPlay() override;
 
-    virtual FGenericTeamId GetGenericTeamId() const override;
-    FGenericTeamId HeroTeamID;
+    //virtual FGenericTeamId GetGenericTeamId() const override;
+    //FGenericTeamId HeroTeamID;
 
 protected:
    
