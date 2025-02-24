@@ -23,7 +23,12 @@ void AYggHeroController::BeginPlay()
         Subsystem->AddMappingContext(InputMappingContext, 0);
     }
 
+    HeroTeamID = FGenericTeamId(0);
+}
 
+FGenericTeamId AYggHeroController::GetGenericTeamId() const
+{
+    return HeroTeamID;
 }
 
 void AYggHeroController::SetupInputComponent()
