@@ -71,5 +71,7 @@ void AMainGameHUD::ShowMainGameWidget()
 		CurrentWidget->AddToViewport();
 	}
 
-	this->PlayerOwner->SetInputMode(FInputModeGameAndUI{});
+	this->PlayerOwner->SetInputMode(FInputModeGameOnly{});
+
+	this->PlayerOwner->bShowMouseCursor = false;
 }
