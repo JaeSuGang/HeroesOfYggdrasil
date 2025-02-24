@@ -24,13 +24,17 @@ protected:
 
 public:
 	UFUNCTION(Server, Reliable)
+	void ServerSelectCharacter(APlayerController* PC);
+
+	UFUNCTION(Server, Reliable)
 	void ServerNextSelectable();
 
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	UDataTable* SelectablesTable;
 
-	int CurrentTableIndex;
+	UPROPERTY(VisibleInstanceOnly, Category = YGG)
+	APawn* SpawnedSelectable;
 
-	AActor* SpawnedSelectable;
+	int CurrentTableIndex;
 };
