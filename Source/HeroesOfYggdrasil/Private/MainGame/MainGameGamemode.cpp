@@ -10,6 +10,8 @@ AMainGameGamemode::AMainGameGamemode()
 
 void AMainGameGamemode::PostLogin(APlayerController* PC)
 {
+	Super::PostLogin(PC);
+
 	FVector FinalSelectZoneLocation = SelectZoneLocation;
 	FinalSelectZoneLocation += SelectZonePosOffset * (GetNumPlayers() - 1);
 	FActorSpawnParameters SpawnParams{};
