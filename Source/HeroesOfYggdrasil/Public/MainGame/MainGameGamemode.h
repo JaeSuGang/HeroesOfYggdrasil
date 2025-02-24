@@ -18,9 +18,23 @@ public:
 	AMainGameGamemode();
 
 protected:
+	void PostLogin(APlayerController* PC) override;
+
 	void BeginPlay() override;
 
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<APawn> MainPawn;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<AActor> SelectZone;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	FVector SelectZoneLocation;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	FRotator SelectZoneRotation;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	FVector SelectZonePosOffset;
 };

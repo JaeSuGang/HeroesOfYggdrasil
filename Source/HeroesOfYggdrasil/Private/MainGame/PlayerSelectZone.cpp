@@ -23,7 +23,8 @@ void APlayerSelectZone::BeginPlay()
 		SelectablesTable->GetAllRows(TEXT("GetAllRows"), Rows);
 		FActorSpawnParameters SpawnParams{};
 		SpawnParams.Owner = nullptr;
-		// GetWorld()->SpawnActor(Rows[0]->PlayPawn, GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnedSelectable = GetWorld()->SpawnActor<APawn>(Rows[0]->PlayPawn, GetActorLocation(), GetActorRotation(), SpawnParams);
 	}
 }
 
@@ -31,6 +32,15 @@ void APlayerSelectZone::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+}
+
+void APlayerSelectZone::ServerSelectCharacter_Implementation(APlayerController* PC)
+{
+	if (HasAuthority())
+	{
+		PC->UnPossess();
+		PC->Possess(SpawnedSelectable);
+	}
 }
 
 void APlayerSelectZone::ServerNextSelectable_Implementation()
