@@ -27,6 +27,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ReadyButton();
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerStartButton();
+	void ServerStartButton_Implementation();
+	bool ServerStartButton_Validate();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastStartButton();
+	void MulticastStartButton_Implementation();
+
 	void ShowLobbyWidget();
 	void ShowMainGameWidget();
 
