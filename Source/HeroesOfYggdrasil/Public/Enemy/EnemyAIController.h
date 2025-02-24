@@ -10,7 +10,7 @@
 class UAIPerceptionComponent;
 class UAISenseConfig_Sight;
 /**
- * 
+ * 담당 : 장시혁
  */
 UCLASS()
 class HEROESOFYGGDRASIL_API AEnemyAIController : public AAIController
@@ -42,9 +42,9 @@ private:
 	bool bEnableDetourCrowdAvoidance = true;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidanve Config", meta = (EditCondition = "bEnableDetourCrowdAvoidance", UIMin = "1", UIMax = "4"))
-	int32 DetourCrowdAvoidanceQuality = 4;
+	int32 DetourCrowdAvoidanceQuality = 3;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidanve Config", meta = (EditCondition = "bEnableDetourCrowdAvoidance", UIMin = "1", UIMax = "4"))
-	float CollisionQueryRange = 600.0f;
+	float CollisionQueryRange = 450.0f;
 	
 };

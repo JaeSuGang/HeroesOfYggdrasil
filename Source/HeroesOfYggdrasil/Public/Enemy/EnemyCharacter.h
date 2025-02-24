@@ -7,6 +7,9 @@
 #include "Core/YggCharacter.h"
 #include "EnemyCharacter.generated.h"
 
+/**
+ * 담당 : 장시혁
+ */
 UCLASS()
 class HEROESOFYGGDRASIL_API AEnemyCharacter : public AYggCharacter
 {

@@ -17,8 +17,8 @@ AEnemyAIController::AEnemyAIController(const FObjectInitializer& ObjectInitializ
 	AISenseConfig_Sight->DetectionByAffiliation.bDetectFriendlies = false;
 	AISenseConfig_Sight->DetectionByAffiliation.bDetectNeutrals = false;
 	AISenseConfig_Sight->SightRadius = 15000.0f;
-	AISenseConfig_Sight->LoseSightRadius = 15700.0f;
-	AISenseConfig_Sight->PeripheralVisionAngleDegrees = 180.f;
+	AISenseConfig_Sight->LoseSightRadius = 0.0f;
+	AISenseConfig_Sight->PeripheralVisionAngleDegrees = 360.f;
 
 	EnemyPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("EnemtPerceptionComponent");
 	EnemyPerceptionComponent->ConfigureSense(*AISenseConfig_Sight);
