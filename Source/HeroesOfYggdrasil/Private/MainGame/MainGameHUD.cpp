@@ -2,6 +2,7 @@
 
 
 #include "MainGame/MainGameHUD.h"
+#include "MainGame/PlayerSelectZone.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -29,43 +30,14 @@ void AMainGameHUD::ExitRoomButton()
 
 void AMainGameHUD::StartButton()
 {
-	if (HasAuthority())
-	{
-		ServerStartButton();
-	}
-	else
-	{
-		ShowMainGameWidget();
-	}
 }
 
 void AMainGameHUD::ReadyButton()
 {
 }
 
-void AMainGameHUD::ServerStartButton_Implementation()
-{
-	MulticastStartButton();
-}
-
-bool AMainGameHUD::ServerStartButton_Validate()
-{
-	return true;
-}
-
-void AMainGameHUD::MulticastStartButton_Implementation()
-{
-	ShowMainGameWidget();
-}
-
 void AMainGameHUD::ShowLobbyWidget()
 {
-	if (CurrentWidget)
-	{
-		CurrentWidget->RemoveFromParent();
-		CurrentWidget = nullptr;
-	}
-
 	if (LobbyWidgetClass)
 	{
 		CurrentWidget = CreateWidget(GetWorld(), LobbyWidgetClass);
@@ -78,12 +50,6 @@ void AMainGameHUD::ShowLobbyWidget()
 
 void AMainGameHUD::ShowMainGameWidget()
 {
-	if (CurrentWidget)
-	{
-		CurrentWidget->RemoveFromParent();
-		CurrentWidget = nullptr;
-	}
-
 	if (MainGameWidgetClass)
 	{
 		CurrentWidget = CreateWidget(GetWorld(), MainGameWidgetClass);
@@ -96,4 +62,13 @@ void AMainGameHUD::ShowMainGameWidget()
 	this->PlayerOwner->SetInputMode(FInputModeGameOnly{});
 
 	this->PlayerOwner->bShowMouseCursor = false;
+}
+
+void AMainGameHUD::CloseCurentWidget()
+{
+	if (CurrentWidget)
+	{
+		CurrentWidget->RemoveFromParent();
+		CurrentWidget = nullptr;
+	}
 }
