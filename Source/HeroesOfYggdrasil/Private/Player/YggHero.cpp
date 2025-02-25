@@ -34,10 +34,9 @@ AYggHero::AYggHero()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-
 	
-
-
+	// 폰 입력 UEnhancedInputComponent 으로 변경
+	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
 }
 
 void AYggHero::Look(const FInputActionValue& _Value)
