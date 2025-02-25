@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "MainGameHUD.generated.h"
 
+class APlayerSelectZone;
+
 /**
  * 
  */
@@ -27,17 +29,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ReadyButton();
 
-	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerStartButton();
-	void ServerStartButton_Implementation();
-	bool ServerStartButton_Validate();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastStartButton();
-	void MulticastStartButton_Implementation();
-
+	UFUNCTION(BlueprintCallable)
 	void ShowLobbyWidget();
+
+	UFUNCTION(BlueprintCallable)
 	void ShowMainGameWidget();
+
+	UFUNCTION(BlueprintCallable)
+	void CloseCurentWidget();
 
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
@@ -51,6 +50,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSoftObjectPtr<UWorld> MainGameLevel;
-
+	
 	UUserWidget* CurrentWidget;
 };
