@@ -24,6 +24,7 @@ AEnemyAIController::AEnemyAIController(const FObjectInitializer& ObjectInitializ
 	EnemyPerceptionComponent->ConfigureSense(*AISenseConfig_Sight);
 	EnemyPerceptionComponent->SetDominantSense(UAISenseConfig_Sight::StaticClass());
 	EnemyPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ThisClass::OnTargetPerceptionUpdated);
+	EnemyPerceptionComponent->bAutoRegister = true;
 
 	SetGenericTeamId(FGenericTeamId(1));
 }
