@@ -39,7 +39,9 @@ protected:
 	virtual void SkillQ(const FInputActionValue& _Value){}
 	virtual void SkillE(const FInputActionValue& _Value){}
 	virtual void SkillR(const FInputActionValue& _Value){}
-	virtual void BeginPlay();
+
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 

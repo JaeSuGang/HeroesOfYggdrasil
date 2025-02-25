@@ -30,8 +30,8 @@ AYggHero::AYggHero()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpring"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bUsePawnControlRotation = true;
-	CameraBoom->TargetArmLength = 600.0f;
-	CameraBoom->SocketOffset = FVector(0.0, 200.0, 50.0);
+	CameraBoom->TargetArmLength = 450.0f;
+	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 300.0f);
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
@@ -115,5 +115,12 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FollowCamera->SetWorldRotation(FRotator(-25.0f, 0.0f, 0.0f));
+}
+
+void AYggHero::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 
 }
