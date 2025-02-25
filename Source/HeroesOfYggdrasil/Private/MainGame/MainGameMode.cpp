@@ -6,6 +6,7 @@
 
 #include "MainGame/PlayerSelectZone.h"
 #include "Kismet/GameplayStatics.h"
+#include "MainGame/PlayerSelectZone.h"
 
 void AMainGameMode::PostLogin(APlayerController* PC)
 {
@@ -15,7 +16,8 @@ void AMainGameMode::PostLogin(APlayerController* PC)
 	FinalSelectZoneLocation += SelectZonePosOffset * (GetNumPlayers() - 1);
 	FActorSpawnParameters SpawnParams{};
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	GetWorld()->SpawnActor<AActor>(SelectZone, FinalSelectZoneLocation, SelectZoneRotation, SpawnParams);
+	APlayerSelectZone* Zone = GetWorld()->SpawnActor<APlayerSelectZone>(SelectZone, FinalSelectZoneLocation, SelectZoneRotation, SpawnParams);
+	PlayerZones.Add(Zone);
 }
 
 void AMainGameMode::OnAllPlayersReady()
