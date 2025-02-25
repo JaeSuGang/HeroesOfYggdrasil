@@ -46,6 +46,10 @@ void AMainGameHUD::ShowLobbyWidget()
 		
 		CurrentWidget->AddToViewport();
 	}
+
+	this->PlayerOwner->SetInputMode(FInputModeUIOnly{});
+
+	this->PlayerOwner->bShowMouseCursor = true;
 }
 
 void AMainGameHUD::ShowMainGameWidget()
