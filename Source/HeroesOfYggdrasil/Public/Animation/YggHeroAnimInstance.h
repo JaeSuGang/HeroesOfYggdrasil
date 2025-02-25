@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "YggHeroAnimInstance.generated.h"
 
+
+
 /**	김성훈
  * 
  */
@@ -13,7 +15,7 @@
 class AYggHero;
 class UCharacterMovementComponent;
 
-UCLASS()
+UCLASS(Blueprintable)
 class HEROESOFYGGDRASIL_API UYggHeroAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
@@ -27,9 +29,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	UCharacterMovementComponent* MovementComponent;
 
-	UPROPERTY(BlueprintReadOnly)
-	float GroundSpeed;
-	
 private:
 	
 };
