@@ -62,6 +62,8 @@ void AYggHero::Move(const FInputActionValue& _Value)
 
 	AddMovementInput(ForwardDirection, MovementVector.Y);
 	AddMovementInput(RightDirection, MovementVector.X);
+
+	
 }
 
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -116,11 +118,15 @@ void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FollowCamera->SetWorldRotation(FRotator(-25.0f, 0.0f, 0.0f));
+	// ??? Yaw에 180.0f 을 추가 해야하는 이유?
+	FollowCamera->SetWorldRotation(FRotator(-25.0f, 180.0f, 0.0f));	
+	
 }
 
 void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	UE_LOG(LogTemp, Warning, TEXT("CameraBoom Rotation: %s"), *CameraBoom->GetComponentRotation().ToString());
+	UE_LOG(LogTemp, Warning, TEXT("FollowCamera Rotation: %s"), *FollowCamera->GetComponentRotation().ToString());
 }
