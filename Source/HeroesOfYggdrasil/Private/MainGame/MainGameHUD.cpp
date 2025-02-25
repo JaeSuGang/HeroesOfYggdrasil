@@ -2,7 +2,7 @@
 
 
 #include "MainGame/MainGameHUD.h"
-#include "MainGame/PlayerSelectZone.h"
+#include "MainGame/MainGameMode.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -30,6 +30,12 @@ void AMainGameHUD::ExitRoomButton()
 
 void AMainGameHUD::StartButton()
 {
+	AMainGameMode* MGM = Cast<AMainGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+
+	if (MGM)
+	{
+		MGM->OnAllPlayersReady();
+	}
 }
 
 void AMainGameHUD::ReadyButton()
