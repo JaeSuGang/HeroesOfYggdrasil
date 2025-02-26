@@ -87,11 +87,14 @@ void AMainGameHUD::EnableCrossHair(bool bIsVisible)
 {
 	if (MainGameWidgetClass)
 	{
-		AIM->SetVisibility(ESlateVisibility::Visible);
-	}
-	else
-	{
-		AIM->SetVisibility(ESlateVisibility::Hidden);
+		if (bIsVisible)
+		{
+			AIM->SetVisibility(ESlateVisibility::Visible);
+		}
+		else
+		{
+			AIM->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
 
