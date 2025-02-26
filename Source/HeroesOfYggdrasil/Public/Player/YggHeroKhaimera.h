@@ -7,13 +7,29 @@
 #include "YggHeroKhaimera.generated.h"
 
 /**
- * 
+ *	김성훈
  */
+
+class UAnimMontage;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 {
 	GENERATED_BODY()
-	
-	
-	
+
+public:
+	AYggHeroKhaimera();
+protected:
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void Attack(const FInputActionValue& _Value) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Montage", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UAnimMontage>TestAttack;
+
+	//UAnimMontage* TestAttack;
+
+
+
+
+
 };

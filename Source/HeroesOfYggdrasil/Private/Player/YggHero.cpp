@@ -21,7 +21,7 @@
 AYggHero::AYggHero()
 {
 	// 카메라에 따라 돌게 세팅
-	bUseControllerRotationYaw = true;
+	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 
@@ -66,53 +66,6 @@ void AYggHero::Move(const FInputActionValue& _Value)
 	
 }
 
-void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	// Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(InputMappingContext, 0);
-		}
-	}
-
-	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
-	if (EnhancedInput)
-	{
-		if (MoveAction)
-		{
-			EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AYggHero::Move);
-		}
-		if (LookAction)
-		{
-			EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AYggHero::Look);
-		}
-		if (JumpAction)
-		{
-			EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AYggHero::Jump);
-		}
-		// 각자 클래스에서
-	/*	if (AttackAction)
-		{
-			EnhancedInput->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AYggHero::Attack);
-		}
-		if (SkillQAction)
-		{
-			EnhancedInput->BindAction(SkillQAction, ETriggerEvent::Triggered, this, &AYggHero::SkillQ);
-		}
-		if (SkillEAction)
-		{
-			EnhancedInput->BindAction(SkillEAction, ETriggerEvent::Triggered, this, &AYggHero::SkillE);
-		}
-		if (SkillRAction)
-		{
-			EnhancedInput->BindAction(SkillRAction, ETriggerEvent::Triggered, this, &AYggHero::SkillR);
-		}*/
-	}
-}
 
 void AYggHero::BeginPlay()
 {
