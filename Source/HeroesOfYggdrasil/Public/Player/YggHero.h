@@ -30,8 +30,8 @@ public:
 	AYggHero();
 protected:
 
-	void Look(const FInputActionValue& _Value);
-	void Move(const FInputActionValue& _Value);
+	virtual void Look(const FInputActionValue& _Value);
+	virtual void Move(const FInputActionValue& _Value);
 
 	virtual void Attack(const FInputActionValue& _Value){}
 	virtual void SkillQ(const FInputActionValue& _Value){}
@@ -70,13 +70,5 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputAction* SkillRAction;
-
-public:
-	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-
-private:
-
-
 
 };

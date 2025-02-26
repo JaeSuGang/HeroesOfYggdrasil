@@ -30,6 +30,8 @@ AYggHero::AYggHero()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpring"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bUsePawnControlRotation = true;
+
+	// 이거 2개는 회의 ㄱㄱ
 	CameraBoom->TargetArmLength = 450.0f;
 	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 300.0f);
 
@@ -51,7 +53,6 @@ void AYggHero::Look(const FInputActionValue& _Value)
 
 void AYggHero::Move(const FInputActionValue& _Value)
 {
-
 	FVector2D MovementVector = _Value.Get<FVector2D>();
 	FRotator ControllerRotation = GetControlRotation();
 
@@ -62,8 +63,6 @@ void AYggHero::Move(const FInputActionValue& _Value)
 
 	AddMovementInput(ForwardDirection, MovementVector.Y);
 	AddMovementInput(RightDirection, MovementVector.X);
-
-	
 }
 
 
