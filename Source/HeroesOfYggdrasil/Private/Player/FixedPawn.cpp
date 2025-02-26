@@ -5,7 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
-
+#include "Components/SplineComponent.h"
 #include "Attribute/AttributeComponent.h"
 
 AFixedPawn::AFixedPawn(const FObjectInitializer& objectInitializer)
@@ -26,5 +26,10 @@ AFixedPawn::AFixedPawn(const FObjectInitializer& objectInitializer)
 
 	CameraComponent->SetupAttachment(SpringArmComponent);
 
-	
+	SplinePath = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
+}
+
+void AFixedPawn::FollowSplineToHero()
+{
+
 }

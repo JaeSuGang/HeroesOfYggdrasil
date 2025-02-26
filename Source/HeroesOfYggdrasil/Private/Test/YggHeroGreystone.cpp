@@ -79,24 +79,34 @@ void AYggHeroGreystone::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	}
 }
 
-void AYggHeroGreystone::Attack(const FInputActionValue& _Value)
+void AYggHeroGreystone::Look(const FInputActionValue& Value)
 {
-	Super::Attack(_Value);
+	Super::Look(Value);
 }
 
-void AYggHeroGreystone::SkillQ(const FInputActionValue& _Value)
+void AYggHeroGreystone::Move(const FInputActionValue& Value)
 {
-	Super::SkillQ(_Value);
+	Super::Move(Value);
+}
+
+void AYggHeroGreystone::Attack(const FInputActionValue& Value)
+{
+	Super::Attack(Value);
+}
+
+void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
+{
+	Super::SkillQ(Value);
 
 	UE_LOG(LogTemp, Warning, TEXT("SkiilQ"));
 }
 
-void AYggHeroGreystone::SkillE(const FInputActionValue& _Value)
+void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
 {
-	Super::SkillE(_Value);
+	Super::SkillE(Value);
 }
 
-void AYggHeroGreystone::SkillR(const FInputActionValue& _Value)
+void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 {
-	Super::SkillR(_Value);
+	Super::SkillR(Value);
 }
