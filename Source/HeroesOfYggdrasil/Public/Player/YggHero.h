@@ -51,24 +51,10 @@ protected:
 	UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* MoveAction;
+	TMap<FName,UInputAction*> ActionMap;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* LookAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* JumpAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* AttackAction;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* SkillQAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* SkillEAction;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	UInputAction* SkillRAction;
-
+	
 };

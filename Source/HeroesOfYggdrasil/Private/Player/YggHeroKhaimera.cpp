@@ -36,7 +36,8 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
-		if (MoveAction)
+		
+		/*if (MoveAction)
 		{
 			EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Move);
 		}
@@ -51,7 +52,7 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		if (AttackAction)
 		{
 			EnhancedInput->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
-		}
+		}*/
 	}
 }
 
