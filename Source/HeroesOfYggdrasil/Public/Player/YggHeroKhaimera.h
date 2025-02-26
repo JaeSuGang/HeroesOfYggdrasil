@@ -19,14 +19,20 @@ class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 
 public:
 	AYggHeroKhaimera();
+	
+
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void Attack(const FInputActionValue& _Value) override;
-	UPROPERTY(EditDefaultsOnly, Category = "Montage", meta = (AllowPrivateAccess = "true"))
-	UAnimMontage* TestAttack;
+
+	void FirstAttack(UAnimInstance* AnimInstance);
+	void SecondAttack(UAnimInstance* AnimInstance);
+	void LastAttack(UAnimInstance* AnimInstance);
 
 
+	UPROPERTY(EditDefaultsOnly, Category = "Montage")
+	TMap<FName,UAnimMontage*> MontageMap;
 
-
-
+	int MaxCombo = 3;
+	int CurCombo = 0;
 };
