@@ -82,3 +82,16 @@ void AMainGameHUD::CloseCurentWidget()
 		CurrentWidget = nullptr;
 	}
 }
+
+void AMainGameHUD::EnableCrossHair(bool bIsVisible)
+{
+	if (MainGameWidgetClass)
+	{
+		AIM->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		AIM->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+

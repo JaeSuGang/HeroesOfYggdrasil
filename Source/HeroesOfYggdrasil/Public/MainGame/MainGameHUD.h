@@ -38,6 +38,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CloseCurentWidget();
 
+	UFUNCTION(BlueprintCallable)
+	void EnableCrossHair(bool bIsVisible);
+
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> MainWidgetClass;
@@ -50,6 +53,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSoftObjectPtr<UWorld> MainGameLevel;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* AIM;
+
 	
 	UUserWidget* CurrentWidget;
 };
