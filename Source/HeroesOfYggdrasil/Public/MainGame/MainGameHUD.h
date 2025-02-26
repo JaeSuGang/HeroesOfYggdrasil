@@ -55,7 +55,7 @@ public:
 	TSoftObjectPtr<UWorld> MainGameLevel;
 
 	UPROPERTY(meta = (BindWidget))
-	class UWidget* AIM;
+	class UImage* AIM;
 
 	
 	UUserWidget* CurrentWidget;

@@ -5,6 +5,7 @@
 #include "MainGame/MainGameMode.h"
 
 #include "Blueprint/UserWidget.h"
+#include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -67,6 +68,11 @@ void AMainGameHUD::ShowMainGameWidget()
 			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
 		CurrentWidget->AddToViewport();
+
+		if (CurrentWidget)
+		{
+			AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
+		}
 	}
 
 	this->PlayerOwner->SetInputMode(FInputModeGameOnly{});
