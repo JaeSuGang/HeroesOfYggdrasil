@@ -36,23 +36,31 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
-		
-		/*if (MoveAction)
+
+		if (ActionMap.Find(FName("Move")))
 		{
-			EnhancedInput->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Move);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Move")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Move);
+			UE_LOG(LogTemp, Warning, TEXT("MoveAction Bind Succesed"));
 		}
-		if (LookAction)
+
+		if (ActionMap.Find(FName("Look")))
 		{
-			EnhancedInput->BindAction(LookAction, ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Look);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Look")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Look);
+			UE_LOG(LogTemp, Warning, TEXT("LookAction Bind Succesed"));
 		}
-		if (JumpAction)
+
+		if (ActionMap.Find(FName("Jump")))
 		{
-			EnhancedInput->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Jump);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Jump")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Jump);
+			UE_LOG(LogTemp, Warning, TEXT("JumpAction Bind Succesed"));
 		}
-		if (AttackAction)
+
+		if (ActionMap.Find(FName("Attack")))
 		{
-			EnhancedInput->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
-		}*/
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
+			UE_LOG(LogTemp, Warning, TEXT("AttackAction Bind Succesed"));
+		}
+
 	}
 }
 
