@@ -16,10 +16,13 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	virtual void Attack(const FInputActionValue& _Value) override;
-	virtual void SkillQ(const FInputActionValue& _Value) override;
-	virtual void SkillE(const FInputActionValue& _Value) override;
-	virtual void SkillR(const FInputActionValue& _Value) override;
+
+	virtual void Look(const FInputActionValue& Value) override;	
+	virtual void Move(const FInputActionValue& Value) override;
+	virtual void Attack(const FInputActionValue& Value) override;
+	virtual void SkillQ(const FInputActionValue& Value) override;
+	virtual void SkillE(const FInputActionValue& Value) override;
+	virtual void SkillR(const FInputActionValue& Value) override;
 
 public:
 	AYggHeroGreystone();

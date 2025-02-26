@@ -78,17 +78,17 @@ void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	DOREPLIFETIME(AYggHero, bAimMode);
 }
 
-void AYggHero::Look(const FInputActionValue& _Value)
+void AYggHero::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = _Value.Get<FVector2D>();
+	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(-LookAxisVector.Y);
 }
 
-void AYggHero::Move(const FInputActionValue& _Value)
+void AYggHero::Move(const FInputActionValue& Value)
 {
-	FVector2D MovementVector = _Value.Get<FVector2D>();
+	FVector2D MovementVector = Value.Get<FVector2D>();
 	FRotator ControllerRotation = GetControlRotation();
 
 	FRotator YawRotation(0, ControllerRotation.Yaw, 0);
@@ -112,6 +112,4 @@ void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// UE_LOG(LogTemp, Warning, TEXT("CameraBoom Rotation: %s"), *CameraBoom->GetComponentRotation().ToString());
-	// UE_LOG(LogTemp, Warning, TEXT("FollowCamera Rotation: %s"), *FollowCamera->GetComponentRotation().ToString());
 }

@@ -45,13 +45,13 @@ public:
 
 protected:
 
-	virtual void Look(const FInputActionValue& _Value);
-	virtual void Move(const FInputActionValue& _Value);
+	virtual void Look(const FInputActionValue& Value);
+	virtual void Move(const FInputActionValue& Value);
 
-	virtual void Attack(const FInputActionValue& _Value){}
-	virtual void SkillQ(const FInputActionValue& _Value){}
-	virtual void SkillE(const FInputActionValue& _Value){}
-	virtual void SkillR(const FInputActionValue& _Value){}
+	virtual void Attack(const FInputActionValue& Value){}
+	virtual void SkillQ(const FInputActionValue& Value){}
+	virtual void SkillE(const FInputActionValue& Value){}
+	virtual void SkillR(const FInputActionValue& Value){}
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;

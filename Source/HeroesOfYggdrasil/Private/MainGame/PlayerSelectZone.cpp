@@ -38,6 +38,8 @@ void APlayerSelectZone::ServerSelectCharacter_Implementation(APlayerController* 
 {
 	if (HasAuthority())
 	{
+
+
 		PC->UnPossess();
 		PC->Possess(SpawnedSelectable);
 	}
