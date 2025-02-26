@@ -51,24 +51,14 @@ void AYggHero::ToggleAimMode_Implementation()
 {
 	bAimMode = !bAimMode;
 
-	SetAimMode_Implementation(bAimMode);
+	bUseControllerRotationYaw = true;
+
+	int a = 0;
 }
 
 void AYggHero::SetAimMode_Implementation(bool Value)
 {
 	bAimMode = Value;
-
-	bUseControllerRotationYaw = bAimMode;
-
-	if (bUseControllerRotationYaw)
-	{
-		CameraBoom->TargetArmLength = 200.0f;
-		CameraBoom->SocketOffset = FVector(0.0f, 45.0f, 250.0f);
-	}
-	else {
-		CameraBoom->TargetArmLength = 450.0f;
-		CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 300.0f);
-	}
 }
 
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
