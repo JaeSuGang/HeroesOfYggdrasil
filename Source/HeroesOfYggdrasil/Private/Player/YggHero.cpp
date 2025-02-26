@@ -21,9 +21,12 @@
 AYggHero::AYggHero()
 {
 	// 카메라에 따라 돌게 세팅
-	bUseControllerRotationYaw = false;
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
+
+	// 2개 옵션 서로 반대
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 
 	// 카메라 
