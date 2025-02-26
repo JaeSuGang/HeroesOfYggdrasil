@@ -14,6 +14,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "InputActionValue.h"
+#include "Net/UnrealNetwork.h"
 
 #include "GameFramework/SpringArmComponent.h"
 
@@ -46,6 +47,23 @@ AYggHero::AYggHero()
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
 }
 
+void AYggHero::ToggleAimMode_Implementation()
+{
+	bAimMode = !bAimMode;
+}
+
+void AYggHero::SetAimMode_Implementation(bool Value)
+{
+	bAimMode = Value;
+}
+
+void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AYggHero, bAimMode);
+}
+
 void AYggHero::Look(const FInputActionValue& _Value)
 {
 	FVector2D LookAxisVector = _Value.Get<FVector2D>();
@@ -68,20 +86,18 @@ void AYggHero::Move(const FInputActionValue& _Value)
 	AddMovementInput(RightDirection, MovementVector.X);
 }
 
-
 void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
 
 	// ??? Yaw에 180.0f 을 추가 해야하는 이유?
-	FollowCamera->SetWorldRotation(FRotator(-25.0f, 180.0f, 0.0f));	
-	
+	FollowCamera->SetWorldRotation(FRotator(-25.0f, 180.0f, 0.0f));		
 }
 
 void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UE_LOG(LogTemp, Warning, TEXT("CameraBoom Rotation: %s"), *CameraBoom->GetComponentRotation().ToString());
-	UE_LOG(LogTemp, Warning, TEXT("FollowCamera Rotation: %s"), *FollowCamera->GetComponentRotation().ToString());
+	// UE_LOG(LogTemp, Warning, TEXT("CameraBoom Rotation: %s"), *CameraBoom->GetComponentRotation().ToString());
+	// UE_LOG(LogTemp, Warning, TEXT("FollowCamera Rotation: %s"), *FollowCamera->GetComponentRotation().ToString());
 }

@@ -28,6 +28,21 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 	GENERATED_BODY()
 public:
 	AYggHero();
+
+	UFUNCTION(Server, Reliable)
+	void ToggleAimMode();
+
+	UFUNCTION(Server, Reliable)
+	void SetAimMode(bool Value);
+
+	UFUNCTION()
+	bool GetAimMode()
+	{
+		return bAimMode;
+	}
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 protected:
 
 	virtual void Look(const FInputActionValue& _Value);
@@ -53,8 +68,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TMap<FName,UInputAction*> ActionMap;
 
-
-
-
-	
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, replicated)
+	bool bAimMode = false;
 };
