@@ -57,5 +57,9 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AYggHeroKhaimera::Attack(const FInputActionValue& _Value)
 {
-	PlayAnimMontage(Cast<UAnimMontage>(TestAttack));
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (TestAttack && AnimInstance)
+	{
+		AnimInstance->Montage_Play(TestAttack);
+	}
 }

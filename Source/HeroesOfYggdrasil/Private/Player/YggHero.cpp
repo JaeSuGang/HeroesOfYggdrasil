@@ -20,7 +20,7 @@
 
 AYggHero::AYggHero()
 {
-	// 카메라에 따라 돌게 세팅
+	// 카메라에 따라 돌게 세팅할꺼면 Yaw=true로
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 

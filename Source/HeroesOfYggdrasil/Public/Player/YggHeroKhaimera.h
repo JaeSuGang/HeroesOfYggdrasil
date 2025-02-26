@@ -22,11 +22,8 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void Attack(const FInputActionValue& _Value) override;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Montage", meta = (AllowPrivateAccess = "true"))
-	TSubclassOf<UAnimMontage>TestAttack;
-
-	//UAnimMontage* TestAttack;
+	UPROPERTY(EditDefaultsOnly, Category = "Montage", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* TestAttack;
 
 
 
