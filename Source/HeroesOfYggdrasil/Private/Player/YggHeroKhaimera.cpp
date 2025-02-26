@@ -18,7 +18,11 @@
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
 
+
 }
+
+
+
 
 void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -54,7 +58,7 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		if (ActionMap.Find(FName("Attack")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Started, this, &AYggHeroKhaimera::Attack);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Completed, this, &AYggHeroKhaimera::Attack);
 			UE_LOG(LogTemp, Warning, TEXT("AttackAction Bind Succesed"));
 		}
 	}
@@ -62,47 +66,24 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AYggHeroKhaimera::Attack(const FInputActionValue& _Value)
 {
+
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("Attacking")));
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (MontageMap.Find(FName("Attack")) && AnimInstance)
 	{
-		if (CurCombo == MaxCombo) 
+		if (CurCombo == MaxCombo)
 		{
 			CurCombo = 0;
-		}	
-		switch (CurCombo)
-		{
-		case 0:
-			FirstAttack(AnimInstance);
-			break;
-		case 1:
-			SecondAttack(AnimInstance);
-			break;
-		case 2:
-			LastAttack(AnimInstance);
-			break;
-		default:
-			break;
 		}
-		CurCombo++;
+		FName SectionName = *FString::Printf(TEXT("Attack%d"), CurCombo);
+		AnimInstance->Montage_Play(*MontageMap.Find(FName("Attack")));
+		AnimInstance->Montage_JumpToSection(SectionName, *MontageMap.Find(FName("Attack")));
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
 	}
+	CurCombo++;
+
 }
 
-void AYggHeroKhaimera::FirstAttack(UAnimInstance* AnimInstance)
-{
-	AnimInstance->Montage_Play(*MontageMap.Find(FName("Attack")));
-	GEngine->AddOnScreenDebugMessage(-1,1.0f,FColor::Blue, FString::Printf(TEXT("%d"),CurCombo));
-}
 
-void AYggHeroKhaimera::SecondAttack(UAnimInstance* AnimInstance)
-{
-	FName SectionName = *FString::Printf(TEXT("Attack%d"), CurCombo);
-	AnimInstance->Montage_JumpToSection(SectionName,*MontageMap.Find(FName("Attack")));
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
-}
 
-void AYggHeroKhaimera::LastAttack(UAnimInstance* AnimInstance)
-{
-	FName SectionName = *FString::Printf(TEXT("Attack%d"), CurCombo);
-	AnimInstance->Montage_JumpToSection(SectionName, *MontageMap.Find(FName("Attack")));
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
-}
+

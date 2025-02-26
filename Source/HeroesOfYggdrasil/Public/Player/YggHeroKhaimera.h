@@ -25,14 +25,10 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void Attack(const FInputActionValue& _Value) override;
 
-	void FirstAttack(UAnimInstance* AnimInstance);
-	void SecondAttack(UAnimInstance* AnimInstance);
-	void LastAttack(UAnimInstance* AnimInstance);
-
-
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	TMap<FName,UAnimMontage*> MontageMap;
 
+	bool bIsAnimPlaying = false;
 	int MaxCombo = 3;
 	int CurCombo = 0;
 };
