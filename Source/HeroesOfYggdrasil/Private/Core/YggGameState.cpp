@@ -5,12 +5,21 @@
 
 #include "Net/UnrealNetwork.h"
 
+AYggGameState::AYggGameState(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
+{
+
+}
+
 void AYggGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	this->InitPlayerManager();
-	this->InitStageManager();
+	if (HasAuthority())
+	{
+		this->InitPlayerManager();
+		this->InitStageManager(nullptr);
+	}
 }
 
 void AYggGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -34,10 +43,12 @@ APlayerManager* AYggGameState::GetPlayerManager() const
 	return PlayerManager;
 }
 
-void AYggGameState::InitStageManager()
+void AYggGameState::InitStageManager(TSubclassOf<AStageManager> _Test)
 {
 	if (HasAuthority())
 	{
+		StageManagerClass;
+
 		StageManager = GetWorld()->SpawnActor<AStageManager>(StageManagerClass);
 	}
 }
