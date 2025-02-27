@@ -82,13 +82,15 @@ void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus St
 
 	if (PawnName == TEXT("BP_YggHero"))
 	{
-		if (Stimulus.WasSuccessfullySensed() && Actor)
+		if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
 		{
-			if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
+			if (!BlackboardComponent->GetValueAsObject(FName("TargetActor")))
 			{
-				BlackboardComponent->SetValueAsObject(FName("TargetActor"), Actor);
+				if (Stimulus.WasSuccessfullySensed() && Actor)
+				{
+					BlackboardComponent->SetValueAsObject(FName("TargetActor"), Actor);
+				}
 			}
 		}
 	}
-
 }
