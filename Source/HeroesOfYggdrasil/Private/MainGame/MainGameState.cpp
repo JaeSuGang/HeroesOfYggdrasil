@@ -12,7 +12,7 @@ void AMainGameState::OnEnterReadyFinishedGameState_Implementation()
 	{
 		if (AMainGameHUD* MGH = Cast<AMainGameHUD>(PC->GetHUD()))
 		{
-			MGH->CloseCurentWidget();
+			MGH->CloseCurrentWidget();
 			MGH->ShowMainGameWidget();
 		}
 	}

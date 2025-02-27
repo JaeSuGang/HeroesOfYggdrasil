@@ -36,7 +36,7 @@ public:
 	void ShowMainGameWidget();
 
 	UFUNCTION(BlueprintCallable)
-	void CloseCurentWidget();
+	void CloseCurrentWidget();
 
 	UFUNCTION(BlueprintCallable)
 	void EnableCrossHair(bool bIsVisible);

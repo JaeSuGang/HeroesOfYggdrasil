@@ -67,12 +67,9 @@ void AMainGameHUD::ShowMainGameWidget()
 		if (!CurrentWidget)
 			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
-		CurrentWidget->AddToViewport();
+		AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
 
-		if (CurrentWidget)
-		{
-			AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
-		}
+		CurrentWidget->AddToViewport();
 	}
 
 	this->PlayerOwner->SetInputMode(FInputModeGameOnly{});
@@ -80,7 +77,7 @@ void AMainGameHUD::ShowMainGameWidget()
 	this->PlayerOwner->bShowMouseCursor = false;
 }
 
-void AMainGameHUD::CloseCurentWidget()
+void AMainGameHUD::CloseCurrentWidget()
 {
 	if (CurrentWidget)
 	{
