@@ -16,14 +16,14 @@ void UYggHeroAnimInstance::NativeInitializeAnimation()
 	{
 		return;
 	}
-	MovementComponent = Hero->GetCharacterMovement();
+	CharacterMovementComponent = Hero->GetCharacterMovement();
 	
 }
 
 void UYggHeroAnimInstance::NativeUpdateAnimation(float _DeltaTime)
 {
 	Super::NativeUpdateAnimation(_DeltaTime);
-	if (MovementComponent == nullptr)
+	if (CharacterMovementComponent == nullptr)
 	{
 		return;
 	}
