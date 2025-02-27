@@ -87,8 +87,15 @@ void AYggHero::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
+	FRotator CurrentRotation = GetControlRotation();
+
+	float ClampedPitch = FMath::ClampAngle(CurrentRotation.Pitch - LookAxisVector.Y, -40.0f, 60.0f);
+
+	GetController()->SetControlRotation(FRotator(ClampedPitch, CurrentRotation.Yaw, CurrentRotation.Roll));
+
 	AddControllerYawInput(LookAxisVector.X);
-	AddControllerPitchInput(-LookAxisVector.Y);
+
+//	AddControllerPitchInput(-LookAxisVector.Y);
 }
 
 void AYggHero::Move(const FInputActionValue& Value)
@@ -116,5 +123,4 @@ void AYggHero::BeginPlay()
 void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
