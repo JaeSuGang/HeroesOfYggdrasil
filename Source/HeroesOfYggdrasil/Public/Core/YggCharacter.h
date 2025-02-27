@@ -13,5 +13,4 @@ class HEROESOFYGGDRASIL_API AYggCharacter : public ACharacter
 
 public:
 	AYggCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
 };

@@ -7,6 +7,13 @@
 #include "MainGame/PlayerSelectZone.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainGame/PlayerSelectZone.h"
+#include "Core/YggGameState.h"
+
+void AMainGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+}
 
 void AMainGameMode::PostLogin(APlayerController* PC)
 {
@@ -36,3 +43,4 @@ void AMainGameMode::OnAllPlayersReady()
 		MainGameState->OnEnterReadyFinishedGameState();
 	}
 }
+

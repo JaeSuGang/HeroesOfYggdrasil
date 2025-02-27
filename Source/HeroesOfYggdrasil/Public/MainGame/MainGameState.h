@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
+#include "Core/YggGameState.h"
 #include "MainGameState.generated.h"
 
 /**
- * 
+ * 담당 코더 : 김경민
  */
 UCLASS()
-class HEROESOFYGGDRASIL_API AMainGameState : public AGameState
+class HEROESOFYGGDRASIL_API AMainGameState : public AYggGameState
 {
 	GENERATED_BODY()
 	

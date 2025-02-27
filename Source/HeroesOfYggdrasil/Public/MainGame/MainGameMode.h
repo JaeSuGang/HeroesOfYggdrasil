@@ -17,11 +17,12 @@ class HEROESOFYGGDRASIL_API AMainGameMode : public AGameMode
 	GENERATED_BODY()
 	
 protected:
+	void BeginPlay() override;
+
 	void PostLogin(APlayerController* PC) override;
 
 public:
 	void OnAllPlayersReady();
-
 
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
