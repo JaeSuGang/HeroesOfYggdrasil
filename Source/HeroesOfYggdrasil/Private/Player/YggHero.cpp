@@ -18,6 +18,8 @@
 
 #include "GameFramework/SpringArmComponent.h"
 
+#include "MainGame/MainGameHUD.h"
+#include "Kismet/GameplayStatics.h"
 
 AYggHero::AYggHero()
 {
@@ -59,6 +61,9 @@ void AYggHero::SetAimMode_Implementation(bool Value)
 	bAimMode = Value;
 
 	bUseControllerRotationYaw = bAimMode;
+
+	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	MainGameHUD->EnableCrossHair(bAimMode);
 
 	if (bUseControllerRotationYaw)
 	{
