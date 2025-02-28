@@ -12,13 +12,13 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "InputActionValue.h"
+#include "Attribute/AttributeComponent.h"
 
 
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
-
-
+	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComponent"));
 }
 
 
@@ -64,24 +64,66 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
-void AYggHeroKhaimera::Attack(const FInputActionValue& _Value)
+void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 {
-
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("Attacking")));
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (MontageMap.Find(FName("Attack")) && AnimInstance)
+	if (!bIsAttackable)
 	{
-		if (CurCombo == MaxCombo)
-		{
-			CurCombo = 0;
-		}
-		FName SectionName = *FString::Printf(TEXT("Attack%d"), CurCombo);
-		AnimInstance->Montage_Play(*MontageMap.Find(FName("Attack")));
-		AnimInstance->Montage_JumpToSection(SectionName, *MontageMap.Find(FName("Attack")));
+		return;
+	}
+	bIsAttackable = false;
+	bIsMoveable = false;
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurCombo);
+	if (MontageMap.Find(MontageName) && AnimInstance)
+	{
+		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
 	}
-	CurCombo++;
+}
 
+void AYggHeroKhaimera::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	//GetCharacterMovement()->
+
+}
+
+void AYggHeroKhaimera::Move(const FInputActionValue& Value)
+{
+	if (!bIsMoveable)
+	{
+		return;
+	}
+	FVector2D MovementVector = Value.Get<FVector2D>();
+	FRotator ControllerRotation = GetControlRotation();
+
+	FRotator YawRotation(0, ControllerRotation.Yaw, 0);
+
+	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+	AddMovementInput(ForwardDirection, MovementVector.Y);
+	AddMovementInput(RightDirection, MovementVector.X);
+}
+
+
+
+
+void AYggHeroKhaimera::SaveAttack()
+{
+	CurCombo++;
+	if (CurCombo == MaxCombo) 
+	{
+		CurCombo = 0;
+	}
+	bIsAttackable = true;
+}
+
+void AYggHeroKhaimera::ResetCombo()
+{
+	CurCombo = 0;
+	bIsAttackable = true;
+	bIsMoveable = true;
 }
 
 

@@ -12,6 +12,12 @@
  * 
  */
 
+
+
+
+
+
+
 class AYggHero;
 class UCharacterMovementComponent;
 
@@ -27,7 +33,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	AYggHero* Hero;
 	UPROPERTY(BlueprintReadOnly)
-	UCharacterMovementComponent* MovementComponent;
+	UCharacterMovementComponent* CharacterMovementComponent;
 
 private:
 	
