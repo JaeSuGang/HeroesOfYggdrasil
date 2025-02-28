@@ -6,22 +6,20 @@
 #include "GameFramework/Info.h"
 #include "StageManager.generated.h"
 
-UCLASS(Abstract)
+UCLASS()
 class HEROESOFYGGDRASIL_API UGameStage : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	/* 서버만이 호출하도록 요망 */
-	UFUNCTION(NetMulticast, Reliable)
-	virtual void OnStateEnter_NetMulticast() = 0;
+	UFUNCTION()
+	virtual void OnStageEnter() {};
 
-	UFUNCTION(NetMulticast, Reliable)
-	virtual void OnStateUpdate_NetMulticast() = 0;
+	UFUNCTION()
+	virtual void OnStageExit() {};
 
-	UFUNCTION(NetMulticast, Reliable)
-	virtual void OnStateExit_NetMulticast() = 0;
-
+	UFUNCTION()
+	virtual void OnStageUpdate(float fDeltaTime) {};
 };
 
 /**
@@ -42,4 +40,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void OnEnterReadyFinishedGameState();
 
+
+public:
+	UPROPERTY(VisibleInstanceOnly)
+	UGameStage* CurrentStage;
+
+	UPROPERTY(VisibleInstanceOnly)
+	int32 Round;
 };
