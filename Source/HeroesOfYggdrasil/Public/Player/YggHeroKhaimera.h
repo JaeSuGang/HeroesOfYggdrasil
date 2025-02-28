@@ -49,8 +49,7 @@ protected:
 	TMap<FName, UAnimMontage*> MontageMap;
 
 
-	bool bIsMoveable = true;
-	bool bIsAttackable = true;
+
 	int MaxCombo = 3;
 	int CurCombo = 0;
 

@@ -9,9 +9,12 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "GameFramework/Controller.h"
+#include "InputActionValue.h"
+
+// Movement
 #include "GameFramework/CharacterMovementComponent.h"
 
-#include "InputActionValue.h"
+// Tag
 #include "Attribute/AttributeComponent.h"
 
 
@@ -19,6 +22,7 @@
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
 	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComponent"));
+	ResetCombo();
 }
 
 
@@ -84,12 +88,14 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 {
-	if (!bIsAttackable)
+	if (!AttributeComponent->Status.HasTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable")))) 
 	{
 		return;
 	}
-	bIsAttackable = false;
-	bIsMoveable = false;
+
+	AttributeComponent->Status.RemoveTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable")));
+	AttributeComponent->Status.RemoveTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Moveable")));
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurCombo);
 	if (MontageMap.Find(MontageName) && AnimInstance)
@@ -101,52 +107,58 @@ void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 
 void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {
-	if (!bIsAttackable)
+	if (!AttributeComponent->Status.HasTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable"))))
 	{
 		return;
 	}
-	bIsAttackable = false;
-	bIsMoveable = false;
+
+	AttributeComponent->Status.RemoveTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable")));
+	AttributeComponent->Status.RemoveTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Moveable")));
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	FName MontageName = TEXT("SkillQ");
 	if (MontageMap.Find(MontageName) && AnimInstance)
 	{
 		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
-		
+
 	}
 }
 
 void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 {
-	if (!bIsAttackable)
+	if (!AttributeComponent->Status.HasTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable"))))
 	{
 		return;
 	}
-	bIsAttackable = false;
-	bIsMoveable = false;
+
+	AttributeComponent->Status.RemoveTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable")));
+	AttributeComponent->Status.RemoveTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Moveable")));
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	FName MontageName = TEXT("SkillE");
 	if (MontageMap.Find(MontageName) && AnimInstance)
 	{
 		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
-		
+
 	}
 }
 
 void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 {
-	if (!bIsAttackable)
+	if (!AttributeComponent->Status.HasTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable"))))
 	{
 		return;
 	}
-	bIsAttackable = false;
-	bIsMoveable = false;
+
+	AttributeComponent->Status.RemoveTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable")));
+	AttributeComponent->Status.RemoveTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Moveable")));
+
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	FName MontageName = TEXT("SkillR");
 	if (MontageMap.Find(MontageName) && AnimInstance)
 	{
 		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
-		
+
 	}
 }
 
@@ -154,10 +166,11 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 
 void AYggHeroKhaimera::Move(const FInputActionValue& Value)
 {
-	if (!bIsMoveable)
+	if (!AttributeComponent->Status.HasTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Moveable"))))
 	{
 		return;
 	}
+
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	FRotator ControllerRotation = GetControlRotation();
 
@@ -176,18 +189,18 @@ void AYggHeroKhaimera::Move(const FInputActionValue& Value)
 void AYggHeroKhaimera::SaveAttack()
 {
 	CurCombo++;
-	if (CurCombo == MaxCombo) 
+	if (CurCombo == MaxCombo)
 	{
 		CurCombo = 0;
 	}
-	bIsAttackable = true;
+	AttributeComponent->Status.AddTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable")));
 }
 
 void AYggHeroKhaimera::ResetCombo()
 {
 	CurCombo = 0;
-	bIsAttackable = true;
-	bIsMoveable = true;
+	AttributeComponent->Status.AddTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Attackable")));
+	AttributeComponent->Status.AddTag(FGameplayTag::RequestGameplayTag(FName("Character.State.Moveable")));
 }
 
 
