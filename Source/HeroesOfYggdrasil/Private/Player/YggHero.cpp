@@ -89,7 +89,7 @@ void AYggHero::Look(const FInputActionValue& Value)
 
 	FRotator CurrentRotation = GetControlRotation();
 
-	float ClampedPitch = FMath::ClampAngle(CurrentRotation.Pitch - LookAxisVector.Y, -40.0f, 60.0f);
+	float ClampedPitch = FMath::ClampAngle(CurrentRotation.Pitch + LookAxisVector.Y, -40.0f, 60.0f);
 
 	GetController()->SetControlRotation(FRotator(ClampedPitch, CurrentRotation.Yaw, CurrentRotation.Roll));
 
