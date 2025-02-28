@@ -101,6 +101,12 @@ void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 
 void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {
+	if (!bIsAttackable)
+	{
+		return;
+	}
+	bIsAttackable = false;
+	bIsMoveable = false;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	FName MontageName = TEXT("SkillQ");
 	if (MontageMap.Find(MontageName) && AnimInstance)
@@ -112,6 +118,12 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 
 void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 {
+	if (!bIsAttackable)
+	{
+		return;
+	}
+	bIsAttackable = false;
+	bIsMoveable = false;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	FName MontageName = TEXT("SkillE");
 	if (MontageMap.Find(MontageName) && AnimInstance)
@@ -123,6 +135,12 @@ void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 
 void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 {
+	if (!bIsAttackable)
+	{
+		return;
+	}
+	bIsAttackable = false;
+	bIsMoveable = false;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	FName MontageName = TEXT("SkillR");
 	if (MontageMap.Find(MontageName) && AnimInstance)
