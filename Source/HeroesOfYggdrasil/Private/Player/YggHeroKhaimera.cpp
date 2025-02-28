@@ -41,25 +41,43 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		if (ActionMap.Find(FName("Move")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Move")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Move);
-			UE_LOG(LogTemp, Warning, TEXT("MoveAction Bind Succesed"));
+			UE_LOG(LogTemp, Warning, TEXT("Khaimera MoveAction Bind Succesed"));
 		}
 
 		if (ActionMap.Find(FName("Look")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Look")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Look);
-			UE_LOG(LogTemp, Warning, TEXT("LookAction Bind Succesed"));
+			UE_LOG(LogTemp, Warning, TEXT("Khaimera LookAction Bind Succesed"));
 		}
 
 		if (ActionMap.Find(FName("Jump")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Jump")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Jump);
-			UE_LOG(LogTemp, Warning, TEXT("JumpAction Bind Succesed"));
+			UE_LOG(LogTemp, Warning, TEXT("Khaimera JumpAction Bind Succesed"));
 		}
 
 		if (ActionMap.Find(FName("Attack")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Completed, this, &AYggHeroKhaimera::Attack);
-			UE_LOG(LogTemp, Warning, TEXT("AttackAction Bind Succesed"));
+			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
+		}
+
+		if (ActionMap.Find(FName("SkillQ")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillQ")), ETriggerEvent::Completed, this, &AYggHeroKhaimera::SkillQ);
+			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
+		}
+
+		if (ActionMap.Find(FName("SkillE")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillE")), ETriggerEvent::Completed, this, &AYggHeroKhaimera::SkillE);
+			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
+		}
+
+		if (ActionMap.Find(FName("SkillR")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillR")), ETriggerEvent::Completed, this, &AYggHeroKhaimera::SkillR);
+			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
 		}
 	}
 }
@@ -81,12 +99,40 @@ void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 	}
 }
 
-void AYggHeroKhaimera::Tick(float DeltaTime)
+void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {
-	Super::Tick(DeltaTime);
-	//GetCharacterMovement()->
-
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	FName MontageName = TEXT("SkillQ");
+	if (MontageMap.Find(MontageName) && AnimInstance)
+	{
+		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
+		
+	}
 }
+
+void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	FName MontageName = TEXT("SkillE");
+	if (MontageMap.Find(MontageName) && AnimInstance)
+	{
+		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
+		
+	}
+}
+
+void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	FName MontageName = TEXT("SkillR");
+	if (MontageMap.Find(MontageName) && AnimInstance)
+	{
+		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
+		
+	}
+}
+
+
 
 void AYggHeroKhaimera::Move(const FInputActionValue& Value)
 {
