@@ -2,12 +2,13 @@
 
 
 #include "MainGame/MainGameMode.h"
-#include "MainGame/MainGameState.h"
 
-#include "MainGame/PlayerSelectZone.h"
 #include "Kismet/GameplayStatics.h"
-#include "MainGame/PlayerSelectZone.h"
+
 #include "Core/YggGameState.h"
+#include "MainGame/MainGameState.h"
+#include "MainGame/PlayerSelectZone.h"
+#include "MainGame/StageManager.h"
 
 void AMainGameMode::BeginPlay()
 {
@@ -38,9 +39,10 @@ void AMainGameMode::OnAllPlayersReady()
 
 	PlayerZones.Empty();
 
-	if (AMainGameState* MainGameState = Cast<AMainGameState>(GameState))
+	AStageManager* SM = AStageManager::Get(GetWorld());
+	if (SM)
 	{
-		MainGameState->OnEnterReadyFinishedGameState();
+		SM->OnEnterReadyFinishedGameState();
 	}
 }
 

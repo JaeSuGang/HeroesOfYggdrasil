@@ -20,6 +20,5 @@ void UAttributeComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
 }
 

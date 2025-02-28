@@ -10,19 +10,7 @@
 #include "MainGame/PlayerManager.h"
 #include "MainGame/StageManager.h"
 
-void AMainGameState::OnEnterReadyFinishedGameState_Implementation()
-{
-	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
-	{
-		if (AMainGameHUD* MGH = Cast<AMainGameHUD>(PC->GetHUD()))
-		{
-			MGH->CloseCurrentWidget();
-			MGH->ShowMainGameWidget();
-		}
-	}
 
-
-}
 
 void AMainGameState::BeginPlay()
 {

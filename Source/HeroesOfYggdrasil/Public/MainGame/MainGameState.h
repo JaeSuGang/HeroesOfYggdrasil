@@ -17,10 +17,6 @@ UCLASS()
 class HEROESOFYGGDRASIL_API AMainGameState : public AYggGameState
 {
 	GENERATED_BODY()
-	
-public:
-	UFUNCTION(NetMulticast, Reliable)
-	void OnEnterReadyFinishedGameState();
 
 protected:
 	void BeginPlay() override;
