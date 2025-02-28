@@ -8,6 +8,7 @@
 #include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "MainGame/StageManager.h"
 
 void AMainGameHUD::BeginPlay()
 {
@@ -31,11 +32,11 @@ void AMainGameHUD::ExitRoomButton()
 
 void AMainGameHUD::StartButton()
 {
-	AMainGameMode* MGM = Cast<AMainGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	AStageManager* SM = AStageManager::Get(GetWorld());
 
-	if (MGM)
+	if (SM)
 	{
-		MGM->OnAllPlayersReady();
+		SM->StartGame();
 	}
 }
 

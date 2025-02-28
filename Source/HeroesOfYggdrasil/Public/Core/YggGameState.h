@@ -17,6 +17,4 @@ class HEROESOFYGGDRASIL_API AYggGameState : public AGameState
 public:
 	AYggGameState(const FObjectInitializer& ObjectInitializer);
 
-
-
 };

@@ -22,24 +22,5 @@ protected:
 	void PostLogin(APlayerController* PC) override;
 
 public:
-	void OnAllPlayersReady();
-
-public:
-	UPROPERTY(EditAnywhere, Category = YGG)
-	TSubclassOf<APawn> MainPawn;
-
-	UPROPERTY(EditAnywhere, Category = YGG)
-	TSubclassOf<AActor> SelectZone;
-
-	UPROPERTY(EditAnywhere, Category = YGG)
-	FVector SelectZoneLocation;
-
-	UPROPERTY(EditAnywhere, Category = YGG)
-	FRotator SelectZoneRotation;
-
-	UPROPERTY(EditAnywhere, Category = YGG)
-	FVector SelectZonePosOffset;
-
-	UPROPERTY(VisibleInstanceOnly, Category = YGG)
-	TArray<APlayerSelectZone*> PlayerZones;
+	
 };

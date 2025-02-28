@@ -6,20 +6,14 @@
 #include "GameFramework/Info.h"
 #include "StageManager.generated.h"
 
-UCLASS()
-class HEROESOFYGGDRASIL_API UGameStage : public UObject
+class APlayerSelectZone;
+
+UENUM()
+enum class EGameStage : uint8
 {
-	GENERATED_BODY()
-
-public:
-	UFUNCTION()
-	virtual void OnStageEnter() {};
-
-	UFUNCTION()
-	virtual void OnStageExit() {};
-
-	UFUNCTION()
-	virtual void OnStageUpdate(float fDeltaTime) {};
+	PreStart,
+	Reinforce,
+	Battle,
 };
 
 /**
@@ -36,15 +30,33 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static AStageManager* Get(UWorld* WorldContext);
 
+protected:
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+public:
+	UFUNCTION(Server, Reliable)
+	void StartGame();
+
+	UFUNCTION(Server, Reliable)
+	void OnUpdateStage();
+
+	UFUNCTION(Server, Reliable)
+	void OnExitStage();
+
+	UFUNCTION(Server, Reliable)
+	void EnterStage(EGameStage newStage, int nRound);
+
 public:
 	UFUNCTION(NetMulticast, Reliable)
-	void OnEnterReadyFinishedGameState();
-
+	void ForceMainWidgetToClients();
 
 public:
-	UPROPERTY(VisibleInstanceOnly)
-	UGameStage* CurrentStage;
+	UPROPERTY(Replicated, VisibleInstanceOnly)
+	EGameStage CurrentStage;
 
-	UPROPERTY(VisibleInstanceOnly)
+	UPROPERTY(Replicated, VisibleInstanceOnly)
 	int32 Round;
+
+	UPROPERTY(VisibleInstanceOnly, Category = YGG)
+	TArray<APlayerSelectZone*> PlayerZones;
 };
