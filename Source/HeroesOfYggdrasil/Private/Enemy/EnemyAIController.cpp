@@ -58,14 +58,15 @@ void AEnemyAIController::BeginPlay()
 
 
 
+
 ETeamAttitude::Type AEnemyAIController::GetTeamAttitudeTowards(const AActor& Other) const
 {
 	const APawn* PawnToCheck = Cast<const APawn>(&Other);
 
-	IGenericTeamAgentInterface* TeamAgent = Cast<IGenericTeamAgentInterface>(PawnToCheck->GetController());
+	FString PawnName = PawnToCheck->GetName().Left(10);
 
 
-	if (TeamAgent && TeamAgent->GetGenericTeamId() != GetGenericTeamId())
+	if (PawnName == TEXT("BP_YggHero"))
 	{
 		return ETeamAttitude::Hostile;
 	}
@@ -76,11 +77,20 @@ ETeamAttitude::Type AEnemyAIController::GetTeamAttitudeTowards(const AActor& Oth
 
 void AEnemyAIController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	if (Stimulus.WasSuccessfullySensed() && Actor)
+
+	FString PawnName = Actor->GetName().Left(10);
+
+	if (PawnName == TEXT("BP_YggHero"))
 	{
 		if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
 		{
-			BlackboardComponent->SetValueAsObject(FName("TargetActor"), Actor);
+			if (!BlackboardComponent->GetValueAsObject(FName("TargetActor")))
+			{
+				if (Stimulus.WasSuccessfullySensed() && Actor)
+				{
+					BlackboardComponent->SetValueAsObject(FName("TargetActor"), Actor);
+				}
+			}
 		}
 	}
 }
