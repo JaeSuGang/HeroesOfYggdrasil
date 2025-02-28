@@ -13,6 +13,7 @@
  */
 
 class UAnimMontage;
+class UAttributeComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
@@ -36,6 +37,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void ResetCombo();
 	
+	UAttributeComponent* AttributeComponent;
 
 	
 

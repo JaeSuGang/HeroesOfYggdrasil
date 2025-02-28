@@ -12,13 +12,13 @@
 #include "GameFramework/CharacterMovementComponent.h"
 
 #include "InputActionValue.h"
+#include "Attribute/AttributeComponent.h"
 
 
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
-
-
+	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComponent"));
 }
 
 
