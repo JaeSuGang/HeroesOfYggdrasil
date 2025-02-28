@@ -20,12 +20,17 @@ void UYggHeroAnimInstance::NativeInitializeAnimation()
 	
 }
 
-void UYggHeroAnimInstance::NativeUpdateAnimation(float _DeltaTime)
+
+
+
+void UYggHeroAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime) 
 {
-	Super::NativeUpdateAnimation(_DeltaTime);
+	Super::NativeThreadSafeUpdateAnimation(DeltaTime);
 	if (CharacterMovementComponent == nullptr)
 	{
 		return;
 	}
-}
+	GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);
+	Direction = CalculateDirection(CharacterMovementComponent->Velocity, Hero->GetActorRotation());
 
+}

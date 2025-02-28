@@ -27,13 +27,22 @@ class HEROESOFYGGDRASIL_API UYggHeroAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 public:
 	virtual void NativeInitializeAnimation() override;
-	virtual void NativeUpdateAnimation(float _DeltaTime) override;
+	virtual void NativeThreadSafeUpdateAnimation(float DeltaTime) override;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	AYggHero* Hero;
 	UPROPERTY(BlueprintReadOnly)
 	UCharacterMovementComponent* CharacterMovementComponent;
+
+	UPROPERTY(BlueprintReadOnly)
+	float GroundSpeed;
+
+	UPROPERTY(BlueprintReadOnly)
+	float Direction;
+
+
+
 
 private:
 	
