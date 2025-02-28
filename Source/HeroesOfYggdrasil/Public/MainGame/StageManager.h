@@ -7,9 +7,9 @@
 #include "StageManager.generated.h"
 
 /**
- * 
+ * 담당 코더 : 김경민
  */
-UCLASS()
+UCLASS(Blueprintable, BlueprintType)
 class HEROESOFYGGDRASIL_API AStageManager : public AInfo
 {
 	GENERATED_BODY()
