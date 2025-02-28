@@ -65,7 +65,7 @@ void AEnemySpawner::SpawningCall()
 		if (CurrentSpawnCount >= MaxSpawnCount)
 		{
 			GetWorldTimerManager().ClearTimer(TimerHandle);
-			Destroy();
+			CurrentSpawnCount = 0;
 			break;
 		}
 	}
