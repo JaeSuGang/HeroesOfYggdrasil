@@ -16,16 +16,21 @@ void UYggHeroAnimInstance::NativeInitializeAnimation()
 	{
 		return;
 	}
-	MovementComponent = Hero->GetCharacterMovement();
+	CharacterMovementComponent = Hero->GetCharacterMovement();
 	
 }
 
-void UYggHeroAnimInstance::NativeUpdateAnimation(float _DeltaTime)
+
+
+
+void UYggHeroAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime) 
 {
-	Super::NativeUpdateAnimation(_DeltaTime);
-	if (MovementComponent == nullptr)
+	Super::NativeThreadSafeUpdateAnimation(DeltaTime);
+	if (CharacterMovementComponent == nullptr)
 	{
 		return;
 	}
-}
+	GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);
+	Direction = CalculateDirection(CharacterMovementComponent->Velocity, Hero->GetActorRotation());
 
+}
