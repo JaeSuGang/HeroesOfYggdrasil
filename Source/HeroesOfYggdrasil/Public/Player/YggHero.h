@@ -43,6 +43,12 @@ public:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(NetMulticast, Reliable)
+	void SetCamera(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset);
+
+
+	void StartGameCamera(float DeltaTime);
+
 protected:
 
 	virtual void Look(const FInputActionValue& Value);
@@ -70,4 +76,19 @@ protected:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, replicated)
 	bool bAimMode = false;
+
+protected:
+	bool bIsCameraTransitioning = false;
+	float TransitionAlpha = 0.0f;
+	float TransitionSpeed = 1.0f; // 카메라 회전 속도
+
+	FVector StartCameraLocation;
+	FRotator StartCameraRotation;
+	float StartArmLength;
+	FVector StartSocketOffset;
+
+	FVector TargetCameraLocation;
+	FRotator TargetCameraRotation;
+	float TargetArmLength;
+	FVector TargetSocketOffset;
 };

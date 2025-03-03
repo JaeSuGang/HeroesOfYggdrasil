@@ -39,3 +39,11 @@ FGenericTeamId AYggPlayerController::GetGenericTeamId() const
 {
     return TeamID;
 }
+
+void AYggPlayerController::SetInputEnabled(bool Value)
+{
+    if (Value)
+        GetPawn()->EnableInput(this);    
+    else
+        GetPawn()->DisableInput(this);
+}

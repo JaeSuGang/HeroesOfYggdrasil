@@ -10,6 +10,7 @@
 #include "Data/Playables.h"
 #include "MainGame/StageManager.h"
 #include "Core/YggPlayerController.h"
+#include "Player/YggHero.h"
 
 APlayerSelectZone::APlayerSelectZone()
 {
@@ -94,12 +95,51 @@ void APlayerSelectZone::SelectCharacter_Implementation()
 	if (HasAuthority())
 	{
 		AYggPlayerController* YPC = this->GetController<AYggPlayerController>();
+		if (!YPC || !SpawnedSelectable)
+		{
+			return;
+		}
+
+		FVector CameraLocation = FVector::ZeroVector;
+		FRotator CameraRotation = FRotator::ZeroRotator;
+		float CameraArmLength = 0.0f;
+		FVector CameraSocketOffset = FVector::ZeroVector;
+
+		// FixedPawn 카메라 위치 저장.
+		if (APawn* FixedPawn = YPC->GetPawn())
+		{
+			if (USpringArmComponent* FixedSpringArm = FixedPawn->FindComponentByClass<USpringArmComponent>())
+			{
+				CameraLocation = FixedSpringArm->GetComponentLocation();
+				CameraRotation = FixedSpringArm->GetComponentRotation();
+				CameraArmLength = FixedSpringArm->TargetArmLength;
+				CameraSocketOffset = FixedSpringArm->SocketOffset;
+			}
+		}
+
 		YPC->UnPossess();
 		YPC->Possess(SpawnedSelectable);
+
+		// 새 Hero에 FixedPawn 카메라 정보 보내기.
+		if (AYggHero* NewHero = Cast<AYggHero>(SpawnedSelectable))
+		{
+			if (USpringArmComponent* NewSpringArm = NewHero->FindComponentByClass<USpringArmComponent>())
+			{
+				NewSpringArm->TargetArmLength = CameraArmLength;
+				NewSpringArm->SocketOffset = CameraSocketOffset;
+				NewSpringArm->SetWorldLocationAndRotation(CameraLocation, CameraRotation);
+			}
+
+			YPC->SetControlRotation(CameraRotation);
+			NewHero->SetCamera(CameraLocation, CameraRotation, CameraArmLength, CameraSocketOffset);
+		}
+
 		SpawnedSelectable = nullptr;
 		this->Destroy();
 	}
 }
+
+
 
 void APlayerSelectZone::SpawnNextSelectable_Implementation()
 {

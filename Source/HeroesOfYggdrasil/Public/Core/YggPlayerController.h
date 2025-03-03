@@ -30,6 +30,8 @@ public:
 
 	FGenericTeamId GetGenericTeamId() const override;
 
+	void SetInputEnabled(bool Value);
+
 protected:
 	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	FGenericTeamId TeamID;
