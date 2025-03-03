@@ -6,43 +6,46 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Core/YggGameState.h"
+#include "Core/YggPlayerController.h"
 #include "MainGame/MainGameState.h"
+#include "MainGame/MainGamePlayerState.h"
 #include "MainGame/PlayerSelectZone.h"
 #include "MainGame/StageManager.h"
+#include "MainGame/PlayerManager.h"
+
+void AMainGameMode::InitGameState()
+{
+	Super::InitGameState();
+
+	/* MainGameState Cast */
+	AMainGameState* MGS = GetGameState<AMainGameState>();
+	if (!MGS)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) MainGameState has not been initialized"), __FUNCTION__, __LINE__);
+		return;
+	}
+
+	/* Manager Initialization */
+	MGS->PlayerManager = GetWorld()->SpawnActor<APlayerManager>();
+	MGS->StageManager = GetWorld()->SpawnActor<AStageManager>();
+}
 
 void AMainGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	
 }
 
 void AMainGameMode::PostLogin(APlayerController* PC)
 {
 	Super::PostLogin(PC);
 
-	//FVector FinalSelectZoneLocation = SelectZoneLocation;
-	//FinalSelectZoneLocation += SelectZonePosOffset * (GetNumPlayers() - 1);
-	//FActorSpawnParameters SpawnParams{};
-	//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	//APlayerSelectZone* Zone = GetWorld()->SpawnActor<APlayerSelectZone>(SelectZone, FinalSelectZoneLocation, SelectZoneRotation, SpawnParams);
-	//PlayerZones.Add(Zone);
 }
 
-//void AMainGameMode::OnAllPlayersReady()
-//{
-//	//int i = 0;
-//	//for (APlayerSelectZone* PlayerZone : PlayerZones)
-//	//{
-//	//	PlayerZone->ServerSelectCharacter(UGameplayStatics::GetPlayerController(GetWorld(), i));
-//	//	i++;
-//	//}
-//
-//	//PlayerZones.Empty();
-//
-//	//AStageManager* SM = AStageManager::Get(GetWorld());
-//	//if (SM)
-//	//{
-//	//	SM->StartGame();
-//	//}
-//}
+void AMainGameMode::Logout(AController* controller)
+{
+	Super::Logout(controller);
+}
+
 

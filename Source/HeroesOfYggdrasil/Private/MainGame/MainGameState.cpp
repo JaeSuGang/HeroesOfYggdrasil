@@ -16,11 +16,6 @@ void AMainGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority())
-	{
-		this->InitPlayerManager();
-		this->InitStageManager();
-	}
 }
 
 void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -31,27 +26,9 @@ void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AMainGameState, StageManager);
 }
 
-void AMainGameState::InitPlayerManager()
-{
-	if (HasAuthority())
-	{
-		PlayerManager = GetWorld()->SpawnActor<APlayerManager>(PlayerManagerClass);
-	}
-}
-
 APlayerManager* AMainGameState::GetPlayerManager() const
 {
 	return PlayerManager;
-}
-
-void AMainGameState::InitStageManager()
-{
-	if (HasAuthority())
-	{
-		StageManagerClass;
-
-		StageManager = GetWorld()->SpawnActor<AStageManager>(StageManagerClass);
-	}
 }
 
 AStageManager* AMainGameState::GetStageManager() const

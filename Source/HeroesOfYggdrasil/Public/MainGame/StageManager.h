@@ -56,7 +56,4 @@ public:
 
 	UPROPERTY(Replicated, VisibleInstanceOnly)
 	int32 Round;
-
-	UPROPERTY(VisibleInstanceOnly, Category = YGG)
-	TArray<APlayerSelectZone*> PlayerZones;
 };

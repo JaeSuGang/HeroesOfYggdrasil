@@ -8,6 +8,7 @@
 
 #include "MainGame/MainGameState.h"
 #include "MainGame/MainGameHUD.h"
+#include "MainGame/PlayerSelectZone.h"
 
 void AStageManager::EnterStage_Implementation(EGameStage newStage, int nRound)
 {
@@ -57,6 +58,17 @@ void AStageManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 void AStageManager::StartGame_Implementation()
 {
 	this->EnterStage(EGameStage::Reinforce, 1);
+
+	auto ControllerIter = GetWorld()->GetPlayerControllerIterator();
+	while (ControllerIter)
+	{
+		APlayerController* PC = ControllerIter->Get();
+		if (APlayerSelectZone* PSZ = Cast<APlayerSelectZone>(PC->GetPawn()))	
+		{
+			PSZ->SelectCharacter();
+		}
+		++ControllerIter;
+	}
 
 	ForceMainWidgetToClients();
 }

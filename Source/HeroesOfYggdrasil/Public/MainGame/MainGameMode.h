@@ -17,9 +17,13 @@ class HEROESOFYGGDRASIL_API AMainGameMode : public AGameMode
 	GENERATED_BODY()
 	
 protected:
+	void InitGameState() override;
+
 	void BeginPlay() override;
 
 	void PostLogin(APlayerController* PC) override;
+
+	void Logout(AController* controller) override;
 
 public:
 	
