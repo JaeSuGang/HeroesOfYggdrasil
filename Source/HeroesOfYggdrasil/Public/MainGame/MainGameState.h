@@ -17,10 +17,6 @@ UCLASS()
 class HEROESOFYGGDRASIL_API AMainGameState : public AYggGameState
 {
 	GENERATED_BODY()
-	
-public:
-	UFUNCTION(NetMulticast, Reliable)
-	void OnEnterReadyFinishedGameState();
 
 protected:
 	void BeginPlay() override;
@@ -34,19 +30,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	APlayerManager* GetPlayerManager() const;
 
-	UFUNCTION(BlueprintCallable)
-	void InitPlayerManager();
-
-	UFUNCTION(BlueprintCallable)
-	void InitStageManager();
-
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UClass* PlayerManagerClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	UClass* StageManagerClass;
-
 	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	APlayerManager* PlayerManager;
 

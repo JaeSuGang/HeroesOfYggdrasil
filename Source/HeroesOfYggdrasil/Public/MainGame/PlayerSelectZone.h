@@ -3,14 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Core/YggActor.h"
+#include "Core/YggPawn.h"
 #include "PlayerSelectZone.generated.h"
 
+class UCameraComponent;
+class USpringArmComponent;
+
 /**
- * 담당 : 김경민
+ * 담당 코더 : 김경민
  */
 UCLASS()
-class HEROESOFYGGDRASIL_API APlayerSelectZone : public AYggActor
+class HEROESOFYGGDRASIL_API APlayerSelectZone : public AYggPawn
 {
 	GENERATED_BODY()
 	
@@ -19,22 +22,47 @@ public:
 
 protected:
 	//void Tick(float fDeltaTime) override;
+	void EndPlay(EEndPlayReason::Type endReason) override;
 	void BeginPlay() override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
 	UFUNCTION(Server, Reliable)
-	void ServerSelectCharacter(APlayerController* PC);
+	void SortPosition();
 
 	UFUNCTION(Server, Reliable)
-	void ServerNextSelectable();
+	void SelectCharacter();
+
+	UFUNCTION(Server, Reliable)
+	void SpawnSelectable(int nSpawnableIndex);
+
+	UFUNCTION(Server, Reliable)
+	void SpawnNextSelectable();
 
 public:
+	UPROPERTY(EditAnywhere, Category = YGG)
+	UStaticMeshComponent* StaticMeshComponent;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	UCameraComponent* CameraComponent;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	USpringArmComponent* SpringArmComponent;
+
 	UPROPERTY(EditAnywhere, Category = YGG)
 	UDataTable* SelectablesTable;
 
 	UPROPERTY(VisibleInstanceOnly, Category = YGG)
 	APawn* SpawnedSelectable;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	FTransform SpawnTransform;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	FVector LocationOffset;
+
+	UPROPERTY(Replicated, VisibleInstanceOnly, Category = YGG)
 	int CurrentTableIndex;
+
+
 };

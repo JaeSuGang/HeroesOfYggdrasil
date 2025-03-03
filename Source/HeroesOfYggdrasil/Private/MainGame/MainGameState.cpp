@@ -10,29 +10,12 @@
 #include "MainGame/PlayerManager.h"
 #include "MainGame/StageManager.h"
 
-void AMainGameState::OnEnterReadyFinishedGameState_Implementation()
-{
-	if (APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0))
-	{
-		if (AMainGameHUD* MGH = Cast<AMainGameHUD>(PC->GetHUD()))
-		{
-			MGH->CloseCurrentWidget();
-			MGH->ShowMainGameWidget();
-		}
-	}
 
-
-}
 
 void AMainGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority())
-	{
-		this->InitPlayerManager();
-		this->InitStageManager();
-	}
 }
 
 void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -43,27 +26,9 @@ void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AMainGameState, StageManager);
 }
 
-void AMainGameState::InitPlayerManager()
-{
-	if (HasAuthority())
-	{
-		PlayerManager = GetWorld()->SpawnActor<APlayerManager>(PlayerManagerClass);
-	}
-}
-
 APlayerManager* AMainGameState::GetPlayerManager() const
 {
 	return PlayerManager;
-}
-
-void AMainGameState::InitStageManager()
-{
-	if (HasAuthority())
-	{
-		StageManagerClass;
-
-		StageManager = GetWorld()->SpawnActor<AStageManager>(StageManagerClass);
-	}
 }
 
 AStageManager* AMainGameState::GetStageManager() const

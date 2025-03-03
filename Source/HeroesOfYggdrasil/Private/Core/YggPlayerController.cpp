@@ -5,6 +5,8 @@
 
 #include "Net/UnrealNetwork.h"
 
+#include "MainGame/PlayerSelectZone.h"
+
 AYggPlayerController::AYggPlayerController(const FObjectInitializer& ObjectInitializer)
     :
     Super(ObjectInitializer)
@@ -17,6 +19,15 @@ void AYggPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AYggPlayerController, TeamID);
+}
+
+void AYggPlayerController::Test()
+{
+	APlayerSelectZone* PSZ = Cast<APlayerSelectZone>(GetPawn());
+	if (PSZ)
+	{
+		PSZ->SpawnNextSelectable();
+	}
 }
 
 void AYggPlayerController::SetGenericTeamId_Implementation(const FGenericTeamId& _TeamID)

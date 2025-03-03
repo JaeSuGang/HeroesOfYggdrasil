@@ -17,29 +17,14 @@ class HEROESOFYGGDRASIL_API AMainGameMode : public AGameMode
 	GENERATED_BODY()
 	
 protected:
+	void InitGameState() override;
+
 	void BeginPlay() override;
 
 	void PostLogin(APlayerController* PC) override;
 
-public:
-	void OnAllPlayersReady();
+	void Logout(AController* controller) override;
 
 public:
-	UPROPERTY(EditAnywhere, Category = YGG)
-	TSubclassOf<APawn> MainPawn;
-
-	UPROPERTY(EditAnywhere, Category = YGG)
-	TSubclassOf<AActor> SelectZone;
-
-	UPROPERTY(EditAnywhere, Category = YGG)
-	FVector SelectZoneLocation;
-
-	UPROPERTY(EditAnywhere, Category = YGG)
-	FRotator SelectZoneRotation;
-
-	UPROPERTY(EditAnywhere, Category = YGG)
-	FVector SelectZonePosOffset;
-
-	UPROPERTY(VisibleInstanceOnly, Category = YGG)
-	TArray<APlayerSelectZone*> PlayerZones;
+	
 };

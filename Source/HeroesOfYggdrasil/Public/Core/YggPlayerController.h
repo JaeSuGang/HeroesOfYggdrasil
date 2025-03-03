@@ -22,6 +22,9 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	UFUNCTION(Exec)
+	void Test();
+
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SetGenericTeamId(const FGenericTeamId& _TeamID) override;
 
