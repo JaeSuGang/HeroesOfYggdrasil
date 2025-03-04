@@ -77,6 +77,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TMap<FName,UInputAction*> ActionMap;
 
+	UPROPERTY(Replicated)
 	UAttributeComponent* AttributeComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")

@@ -12,11 +12,6 @@
  *	김성훈
  */
 
-class UAnimMontage;
-class UAttributeComponent;
-
-struct FGamePlayTag;
-
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 {
@@ -32,6 +27,7 @@ protected:
 
 	virtual void Attack(const FInputActionValue& Value) override;
 
+	
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	virtual void SkillE(const FInputActionValue& Value) override;
 	virtual void SkillR(const FInputActionValue& Value) override;
@@ -41,12 +37,12 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 
-	UFUNCTION(BlueprintCallable,Reliable,Server)
+	UFUNCTION(BlueprintCallable)
 	void SaveAttack();
-	UFUNCTION(BlueprintCallable, Reliable, Server)
+	UFUNCTION(BlueprintCallable)
 	void ResetCombo();
 
-	int MaxCombo = 3;
+	const int MaxCombo = 3;
 	UPROPERTY(Replicated)
 	int CurCombo = 0;
 };

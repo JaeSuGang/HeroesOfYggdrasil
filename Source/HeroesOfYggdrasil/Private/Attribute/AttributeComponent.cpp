@@ -3,6 +3,8 @@
 
 #include "Attribute/AttributeComponent.h"
 
+#include "Net/UnrealNetwork.h"
+
 // Sets default values for this component's properties
 UAttributeComponent::UAttributeComponent()
 {
@@ -20,6 +22,12 @@ void UAttributeComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
+}
+
+void UAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UAttributeComponent, Status);
 }
 
 bool UAttributeComponent::HasStatusTag(const FName& Tag)

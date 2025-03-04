@@ -20,6 +20,7 @@
 // Game Framework
 #include "GameFramework/Controller.h"
 #include "Core/YggPlayerController.h"
+#include "Attribute/AttributeComponent.h"
 
 // Network
 #include "Net/UnrealNetwork.h"
@@ -27,13 +28,12 @@
 // HUD
 #include "MainGame/MainGameHUD.h"
 
+
+
 AYggHero::AYggHero()
 {
-	// 카메라에 따라 돌게 세팅할꺼면 Yaw=true로
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
-
-	// 2개 옵션 서로 반대
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -49,6 +49,8 @@ AYggHero::AYggHero()
 	
 	// 폰 입력 UEnhancedInputComponent 으로 변경
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
+
+	
 }
 
 void AYggHero::ToggleAimMode_Implementation()
@@ -83,6 +85,7 @@ void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AYggHero, bAimMode);
+	DOREPLIFETIME(AYggHero, AttributeComponent);
 }
 
 void AYggHero::SetCamera_Implementation(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset)
@@ -159,6 +162,10 @@ void AYggHero::Look(const FInputActionValue& Value)
 
 void AYggHero::Move(const FInputActionValue& Value)
 {
+	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Moveable")))
+	{
+		return;
+	}
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	FRotator ControllerRotation = GetControlRotation();
 

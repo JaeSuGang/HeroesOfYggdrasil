@@ -25,11 +25,7 @@
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
 	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComponent"));
-	
 }
-
-
-
 
 void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -105,11 +101,11 @@ void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 	{
 		AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
 	}
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	// 몽타주 실행
 	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurCombo);
-	if (MontageMap.Find(MontageName) && AnimInstance)
+	if (MontageMap.Find(MontageName))
 	{
-		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
+		PlayAnimMontage(*MontageMap.Find(MontageName));
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
 	}
 }
@@ -124,11 +120,12 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 	{
 		AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
 	}
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+	// 몽타주 실행
 	FName MontageName = TEXT("SkillQ");
-	if (MontageMap.Find(MontageName) && AnimInstance)
+	if (MontageMap.Find(MontageName))
 	{
-		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
+		PlayAnimMontage(*MontageMap.Find(MontageName));
 	}
 }
 
@@ -143,11 +140,11 @@ void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 		AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
 	}
 
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	// 몽타주 실행
 	FName MontageName = TEXT("SkillE");
-	if (MontageMap.Find(MontageName) && AnimInstance)
+	if (MontageMap.Find(MontageName))
 	{
-		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
+		PlayAnimMontage(*MontageMap.Find(MontageName));
 	}
 }
 
@@ -162,11 +159,11 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 		AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
 	}
 
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	// 몽타주 실행
 	FName MontageName = TEXT("SkillR");
-	if (MontageMap.Find(MontageName) && AnimInstance)
+	if (MontageMap.Find(MontageName))
 	{
-		AnimInstance->Montage_Play(*MontageMap.Find(MontageName));
+		PlayAnimMontage(*MontageMap.Find(MontageName));
 	}
 }
 
@@ -174,34 +171,16 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 
 void AYggHeroKhaimera::Move(const FInputActionValue& Value)
 {
-	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Moveable")))
-	{
-		return;
-	}
-
-	FVector2D MovementVector = Value.Get<FVector2D>();
-	FRotator ControllerRotation = GetControlRotation();
-
-	FRotator YawRotation(0, ControllerRotation.Yaw, 0);
-
-	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-	AddMovementInput(ForwardDirection, MovementVector.Y);
-	AddMovementInput(RightDirection, MovementVector.X);
+	Super::Move(Value);
 }
 
 void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
 	DOREPLIFETIME(AYggHeroKhaimera, CurCombo);
 }
 
-
-
-
-void AYggHeroKhaimera::SaveAttack_Implementation()
+void AYggHeroKhaimera::SaveAttack()
 {
 	CurCombo++;
 	if (CurCombo == MaxCombo)
@@ -211,7 +190,7 @@ void AYggHeroKhaimera::SaveAttack_Implementation()
 	AttributeComponent->AddStatusTag(TEXT("Character.State.Attackable"));
 }
 
-void AYggHeroKhaimera::ResetCombo_Implementation()
+void AYggHeroKhaimera::ResetCombo()
 {
 	CurCombo = 0;
 	AttributeComponent->AddStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });

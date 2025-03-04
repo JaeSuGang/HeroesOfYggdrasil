@@ -17,7 +17,6 @@ void UYggHeroAnimInstance::NativeInitializeAnimation()
 		return;
 	}
 	CharacterMovementComponent = Hero->GetCharacterMovement();
-	
 }
 
 
@@ -32,5 +31,4 @@ void UYggHeroAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime)
 	}
 	GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);
 	Direction = CalculateDirection(CharacterMovementComponent->Velocity, Hero->GetActorRotation());
-
 }
