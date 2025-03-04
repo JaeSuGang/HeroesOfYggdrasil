@@ -27,6 +27,7 @@ AYggHeroKhaimera::AYggHeroKhaimera()
 	AttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComponent"));
 }
 
+
 void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -91,16 +92,37 @@ void AYggHeroKhaimera::BeginPlay()
 	ResetCombo();
 }
 
+#pragma region Attack
 void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 {
+	if (!HasAuthority())
+	{
+		ServerAttack();
+		return;
+	}
+
 	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
-	else
-	{
-		AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
-	}
+
+	AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
+	MulticastAttack();
+
+}
+void AYggHeroKhaimera::ServerAttack_Implementation()
+{
+	Attack(FInputActionValue());
+}
+
+bool AYggHeroKhaimera::ServerAttack_Validate()
+{
+	// 여기에 태그 조건인가?
+	return true;
+}
+
+void AYggHeroKhaimera::MulticastAttack_Implementation()
+{
 	// 몽타주 실행
 	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurCombo);
 	if (MontageMap.Find(MontageName))
@@ -109,19 +131,39 @@ void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
 	}
 }
+#pragma endregion
 
+#pragma region SkillQ
 void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {
+
+	if (!HasAuthority())
+	{
+		ServerSkillQ();
+		return;
+	}
+
 	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
-	else
-	{
-		AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
-	}
 
-	// 몽타주 실행
+	AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+	MulticastSkillQ();
+}
+
+void AYggHeroKhaimera::ServerSkillQ_Implementation()
+{
+	SkillQ(FInputActionValue());
+}
+
+bool AYggHeroKhaimera::ServerSkillQ_Validate()
+{
+	return true;
+}
+
+void AYggHeroKhaimera::MulticastSkillQ_Implementation()
+{
 	FName MontageName = TEXT("SkillQ");
 	if (MontageMap.Find(MontageName))
 	{
@@ -129,43 +171,94 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 	}
 }
 
+#pragma endregion
+
+#pragma region SkillE
 void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 {
+	if (!HasAuthority())
+	{
+		ServerSkillE();
+		return;
+	}
+
 	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
-	else
-	{
-		AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
-	}
 
-	// 몽타주 실행
+	AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+	MulticastSkillE();
+}
+
+void AYggHeroKhaimera::ServerSkillE_Implementation()
+{
+	SkillE(FInputActionValue());
+}
+
+bool AYggHeroKhaimera::ServerSkillE_Validate()
+{
+	return true;
+}
+
+void AYggHeroKhaimera::MulticastSkillE_Implementation()
+{
 	FName MontageName = TEXT("SkillE");
 	if (MontageMap.Find(MontageName))
 	{
 		PlayAnimMontage(*MontageMap.Find(MontageName));
 	}
 }
+#pragma endregion
 
+#pragma region SkillR
 void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 {
+	if (!HasAuthority())
+	{
+		ServerSkillR();
+		return;
+	}
+
 	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
-	else
-	{
-		AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
-	}
 
-	// 몽타주 실행
+	AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+	MulticastSkillR();
+}
+void AYggHeroKhaimera::ServerSkillR_Implementation()
+{
+	SkillR(FInputActionValue());
+}
+
+bool AYggHeroKhaimera::ServerSkillR_Validate()
+{
+	return true;
+}
+
+void AYggHeroKhaimera::MulticastSkillR_Implementation()
+{
 	FName MontageName = TEXT("SkillR");
 	if (MontageMap.Find(MontageName))
 	{
 		PlayAnimMontage(*MontageMap.Find(MontageName));
 	}
 }
+#pragma endregion
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

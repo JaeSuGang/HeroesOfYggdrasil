@@ -41,9 +41,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	float Direction;
 
-
-
-
 private:
 	
 };

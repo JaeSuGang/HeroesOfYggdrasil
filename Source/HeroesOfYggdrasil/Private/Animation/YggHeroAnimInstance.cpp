@@ -29,6 +29,8 @@ void UYggHeroAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime)
 	{
 		return;
 	}
+
+	//CharacterMovementComponent에서 받아온 Velocity는 자동 동기화
 	GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);
 	Direction = CalculateDirection(CharacterMovementComponent->Velocity, Hero->GetActorRotation());
 }
