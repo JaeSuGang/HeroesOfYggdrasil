@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
-#include "MainGame/MainGameHUD.h"
+#include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/PlayerManager.h"
 #include "MainGame/StageManager.h"
 

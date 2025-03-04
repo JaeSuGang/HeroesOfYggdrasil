@@ -1,7 +1,7 @@
 // AssortRock 
 
 
-#include "MainGame/MainGameHUD.h"
+#include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/MainGameMode.h"
 
 #include "Blueprint/UserWidget.h"

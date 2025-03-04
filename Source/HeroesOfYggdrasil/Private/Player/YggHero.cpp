@@ -26,7 +26,7 @@
 #include "Net/UnrealNetwork.h"
 
 // HUD
-#include "MainGame/MainGameHUD.h"
+#include "MainGame/UI/MainGameHUD.h"
 
 // Tag
 #include "Attribute/HeroAttributeComponent.h"

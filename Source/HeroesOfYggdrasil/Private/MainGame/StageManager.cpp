@@ -7,7 +7,7 @@
 #include "Net/UnrealNetwork.h"
 
 #include "MainGame/MainGameState.h"
-#include "MainGame/MainGameHUD.h"
+#include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/PlayerSelectZone.h"
 
 void AStageManager::EnterStage_Implementation(EGameStage newStage, int nRound)
