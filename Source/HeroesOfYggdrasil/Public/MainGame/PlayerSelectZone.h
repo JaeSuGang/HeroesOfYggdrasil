@@ -64,5 +64,5 @@ public:
 	UPROPERTY(Replicated, VisibleInstanceOnly, Category = YGG)
 	int CurrentTableIndex;
 
-
+	APlayerStart* PlayerStart;
 };

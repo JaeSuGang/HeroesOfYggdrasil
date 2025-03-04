@@ -48,11 +48,11 @@ void APlayerSelectZone::BeginPlay()
 		SpawnSelectable(0);
 	}
 
-	if (HasLocalNetOwner)
+	if (HasLocalNetOwner())
 	{
 		if (APlayerController* PC = Cast<APlayerController>(GetController()))
 		{
-			PC->SetViewTarget();
+			// PC->SetViewTarget();
 		}
 	}
 }
