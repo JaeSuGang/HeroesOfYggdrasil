@@ -22,6 +22,9 @@ class UInputAction;
 class UInputComponent;
 struct FInputActionValue;
 
+class UMontage;
+class UAttributeComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 {
@@ -73,6 +76,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TMap<FName,UInputAction*> ActionMap;
+
+	UAttributeComponent* AttributeComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Montage")
+	TMap<FName, UAnimMontage*> MontageMap;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, replicated)
 	bool bAimMode = false;

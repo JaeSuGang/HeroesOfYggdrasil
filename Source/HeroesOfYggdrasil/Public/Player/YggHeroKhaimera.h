@@ -15,6 +15,8 @@
 class UAnimMontage;
 class UAttributeComponent;
 
+struct FGamePlayTag;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 {
@@ -26,6 +28,7 @@ public:
 
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void BeginPlay()override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
 
@@ -35,24 +38,15 @@ protected:
 
 	virtual void Move(const FInputActionValue& Value) override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UFUNCTION(BlueprintCallable)
+
+	UFUNCTION(BlueprintCallable,Reliable,Server)
 	void SaveAttack();
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Reliable, Server)
 	void ResetCombo();
 
-	UAttributeComponent* AttributeComponent;
-
-
-
-	UPROPERTY(EditDefaultsOnly, Category = "Montage")
-	TMap<FName, UAnimMontage*> MontageMap;
-
-
-
 	int MaxCombo = 3;
+	UPROPERTY(Replicated)
 	int CurCombo = 0;
-
-
-
 };

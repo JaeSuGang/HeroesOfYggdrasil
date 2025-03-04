@@ -28,4 +28,22 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TMap<FGameplayTag, float> Values;
+
+
+	// 김성훈- 추가
+	UFUNCTION(BlueprintCallable)
+	bool HasStatusTag(const FName& Tag);
+
+	UFUNCTION(BlueprintCallable)
+	void AddStatusTag(const FName& Tag);
+	UFUNCTION(BlueprintCallable)
+	void AddStatusTags(const TArray<FName>& Tags);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveStatusTag(const FName& Tag);
+	UFUNCTION(BlueprintCallable)
+	void RemoveStatusTags(const TArray<FName>& Tags);
+
+	
+
 };

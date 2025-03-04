@@ -22,3 +22,35 @@ void UAttributeComponent::BeginPlay()
 	// ...
 }
 
+bool UAttributeComponent::HasStatusTag(const FName& Tag)
+{
+	return Status.HasTag(FGameplayTag::RequestGameplayTag(Tag));
+}
+
+void UAttributeComponent::AddStatusTag(const FName& Tag)
+{
+	
+	Status.AddTag(FGameplayTag::RequestGameplayTag(Tag));
+}
+
+void UAttributeComponent::AddStatusTags(const TArray<FName>& Tags)
+{
+	for (const FName Tag : Tags)
+	{
+		Status.AddTag(FGameplayTag::RequestGameplayTag(Tag));
+	}
+}
+
+void UAttributeComponent::RemoveStatusTag(const FName& Tag)
+{
+	Status.RemoveTag(FGameplayTag::RequestGameplayTag(Tag));
+}
+
+void UAttributeComponent::RemoveStatusTags(const TArray<FName>& Tags)
+{
+	for (const FName Tag : Tags)
+	{
+		Status.RemoveTag(FGameplayTag::RequestGameplayTag(Tag));
+	}
+}
+
