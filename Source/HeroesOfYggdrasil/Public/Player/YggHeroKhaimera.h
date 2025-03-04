@@ -61,6 +61,7 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SaveAttack();
+
 	UFUNCTION(BlueprintCallable)
 	void ResetCombo();
 

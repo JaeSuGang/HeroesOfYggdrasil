@@ -248,20 +248,6 @@ void AYggHeroKhaimera::MulticastSkillR_Implementation()
 }
 #pragma endregion
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 void AYggHeroKhaimera::Move(const FInputActionValue& Value)
 {
 	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Moveable")))

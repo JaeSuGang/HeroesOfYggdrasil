@@ -23,6 +23,7 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaTime) override;
 
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	AYggHeroKhaimera* Khaimera;
