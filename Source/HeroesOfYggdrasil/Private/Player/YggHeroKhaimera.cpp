@@ -14,6 +14,7 @@
 // Movement
 #include "GameFramework/CharacterMovementComponent.h"
 
+
 // Tag
 #include "Attribute/HeroAttributeComponent.h"
 
@@ -24,7 +25,7 @@
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
-	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("AttributeComponent"));
+
 }
 
 
@@ -89,7 +90,6 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AYggHeroKhaimera::BeginPlay()
 {
 	Super::BeginPlay();
-	ResetCombo();
 }
 
 #pragma region Attack

@@ -13,4 +13,6 @@ UCLASS()
 class HEROESOFYGGDRASIL_API UAnimNotifySaveAttack : public UAnimNotify
 {
 	GENERATED_BODY()
+
+	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };

@@ -28,10 +28,16 @@
 // HUD
 #include "MainGame/MainGameHUD.h"
 
+// Tag
+#include "Attribute/HeroAttributeComponent.h"
+
 
 
 AYggHero::AYggHero()
 {
+	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("AttributeComponent"));
+	HeroAttributeComponent->AddTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
+
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
@@ -48,11 +54,7 @@ AYggHero::AYggHero()
 	FollowCamera->bUsePawnControlRotation = false;
 	
 	// 폰 입력 UEnhancedInputComponent 으로 변경
-	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
-
-
-
-	
+	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();	
 }
 
 void AYggHero::ToggleAimMode_Implementation()

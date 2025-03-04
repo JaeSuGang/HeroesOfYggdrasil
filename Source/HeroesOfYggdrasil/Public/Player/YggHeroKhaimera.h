@@ -20,6 +20,9 @@ class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 public:
 	AYggHeroKhaimera();
 
+	UFUNCTION(BlueprintCallable)
+	void SaveAttack();
+
 
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
@@ -59,8 +62,7 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 
-	UFUNCTION(BlueprintCallable)
-	void SaveAttack();
+	
 
 	UFUNCTION(BlueprintCallable)
 	void ResetCombo();
