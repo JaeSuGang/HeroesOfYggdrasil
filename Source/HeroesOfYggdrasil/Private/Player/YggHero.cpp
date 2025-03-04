@@ -50,6 +50,8 @@ AYggHero::AYggHero()
 	// 폰 입력 UEnhancedInputComponent 으로 변경
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
 
+
+
 	
 }
 
@@ -83,9 +85,7 @@ void AYggHero::SetAimMode_Implementation(bool Value)
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
 	DOREPLIFETIME(AYggHero, bAimMode);
-	DOREPLIFETIME(AYggHero, AttributeComponent);
 }
 
 void AYggHero::SetCamera_Implementation(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset)
@@ -162,10 +162,10 @@ void AYggHero::Look(const FInputActionValue& Value)
 
 void AYggHero::Move(const FInputActionValue& Value)
 {
-	if (!AttributeComponent->HasTagExact(TEXT("Character.State.Moveable")))
+	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Moveable")))
 	{
 		return;
-	}
+	}*/
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	FRotator ControllerRotation = GetControlRotation();
 

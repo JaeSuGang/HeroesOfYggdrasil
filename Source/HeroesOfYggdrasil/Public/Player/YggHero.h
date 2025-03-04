@@ -23,7 +23,7 @@ class UInputComponent;
 struct FInputActionValue;
 
 class UMontage;
-class UAttributeComponent;
+class UHeroAttributeComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
@@ -77,8 +77,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	TMap<FName,UInputAction*> ActionMap;
 
-	UPROPERTY(Replicated)
-	UAttributeComponent* AttributeComponent;
+	
+	UHeroAttributeComponent* HeroAttributeComponent;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	TMap<FName, UAnimMontage*> MontageMap;
