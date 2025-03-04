@@ -1,64 +1,62 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Attribute/AttributeComponent.h"
 
 #include "Net/UnrealNetwork.h"
 
-// Sets default values for this component's properties
 UAttributeComponent::UAttributeComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+	SetIsReplicatedByDefault(true);
+
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// ...
+
 }
 
-
-// Called when the game starts
 void UAttributeComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
 }
 
 void UAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UAttributeComponent, Status);
+	DOREPLIFETIME(UAttributeComponent, GameplayTags);
 }
 
-bool UAttributeComponent::HasStatusTag(const FName& Tag)
+bool UAttributeComponent::HasTag(const FName& Tag)
 {
-	return Status.HasTag(FGameplayTag::RequestGameplayTag(Tag));
+	return GameplayTags.HasTag(FGameplayTag::RequestGameplayTag(Tag));
 }
 
-void UAttributeComponent::AddStatusTag(const FName& Tag)
+bool UAttributeComponent::HasTagExact(const FName& Tag)
 {
-	
-	Status.AddTag(FGameplayTag::RequestGameplayTag(Tag));
+	return GameplayTags.HasTagExact(FGameplayTag::RequestGameplayTag(Tag));
 }
 
-void UAttributeComponent::AddStatusTags(const TArray<FName>& Tags)
+void UAttributeComponent::AddTag_Implementation(const FName& Tag)
+{
+	GameplayTags.AddTag(FGameplayTag::RequestGameplayTag(Tag));
+}
+
+void UAttributeComponent::AddTags_Implementation(const TArray<FName>& Tags)
 {
 	for (const FName Tag : Tags)
 	{
-		Status.AddTag(FGameplayTag::RequestGameplayTag(Tag));
+		GameplayTags.AddTag(FGameplayTag::RequestGameplayTag(Tag));
 	}
 }
 
-void UAttributeComponent::RemoveStatusTag(const FName& Tag)
+void UAttributeComponent::RemoveTag_Implementation(const FName& Tag)
 {
-	Status.RemoveTag(FGameplayTag::RequestGameplayTag(Tag));
+	GameplayTags.RemoveTag(FGameplayTag::RequestGameplayTag(Tag));
 }
 
-void UAttributeComponent::RemoveStatusTags(const TArray<FName>& Tags)
+void UAttributeComponent::RemoveTags_Implementation(const TArray<FName>& Tags)
 {
 	for (const FName Tag : Tags)
 	{
-		Status.RemoveTag(FGameplayTag::RequestGameplayTag(Tag));
+		GameplayTags.RemoveTag(FGameplayTag::RequestGameplayTag(Tag));
 	}
 }
 

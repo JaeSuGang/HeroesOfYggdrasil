@@ -101,12 +101,12 @@ void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 		return;
 	}
 
-	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Attackable")))
+	if (!AttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
 
-	AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
+	AttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
 	MulticastAttack();
 
 }
@@ -143,12 +143,12 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 		return;
 	}
 
-	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Attackable")))
+	if (!AttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
 
-	AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+	AttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
 	MulticastSkillQ();
 }
 
@@ -182,12 +182,12 @@ void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 		return;
 	}
 
-	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Attackable")))
+	if (!AttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
 
-	AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+	AttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
 	MulticastSkillE();
 }
 
@@ -220,12 +220,12 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 		return;
 	}
 
-	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Attackable")))
+	if (!AttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
 
-	AttributeComponent->RemoveStatusTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+	AttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
 	MulticastSkillR();
 }
 void AYggHeroKhaimera::ServerSkillR_Implementation()
@@ -280,13 +280,13 @@ void AYggHeroKhaimera::SaveAttack()
 	{
 		CurCombo = 0;
 	}
-	AttributeComponent->AddStatusTag(TEXT("Character.State.Attackable"));
+	AttributeComponent->AddTag(TEXT("Character.State.Attackable"));
 }
 
 void AYggHeroKhaimera::ResetCombo()
 {
 	CurCombo = 0;
-	AttributeComponent->AddStatusTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
+	AttributeComponent->AddTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
 }
 
 

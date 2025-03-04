@@ -26,7 +26,7 @@ void AYggPlayerController::Test()
 	APlayerSelectZone* PSZ = Cast<APlayerSelectZone>(GetPawn());
 	if (PSZ)
 	{
-		PSZ->SpawnNextSelectable();
+
 	}
 }
 

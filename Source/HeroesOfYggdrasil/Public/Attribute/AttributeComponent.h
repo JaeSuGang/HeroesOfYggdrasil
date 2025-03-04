@@ -7,45 +7,43 @@
 #include "GameplayTagContainer.h"
 #include "AttributeComponent.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+/**
+ * 담당 코더 : 김경민
+ */
+UCLASS()
 class HEROESOFYGGDRASIL_API UAttributeComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UAttributeComponent();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	
 public:
-	UPROPERTY(EditAnywhere,Replicated)
-	FGameplayTagContainer Status;
-
-	UPROPERTY(EditAnywhere)
-	TMap<FGameplayTag, float> Values;
-
-
-	// 김성훈- 추가
 	UFUNCTION(BlueprintCallable)
-	bool HasStatusTag(const FName& Tag);
+	bool HasTag(const FName& Tag);
 
 	UFUNCTION(BlueprintCallable)
-	void AddStatusTag(const FName& Tag);
-	UFUNCTION(BlueprintCallable)
-	void AddStatusTags(const TArray<FName>& Tags);
+	bool HasTagExact(const FName& Tag);
 
-	UFUNCTION(BlueprintCallable)
-	void RemoveStatusTag(const FName& Tag);
-	UFUNCTION(BlueprintCallable)
-	void RemoveStatusTags(const TArray<FName>& Tags);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void AddTag(const FName& Tag);
 
-	
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void AddTags(const TArray<FName>& Tags);
 
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void RemoveTag(const FName& Tag);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void RemoveTags(const TArray<FName>& Tags);
+
+protected:
+	UPROPERTY(EditAnywhere, Replicated)
+	FGameplayTagContainer GameplayTags;
 };

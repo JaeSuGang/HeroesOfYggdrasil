@@ -47,6 +47,14 @@ void APlayerSelectZone::BeginPlay()
 		SortPosition();
 		SpawnSelectable(0);
 	}
+
+	if (HasLocalNetOwner)
+	{
+		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		{
+			PC->SetViewTarget();
+		}
+	}
 }
 
 void APlayerSelectZone::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -82,6 +90,8 @@ void APlayerSelectZone::SpawnSelectable_Implementation(int nSpawnableIndex)
 	TArray<FPlayableCharacterRow*> Rows;
 	SelectablesTable->GetAllRows(TEXT("GetAllRows"), Rows);
 	CurrentTableIndex = nSpawnableIndex % Rows.Num();
+	if (CurrentTableIndex < 0)
+		CurrentTableIndex = Rows.Num() + CurrentTableIndex;
 
 	FActorSpawnParameters SpawnParams{};
 	SpawnParams.Owner = nullptr;
@@ -141,9 +151,9 @@ void APlayerSelectZone::SelectCharacter_Implementation()
 
 
 
-void APlayerSelectZone::SpawnNextSelectable_Implementation()
+void APlayerSelectZone::SpawnNextSelectable(int nHowMuchNext)
 {
-	CurrentTableIndex++;
+	CurrentTableIndex += nHowMuchNext;
 
 	SpawnSelectable(CurrentTableIndex);
 }

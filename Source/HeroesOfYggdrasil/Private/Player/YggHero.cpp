@@ -162,7 +162,7 @@ void AYggHero::Look(const FInputActionValue& Value)
 
 void AYggHero::Move(const FInputActionValue& Value)
 {
-	if (!AttributeComponent->HasStatusTag(TEXT("Character.State.Moveable")))
+	if (!AttributeComponent->HasTagExact(TEXT("Character.State.Moveable")))
 	{
 		return;
 	}

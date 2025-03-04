@@ -36,8 +36,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void SpawnSelectable(int nSpawnableIndex);
 
-	UFUNCTION(Server, Reliable)
-	void SpawnNextSelectable();
+	UFUNCTION()
+	void SpawnNextSelectable(int nHowMuchNext);
 
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
