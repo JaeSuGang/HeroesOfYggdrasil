@@ -19,6 +19,7 @@ protected:
 
 	virtual void Look(const FInputActionValue& Value) override;	
 	virtual void Move(const FInputActionValue& Value) override;
+	void Jump(const FInputActionValue& Value);
 	virtual void Attack(const FInputActionValue& Value) override;
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	virtual void SkillE(const FInputActionValue& Value) override;

@@ -1,6 +1,6 @@
 // Coded By AssortRock Unreal Engine Class Project
 
-#include "Test/YggHeroGreystone.h"
+#include "Player/YggHeroGreystone.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
@@ -40,37 +40,30 @@ void AYggHeroGreystone::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		if (ActionMap.Find(FName("Move")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Move")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Move);
-			UE_LOG(LogTemp, Warning, TEXT("MoveAction Bind Succesed"));
 		}
 		if (ActionMap.Find(FName("Look")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Look")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Look);
-			UE_LOG(LogTemp, Warning, TEXT("LookAction Bind Succesed"));
 		}
 		if (ActionMap.Find(FName("Jump")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Jump")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Jump);
-			UE_LOG(LogTemp, Warning, TEXT("JumpAction Bind Succesed"));
 		}
 		if (ActionMap.Find(FName("Attack")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Attack);
-			UE_LOG(LogTemp, Warning, TEXT("AttackAction Bind Succesed"));
 		}
 		if (ActionMap.Find(FName("SkillQ")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillQ")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::SkillQ);
-			UE_LOG(LogTemp, Warning, TEXT("AttackAction Bind Succesed"));
 		}
 		if (ActionMap.Find(FName("SkillE")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillE")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::SkillE);
-			UE_LOG(LogTemp, Warning, TEXT("AttackAction Bind Succesed"));
 		}
 		if (ActionMap.Find(FName("SkillR")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillR")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::SkillR);
-			UE_LOG(LogTemp, Warning, TEXT("AttackAction Bind Succesed"));
 		}
 		if (ActionMap.Find(FName("ToggleAimMode")))
 		{
@@ -87,6 +80,10 @@ void AYggHeroGreystone::Look(const FInputActionValue& Value)
 void AYggHeroGreystone::Move(const FInputActionValue& Value)
 {
 	Super::Move(Value);
+}
+
+void AYggHeroGreystone::Jump(const FInputActionValue& Value)
+{
 }
 
 void AYggHeroGreystone::Attack(const FInputActionValue& Value)

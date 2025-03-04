@@ -22,8 +22,6 @@ class HEROESOFYGGDRASIL_API AFixedPawn : public AYggPawn
 public:
 	AFixedPawn(const FObjectInitializer& objectInitializer);
 
-	void FollowSplineToHero();
-
 public:
 	UPROPERTY(EditAnywhere)
 	UAttributeComponent* AttributeComponent;
@@ -36,7 +34,4 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	USpringArmComponent* SpringArmComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	class USplineComponent* SplinePath;
 };

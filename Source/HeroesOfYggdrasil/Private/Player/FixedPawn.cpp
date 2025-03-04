@@ -25,11 +25,4 @@ AFixedPawn::AFixedPawn(const FObjectInitializer& objectInitializer)
 	SpringArmComponent->SetupAttachment(RootComponent);
 
 	CameraComponent->SetupAttachment(SpringArmComponent);
-
-	SplinePath = CreateDefaultSubobject<USplineComponent>(TEXT("Spline"));
-}
-
-void AFixedPawn::FollowSplineToHero()
-{
-
 }
