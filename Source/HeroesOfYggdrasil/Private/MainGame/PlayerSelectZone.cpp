@@ -2,11 +2,14 @@
 
 #include "MainGame/PlayerSelectZone.h"
 
+#include "EngineUtils.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/PlayerStart.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Core/YggPlayerState.h"
 #include "Data/Playables.h"
 #include "MainGame/StageManager.h"
 #include "Core/YggPlayerController.h"
@@ -42,9 +45,13 @@ void APlayerSelectZone::BeginPlay()
 {
 	Super::BeginPlay();
 
+	TActorIterator<APlayerStart> Iter(GetWorld());
+	PlayerStart = *Iter;
+
 	if (HasAuthority())
 	{
-		SortPosition();
+		APlayerState* PS = GetPlayerState();
+		PS ? SetToPosition(PS->GetPlayerId()) : SetToPosition(0);
 		SpawnSelectable(0);
 	}
 
@@ -52,7 +59,7 @@ void APlayerSelectZone::BeginPlay()
 	{
 		if (APlayerController* PC = Cast<APlayerController>(GetController()))
 		{
-			// PC->SetViewTarget();
+			PC->SetViewTarget(PlayerStart);
 		}
 	}
 }
@@ -64,7 +71,7 @@ void APlayerSelectZone::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(APlayerSelectZone, CurrentTableIndex);
 }
 
-void APlayerSelectZone::SortPosition_Implementation()
+void APlayerSelectZone::SetToPosition_Implementation()
 {
 	TArray<AActor*> Zones;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerSelectZone::StaticClass(), Zones);

@@ -3,6 +3,7 @@
 
 #include "MainGame/MainGameMode.h"
 
+#include "Algo/Heapify.h"
 #include "Kismet/GameplayStatics.h"
 
 #include "Core/YggGameState.h"
@@ -16,6 +17,10 @@
 void AMainGameMode::InitGameState()
 {
 	Super::InitGameState();
+
+	/* Initialize Avaliable Player IDs */
+	Algo::Heap
+	AvailablePlayerIds.
 
 	/* MainGameState Cast */
 	AMainGameState* MGS = GetGameState<AMainGameState>();
@@ -34,13 +39,17 @@ void AMainGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
 }
 
 void AMainGameMode::PostLogin(APlayerController* PC)
 {
 	Super::PostLogin(PC);
 
+	if (AYggPlayerState* YPS = PC->GetPlayerState<AYggPlayerState>())
+	{
+		Ava
+		YPS->SetPlayerId()
+	}
 }
 
 void AMainGameMode::Logout(AController* controller)

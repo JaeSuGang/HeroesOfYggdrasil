@@ -25,6 +25,8 @@ protected:
 
 	void Logout(AController* controller) override;
 
-public:
-	
+protected:
+	TArray<int> AvailablePlayerIds;
+
+	TArray<int> OccupiedPlayerIds;
 };

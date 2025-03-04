@@ -28,7 +28,7 @@ protected:
 
 public:
 	UFUNCTION(Server, Reliable)
-	void SortPosition();
+	void SetToPosition(int nIndex);
 
 	UFUNCTION(Server, Reliable)
 	void SelectCharacter();
@@ -54,9 +54,6 @@ public:
 
 	UPROPERTY(VisibleInstanceOnly, Category = YGG)
 	APawn* SpawnedSelectable;
-
-	UPROPERTY(EditAnywhere, Category = YGG)
-	FTransform SpawnTransform;
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	FVector LocationOffset;
