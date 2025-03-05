@@ -25,9 +25,27 @@ void UEnemyBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime)
 	{
 		return;
 	}
-
+	
 	GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);
-	LocomotionDirection = CalculateDirection(CharacterMovementComponent->Velocity, Enemy->GetActorRotation());
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	
+	if (PlayerController != nullptr)
+	{
+		ACharacter* MainCharacter = Cast<ACharacter>(PlayerController->GetPawn());
+		if (MainCharacter)
+		{
+			AActor* TargetActor = Cast<AActor>(MainCharacter);
+			APawn* OwningPawn = Cast<APawn>(Enemy);
+
+			if (OwningPawn && TargetActor)
+			{
+				FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(OwningPawn->GetActorLocation(), TargetActor->GetActorLocation());
+				FRotator TargetRot = FMath::RInterpTo(OwningPawn->GetActorRotation(), LookAtRot, DeltaTime, RotationInterSpeed);
+				LocomotionDirection = TargetRot.Yaw;
+			}
+		}
+	}
 }
 
 bool UEnemyBaseAnimInstance::NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck)

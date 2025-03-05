@@ -45,4 +45,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	bool OwnerHaveTag(FGameplayTag _TagToCheck);
+
+	float RotationInterSpeed;
 };
