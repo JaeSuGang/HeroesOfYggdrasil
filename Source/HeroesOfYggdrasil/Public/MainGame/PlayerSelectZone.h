@@ -21,7 +21,9 @@ public:
 	APlayerSelectZone();
 
 protected:
-	//void Tick(float fDeltaTime) override;
+	void Restart() override;
+	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	void PossessedBy(AController* controller) override;
 	void EndPlay(EEndPlayReason::Type endReason) override;
 	void BeginPlay() override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -56,7 +58,10 @@ public:
 	APawn* SpawnedSelectable;
 
 	UPROPERTY(EditAnywhere, Category = YGG)
-	FVector LocationOffset;
+	FVector ZoneInterval;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	FVector CameraDistance;
 
 	UPROPERTY(Replicated, VisibleInstanceOnly, Category = YGG)
 	int CurrentTableIndex;

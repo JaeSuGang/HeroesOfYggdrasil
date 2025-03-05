@@ -102,7 +102,6 @@ AStageManager::AStageManager(const FObjectInitializer& ObjectInitializer)
 	bReplicates = true;
 	bAlwaysRelevant = true;
 	NetDormancy = DORM_Never;
-
 	Round = 0;
 }
 

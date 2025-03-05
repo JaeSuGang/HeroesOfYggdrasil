@@ -27,6 +27,4 @@ protected:
 
 protected:
 	TArray<int> AvailablePlayerIds;
-
-	TArray<int> OccupiedPlayerIds;
 };
