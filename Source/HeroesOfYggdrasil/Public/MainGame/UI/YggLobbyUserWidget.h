@@ -7,7 +7,9 @@
 #include "YggLobbyUserWidget.generated.h"
 
 class UCanvasPanel;
+class UButton;
 class UYggLobbySelectUserWidget;
+class UYggUserWidget;
 
 /**
  * 
@@ -21,14 +23,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddPlayerToLobby();
 
+protected:
+	virtual void NativeOnInitialized() override;
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* LobbyCanvasPanel;
 
+	//UPROPERTY(meta = (BindWidget))
+	//UButton* StartButton;
+
 	UPROPERTY(EditAnywhere, Category = YGG)
-	TSubclassOf<UYggLobbySelectUserWidget> SelectUserWidgetClass;
+	TSubclassOf<UUserWidget> SelectUserWidgetClass;
 
 	TArray<UYggLobbySelectUserWidget*> LobbySelectWidget;
 
-	float WidgetSpace = 100.0f;
+	float WidgetSpace = 200.0f;
 };
