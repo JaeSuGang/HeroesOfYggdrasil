@@ -103,4 +103,8 @@ protected:
 	FRotator TargetCameraRotation;
 	float TargetArmLength;
 	FVector TargetSocketOffset;
+
+
+	int MaxCombo;
+	int CurCombo;
 };

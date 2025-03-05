@@ -37,7 +37,7 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerAttack();
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastAttack();
+	void MulticastAttack(int NewCurCombo);
 
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
@@ -61,6 +61,7 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	const int MaxCombo = 3;
-	int CurCombo = 0;
+	
+
+	
 };

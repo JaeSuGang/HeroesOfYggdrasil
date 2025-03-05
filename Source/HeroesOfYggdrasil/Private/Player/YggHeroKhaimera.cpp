@@ -63,25 +63,25 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		if (ActionMap.Find(FName("Attack")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Completed, this, &AYggHeroKhaimera::Attack);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Started, this, &AYggHeroKhaimera::Attack);
 			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
 		}
 
 		if (ActionMap.Find(FName("SkillQ")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillQ")), ETriggerEvent::Completed, this, &AYggHeroKhaimera::SkillQ);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillQ")), ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillQ);
 			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
 		}
 
 		if (ActionMap.Find(FName("SkillE")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillE")), ETriggerEvent::Completed, this, &AYggHeroKhaimera::SkillE);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillE")), ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillE);
 			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
 		}
 
 		if (ActionMap.Find(FName("SkillR")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillR")), ETriggerEvent::Completed, this, &AYggHeroKhaimera::SkillR);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillR")), ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillR);
 			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
 		}
 	}
@@ -90,37 +90,47 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AYggHeroKhaimera::BeginPlay()
 {
 	Super::BeginPlay();
+	CurCombo = 0;
+	MaxCombo = 3;
+
 }
 
 #pragma region Attack
 void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 {
-	if (!HasAuthority())
-	{
-		ServerAttack();
-		return;
-	}
-
 	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
 
-	HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
-	MulticastAttack();
-
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
+		MulticastAttack(CurCombo);
+		
+		CurCombo++;
+		if (CurCombo == MaxCombo)
+		{
+			CurCombo = 0;
+		}
+	}
+	else
+	{
+		ServerAttack();
+		return;
+	}
 }
+
 void AYggHeroKhaimera::ServerAttack_Implementation()
 {
 	Attack(FInputActionValue());
 }
 
-
-
-void AYggHeroKhaimera::MulticastAttack_Implementation()
+void AYggHeroKhaimera::MulticastAttack_Implementation(int NewCurCombo)
 {
-	// 몽타주 실행
+	CurCombo = NewCurCombo; // 서버에서 동기화된 값을 클라이언트가 받음
 	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurCombo);
+
 	PlayMontage(MontageName);
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
 }
@@ -129,27 +139,25 @@ void AYggHeroKhaimera::MulticastAttack_Implementation()
 #pragma region SkillQ
 void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {
-	if (!HasAuthority())
-	{
-		ServerSkillQ();
-		return;
-	}
-
 	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
-
-	HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
-	MulticastSkillQ();
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+		MulticastSkillQ();
+	}
+	else
+	{
+		ServerSkillQ();
+	}
 }
 
 void AYggHeroKhaimera::ServerSkillQ_Implementation()
 {
 	SkillQ(FInputActionValue());
 }
-
-
 
 void AYggHeroKhaimera::MulticastSkillQ_Implementation()
 {
@@ -162,19 +170,19 @@ void AYggHeroKhaimera::MulticastSkillQ_Implementation()
 #pragma region SkillE
 void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 {
-	if (!HasAuthority())
-	{
-		ServerSkillE();
-		return;
-	}
-
 	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
-
-	HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
-	MulticastSkillE();
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+		MulticastSkillE();
+	}
+	else
+	{
+		ServerSkillE();
+	}
 }
 
 void AYggHeroKhaimera::ServerSkillE_Implementation()
@@ -194,19 +202,19 @@ void AYggHeroKhaimera::MulticastSkillE_Implementation()
 #pragma region SkillR
 void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 {
-	if (!HasAuthority())
-	{
-		ServerSkillR();
-		return;
-	}
-
 	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
 	{
 		return;
 	}
-
-	HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
-	MulticastSkillR();
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+		MulticastSkillR();
+	}
+	else
+	{
+		ServerSkillR();
+	}
 }
 void AYggHeroKhaimera::ServerSkillR_Implementation()
 {
@@ -231,11 +239,6 @@ void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 void AYggHeroKhaimera::SaveAttack()
 {
-	CurCombo++;
-	if (CurCombo == MaxCombo)
-	{
-		CurCombo = 0;
-	}
 	HeroAttributeComponent->AddTag(TEXT("Character.State.Attackable"));
 }
 
