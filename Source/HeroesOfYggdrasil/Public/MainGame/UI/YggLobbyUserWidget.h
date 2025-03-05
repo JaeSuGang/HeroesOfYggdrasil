@@ -28,7 +28,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UYggLobbySelectUserWidget> SelectUserWidgetClass;
 
-	TArray<UYggLobbySelectUserWidget*> LobbySelectWidget{nullptr, 4};
+	TArray<UYggLobbySelectUserWidget*> LobbySelectWidget;
 
 	float WidgetSpace = 100.0f;
 };
