@@ -21,7 +21,7 @@ class HEROESOFYGGDRASIL_API UHeroKhaimeraAnimInstance : public UYggHeroAnimInsta
 
 public:
 	virtual void NativeInitializeAnimation() override;
-	virtual void NativeThreadSafeUpdateAnimation(float DeltaTime) override;
+	virtual void NativeUpdateAnimation(float DeltaTime) override;
 
 
 protected:

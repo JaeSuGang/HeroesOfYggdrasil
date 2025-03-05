@@ -197,7 +197,7 @@ void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	StartGameCamera(DeltaTime);
+	//StartGameCamera(DeltaTime);
 }
 
 void AYggHero::PlayMontage(FName MontageName)

@@ -14,7 +14,7 @@ void UHeroKhaimeraAnimInstance::NativeInitializeAnimation()
 	Khaimera = Cast<AYggHeroKhaimera>(Hero);
 }
 
-void UHeroKhaimeraAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime)
+void UHeroKhaimeraAnimInstance::NativeUpdateAnimation(float DeltaTime)
 {
-	Super::NativeThreadSafeUpdateAnimation(DeltaTime);
+	Super::NativeUpdateAnimation(DeltaTime);
 }
