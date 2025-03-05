@@ -32,24 +32,33 @@ void UEnemyBaseAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime)
 
 bool UEnemyBaseAnimInstance::NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck)
 {
-	FString ActorName = InActor->GetName();
-	FString ActorNameLeft = ActorName.Left(8);
+	int a = 0;
 
-	FName TagName = TagToCheck.GetTagName();
-	
-	if (ActorNameLeft == FString("BP_Enemy") && TagName == FName("Monster.State.Strafing"))
+	if (InActor)
 	{
-		return true;
+		FString ActorName = InActor->GetName();
+		FString ActorNameLeft = ActorName.Left(8);
+
+		FName TagName = TagToCheck.GetTagName();
+
+		if (ActorNameLeft == FString("BP_Enemy") && TagName == FName("Monster.State.Strafing"))
+		{
+			return true;
+		}
 	}
+	
 	return false;
 }
 
-bool UEnemyBaseAnimInstance::OwnerHaveTag(FGameplayTag _TagToCheck) const
+bool UEnemyBaseAnimInstance::OwnerHaveTag(FGameplayTag _TagToCheck)
 {
 	if (APawn* OwningPawn = TryGetPawnOwner())
 	{
 		return NativeDoesActorHaveTag(OwningPawn, _TagToCheck);
 	}
-	return false;
+	else
+	{
+		return false;
+	}
 }
 

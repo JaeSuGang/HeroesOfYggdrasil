@@ -25,6 +25,8 @@ class HEROESOFYGGDRASIL_API UEnemyBaseAnimInstance : public UAnimInstance
 public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 	static bool NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck);
 
 protected:
@@ -41,6 +43,6 @@ protected:
 	float LocomotionDirection;
 
 
-	UFUNCTION(BlueprintPure, meta = (BlueprintThreadSafe))
-	bool OwnerHaveTag(FGameplayTag _TagToCheck) const;
+	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
+	bool OwnerHaveTag(FGameplayTag _TagToCheck);
 };
