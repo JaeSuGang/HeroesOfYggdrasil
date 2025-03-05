@@ -115,28 +115,20 @@ void AYggHeroKhaimera::ServerAttack_Implementation()
 	Attack(FInputActionValue());
 }
 
-bool AYggHeroKhaimera::ServerAttack_Validate()
-{
-	// 여기에 태그 조건인가?
-	return true;
-}
+
 
 void AYggHeroKhaimera::MulticastAttack_Implementation()
 {
 	// 몽타주 실행
 	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurCombo);
-	if (MontageMap.Find(MontageName))
-	{
-		PlayAnimMontage(*MontageMap.Find(MontageName));
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
-	}
+	PlayMontage(MontageName);
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
 }
 #pragma endregion
 
 #pragma region SkillQ
 void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {
-
 	if (!HasAuthority())
 	{
 		ServerSkillQ();
@@ -157,18 +149,12 @@ void AYggHeroKhaimera::ServerSkillQ_Implementation()
 	SkillQ(FInputActionValue());
 }
 
-bool AYggHeroKhaimera::ServerSkillQ_Validate()
-{
-	return true;
-}
+
 
 void AYggHeroKhaimera::MulticastSkillQ_Implementation()
 {
 	FName MontageName = TEXT("SkillQ");
-	if (MontageMap.Find(MontageName))
-	{
-		PlayAnimMontage(*MontageMap.Find(MontageName));
-	}
+	PlayMontage(MontageName);
 }
 
 #pragma endregion
@@ -196,18 +182,12 @@ void AYggHeroKhaimera::ServerSkillE_Implementation()
 	SkillE(FInputActionValue());
 }
 
-bool AYggHeroKhaimera::ServerSkillE_Validate()
-{
-	return true;
-}
+
 
 void AYggHeroKhaimera::MulticastSkillE_Implementation()
 {
 	FName MontageName = TEXT("SkillE");
-	if (MontageMap.Find(MontageName))
-	{
-		PlayAnimMontage(*MontageMap.Find(MontageName));
-	}
+	PlayMontage(MontageName);
 }
 #pragma endregion
 
@@ -233,34 +213,20 @@ void AYggHeroKhaimera::ServerSkillR_Implementation()
 	SkillR(FInputActionValue());
 }
 
-bool AYggHeroKhaimera::ServerSkillR_Validate()
-{
-	return true;
-}
+
 
 void AYggHeroKhaimera::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
-	if (MontageMap.Find(MontageName))
-	{
-		PlayAnimMontage(*MontageMap.Find(MontageName));
-	}
+	PlayMontage(MontageName);
 }
 #pragma endregion
 
-void AYggHeroKhaimera::Move(const FInputActionValue& Value)
-{
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Moveable")))
-	{
-		return;
-	}
-	Super::Move(Value);
-}
+
 
 void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AYggHeroKhaimera, CurCombo);
 }
 
 void AYggHeroKhaimera::SaveAttack()

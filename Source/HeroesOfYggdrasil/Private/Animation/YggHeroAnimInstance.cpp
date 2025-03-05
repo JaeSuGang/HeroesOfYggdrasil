@@ -20,8 +20,6 @@ void UYggHeroAnimInstance::NativeInitializeAnimation()
 }
 
 
-
-
 void UYggHeroAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime) 
 {
 	Super::NativeThreadSafeUpdateAnimation(DeltaTime);
@@ -33,4 +31,13 @@ void UYggHeroAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaTime)
 	//CharacterMovementComponent에서 받아온 Velocity는 자동 동기화
 	GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);
 	Direction = CalculateDirection(CharacterMovementComponent->Velocity, Hero->GetActorRotation());
+}
+
+void UYggHeroAnimInstance::PlayMontage(FName MontageName)
+{
+	if (MontageMap.Contains(MontageName) == false) 
+	{
+		return;
+	}
+	PlayMontageEvent(MontageMap[MontageName]);
 }

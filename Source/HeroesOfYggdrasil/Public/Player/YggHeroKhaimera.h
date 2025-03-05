@@ -12,6 +12,9 @@
  *	김성훈
  */
 
+
+
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 {
@@ -22,6 +25,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SaveAttack();
+	UFUNCTION(BlueprintCallable)
+	void ResetCombo();
 
 
 protected:
@@ -29,45 +34,33 @@ protected:
 	virtual void BeginPlay()override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(Server, Reliable)
 	void ServerAttack();
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastAttack();
 
-
-
-	
 	virtual void SkillQ(const FInputActionValue& Value) override;
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(Server, Reliable)
 	void ServerSkillQ();
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillQ();
 
-
 	virtual void SkillE(const FInputActionValue& Value) override;
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(Server, Reliable)
 	void ServerSkillE();
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillE();
 
 
 	virtual void SkillR(const FInputActionValue& Value) override;
-	UFUNCTION(Server, Reliable, WithValidation)
+	UFUNCTION(Server, Reliable)
 	void ServerSkillR();
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillR();
 
-	virtual void Move(const FInputActionValue& Value) override;
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-
-	
-
-	UFUNCTION(BlueprintCallable)
-	void ResetCombo();
-
 	const int MaxCombo = 3;
-	UPROPERTY(Replicated)
 	int CurCombo = 0;
 };

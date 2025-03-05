@@ -20,6 +20,7 @@
 
 class AYggHero;
 class UCharacterMovementComponent;
+class UAnimMontage;
 
 UCLASS(Blueprintable)
 class HEROESOFYGGDRASIL_API UYggHeroAnimInstance : public UAnimInstance
@@ -29,7 +30,18 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeThreadSafeUpdateAnimation(float DeltaTime) override;
 
+
+
+
+	void PlayMontage(FName MontageName);
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void PlayMontageEvent(UAnimMontage* Montage);
 protected:
+	UPROPERTY(EditDefaultsOnly, Category = "Montage")
+	TMap<FName, UAnimMontage*> MontageMap;
+
+
+
 	UPROPERTY(BlueprintReadOnly)
 	AYggHero* Hero;
 	UPROPERTY(BlueprintReadOnly)
