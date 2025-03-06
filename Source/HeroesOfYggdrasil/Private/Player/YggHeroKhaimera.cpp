@@ -63,7 +63,7 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		if (ActionMap.Find(FName("Attack")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Started, this, &AYggHeroKhaimera::Attack);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
 			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
 		}
 
@@ -90,9 +90,9 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AYggHeroKhaimera::BeginPlay()
 {
 	Super::BeginPlay();
-	CurCombo = 0;
-	MaxCombo = 3;
-	
+	CurAttackIndex = 0;
+	MaxAttackIndex = 3;
+
 }
 
 void AYggHeroKhaimera::Tick(float DeltaTime)
@@ -110,17 +110,14 @@ void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 
 	if (HasAuthority())
 	{
-		if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.MoveAttackable")))
-		{
-			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		}
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
 		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
-		MulticastAttack(CurCombo);
+		MulticastAttack(CurAttackIndex);
 
-		CurCombo++;
-		if (CurCombo == MaxCombo)
+		CurAttackIndex++;
+		if (CurAttackIndex == MaxAttackIndex)
 		{
-			CurCombo = 0;
+			CurAttackIndex = 0;
 		}
 	}
 	else
@@ -135,13 +132,16 @@ void AYggHeroKhaimera::ServerAttack_Implementation()
 	Attack(FInputActionValue());
 }
 
-void AYggHeroKhaimera::MulticastAttack_Implementation(int NewCurCombo)
+void AYggHeroKhaimera::MulticastAttack_Implementation(int ServerAttackIndex)
 {
-	CurCombo = NewCurCombo; // 서버에서 동기화된 값을 클라이언트가 받음
-	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurCombo);
-
+	CurAttackIndex = ServerAttackIndex; // 서버에서 동기화된 값을 클라이언트가 받음
+	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurAttackIndex);
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.Buff.FastAttackSpeed"))) 
+	{
+		MontageName = *FString::Printf(TEXT("FAttack%d"), CurAttackIndex);
+	}
 	PlayMontage(MontageName);
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurCombo));
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurAttackIndex));
 }
 #pragma endregion
 
@@ -154,10 +154,7 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 	}
 	if (HasAuthority())
 	{
-		if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.MoveAttackable")))
-		{
-			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		}
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
 		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
 		MulticastSkillQ();
 	}
@@ -189,10 +186,7 @@ void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 	}
 	if (HasAuthority())
 	{
-		if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.MoveAttackable")))
-		{
-			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		}
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
 		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
 		MulticastSkillE();
 	}
@@ -225,10 +219,7 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 	}
 	if (HasAuthority())
 	{
-		if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.MoveAttackable")))
-		{
-			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		}
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
 		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
 		MulticastSkillR();
 	}
@@ -254,8 +245,7 @@ void AYggHeroKhaimera::MulticastSkillR_Implementation()
 
 void AYggHeroKhaimera::StartSkillR()
 {
-	HeroAttributeComponent->AddTag(TEXT("Character.State.MoveAttackable"));
-	bUsingSkillR = true;
+	HeroAttributeComponent->AddTag(TEXT("Character.Buff.FastAttackSpeed"));
 }
 
 void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -270,7 +260,7 @@ void AYggHeroKhaimera::SaveAttack()
 
 void AYggHeroKhaimera::ResetCombo()
 {
-	CurCombo = 0;
+	CurAttackIndex = 0;
 	HeroAttributeComponent->AddTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
 }
 

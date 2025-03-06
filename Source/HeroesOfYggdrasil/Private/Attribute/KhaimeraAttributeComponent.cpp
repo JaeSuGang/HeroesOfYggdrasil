@@ -14,6 +14,7 @@ void UKhaimeraAttributeComponent::BeginPlay()
 void UKhaimeraAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
 }
 
 

@@ -111,6 +111,6 @@ protected:
 	FVector TargetSocketOffset;
 
 
-	int MaxCombo;
-	int CurCombo;
+	int MaxAttackIndex;
+	int CurAttackIndex;
 };

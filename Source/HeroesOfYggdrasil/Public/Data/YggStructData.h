@@ -11,11 +11,11 @@
  */
 
 USTRUCT(BlueprintType)
-struct FPlayerSkillInfoaRow : public FTableRowBase
+struct FPlayerSkillInfoRow : public FTableRowBase
 {
 	GENERATED_BODY()
-	FPlayerSkillInfoaRow() {}
-	~FPlayerSkillInfoaRow() {}
+	FPlayerSkillInfoRow() {}
+	~FPlayerSkillInfoRow() {}
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")

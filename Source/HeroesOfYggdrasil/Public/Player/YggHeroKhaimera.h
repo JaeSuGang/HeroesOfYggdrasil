@@ -38,7 +38,7 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerAttack();
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastAttack(int NewCurCombo);
+	void MulticastAttack(int ServerAttackIndex);
 	
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
