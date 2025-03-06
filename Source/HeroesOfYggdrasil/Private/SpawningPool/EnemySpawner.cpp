@@ -2,6 +2,7 @@
 
 
 #include "SpawningPool/EnemySpawner.h"
+#include <Components/SceneComponent.h>
 #include <Math/UnrealMathUtility.h>
 
 // Sets default values
@@ -9,6 +10,7 @@ AEnemySpawner::AEnemySpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
 
 }
 
@@ -26,24 +28,13 @@ void AEnemySpawner::Tick(float DeltaTime)
 
 }
 
-void AEnemySpawner::SpawnStart(UClass* _SpawningActor, double _SpawnDaley, FVector _SpawnRange, TFunction<void()> _SpawnStartFunc, TFunction<void()> _SpawnCallFunc)
+void AEnemySpawner::SpawnStart()
 {
-	SpawningActor = _SpawningActor;
-	SpawnRange = _SpawnRange;
-	SpawnStartFunc = _SpawnStartFunc;
-	SpawnCallFunc = _SpawnCallFunc;
-
-	if (SpawnStartFunc != nullptr)
-		SpawnStartFunc();
-
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemySpawner::SpawningCall, _SpawnDaley, true);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemySpawner::SpawningCall, SpawnDaley, true);
 }
 
 void AEnemySpawner::SpawningCall()
 {
-	if (SpawnCallFunc != nullptr)
-		SpawnCallFunc();
-
 	FVector Range = FVector::ZeroVector;
 
 	if (SpawnRange != FVector::ZeroVector)
@@ -65,7 +56,7 @@ void AEnemySpawner::SpawningCall()
 		if (CurrentSpawnCount >= MaxSpawnCount)
 		{
 			GetWorldTimerManager().ClearTimer(TimerHandle);
-			CurrentSpawnCount = 0;
+			Destroy();
 			break;
 		}
 	}

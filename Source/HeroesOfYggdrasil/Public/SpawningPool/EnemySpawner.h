@@ -26,15 +26,7 @@ public:
 
 private:
 	void SpawningCall();
-	void SpawnStart(UClass* _SpawningActor, double _SpawnDaley, FVector _SpawnRange, TFunction<void()> _SpawnStartFunc, TFunction<void()> _SpawnCallFunc);
-	void SetSpawnStartFunc(TFunction<void()> _Function)
-	{
-		SpawnStartFunc = _Function;
-	}
-	void SetSpawnCallFunc(TFunction<void()> _Function)
-	{
-		SpawnCallFunc = _Function;
-	}
+	void SpawnStart();
 
 private:
 	FTimerHandle TimerHandle = {};
@@ -45,8 +37,6 @@ private:
 
 	FVector SpawnRange = FVector::ZeroVector;
 	UClass* SpawningActor = nullptr;
-
-	TFunction<void()> SpawnStartFunc = nullptr;
-	TFunction<void()> SpawnCallFunc = nullptr;
+	float SpawnDaley = 0.f;
 
 };
