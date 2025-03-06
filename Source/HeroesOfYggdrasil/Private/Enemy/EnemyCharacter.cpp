@@ -16,7 +16,7 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	EnemyAttributeComponent->AddTag(TEXT("Monster.State.Strafing"));
 }
 
