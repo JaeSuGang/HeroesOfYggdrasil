@@ -32,6 +32,7 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay()override;
+	virtual void Tick(float DeltaTime)override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
@@ -58,8 +59,15 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillR();
 
+	UFUNCTION(BlueprintCallable)
+	void StartSkillR();
+
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	// 임시
+	float SkillRContinueTime = 10.0f;
+	bool bUsingSkillR = false;
 
 	
 

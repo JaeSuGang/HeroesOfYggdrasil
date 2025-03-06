@@ -53,6 +53,12 @@ public:
 
 	void StartGameCamera(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable)
+	UHeroAttributeComponent* GetHeroAttribute() 
+	{
+		return HeroAttributeComponent;
+	}
+
 protected:
 
 	virtual void Look(const FInputActionValue& Value);

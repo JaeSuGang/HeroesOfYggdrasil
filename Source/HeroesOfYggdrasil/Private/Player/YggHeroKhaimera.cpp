@@ -95,6 +95,16 @@ void AYggHeroKhaimera::BeginPlay()
 
 }
 
+void AYggHeroKhaimera::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (bUsingSkillR) 
+	{
+		SkillRContinueTime -= DeltaTime;
+	}
+
+}
+
 #pragma region Attack
 void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 {
@@ -105,9 +115,13 @@ void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
+		if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.MoveAttackable")))
+		{
+			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
+		}
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
 		MulticastAttack(CurCombo);
-		
+
 		CurCombo++;
 		if (CurCombo == MaxCombo)
 		{
@@ -145,7 +159,11 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 	}
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+		if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.MoveAttackable")))
+		{
+			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
+		}
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
 		MulticastSkillQ();
 	}
 	else
@@ -176,7 +194,11 @@ void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 	}
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+		if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.MoveAttackable")))
+		{
+			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
+		}
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
 		MulticastSkillE();
 	}
 	else
@@ -208,7 +230,11 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 	}
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->RemoveTags({ TEXT("Character.State.Attackable"), TEXT("Character.State.Moveable") });
+		if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.MoveAttackable")))
+		{
+			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
+		}
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
 		MulticastSkillR();
 	}
 	else
@@ -231,6 +257,11 @@ void AYggHeroKhaimera::MulticastSkillR_Implementation()
 #pragma endregion
 
 
+void AYggHeroKhaimera::StartSkillR()
+{
+	HeroAttributeComponent->AddTag(TEXT("Character.State.MoveAttackable"));
+	bUsingSkillR = true;
+}
 
 void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
