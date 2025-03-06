@@ -92,17 +92,12 @@ void AYggHeroKhaimera::BeginPlay()
 	Super::BeginPlay();
 	CurCombo = 0;
 	MaxCombo = 3;
-
+	
 }
 
 void AYggHeroKhaimera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (bUsingSkillR) 
-	{
-		SkillRContinueTime -= DeltaTime;
-	}
-
 }
 
 #pragma region Attack
