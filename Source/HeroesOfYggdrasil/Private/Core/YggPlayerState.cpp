@@ -3,3 +3,7 @@
 
 #include "Core/YggPlayerState.h"
 
+void AYggPlayerState::SetPlayerName_Implementation(const FString& name)
+{
+	APlayerState::SetPlayerName(name);
+}

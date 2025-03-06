@@ -14,4 +14,8 @@ class HEROESOFYGGDRASIL_API AYggPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 	
+
+public:
+	UFUNCTION(Server, Reliable)
+	void SetPlayerName(const FString& name);
 };
