@@ -4,6 +4,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
+#include "Attribute/HeroAttributeComponent.h"
+
 AYggHeroGreystone::AYggHeroGreystone()
 {
 }
@@ -16,8 +18,8 @@ void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurCombo = 0;
-	MaxCombo = 4;
+	CurAttackIndex = 0;
+	MaxAttackIndex = 4;
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
@@ -92,21 +94,138 @@ void AYggHeroGreystone::Jump(const FInputActionValue& Value)
 void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 {
 	Super::Attack(Value);
+
+	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	{
+		return;
+	}*/
+
+	if (HasAuthority())
+	{
+		// HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
+		// HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		MulticastAttack(CurAttackIndex);
+
+		CurAttackIndex++;
+		if (CurAttackIndex == MaxAttackIndex)
+		{
+			CurAttackIndex = 0;
+		}
+	}
+	else
+	{
+		ServerAttack();
+		return;
+	}
+}
+
+void AYggHeroGreystone::ServerAttack_Implementation()
+{
+	Attack(FInputActionValue());
+}
+
+void AYggHeroGreystone::MulticastAttack_Implementation(int ServerAttackIndex)
+{
+	CurAttackIndex = ServerAttackIndex;
+	
+	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurAttackIndex);
+	
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.Buff.FastAttackSpeed")))
+	{
+		MontageName = *FString::Printf(TEXT("FAttack%d"), CurAttackIndex);
+	}
+	
+	 PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 {
 	Super::SkillQ(Value);
 
-	UE_LOG(LogTemp, Warning, TEXT("SkiilQ"));
+	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	{
+		return;
+	}*/
+	if (HasAuthority())
+	{
+		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
+		MulticastSkillQ();
+	}
+	else
+	{
+		ServerSkillQ();
+	}
+}
+
+void AYggHeroGreystone::ServerSkillQ_Implementation()
+{
+	SkillQ(FInputActionValue());
+}
+
+void AYggHeroGreystone::MulticastSkillQ_Implementation()
+{
+	FName MontageName = TEXT("SkillQ");
+	PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
 {
 	Super::SkillE(Value);
+
+	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	{
+		return;
+	}*/
+	if (HasAuthority())
+	{
+		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
+		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		MulticastSkillE();
+	}
+	else
+	{
+		ServerSkillE();
+	}
+}
+
+void AYggHeroGreystone::ServerSkillE_Implementation()
+{
+	SkillE(FInputActionValue());
+}
+
+void AYggHeroGreystone::MulticastSkillE_Implementation()
+{
+	// FName MontageName = TEXT("SkillE");
+	// PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 {
 	Super::SkillR(Value);
+
+	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	{
+		return;
+	}*/
+	if (HasAuthority())
+	{
+		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
+		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		MulticastSkillR();
+	}
+	else
+	{
+		ServerSkillR();
+	}
+}
+void AYggHeroGreystone::ServerSkillR_Implementation()
+{
+	SkillR(FInputActionValue());
+}
+
+void AYggHeroGreystone::MulticastSkillR_Implementation()
+{
+	FName MontageName = TEXT("SkillR");
+	PlayMontage(MontageName);
 }
