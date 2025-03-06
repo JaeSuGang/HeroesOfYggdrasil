@@ -27,6 +27,9 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	AYggHeroKhaimera* Khaimera;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsMoveAttackable = false;
 private:
 
 };
