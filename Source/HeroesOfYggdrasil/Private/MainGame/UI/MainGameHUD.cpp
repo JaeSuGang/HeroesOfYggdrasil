@@ -30,15 +30,10 @@ void AMainGameHUD::BeginPlay()
 	{
 		if (!Start)
 		{
-			UE_LOG(LogTemp, Error, TEXT("StartButton을 찾을 수 없습니다! Blueprint에서 이름을 확인하세요."));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Log, TEXT("StartButton이 정상적으로 가져와졌습니다!"));
+			UE_LOG(LogTemp, Error, TEXT("Start을 찾을 수 없습니다! Blueprint에서 이름을 확인하세요."));
 		}
 
 		Start->SetIsEnabled(false);
-		Start->SetRenderOpacity(1.0f);  // 흐려지는 효과 제거
 	}
 
 	UYggLobbyUserWidget* LobbyUserWidget = Cast<UYggLobbyUserWidget>(CurrentWidget);

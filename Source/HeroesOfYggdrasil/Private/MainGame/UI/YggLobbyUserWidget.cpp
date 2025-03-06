@@ -35,7 +35,7 @@ void UYggLobbyUserWidget::AddPlayerToLobby()
 
 		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(NewPlayerWidget->Slot))
 		{
-			CanvasSlot->SetPosition(FVector2D(0.0f, 225.0f));
+			CanvasSlot->SetPosition(FVector2D(0.0f, 260.0f));
 			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
 			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
 		}
