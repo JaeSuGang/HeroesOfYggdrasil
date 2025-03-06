@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Components/ActorComponent.h"
 #include "EnemySpawner.h"
-#include "SpawnerManager.generated.h"
+#include "SpawnManagerComponent.generated.h"
 
 USTRUCT(BlueprintType)
 struct FSpawnPortalData : public FTableRowBase
@@ -50,29 +50,28 @@ public:
 };
 
 
-UCLASS()
-class HEROESOFYGGDRASIL_API ASpawnerManager : public AActor
+
+UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class HEROESOFYGGDRASIL_API USpawnManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
-	
+
 public:	
-	// Sets default values for this actor's properties
-	ASpawnerManager();
+	// Sets default values for this component's properties
+	USpawnManagerComponent();
 
 protected:
-	// Called when the game starts or when spawned
+	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable)
 	void StageEnemySpawn(int32 Stage);
 
 public:
-	// TObjectPtr<FStageEnemyData> SpawnDatas = {};
 	UPROPERTY(VisibleAnywhere, Category = "Data")
 	UDataTable* SpawnDatas = nullptr;
-
 };

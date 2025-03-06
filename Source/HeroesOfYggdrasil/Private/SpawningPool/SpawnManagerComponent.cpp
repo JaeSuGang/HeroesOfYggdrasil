@@ -1,13 +1,14 @@
 // Coded By AssortRock Unreal Engine Class Project
 
 
-#include "SpawningPool/SpawnerManager.h"
+#include "SpawningPool/SpawnManagerComponent.h"
 
-// Sets default values
-ASpawnerManager::ASpawnerManager()
+// Sets default values for this component's properties
+USpawnManagerComponent::USpawnManagerComponent()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
+	// off to improve performance if you don't need them.
+	PrimaryComponentTick.bCanEverTick = true;
 
 	FString DataPath = TEXT("/Script/Engine.DataTable'/Game/Data/StageEnemyDataTable.StageEnemyDataTable'");
 	ConstructorHelpers::FObjectFinder<UDataTable> DataTable(*DataPath);
@@ -18,21 +19,27 @@ ASpawnerManager::ASpawnerManager()
 	}
 }
 
-// Called when the game starts or when spawned
-void ASpawnerManager::BeginPlay()
+
+// Called when the game starts
+void USpawnManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// ...
 	
 }
 
-// Called every frame
-void ASpawnerManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 
+// Called every frame
+void USpawnManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// ...
 }
 
-void ASpawnerManager::StageEnemySpawn(int32 _Stage)
+
+void USpawnManagerComponent::StageEnemySpawn(int32 _Stage)
 {
 	FString Name = TEXT("Stage_");
 	Name.AppendInt(_Stage);

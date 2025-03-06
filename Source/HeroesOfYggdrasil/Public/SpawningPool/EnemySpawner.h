@@ -10,7 +10,7 @@ UCLASS()
 class HEROESOFYGGDRASIL_API AEnemySpawner : public AActor
 {
 	GENERATED_BODY()
-	friend class ASpawnerManager;
+	friend class USpawnManagerComponent;
 
 public:	
 	// Sets default values for this actor's properties
