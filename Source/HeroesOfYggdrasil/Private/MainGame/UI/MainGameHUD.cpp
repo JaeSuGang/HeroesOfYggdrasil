@@ -3,9 +3,12 @@
 
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/MainGameMode.h"
+#include "MainGame/UI/YggLobbyUserWidget.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
+#include "Components/Button.h"
+#include "Components/Widget.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "MainGame/StageManager.h"
@@ -19,6 +22,23 @@ void AMainGameHUD::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
 	CurrentWidget->AddToViewport();
+
+	Start = Cast<UButton>(CurrentWidget->GetWidgetFromName(TEXT("Start")));
+	
+	APlayerController* PC = GetOwningPlayerController();
+	if (PC && !(PC->HasAuthority()))
+	{
+		if (!Start)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Start을 찾을 수 없습니다! Blueprint에서 이름을 확인하세요."));
+		}
+
+		Start->SetIsEnabled(false);
+	}
+
+	UYggLobbyUserWidget* LobbyUserWidget = Cast<UYggLobbyUserWidget>(CurrentWidget);
+
+	LobbyUserWidget->AddPlayerToLobby();
 
 	this->PlayerOwner->SetInputMode(FInputModeUIOnly{});
 
@@ -69,6 +89,7 @@ void AMainGameHUD::ShowMainGameWidget()
 			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
 		AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
+		
 
 		CurrentWidget->AddToViewport();
 	}

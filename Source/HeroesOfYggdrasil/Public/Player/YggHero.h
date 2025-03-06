@@ -7,12 +7,12 @@
 #include "YggHero.generated.h"
 
 /**
- * 김성훈
+ * 김성훈, 김지호ㄴ
  * 히어로 기본 클래스
  */
 
 
-// Camera
+ // Camera
 class USpringArmComponent;
 class UCameraComponent;
 
@@ -22,7 +22,8 @@ class UInputAction;
 class UInputComponent;
 struct FInputActionValue;
 
-class UMontage;
+class UYggHeroAnimInstance;
+
 class UHeroAttributeComponent;
 
 UCLASS()
@@ -52,36 +53,44 @@ public:
 
 	void StartGameCamera(float DeltaTime);
 
+	UFUNCTION(BlueprintCallable)
+	UHeroAttributeComponent* GetHeroAttribute() 
+	{
+		return HeroAttributeComponent;
+	}
+
 protected:
 
 	virtual void Look(const FInputActionValue& Value);
 	virtual void Move(const FInputActionValue& Value);
 
-	virtual void Attack(const FInputActionValue& Value){}
-	virtual void SkillQ(const FInputActionValue& Value){}
-	virtual void SkillE(const FInputActionValue& Value){}
-	virtual void SkillR(const FInputActionValue& Value){}
+	virtual void Attack(const FInputActionValue& Value) {}
+	virtual void SkillQ(const FInputActionValue& Value) {}
+	virtual void SkillE(const FInputActionValue& Value) {}
+	virtual void SkillR(const FInputActionValue& Value) {}
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void PlayMontage(FName MontageName);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
-	TMap<FName,UInputAction*> ActionMap;
+	TMap<FName, UInputAction*> ActionMap;
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UYggHeroAnimInstance* HeroAnimInstance;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHeroAttributeComponent* HeroAttributeComponent;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Montage")
-	TMap<FName, UAnimMontage*> MontageMap;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, replicated)
 	bool bAimMode = false;
@@ -100,4 +109,8 @@ protected:
 	FRotator TargetCameraRotation;
 	float TargetArmLength;
 	FVector TargetSocketOffset;
+
+
+	int MaxAttackIndex;
+	int CurAttackIndex;
 };

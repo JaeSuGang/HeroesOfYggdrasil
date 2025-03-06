@@ -31,6 +31,9 @@
 // Tag
 #include "Attribute/HeroAttributeComponent.h"
 
+// Animation
+#include "Animation/YggHeroAnimInstance.h"
+
 
 
 AYggHero::AYggHero()
@@ -52,9 +55,9 @@ AYggHero::AYggHero()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
-	
+
 	// 폰 입력 UEnhancedInputComponent 으로 변경
-	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();	
+	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
 }
 
 void AYggHero::ToggleAimMode_Implementation()
@@ -153,7 +156,7 @@ void AYggHero::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	FRotator CurrentRotation = GetControlRotation(); 
+	FRotator CurrentRotation = GetControlRotation();
 
 	float ClampedPitch = FMath::ClampAngle(CurrentRotation.Pitch + LookAxisVector.Y, -40.0f, 60.0f);
 
@@ -164,10 +167,10 @@ void AYggHero::Look(const FInputActionValue& Value)
 
 void AYggHero::Move(const FInputActionValue& Value)
 {
-	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Moveable")))
+	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Moveable")))
 	{
 		return;
-	}*/
+	}
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	FRotator ControllerRotation = GetControlRotation();
 
@@ -183,11 +186,21 @@ void AYggHero::Move(const FInputActionValue& Value)
 void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
+	}
 }
 
 void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	StartGameCamera(DeltaTime);
+	//StartGameCamera(DeltaTime);
+}
+
+void AYggHero::PlayMontage(FName MontageName)
+{
+	HeroAnimInstance->PlayMontage(MontageName);
 }

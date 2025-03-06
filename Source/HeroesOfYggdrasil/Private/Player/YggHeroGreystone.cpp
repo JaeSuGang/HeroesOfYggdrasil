@@ -15,6 +15,9 @@ AYggHeroGreystone::~AYggHeroGreystone()
 void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CurCombo = 0;
+	MaxCombo = 4;
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)

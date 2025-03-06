@@ -2,11 +2,14 @@
 
 #include "MainGame/PlayerSelectZone.h"
 
+#include "EngineUtils.h"
 #include "Net/UnrealNetwork.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/PlayerStart.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Core/YggPlayerState.h"
 #include "Data/Playables.h"
 #include "MainGame/StageManager.h"
 #include "Core/YggPlayerController.h"
@@ -33,6 +36,43 @@ APlayerSelectZone::APlayerSelectZone()
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 }
 
+void APlayerSelectZone::Restart()
+{
+	Super::Restart();
+
+	if (AYggPlayerController* YPC = Cast<AYggPlayerController>(GetController()))
+	{
+		if (HasAuthority())
+		{
+			if (APlayerState* PS = GetPlayerState())
+			{
+				int nPlayerId = PS->GetPlayerId();
+				SetToPosition(nPlayerId);
+			}
+			else
+			{
+				SetToPosition(0);
+			}
+
+			AddActorLocalRotation(FRotator{ 0, 180, 0 });
+			SpawnSelectable(0);
+		}
+	}
+}
+
+void APlayerSelectZone::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+}
+
+void APlayerSelectZone::PossessedBy(AController* controller)
+{
+	Super::PossessedBy(controller);
+
+	
+}
+
 void APlayerSelectZone::EndPlay(EEndPlayReason::Type endReason)
 {
 	Super::EndPlay(endReason);
@@ -42,19 +82,8 @@ void APlayerSelectZone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority())
-	{
-		SortPosition();
-		SpawnSelectable(0);
-	}
-
-	if (HasLocalNetOwner())
-	{
-		if (APlayerController* PC = Cast<APlayerController>(GetController()))
-		{
-			// PC->SetViewTarget();
-		}
-	}
+	TActorIterator<APlayerStart> Iter(GetWorld());
+	PlayerStart = *Iter;
 }
 
 void APlayerSelectZone::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -64,22 +93,15 @@ void APlayerSelectZone::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(APlayerSelectZone, CurrentTableIndex);
 }
 
-void APlayerSelectZone::SortPosition_Implementation()
+void APlayerSelectZone::SetToPosition_Implementation(int nIndex)
 {
-	TArray<AActor*> Zones;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerSelectZone::StaticClass(), Zones);
+	TActorIterator<APlayerStart> Iter(GetWorld());
+	PlayerStart = *Iter;
 
-	int32 ZoneCount = Zones.Num();
-	for (int i = 0; i < ZoneCount; ++i)
-	{
-		FVector PosOffset = LocationOffset * (i - (ZoneCount - 1) * 0.5f);
-		FTransform LoopTransform = SpawnTransform;
-		LoopTransform.SetLocation(LoopTransform.GetLocation() + PosOffset);
-		APlayerSelectZone* CastedZone = Cast<APlayerSelectZone>(Zones[i]);
-		CastedZone->SetActorTransform(LoopTransform);
-		if (CastedZone->SpawnedSelectable)
-			CastedZone->SpawnedSelectable->SetActorTransform(LoopTransform);
-	}
+	FVector location = PlayerStart->GetActorLocation();
+	location = location + CameraDistance;
+	location = location + ZoneInterval * ((float)nIndex - 1.5f);
+	SetActorLocation(location);
 }
 
 void APlayerSelectZone::SpawnSelectable_Implementation(int nSpawnableIndex)
@@ -127,6 +149,7 @@ void APlayerSelectZone::SelectCharacter_Implementation()
 			}
 		}
 
+		YPC->SetViewTarget(this);
 		YPC->UnPossess();
 		YPC->Possess(SpawnedSelectable);
 

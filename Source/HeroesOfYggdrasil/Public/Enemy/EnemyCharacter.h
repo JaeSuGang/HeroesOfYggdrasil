@@ -10,6 +10,9 @@
 /**
  * 담당 : 장시혁
  */
+
+class UAttributeComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AEnemyCharacter : public AYggCharacter
 {
@@ -30,4 +33,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere)
+	UAttributeComponent* EnemyAttributeComponent;
 };

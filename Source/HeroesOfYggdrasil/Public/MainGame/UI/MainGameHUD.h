@@ -6,8 +6,6 @@
 #include "GameFramework/HUD.h"
 #include "MainGameHUD.generated.h"
 
-class APlayerSelectZone;
-
 /**
  * 
  */
@@ -57,6 +55,9 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UImage* AIM;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
+	class UButton* Start;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = YGG)
 	UUserWidget* CurrentWidget;
 };
