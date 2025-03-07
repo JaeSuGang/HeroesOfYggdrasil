@@ -54,7 +54,7 @@ public:
 	void StartGameCamera(float DeltaTime);
 
 	UFUNCTION(BlueprintCallable)
-	UHeroAttributeComponent* GetHeroAttribute() 
+	UHeroAttributeComponent* GetHeroAttributeComponent()
 	{
 		return HeroAttributeComponent;
 	}

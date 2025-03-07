@@ -25,6 +25,26 @@ public:
 };
 
 
+USTRUCT(BlueprintType)
+struct FPlayerBaseStatusInfoRow : public FTableRowBase
+{
+	GENERATED_BODY()
+	FPlayerBaseStatusInfoRow() {}
+	~FPlayerBaseStatusInfoRow() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float Hp = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float SpeedRate = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float JumpRate = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	int MaxAttackIndex = 0;
+};
+
+
+
 
 
 

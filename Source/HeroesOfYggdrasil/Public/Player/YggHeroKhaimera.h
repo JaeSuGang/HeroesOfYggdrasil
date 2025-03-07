@@ -14,6 +14,7 @@
 
 
 
+class UKhaimeraAttributeComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
@@ -30,6 +31,8 @@ public:
 
 
 protected:
+	UKhaimeraAttributeComponent* KhaimeraAttributeComponent;
+
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay()override;
 	virtual void Tick(float DeltaTime)override;

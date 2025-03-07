@@ -19,6 +19,7 @@ void UYggHeroAnimInstance::NativeInitializeAnimation()
 
 	// 캐릭터의 이동 컴포넌트를 가져와 저장
 	CharacterMovementComponent = Hero->GetCharacterMovement();
+	HeroAttributeComponent = Hero->GetHeroAttributeComponent();
 }
 
 // 애니메이션이 업데이트될 때 실행되는 함수
@@ -31,6 +32,8 @@ void UYggHeroAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	{
 		return;
 	}
+
+
 
 	// 현재 이동 속도를 2D 벡터 크기로 계산 (XY 평면 속도)
 	GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);

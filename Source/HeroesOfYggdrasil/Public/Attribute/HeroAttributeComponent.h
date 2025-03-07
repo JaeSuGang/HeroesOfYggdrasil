@@ -15,19 +15,12 @@ class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UAttributeComponent
 	GENERATED_BODY()
 
 protected:
+
+public:
+	UPROPERTY(BlueprintReadOnly)
 	float Hp;
-
-	// 나중에 구조체로 묶어
-	bool bIsContinueSkillQ;
-	float CoolTimeSkillQ;
-	float ContinueTimeSkillQ;
-
-	bool bIsContinueSkillE;
-	float CoolTimeSkillE;
-	float ContinueTimeSkillE;
-
-	bool bIsContinueSkillR;
-	float CoolTimeSkillR;
-	float ContinueTimeSkillR;
-
+	UPROPERTY(BlueprintReadOnly)
+	float SpeedRate = 2.0f;
+	UPROPERTY(BlueprintReadOnly)
+	float JumpRate = 1.0f;
 };

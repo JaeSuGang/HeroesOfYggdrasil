@@ -16,6 +16,7 @@
 class AYggHero;
 class UCharacterMovementComponent;
 class UAnimMontage;
+class UHeroAttributeComponent;
 
 UCLASS(Blueprintable)
 class HEROESOFYGGDRASIL_API UYggHeroAnimInstance : public UAnimInstance
@@ -40,6 +41,11 @@ protected:
 	AYggHero* Hero;
 	UPROPERTY(BlueprintReadOnly)
 	UCharacterMovementComponent* CharacterMovementComponent;
+
+
+	UPROPERTY(BlueprintReadOnly)
+	UHeroAttributeComponent* HeroAttributeComponent;
+
 
 	UPROPERTY(BlueprintReadOnly)
 	float GroundSpeed;

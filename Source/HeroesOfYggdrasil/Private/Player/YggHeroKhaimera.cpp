@@ -21,11 +21,13 @@
 // Network
 #include "Net/UnrealNetwork.h"
 
+#include "Attribute/KhaimeraAttributeComponent.h"
+
 
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
-
+	KhaimeraAttributeComponent = Cast<UKhaimeraAttributeComponent>(HeroAttributeComponent);
 }
 
 
@@ -90,6 +92,9 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AYggHeroKhaimera::BeginPlay()
 {
 	Super::BeginPlay();
+	GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->SpeedRate;
+	GetCharacterMovement()->JumpZVelocity *= HeroAttributeComponent->JumpRate;
+
 	CurAttackIndex = 0;
 	MaxAttackIndex = 3;
 
@@ -154,7 +159,7 @@ void AYggHeroKhaimera::MulticastAttack_Implementation(int ServerAttackIndex)
 {
 	CurAttackIndex = ServerAttackIndex; // 서버에서 동기화된 값을 클라이언트가 받음
 	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurAttackIndex);
-	PlayMontage(MontageName);
+	PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
 #pragma endregion
 
@@ -185,7 +190,7 @@ void AYggHeroKhaimera::ServerSkillQ_Implementation()
 void AYggHeroKhaimera::MulticastSkillQ_Implementation()
 {
 	FName MontageName = TEXT("SkillQ");
-	PlayMontage(MontageName);
+	PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
 
 #pragma endregion
@@ -219,7 +224,7 @@ void AYggHeroKhaimera::ServerSkillE_Implementation()
 void AYggHeroKhaimera::MulticastSkillE_Implementation()
 {
 	FName MontageName = TEXT("SkillE");
-	PlayMontage(MontageName);
+	PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
 #pragma endregion
 
@@ -251,7 +256,7 @@ void AYggHeroKhaimera::ServerSkillR_Implementation()
 void AYggHeroKhaimera::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
-	PlayMontage(MontageName);
+	PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
 #pragma endregion
 
