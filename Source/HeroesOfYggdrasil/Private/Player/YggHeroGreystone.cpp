@@ -4,6 +4,9 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+
 #include "Attribute/HeroAttributeComponent.h"
 
 AYggHeroGreystone::AYggHeroGreystone()
@@ -218,6 +221,17 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	{
 		ServerSkillR();
 	}
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		PlayerController->bShowMouseCursor = true;
+		PlayerController->SetIgnoreLookInput(true);
+		PlayerController->SetIgnoreMoveInput(true);
+	}
+
+	FollowCamera->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+	CameraBoom->TargetArmLength = 1000.0f;
 }
 void AYggHeroGreystone::ServerSkillR_Implementation()
 {

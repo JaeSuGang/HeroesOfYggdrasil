@@ -153,6 +153,11 @@ void AYggHero::StartGameCamera(float DeltaTime)
 
 void AYggHero::Look(const FInputActionValue& Value)
 {
+	if (GetController()->IsLookInputIgnored())
+	{
+		return;
+	}
+
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	FRotator CurrentRotation = GetControlRotation();
