@@ -196,8 +196,8 @@ void AYggHeroGreystone::ServerSkillE_Implementation()
 
 void AYggHeroGreystone::MulticastSkillE_Implementation()
 {
-	// FName MontageName = TEXT("SkillE");
-	// PlayMontage(MontageName);
+	FName MontageName = TEXT("SkillE");
+	PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
