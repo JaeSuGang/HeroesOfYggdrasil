@@ -34,6 +34,9 @@ protected:
 	virtual void BeginPlay()override;
 	virtual void Tick(float DeltaTime)override;
 
+	virtual void Move(const FInputActionValue& Value)override;
+	virtual void Jump()override;
+
 	virtual void Attack(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
 	void ServerAttack();
@@ -62,14 +65,10 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void StartSkillR();
 
-
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	// 임시
 	float SkillRContinueTime = 10.0f;
 	bool bUsingSkillR = false;
-
-	
 
 	
 };

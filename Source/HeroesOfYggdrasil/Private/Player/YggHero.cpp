@@ -39,7 +39,6 @@
 AYggHero::AYggHero()
 {
 	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("AttributeComponent"));
-	HeroAttributeComponent->AddTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
@@ -167,10 +166,6 @@ void AYggHero::Look(const FInputActionValue& Value)
 
 void AYggHero::Move(const FInputActionValue& Value)
 {
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Moveable")))
-	{
-		return;
-	}
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	FRotator ControllerRotation = GetControlRotation();
 
@@ -200,7 +195,7 @@ void AYggHero::Tick(float DeltaTime)
 	//StartGameCamera(DeltaTime);
 }
 
-void AYggHero::PlayMontage(FName MontageName)
+void AYggHero::PlayMontage(FName MontageName, float PlayRate)
 {
-	HeroAnimInstance->PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName, PlayRate);
 }

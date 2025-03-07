@@ -100,18 +100,36 @@ void AYggHeroKhaimera::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AYggHeroKhaimera::Move(const FInputActionValue& Value)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable")))
+	{
+		return;
+	}
+	Super::Move(Value);
+}
+
+void AYggHeroKhaimera::Jump()
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable")))
+	{
+		return;
+	}
+	Super::Jump();
+}
+
 #pragma region Attack
 void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 {
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
 	{
 		return;
 	}
 
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastAttack(CurAttackIndex);
 
 		CurAttackIndex++;
@@ -136,26 +154,21 @@ void AYggHeroKhaimera::MulticastAttack_Implementation(int ServerAttackIndex)
 {
 	CurAttackIndex = ServerAttackIndex; // 서버에서 동기화된 값을 클라이언트가 받음
 	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurAttackIndex);
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.Buff.FastAttackSpeed"))) 
-	{
-		MontageName = *FString::Printf(TEXT("FAttack%d"), CurAttackIndex);
-	}
 	PlayMontage(MontageName);
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%d"), CurAttackIndex));
 }
 #pragma endregion
 
 #pragma region SkillQ
 void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
 	{
 		return;
 	}
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillQ();
 	}
 	else
@@ -180,14 +193,14 @@ void AYggHeroKhaimera::MulticastSkillQ_Implementation()
 #pragma region SkillE
 void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 {
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
 	{
 		return;
 	}
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillE();
 	}
 	else
@@ -213,14 +226,14 @@ void AYggHeroKhaimera::MulticastSkillE_Implementation()
 #pragma region SkillR
 void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 {
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
 	{
 		return;
 	}
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillR();
 	}
 	else
@@ -255,13 +268,13 @@ void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 void AYggHeroKhaimera::SaveAttack()
 {
-	HeroAttributeComponent->AddTag(TEXT("Character.State.Attackable"));
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
 }
 
 void AYggHeroKhaimera::ResetCombo()
 {
 	CurAttackIndex = 0;
-	HeroAttributeComponent->AddTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
+	HeroAttributeComponent->RemoveTags({ TEXT("Character.State.NotAttackable"),TEXT("Character.State.NotMoveable") });
 }
 
 

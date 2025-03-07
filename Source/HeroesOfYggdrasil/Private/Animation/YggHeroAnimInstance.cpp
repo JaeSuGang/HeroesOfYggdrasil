@@ -49,7 +49,7 @@ void UYggHeroAnimInstance::NativeUpdateAnimation(float DeltaTime)
 }
 
 // 지정된 몽타주를 재생하는 함수
-void UYggHeroAnimInstance::PlayMontage(FName MontageName)
+void UYggHeroAnimInstance::PlayMontage(FName MontageName, float PlayRate)
 {
 	// MontageMap에 해당하는 키가 없으면 실행하지 않음
 	if (MontageMap.Contains(MontageName) == false)
@@ -58,7 +58,7 @@ void UYggHeroAnimInstance::PlayMontage(FName MontageName)
 	}
 
 	// 맵에서 몽타주를 찾아 실행
-	PlayMontageEvent(MontageMap[MontageName]);
+	PlayMontageEvent(MontageMap[MontageName], PlayRate);
 }
 
 // 에임 오프셋을 계산하는 함수
