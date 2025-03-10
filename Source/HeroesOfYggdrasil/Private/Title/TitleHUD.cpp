@@ -36,11 +36,6 @@ void ATitleHUD::CreateRoom()
 	FString MainGameLevelName = MainGameLevel.GetLongPackageName();
 	FString OpenLevel = FString::Printf(TEXT(":%s%s"), *DefaultPort, *MainGameLevelName);
 
-	if (UYggGameInstance* YGI = GetGameInstance<UYggGameInstance>())
-	{
-		// YGI->LocalPlayerName = 
-	}
-
 	if (!MainGameLevelName.IsEmpty())
 		UGameplayStatics::OpenLevel(GetWorld(), *OpenLevel, true, TEXT("listen"));
 	else
@@ -50,11 +45,6 @@ void ATitleHUD::CreateRoom()
 void ATitleHUD::JoinRoom(FString strIPAddress)
 {
 	FString FinalUrl = FString::Printf(TEXT("%s:%s"), *strIPAddress, *DefaultPort);
-
-	if (UYggGameInstance* YGI = GetGameInstance<UYggGameInstance>())
-	{
-		// YGI->LocalPlayerName = 
-	}
 
 	UGameplayStatics::OpenLevel(GetWorld(), *FinalUrl);
 }

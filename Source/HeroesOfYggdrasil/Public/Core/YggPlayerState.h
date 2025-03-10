@@ -16,6 +16,6 @@ class HEROESOFYGGDRASIL_API AYggPlayerState : public APlayerState
 	
 
 public:
-	UFUNCTION(Server, Reliable)
-	void SetPlayerName(const FString& name);
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerSetPlayerName(const FString& name);
 };
