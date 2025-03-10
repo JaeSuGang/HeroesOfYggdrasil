@@ -19,6 +19,7 @@ public:
 	AYggPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
+	void BeginPlay() override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:

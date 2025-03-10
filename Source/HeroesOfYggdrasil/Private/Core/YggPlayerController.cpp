@@ -14,6 +14,12 @@ AYggPlayerController::AYggPlayerController(const FObjectInitializer& ObjectIniti
 	TeamID = FGenericTeamId{ 0 };
 }
 
+void AYggPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+}
+
 void AYggPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

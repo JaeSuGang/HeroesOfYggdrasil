@@ -31,6 +31,12 @@ public:
 	APlayerManager* GetPlayerManager() const;
 
 public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APlayerManager> PlayerManagerClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AStageManager> StageManagerClass;
+
 	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	APlayerManager* PlayerManager;
 

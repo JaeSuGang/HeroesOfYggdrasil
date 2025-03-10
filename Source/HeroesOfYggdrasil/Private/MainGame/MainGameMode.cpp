@@ -31,8 +31,8 @@ void AMainGameMode::InitGameState()
 	}
 
 	/* Manager Initialization */
-	MGS->PlayerManager = GetWorld()->SpawnActor<APlayerManager>();
-	MGS->StageManager = GetWorld()->SpawnActor<AStageManager>();
+	MGS->PlayerManager = GetWorld()->SpawnActor<APlayerManager>(MGS->PlayerManagerClass);
+	MGS->StageManager = GetWorld()->SpawnActor<AStageManager>(MGS->StageManagerClass);
 }
 
 void AMainGameMode::BeginPlay()

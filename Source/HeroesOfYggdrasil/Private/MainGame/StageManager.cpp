@@ -6,35 +6,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
+#include "MainGame/GameStage.h"
 #include "MainGame/MainGameState.h"
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/PlayerSelectZone.h"
-
-void AStageManager::EnterStage_Implementation(EGameStage newStage, int nRound)
-{
-	this->OnExitStage();
-
-	CurrentStage = newStage;
-	Round = nRound;
-
-	switch (newStage)
-	{
-	case EGameStage::PreStart:
-		break;
-
-	case EGameStage::Reinforce:
-	{
-		if (Round == 1)
-		{
-		}
-	}
-		break;
-	case EGameStage::Battle:
-		break;
-	default:
-		break;
-	}
-}
 
 AStageManager* AStageManager::Get(UWorld* WorldContext)
 {
@@ -47,18 +22,33 @@ AStageManager* AStageManager::Get(UWorld* WorldContext)
 	return nullptr;
 }
 
+void AStageManager::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	if (HasAuthority())
+	{
+		EnterStage(FirstStageToStart);
+	}
+}
+
 void AStageManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AStageManager, CurrentStage);
 	DOREPLIFETIME(AStageManager, Round);
+}
+
+void AStageManager::EnterStage_Implementation(TSubclassOf<AGameStage> stage)
+{
+	if (CurrentStage)
+		CurrentStage->Destroy();
+
+	CurrentStage = GetWorld()->SpawnActor<AGameStage>(stage);
 }
 
 void AStageManager::StartGame_Implementation()
 {
-	this->EnterStage(EGameStage::Reinforce, 1);
-
 	auto ControllerIter = GetWorld()->GetPlayerControllerIterator();
 	while (ControllerIter)
 	{
@@ -83,16 +73,6 @@ void AStageManager::ForceMainWidgetToClients_Implementation()
 			MGH->ShowMainGameWidget();
 		}
 	}
-}
-
-void AStageManager::OnExitStage_Implementation()
-{
-
-}
-
-void AStageManager::OnUpdateStage_Implementation()
-{
-
 }
 
 AStageManager::AStageManager(const FObjectInitializer& ObjectInitializer)
