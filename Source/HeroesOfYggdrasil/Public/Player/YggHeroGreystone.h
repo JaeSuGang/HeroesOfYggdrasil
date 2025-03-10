@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Player/YggHero.h"
+#include "Player/YggHero.h"	
 #include "YggHeroGreystone.generated.h"
 
 UCLASS()
@@ -44,8 +44,20 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillR();
 
+	void MagicCircleOn();
+	void MagicCircleOff();
+
+	UPROPERTY()
+	bool bIsSkillR = false;
 
 public:
 	AYggHeroGreystone();
 	~AYggHeroGreystone();
+
+private:
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* SkillRDecalMaterial;
+
+	UPROPERTY()
+	UDecalComponent* SkillRDecal;
 };

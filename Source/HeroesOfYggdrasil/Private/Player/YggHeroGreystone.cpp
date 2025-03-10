@@ -1,13 +1,26 @@
 // Coded By AssortRock Unreal Engine Class Project
 
+// Project Headers
 #include "Player/YggHeroGreystone.h"
-#include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
-
-#include "Camera/CameraComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-
 #include "Attribute/HeroAttributeComponent.h"
+
+// Unreal Framework Core Components
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/Controller.h"
+
+// Input System Modules
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+
+// Visual Components
+#include "Camera/CameraComponent.h"
+#include "Components/DecalComponent.h"
+
+// Engine Utilities
+#include "Engine/EngineTypes.h"
+#include "Kismet/GameplayStatics.h"
 
 AYggHeroGreystone::AYggHeroGreystone()
 {
@@ -27,7 +40,12 @@ void AYggHeroGreystone::BeginPlay()
 
 void AYggHeroGreystone::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);		
+
+	if (bIsSkillR)
+	{
+		MagicCircleOn();
+	}
 }
 
 void AYggHeroGreystone::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -102,6 +120,12 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 	{
 		return;
 	}*/
+
+	if (bIsSkillR)
+	{
+		bIsSkillR = false;
+		MagicCircleOff();
+	}
 
 	if (HasAuthority())
 	{
@@ -205,6 +229,9 @@ void AYggHeroGreystone::MulticastSkillE_Implementation()
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 {
+	if (bIsSkillR)
+		return;
+
 	Super::SkillR(Value);
 
 	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
@@ -225,14 +252,23 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (PlayerController)
 	{
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+
+		CameraBoom->bUsePawnControlRotation = false;
+		CameraBoom->TargetArmLength = 1000.0f;
+		CameraBoom->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
+
 		PlayerController->bShowMouseCursor = true;
 		PlayerController->SetIgnoreLookInput(true);
-		PlayerController->SetIgnoreMoveInput(true);
+
+		FRotator NewControlRotation = GetActorRotation();
+		PlayerController->SetControlRotation(NewControlRotation);
 	}
 
-	FollowCamera->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
-	CameraBoom->TargetArmLength = 1000.0f;
+	bIsSkillR = true;
 }
+
 void AYggHeroGreystone::ServerSkillR_Implementation()
 {
 	SkillR(FInputActionValue());
@@ -241,5 +277,70 @@ void AYggHeroGreystone::ServerSkillR_Implementation()
 void AYggHeroGreystone::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
-	PlayMontage(MontageName);
+	// PlayMontage(MontageName);
+}
+
+void AYggHeroGreystone::MagicCircleOn()
+{
+	FVector WorldLocation, WorldDirection;
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (PlayerController && PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
+	{
+		FVector Start = WorldLocation;
+		FVector End = Start + (WorldDirection * 5000.0f);
+
+		FHitResult HitResult;
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, QueryParams))
+		{
+			FVector OutHitLocation = HitResult.ImpactPoint;
+
+			if (!IsValid(SkillRDecal))
+			{
+				SkillRDecal = UGameplayStatics::SpawnDecalAtLocation(
+					GetWorld(),
+					SkillRDecalMaterial,
+					FVector(1024.0f, 1024.0f, 1024.0f),
+					OutHitLocation,
+					FRotator(-90.0f, 0.0f, 0.0f),
+					0.0f
+				);
+			}
+			else
+			{
+				SkillRDecal->SetWorldLocation(OutHitLocation);
+			}
+		}
+	}
+}
+
+void AYggHeroGreystone::MagicCircleOff()
+{
+	if (IsValid(SkillRDecal))
+	{
+		SetActorLocation(SkillRDecal->GetComponentLocation());
+
+		SkillRDecal->DestroyComponent();
+		SkillRDecal = nullptr;
+
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			bUseControllerRotationYaw = true;
+			GetCharacterMovement()->bOrientRotationToMovement = true;
+
+			CameraBoom->bUsePawnControlRotation = true;
+			CameraBoom->TargetArmLength = 450.0f;
+			CameraBoom->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
+
+			PlayerController->bShowMouseCursor = false;
+			PlayerController->SetIgnoreLookInput(false);
+
+			FRotator NewControlRotation = GetActorRotation();
+			PlayerController->SetControlRotation(NewControlRotation);
+		}
+	}
 }
