@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Player/YggHero.h"	
+#include "Player/YggHero.h"
+#include "Interfaces/YggHeroInterface.h"
 #include "YggHeroGreystone.generated.h"
 
 UCLASS()
-class HEROESOFYGGDRASIL_API AYggHeroGreystone : public AYggHero
+class HEROESOFYGGDRASIL_API AYggHeroGreystone : public AYggHero, public IYggHeroInterface
 {
 	GENERATED_BODY()
 
@@ -44,15 +45,15 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillR();
 
-	void MagicCircleOn();
-	void MagicCircleOff();
-
-	UPROPERTY()
-	bool bIsSkillR = false;
-
 public:
 	AYggHeroGreystone();
 	~AYggHeroGreystone();
+
+	virtual void MagicCircleOn() override;
+	virtual void MagicCircleOff() override;
+
+	UPROPERTY()
+	bool bIsSkillR = false;
 
 private:
 	UPROPERTY(EditAnywhere)

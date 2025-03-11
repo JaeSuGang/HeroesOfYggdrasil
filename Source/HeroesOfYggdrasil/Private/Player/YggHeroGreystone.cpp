@@ -105,6 +105,11 @@ void AYggHeroGreystone::Look(const FInputActionValue& Value)
 
 void AYggHeroGreystone::Move(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable")))
+	{
+		return;
+	}
+
 	Super::Move(Value);
 }
 
@@ -114,19 +119,20 @@ void AYggHeroGreystone::Jump(const FInputActionValue& Value)
 
 void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 {
-	Super::Attack(Value);
-
-	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	if (bIsSkillR && !(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
 	{
-		return;
-	}*/
-
-	if (bIsSkillR)
-	{
-		bIsSkillR = false;
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MagicCircleOff();
 	}
 
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+
+	Super::Attack(Value);
+	
 	if (HasAuthority())
 	{
 		// HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
@@ -167,12 +173,10 @@ void AYggHeroGreystone::MulticastAttack_Implementation(int ServerAttackIndex)
 
 void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+
 	Super::SkillQ(Value);
 
-	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
-	{
-		return;
-	}*/
 	if (HasAuthority())
 	{
 		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
@@ -198,12 +202,10 @@ void AYggHeroGreystone::MulticastSkillQ_Implementation()
 
 void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+
 	Super::SkillE(Value);
 
-	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
-	{
-		return;
-	}*/
 	if (HasAuthority())
 	{
 		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
@@ -229,19 +231,16 @@ void AYggHeroGreystone::MulticastSkillE_Implementation()
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 {
-	if (bIsSkillR)
-		return;
+	if (bIsSkillR) return;
+
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;	
 
 	Super::SkillR(Value);
-
-	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
-	{
-		return;
-	}*/
+		
 	if (HasAuthority())
 	{
-		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillR();
 	}
 	else
@@ -252,7 +251,6 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 	if (PlayerController)
 	{
-		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = false;
 
 		CameraBoom->bUsePawnControlRotation = false;
@@ -277,7 +275,7 @@ void AYggHeroGreystone::ServerSkillR_Implementation()
 void AYggHeroGreystone::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
-	// PlayMontage(MontageName);
+	PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::MagicCircleOn()
@@ -319,6 +317,8 @@ void AYggHeroGreystone::MagicCircleOn()
 
 void AYggHeroGreystone::MagicCircleOff()
 {
+	bIsSkillR = false;
+
 	if (IsValid(SkillRDecal))
 	{
 		SetActorLocation(SkillRDecal->GetComponentLocation());
@@ -329,7 +329,6 @@ void AYggHeroGreystone::MagicCircleOff()
 		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 		if (PlayerController)
 		{
-			bUseControllerRotationYaw = true;
 			GetCharacterMovement()->bOrientRotationToMovement = true;
 
 			CameraBoom->bUsePawnControlRotation = true;
