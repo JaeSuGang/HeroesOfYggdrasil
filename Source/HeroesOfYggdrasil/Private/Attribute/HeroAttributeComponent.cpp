@@ -2,4 +2,5 @@
 
 
 #include "Attribute/HeroAttributeComponent.h"
+#include "Engine/DataTable.h"
 

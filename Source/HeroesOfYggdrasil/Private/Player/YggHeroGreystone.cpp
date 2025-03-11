@@ -22,6 +22,8 @@
 #include "Engine/EngineTypes.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Animation/HeroGreystoneAnimInstance.h"
+
 AYggHeroGreystone::AYggHeroGreystone()
 {
 }
@@ -123,6 +125,7 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAnimInstance->JumpMontage(TEXT("SkillR"), TEXT("GreystoneRFall"));
 		MagicCircleOff();
 	}
 

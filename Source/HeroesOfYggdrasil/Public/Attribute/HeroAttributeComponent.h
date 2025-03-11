@@ -3,24 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Attribute/AttributeComponent.h"
+#include "Attribute/CharacterAttributeComponent.h"
 #include "HeroAttributeComponent.generated.h"
 
 /**
  *	김성훈
  */
+class UDataTable;
 UCLASS()
-class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UAttributeComponent
+class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UCharacterAttributeComponent
 {
 	GENERATED_BODY()
 
 protected:
 
 public:
+	UPROPERTY(EditAnywhere)
+	UDataTable* Data;
+	
 	UPROPERTY(BlueprintReadOnly)
-	float Hp;
-	UPROPERTY(BlueprintReadOnly)
-	float SpeedRate = 2.0f;
+	float SpeedRate = 1.0f;
 	UPROPERTY(BlueprintReadOnly)
 	float JumpRate = 1.0f;
 };

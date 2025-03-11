@@ -11,36 +11,44 @@
  */
 
 USTRUCT(BlueprintType)
-struct FPlayerSkillInfoRow : public FTableRowBase
+struct FHeroSkillInfoRow : public FTableRowBase
 {
 	GENERATED_BODY()
-	FPlayerSkillInfoRow() {}
-	~FPlayerSkillInfoRow() {}
+	FHeroSkillInfoRow() {}
+	~FHeroSkillInfoRow() {}
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float CoolTime =0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float ContinueTime = 0.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float CoolTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float ContinueTime;
 };
 
 
 USTRUCT(BlueprintType)
-struct FPlayerBaseStatusInfoRow : public FTableRowBase
+struct FHeroBaseStatusInfoRow : public FTableRowBase
 {
 	GENERATED_BODY()
-	FPlayerBaseStatusInfoRow() {}
-	~FPlayerBaseStatusInfoRow() {}
+	FHeroBaseStatusInfoRow() {}
+	~FHeroBaseStatusInfoRow() {}
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Hp = 0.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float SpeedRate = 1.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float Hp;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float GroundSpeedRate =1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float AttackSpeedRate = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float JumpRate = 1.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	int MaxAttackIndex = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	int MaxAttackIndex;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FHeroSkillInfoRow SkillQInfo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FHeroSkillInfoRow SkillEInfo;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FHeroSkillInfoRow SkillRInfo;
 };
 
 

@@ -64,6 +64,15 @@ void UYggHeroAnimInstance::PlayMontage(FName MontageName, float PlayRate)
 	PlayMontageEvent(MontageMap[MontageName], PlayRate);
 }
 
+void UYggHeroAnimInstance::JumpMontage(FName MontageName, FName SectionName)
+{
+	if (MontageMap.Contains(MontageName) == false)
+	{
+		return;
+	}
+	Montage_JumpToSection(SectionName, MontageMap[MontageName]);
+}
+
 // 에임 오프셋을 계산하는 함수
 void UYggHeroAnimInstance::UpdateAimOffset()
 {

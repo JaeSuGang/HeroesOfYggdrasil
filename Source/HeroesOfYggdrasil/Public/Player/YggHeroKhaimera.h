@@ -70,8 +70,8 @@ protected:
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	// 임시
-	float SkillRContinueTime = 10.0f;
-	bool bUsingSkillR = false;
+	float SkillRContinueTime;
+	bool bUsingSkillR;
 
 	
 };

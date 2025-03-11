@@ -27,6 +27,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaTime) override;
 
 	void PlayMontage(FName MontageName,float PlayRate = 1.0f);
+	void JumpMontage(FName MontageName, FName SectionName);
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void PlayMontageEvent(UAnimMontage* Montage,float PlayRate);
 protected:
