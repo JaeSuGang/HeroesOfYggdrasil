@@ -22,16 +22,12 @@ void UYggLobbyUserWidget::AddPlayerToLobby()
 {
 	if (!SelectUserWidgetClass)
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-	//GetOwningPlayer()->GetPlayerState<AMainGamePlayerState>()->GetPlayerId();
 	
-	UYggLobbySelectUserWidget* NewPlayerWidget = CreateWidget<UYggLobbySelectUserWidget>(GetWorld(), SelectUserWidgetClass);
+	NewPlayerWidget = CreateWidget<UYggLobbySelectUserWidget>(GetWorld(), SelectUserWidgetClass);
 	
 	if (NewPlayerWidget)
 	{
 		LobbyCanvasPanel->AddChild(NewPlayerWidget);
-		//LobbySelectWidget = NewPlayerWidget;
-
-		//float NewXPosition = i * WidgetSpace;
 
 		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(NewPlayerWidget->Slot))
 		{
@@ -40,20 +36,10 @@ void UYggLobbyUserWidget::AddPlayerToLobby()
 			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
 		}
 	}
-	//
-	//	if (PlayerCount == i)
-	//	{
-	//		NewPlayerWidget->LeftButton->SetIsEnabled(true);
-	//		NewPlayerWidget->RightButton->SetIsEnabled(true);
-	//	}
-	//	else
-	//	{
-	//		NewPlayerWidget->LeftButton->SetIsEnabled(false);
-	//		NewPlayerWidget->RightButton->SetIsEnabled(false);
-	//	}
-	//}
-
 }
 
-
+void UYggLobbyUserWidget::SetPlayerName()
+{
+	PlayerName = NewPlayerWidget->GetTextBlockValue();
+}
 

@@ -20,8 +20,15 @@ class HEROESOFYGGDRASIL_API UYggLobbyUserWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category = YGG)
 	void AddPlayerToLobby();
+
+	void SetPlayerName();
+
+	FString GetPlayerName()
+	{
+		return PlayerName;
+	}
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -30,13 +37,10 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* LobbyCanvasPanel;
 
-	//UPROPERTY(meta = (BindWidget))
-	//UButton* StartButton;
-
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> SelectUserWidgetClass;
 
-	TArray<UYggLobbySelectUserWidget*> LobbySelectWidget;
+	UYggLobbySelectUserWidget* NewPlayerWidget;
 
-	float WidgetSpace = 200.0f;
+	FString PlayerName;
 };

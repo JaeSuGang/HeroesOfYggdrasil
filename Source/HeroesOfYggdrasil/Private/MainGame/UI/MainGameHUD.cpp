@@ -4,6 +4,7 @@
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/MainGameMode.h"
 #include "MainGame/UI/YggLobbyUserWidget.h"
+#include "Core/YggPlayerState.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
@@ -25,7 +26,7 @@ void AMainGameHUD::BeginPlay()
 
 	Start = Cast<UButton>(CurrentWidget->GetWidgetFromName(TEXT("Start")));
 	
-	APlayerController* PC = GetOwningPlayerController();
+	PC = GetOwningPlayerController();
 	if (PC && !(PC->HasAuthority()))
 	{
 		if (!Start)
@@ -35,8 +36,13 @@ void AMainGameHUD::BeginPlay()
 
 		Start->SetIsEnabled(false);
 	}
+	
+	//AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
+	//
+	//PS->SetPlayerName("asdf");
+	//PS->GetPlayerName();
 
-	UYggLobbyUserWidget* LobbyUserWidget = Cast<UYggLobbyUserWidget>(CurrentWidget);
+	LobbyUserWidget = Cast<UYggLobbyUserWidget>(CurrentWidget);
 
 	LobbyUserWidget->AddPlayerToLobby();
 
@@ -54,6 +60,9 @@ void AMainGameHUD::StartButton()
 {
 	AStageManager* SM = AStageManager::Get(GetWorld());
 
+	AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
+	PS->SetPlayerName(PlayerName);
+	
 	if (SM)
 	{
 		SM->StartGame();
@@ -62,6 +71,7 @@ void AMainGameHUD::StartButton()
 
 void AMainGameHUD::ReadyButton()
 {
+	PlayerName = LobbyUserWidget->GetPlayerName();
 }
 
 void AMainGameHUD::ShowLobbyWidget()

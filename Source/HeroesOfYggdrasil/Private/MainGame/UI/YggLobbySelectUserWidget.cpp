@@ -5,6 +5,7 @@
 #include "MainGame/PlayerSelectZone.h"
 
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 
 void UYggLobbySelectUserWidget::NativeOnInitialized()
 {
@@ -38,4 +39,14 @@ void UYggLobbySelectUserWidget::RightButtonEvent()
 	{
 		SelectZone->SpawnNextSelectable(1);
 	}
+}
+
+FString UYggLobbySelectUserWidget::GetTextBlockValue()
+{
+	if (Nickname)
+	{
+		return Nickname->GetText().ToString();
+	}
+
+	return FString(" ");
 }
