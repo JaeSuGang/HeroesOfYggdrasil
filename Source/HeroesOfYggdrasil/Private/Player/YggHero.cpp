@@ -46,7 +46,7 @@ AYggHero::AYggHero()
 	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("AttributeComponent"));
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(GetMesh());
-	WidgetComponent->SetWidgetClass(UYggNicknameBarUserWidget::StaticClass());
+	
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
@@ -180,6 +180,11 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("MouseWheel")), ETriggerEvent::Triggered, this, &AYggHero::MouseWheel);
 		}
+		if (ActionMap.Find(FName("UIMode")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("UIMode")), ETriggerEvent::Triggered, this, &AYggHero::UIModeOn);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("UIMode")), ETriggerEvent::Completed, this, &AYggHero::UIModeOff);
+		}
 	}
 
 }
@@ -224,6 +229,7 @@ void AYggHero::BeginPlay()
 	{
 		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
 	}
+
 	
 }
 
@@ -251,5 +257,18 @@ void AYggHero::MouseWheel(const FInputActionValue& Value)
 	NewLength = FMath::Clamp(NewLength, CameraConst::MinCameraBoomLength, CameraConst::MaxCameraBoomLength);
 	// 변경된 길이 적용
 	CameraBoom->TargetArmLength = NewLength;
+}
+
+void AYggHero::UIModeOn(const FInputActionValue& Value)
+{
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+}
+
+
+void AYggHero::UIModeOff(const FInputActionValue& Value)
+{
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
 }
 

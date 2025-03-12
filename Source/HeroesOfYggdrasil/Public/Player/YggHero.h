@@ -69,6 +69,12 @@ public:
 	{
 		return HeroAttributeComponent;
 	}
+
+	UFUNCTION(BlueprintCallable)
+	UWidgetComponent* GetWidgetComponent()
+	{
+		return WidgetComponent;
+	}
 	
 
 protected:
@@ -85,6 +91,8 @@ protected:
 	virtual void SkillR(const FInputActionValue& Value) {}
 
 	virtual void MouseWheel(const FInputActionValue& Value);
+	virtual void UIModeOn(const FInputActionValue& Value);
+	virtual void UIModeOff(const FInputActionValue& Value);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	USpringArmComponent* CameraBoom;
