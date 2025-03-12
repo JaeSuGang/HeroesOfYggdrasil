@@ -121,6 +121,18 @@ public:
 };
 
 
+USTRUCT(BlueprintType)
+struct FEnemyConst : public UObject
+{
+	GENERATED_BODY()
+
+	FEnemyConst() {}
+	~FEnemyConst() {}
+
+public:
+	static FName EnemyAIDataName;
+};
+
 
 
 

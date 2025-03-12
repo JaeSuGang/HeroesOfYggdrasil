@@ -3,3 +3,4 @@
 
 #include "Data/YggStructData.h"
 
+FName FEnemyConst::EnemyAIDataName = TEXT("EnemyAIDataName");
