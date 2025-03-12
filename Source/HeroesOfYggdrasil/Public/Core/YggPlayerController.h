@@ -7,6 +7,10 @@
 #include "GenericTeamAgentInterface.h"
 #include "YggPlayerController.generated.h"
 
+struct FInputActionValue;
+class UInputMappingContext;
+class UInputAction;
+
 /**
  * 담당 코더 : 김경민
  */
@@ -19,6 +23,7 @@ public:
 	AYggPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 protected:
+	void SetupInputComponent() override;
 	void BeginPlay() override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -29,6 +34,10 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SetGenericTeamId(const FGenericTeamId& _TeamID) override;
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void SetMouseMode(const FInputActionValue& Value);
+
 	FGenericTeamId GetGenericTeamId() const override;
 
 	void SetInputEnabled(bool Value);
@@ -36,4 +45,10 @@ public:
 protected:
 	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	FGenericTeamId TeamID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputMappingContext* DefaultMappingContext;	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputAction* InputModeAction;
 };
