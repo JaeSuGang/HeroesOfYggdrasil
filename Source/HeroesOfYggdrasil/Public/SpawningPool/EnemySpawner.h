@@ -28,6 +28,9 @@ private:
 	void SpawningCall();
 	void SpawnStart();
 
+	UFUNCTION(BlueprintCallable)
+	void OnceSpawningCall(UClass* _Class, int32 _Count, double _Delay);
+
 private:
 	FTimerHandle TimerHandle = {};
 
@@ -39,4 +42,5 @@ private:
 	UClass* SpawningActor = nullptr;
 	float SpawnDaley = 0.f;
 
+	bool Invalid = false;
 };

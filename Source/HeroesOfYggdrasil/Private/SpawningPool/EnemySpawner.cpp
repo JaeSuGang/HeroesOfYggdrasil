@@ -30,7 +30,21 @@ void AEnemySpawner::Tick(float DeltaTime)
 
 void AEnemySpawner::SpawnStart()
 {
+	if (Invalid = true)
+		return;
+
+	Invalid = false;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemySpawner::SpawningCall, SpawnDaley, true);
+}
+
+void AEnemySpawner::OnceSpawningCall(UClass* _Class, int32 _Count, double _Delay)
+{
+	OnceSpawnCount = _Count;
+	MaxSpawnCount = _Count;
+	SpawningActor = _Class;
+	SpawnDaley = _Delay;
+
+	SpawnStart();
 }
 
 void AEnemySpawner::SpawningCall()
