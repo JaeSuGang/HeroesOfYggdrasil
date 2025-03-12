@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "YggEnumData.h"
 #include "YggStructData.generated.h"
 
 /**
@@ -82,10 +83,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	FAIData Data;
 
+	EEnemyAIState EnemyAIState = EEnemyAIState::Idle;
 	double CurHP = 100;
-	APawn* SelfPawn = nullptr;
+	class APawn* SelfPawn = nullptr;
 	AActor* TargetActor = nullptr;
+	class AEnemyAnimCharacter* SelfAnimPawn = nullptr;
+	class UEnemyBaseAnimInstance* UEnemyBaseAnimInstance = nullptr;
 	FVector OriginPos;
+
 };
 
 UCLASS(BlueprintType)
