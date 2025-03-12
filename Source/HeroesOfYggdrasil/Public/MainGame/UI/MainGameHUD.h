@@ -65,5 +65,4 @@ public:
 
 	APlayerController* PC;
 	UYggLobbyUserWidget* LobbyUserWidget;
-	FString PlayerName;
 };
