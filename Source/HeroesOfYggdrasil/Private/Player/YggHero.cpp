@@ -34,11 +34,19 @@
 // Animation
 #include "Animation/YggHeroAnimInstance.h"
 
+#include "MainGame/UI/YggNicknameBarUserWidget.h"
+#include "Components/WidgetComponent.h"
+
+// Data
+#include "Data/YggConst.h"
 
 
 AYggHero::AYggHero()
 {
 	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("AttributeComponent"));
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(GetMesh());
+	WidgetComponent->SetWidgetClass(UYggNicknameBarUserWidget::StaticClass());
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
@@ -69,7 +77,6 @@ void AYggHero::ToggleAimMode_Implementation()
 void AYggHero::SetAimMode_Implementation(bool Value)
 {
 	bAimMode = Value;
-
 	bUseControllerRotationYaw = bAimMode;
 
 	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
@@ -89,7 +96,6 @@ void AYggHero::SetAimMode_Implementation(bool Value)
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AYggHero, bAimMode);
 }
 
 void AYggHero::SetCamera_Implementation(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset)
@@ -151,6 +157,7 @@ void AYggHero::StartGameCamera(float DeltaTime)
 	}
 }
 
+
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -167,7 +174,7 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		if (ActionMap.Find(FName("ToggleAimMode")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("ToggleAimMode")), ETriggerEvent::Started, this, &AYggHero::ToggleAimMode);
-			EnhancedInput->BindAction(*ActionMap.Find(FName("ToggleAimMode")), ETriggerEvent::Completed, this, &AYggHero::ToggleAimMode);
+			
 		}
 		if (ActionMap.Find(FName("MouseWheel")))
 		{
@@ -217,14 +224,17 @@ void AYggHero::BeginPlay()
 	{
 		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
 	}
+	
 }
 
 void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//StartGameCamera(DeltaTime);
+	StartGameCamera(DeltaTime);
 }
+
+
 
 void AYggHero::MouseWheel(const FInputActionValue& Value)
 {
@@ -235,18 +245,11 @@ void AYggHero::MouseWheel(const FInputActionValue& Value)
 	{
 		return;
 	}
-
 	// 현재 SpringArm 길이를 가져옴
-	float NewLength = CameraBoom->TargetArmLength + (WheelValue * ZoomSpeed);
-
+	float NewLength = CameraBoom->TargetArmLength + (WheelValue * CameraConst::ZoomSpeed);
 	// 최소/최대 줌 제한
-	NewLength = FMath::Clamp(NewLength, MinZoom, MaxZoom);
-
+	NewLength = FMath::Clamp(NewLength, CameraConst::MinCameraBoomLength, CameraConst::MaxCameraBoomLength);
 	// 변경된 길이 적용
 	CameraBoom->TargetArmLength = NewLength;
 }
 
-void AYggHero::PlayMontage(FName MontageName, float PlayRate)
-{
-	HeroAnimInstance->PlayMontage(MontageName, PlayRate);
-}

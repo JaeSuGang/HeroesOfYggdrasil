@@ -25,6 +25,8 @@ public:
 };
 
 
+
+
 USTRUCT(BlueprintType)
 struct FHeroBaseStatusInfoRow : public FTableRowBase
 {

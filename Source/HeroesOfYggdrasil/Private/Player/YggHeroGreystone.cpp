@@ -174,7 +174,7 @@ void AYggHeroGreystone::MulticastAttack_Implementation(int ServerAttackIndex)
 		MontageName = *FString::Printf(TEXT("FAttack%d"), CurAttackIndex);
 	}
 	
-	 PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
@@ -201,7 +201,7 @@ void AYggHeroGreystone::ServerSkillQ_Implementation()
 void AYggHeroGreystone::MulticastSkillQ_Implementation()
 {
 	FName MontageName = TEXT("SkillQ");
-	PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
@@ -230,7 +230,7 @@ void AYggHeroGreystone::ServerSkillE_Implementation()
 void AYggHeroGreystone::MulticastSkillE_Implementation()
 {
 	FName MontageName = TEXT("SkillE");
-	PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
@@ -284,7 +284,7 @@ void AYggHeroGreystone::ServerSkillR_Implementation()
 void AYggHeroGreystone::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
-	PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::RFall()
