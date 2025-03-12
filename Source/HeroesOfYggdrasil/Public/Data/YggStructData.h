@@ -126,8 +126,6 @@ class UEnemyConst : public UObject
 	GENERATED_BODY()
 
 public:
-	static FName MainPanelName;
-
 	class AI
 	{
 	public:
