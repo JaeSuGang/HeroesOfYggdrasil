@@ -60,9 +60,11 @@ void AMainGameHUD::StartButton()
 {
 	AStageManager* SM = AStageManager::Get(GetWorld());
 
+	LobbyUserWidget->SetPlayerName();
+
 	AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
-	PS->SetPlayerName(PlayerName);
-	
+	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
+
 	if (SM)
 	{
 		SM->StartGame();
@@ -72,7 +74,9 @@ void AMainGameHUD::StartButton()
 void AMainGameHUD::ReadyButton()
 {
 	LobbyUserWidget->SetPlayerName();
-	PlayerName = LobbyUserWidget->GetPlayerName();
+
+	AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
+	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
 }
 
 void AMainGameHUD::ShowLobbyWidget()
