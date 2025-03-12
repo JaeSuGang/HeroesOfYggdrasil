@@ -11,7 +11,7 @@
  * 담당 : 장시혁
  */
 
-class UAttributeComponent;
+class UCharacterAttributeComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AEnemyCharacter : public AYggCharacter
@@ -34,5 +34,5 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere)
-	UAttributeComponent* EnemyAttributeComponent;
+	UCharacterAttributeComponent* EnemyAttributeComponent;
 };

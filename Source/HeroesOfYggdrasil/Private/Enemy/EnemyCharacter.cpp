@@ -2,14 +2,14 @@
 
 
 #include "Enemy/EnemyCharacter.h"
-#include "Attribute/AttributeComponent.h"
+#include "Attribute/CharacterAttributeComponent.h"
 
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	EnemyAttributeComponent = CreateDefaultSubobject<UAttributeComponent>(TEXT("AttributeComponent"));
+	EnemyAttributeComponent = CreateDefaultSubobject<UCharacterAttributeComponent>(TEXT("AttributeComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -17,7 +17,7 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-	EnemyAttributeComponent->AddTag(TEXT("Monster.State.Strafing"));
+	// EnemyAttributeComponent->AddTag(TEXT("Monster.State.Strafing"));
 }
 
 // Called every frame

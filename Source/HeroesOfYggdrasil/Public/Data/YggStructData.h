@@ -54,6 +54,76 @@ public:
 
 
 
+USTRUCT(BlueprintType)
+struct FAIData
+{
+	GENERATED_BODY()
+	FAIData() {}
+	~FAIData() {}
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double MaxHP = 100;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double TraceRange = 500.0f;
+
+};
+
+
+USTRUCT(BlueprintType)
+struct FPlayAIData
+{
+	GENERATED_BODY()
+
+	FPlayAIData() {}
+	~FPlayAIData() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	FAIData Data;
+
+	double CurHP = 100;
+	APawn* SelfPawn = nullptr;
+	AActor* TargetActor = nullptr;
+	FVector OriginPos;
+};
+
+UCLASS(BlueprintType)
+class UAIDataObject : public UObject
+{
+	GENERATED_BODY()
+
+	UAIDataObject() {}
+	~UAIDataObject() {}
+
+public:
+	FPlayAIData PlayData;
+};
+
+
+USTRUCT(BlueprintType)
+struct FMonsterDataRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FMonsterDataRow() {}
+	~FMonsterDataRow() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FAIData AIData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	class UBehaviorTree* BTAsset;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	class USkeletalMesh* Mesh;
+};
+
+
+
+
+
 
 
 
