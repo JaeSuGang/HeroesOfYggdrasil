@@ -39,7 +39,7 @@ void AEnemySpawner::SpawnStart()
 
 void AEnemySpawner::OnceSpawningCall(UClass* _Class, int32 _Count, double _Delay)
 {
-	OnceSpawnCount = _Count;
+	OnceSpawnCount = 1;
 	MaxSpawnCount = _Count;
 	SpawningActor = _Class;
 	SpawnDaley = _Delay;
