@@ -182,7 +182,7 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		}
 		if (ActionMap.Find(FName("UIMode")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("UIMode")), ETriggerEvent::Triggered, this, &AYggHero::UIModeOn);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("UIMode")), ETriggerEvent::Started, this, &AYggHero::UIModeOn);
 			EnhancedInput->BindAction(*ActionMap.Find(FName("UIMode")), ETriggerEvent::Completed, this, &AYggHero::UIModeOff);
 		}
 	}
@@ -191,7 +191,7 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AYggHero::Look(const FInputActionValue& Value)
 {
-	if (GetController()->IsLookInputIgnored())
+	if (GetController()->IsLookInputIgnored()||bIsUIMode)
 	{
 		return;
 	}
@@ -261,14 +261,14 @@ void AYggHero::MouseWheel(const FInputActionValue& Value)
 
 void AYggHero::UIModeOn(const FInputActionValue& Value)
 {
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+	bIsUIMode = true;
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 }
 
 
 void AYggHero::UIModeOff(const FInputActionValue& Value)
 {
-	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
+	bIsUIMode = false;
 	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
 }
 
