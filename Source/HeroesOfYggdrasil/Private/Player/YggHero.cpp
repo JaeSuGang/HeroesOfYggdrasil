@@ -151,6 +151,32 @@ void AYggHero::StartGameCamera(float DeltaTime)
 	}
 }
 
+void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(InputMappingContext, 0);
+		}
+	}
+	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
+	if (EnhancedInput)
+	{
+		if (ActionMap.Find(FName("ToggleAimMode")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("ToggleAimMode")), ETriggerEvent::Started, this, &AYggHero::ToggleAimMode);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("ToggleAimMode")), ETriggerEvent::Completed, this, &AYggHero::ToggleAimMode);
+		}
+		if (ActionMap.Find(FName("MouseWheel")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("MouseWheel")), ETriggerEvent::Triggered, this, &AYggHero::MouseWheel);
+		}
+	}
+
+}
+
 void AYggHero::Look(const FInputActionValue& Value)
 {
 	if (GetController()->IsLookInputIgnored())
@@ -198,6 +224,26 @@ void AYggHero::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//StartGameCamera(DeltaTime);
+}
+
+void AYggHero::MouseWheel(const FInputActionValue& Value)
+{
+	float WheelValue = Value.Get<float>();
+
+	// 마우스 휠 입력이 없으면 리턴
+	if (WheelValue == 0.0f)
+	{
+		return;
+	}
+
+	// 현재 SpringArm 길이를 가져옴
+	float NewLength = CameraBoom->TargetArmLength + (WheelValue * ZoomSpeed);
+
+	// 최소/최대 줌 제한
+	NewLength = FMath::Clamp(NewLength, MinZoom, MaxZoom);
+
+	// 변경된 길이 적용
+	CameraBoom->TargetArmLength = NewLength;
 }
 
 void AYggHero::PlayMontage(FName MontageName, float PlayRate)

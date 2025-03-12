@@ -60,6 +60,7 @@ public:
 	}
 
 protected:
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 
 	virtual void Look(const FInputActionValue& Value);
 	virtual void Move(const FInputActionValue& Value);
@@ -71,6 +72,8 @@ protected:
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void MouseWheel(const FInputActionValue& Value);
 
 	virtual void PlayMontage(FName MontageName,float PlayRate=1.0f);
 
@@ -109,6 +112,15 @@ protected:
 	FRotator TargetCameraRotation;
 	float TargetArmLength;
 	FVector TargetSocketOffset;
+
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float MinZoom = 100.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float MaxZoom = 1000.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float ZoomSpeed = 50.0f;
 
 
 	int MaxAttackIndex;
