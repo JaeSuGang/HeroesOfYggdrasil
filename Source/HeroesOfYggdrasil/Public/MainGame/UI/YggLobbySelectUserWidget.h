@@ -7,7 +7,7 @@
 #include "YggLobbySelectUserWidget.generated.h"
 
 class UButton;
-class UTextBlock;
+class UEditableTextBox;
 
 /**
  * 
@@ -34,7 +34,7 @@ public:
 	UButton* RightButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Nickname;;
+	UEditableTextBox* Nickname;
 
 protected:
 	virtual void NativeOnInitialized() override;

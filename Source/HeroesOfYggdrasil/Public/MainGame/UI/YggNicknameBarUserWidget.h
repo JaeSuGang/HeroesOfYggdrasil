@@ -19,4 +19,9 @@ class HEROESOFYGGDRASIL_API UYggNicknameBarUserWidget : public UYggUserWidget
 public:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* PlayerName;
+
+	void SetPlayerName();
+
+protected:
+	void NativeOnInitialized() override;
 };

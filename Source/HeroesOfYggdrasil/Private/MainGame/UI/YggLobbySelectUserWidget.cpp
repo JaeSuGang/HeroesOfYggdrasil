@@ -5,7 +5,7 @@
 #include "MainGame/PlayerSelectZone.h"
 
 #include "Components/Button.h"
-#include "Components/TextBlock.h"
+#include "Components/EditableTextBox.h"
 
 void UYggLobbySelectUserWidget::NativeOnInitialized()
 {

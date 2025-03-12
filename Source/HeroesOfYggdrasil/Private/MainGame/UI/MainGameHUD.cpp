@@ -71,6 +71,7 @@ void AMainGameHUD::StartButton()
 
 void AMainGameHUD::ReadyButton()
 {
+	LobbyUserWidget->SetPlayerName();
 	PlayerName = LobbyUserWidget->GetPlayerName();
 }
 
