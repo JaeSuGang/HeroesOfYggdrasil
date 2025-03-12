@@ -45,6 +45,11 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillR();
 
+	void RFall();
+	UFUNCTION(Server, Reliable)
+	void ServerRFall();
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRFall();
 public:
 	AYggHeroGreystone();
 	~AYggHeroGreystone();
