@@ -123,6 +123,7 @@ protected:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bAimMode = false;
+	bool bIsUIMode = false;
 
 protected:
 	bool bIsCameraTransitioning = false;
