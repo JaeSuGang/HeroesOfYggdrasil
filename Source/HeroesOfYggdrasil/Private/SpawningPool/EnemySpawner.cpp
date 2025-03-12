@@ -30,10 +30,10 @@ void AEnemySpawner::Tick(float DeltaTime)
 
 void AEnemySpawner::SpawnStart()
 {
-	if (Invalid = true)
+	if (Invalid == true)
 		return;
 
-	Invalid = false;
+	Invalid = true;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemySpawner::SpawningCall, SpawnDaley, true);
 }
 
