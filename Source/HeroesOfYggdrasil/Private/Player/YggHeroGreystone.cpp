@@ -240,9 +240,12 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;	
 
 	Super::SkillR(Value);
-		
+
 	if (HasAuthority())
 	{
+		HeroAttributeComponent->Status->GroundSpeedRate = 4.0f;
+		GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->Status->GroundSpeedRate;
+
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillR();
@@ -269,10 +272,7 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	}
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-
-	HeroAttributeComponent->Status->GroundSpeedRate *= 2.0f;
-	GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->Status->GroundSpeedRate;
-
+	
 	bIsSkillR = true;
 }
 
@@ -373,9 +373,12 @@ void AYggHeroGreystone::MagicCircleOff()
 			PlayerController->SetControlRotation(NewControlRotation);
 		}
 
-		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);		
+	}
 
+	if (HasAuthority())
+	{	
 		GetCharacterMovement()->MaxWalkSpeed /= HeroAttributeComponent->Status->GroundSpeedRate;
-		HeroAttributeComponent->Status->GroundSpeedRate /= 2.0f;
+		HeroAttributeComponent->Status->GroundSpeedRate /= 4.0f;
 	}
 }

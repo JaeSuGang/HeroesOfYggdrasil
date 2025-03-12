@@ -74,8 +74,7 @@ public:
 	UWidgetComponent* GetWidgetComponent()
 	{
 		return WidgetComponent;
-	}
-	
+	}	
 
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
@@ -109,7 +108,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")
 	UYggHeroAnimInstance* HeroAnimInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
 	UHeroAttributeComponent* HeroAttributeComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
