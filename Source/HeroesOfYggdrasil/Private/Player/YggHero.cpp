@@ -229,8 +229,12 @@ void AYggHero::BeginPlay()
 	{
 		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
 	}
+	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 
-	
+	MainGameHUD->BindStartButtinPlayerFunc([this]()
+		{
+			Cast<UYggNicknameBarUserWidget>(WidgetComponent->GetWidget())->SetPlayerName();
+		});
 }
 
 void AYggHero::Tick(float DeltaTime)

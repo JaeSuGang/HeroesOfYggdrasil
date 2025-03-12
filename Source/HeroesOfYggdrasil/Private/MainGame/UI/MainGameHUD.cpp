@@ -4,15 +4,18 @@
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/MainGameMode.h"
 #include "MainGame/UI/YggLobbyUserWidget.h"
+#include "MainGame/UI/YggNicknameBarUserWidget.h"
 #include "Core/YggPlayerState.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
 #include "Components/Widget.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "MainGame/StageManager.h"
+#include "Player/YggHero.h"
 
 void AMainGameHUD::BeginPlay()
 {
@@ -69,6 +72,7 @@ void AMainGameHUD::StartButton()
 	{
 		SM->StartGame();
 	}
+	StartButtinPlayerFunc();
 }
 
 void AMainGameHUD::ReadyButton()
@@ -136,5 +140,10 @@ void AMainGameHUD::EnableCrossHair(bool bIsVisible)
 			AIM->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+}
+
+void AMainGameHUD::BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc)
+{
+	StartButtinPlayerFunc = _StartButtinPlayerFunc;
 }
 
