@@ -120,19 +120,20 @@ public:
 	class USkeletalMesh* Mesh;
 };
 
-
-USTRUCT(BlueprintType)
-struct FEnemyConst : public UObject
+UCLASS(BlueprintType)
+class UEnemyConst : public UObject
 {
 	GENERATED_BODY()
 
-	FEnemyConst() {}
-	~FEnemyConst() {}
-
 public:
-	static FName EnemyAIDataName;
-};
+	static FName MainPanelName;
 
+	class AI
+	{
+	public:
+		static FName EnemyAIDataName;
+	};
+};
 
 
 
