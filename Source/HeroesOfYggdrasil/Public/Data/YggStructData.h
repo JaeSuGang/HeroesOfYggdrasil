@@ -37,11 +37,11 @@ struct FHeroBaseStatusInfoRow : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	float CurHp = 100.0f; 
+	float CurHP = 100.0f; 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	float MaxHp = 100.0f;
+	float MaxHP = 100.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	float HpRegen = 1.0f;
+	float HPRegen = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float GroundSpeedRate =1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
