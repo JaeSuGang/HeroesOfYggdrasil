@@ -88,7 +88,7 @@ void AYggHero::SetAimMode_Implementation(bool Value)
 		CameraBoom->SocketOffset = FVector(0.0f, 45.0f, 150.0f);
 	}
 	else {
-		CameraBoom->TargetArmLength = 450.0f;
+		CameraBoom->TargetArmLength = 700.0f;
 		CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
 	}
 }
@@ -108,7 +108,7 @@ void AYggHero::SetCamera_Implementation(FVector NewCameraLocation, FRotator NewC
 	StartSocketOffset = NewSocketOffset;
 
 	// 플레이 카메라.
-	TargetArmLength = 450.0f;
+	TargetArmLength = 700.0f;
 	TargetSocketOffset = FVector(0.0f, 0.0f, 200.0f);
 	TargetCameraLocation = StartCameraLocation;
 	TargetCameraRotation = FRotator(StartCameraRotation.Pitch, StartCameraRotation.Yaw + 180.0f, StartCameraRotation.Roll);
