@@ -14,5 +14,10 @@ UCLASS()
 class HEROESOFYGGDRASIL_API UBTTaskNode_Idle : public UEnemyBTTaskNode
 {
 	GENERATED_BODY()
-	
+	UBTTaskNode_Idle();
+
+public:
+
+	void Start(UBehaviorTreeComponent& _OwnerComp);
+	void TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds);
 };

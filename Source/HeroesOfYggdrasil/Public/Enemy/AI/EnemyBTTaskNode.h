@@ -28,6 +28,8 @@ public:
 
 	FPlayAIData& GetPlayAIData(UBehaviorTreeComponent& _OwnerComp);
 
+	void TargetCheck(UBehaviorTreeComponent& _OwnerComp);
+
 private:
 	EEnemyAIState EnemyAIStateValue;
 	

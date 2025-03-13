@@ -68,6 +68,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceRange = 500.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FName TargetGroupName = TEXT("None");
 };
 
 
