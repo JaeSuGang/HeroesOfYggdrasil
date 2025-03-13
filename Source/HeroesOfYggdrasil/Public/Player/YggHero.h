@@ -76,6 +76,11 @@ public:
 		return WidgetComponent;
 	}	
 
+	UInputMappingContext* GetInputMappingContext()
+	{
+		return InputMappingContext;
+	}
+
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 	virtual void BeginPlay() override;
