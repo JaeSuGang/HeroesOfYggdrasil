@@ -72,7 +72,7 @@ void AMainGameHUD::StartButton()
 	{
 		SM->StartGame();
 	}
-	StartButtinPlayerFunc();
+	//StartButtinPlayerFunc();
 }
 
 void AMainGameHUD::ReadyButton()
@@ -142,8 +142,8 @@ void AMainGameHUD::EnableCrossHair(bool bIsVisible)
 	}
 }
 
-void AMainGameHUD::BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc)
-{
-	StartButtinPlayerFunc = _StartButtinPlayerFunc;
-}
+//void AMainGameHUD::BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc)
+//{
+//	StartButtinPlayerFunc = _StartButtinPlayerFunc;
+//}
 
