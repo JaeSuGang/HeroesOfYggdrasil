@@ -8,6 +8,7 @@
 #include "EnhancedInputComponent.h"
 
 #include "MainGame/PlayerSelectZone.h"
+#include "Player/YggHero.h"
 
 AYggPlayerController::AYggPlayerController(const FObjectInitializer& ObjectInitializer)
     :
@@ -27,8 +28,8 @@ void AYggPlayerController::SetupInputComponent()
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
-		EnhancedInputComponent->BindAction(InputModeAction, ETriggerEvent::Started, this, &AYggPlayerController::SetMouseMode);
-		EnhancedInputComponent->BindAction(InputModeAction, ETriggerEvent::Completed, this, &AYggPlayerController::SetMouseMode);
+		EnhancedInputComponent->BindAction(InputModeAction, ETriggerEvent::Started, this, &AYggPlayerController::SetMouseMode, true);
+		EnhancedInputComponent->BindAction(InputModeAction, ETriggerEvent::Completed, this, &AYggPlayerController::SetMouseMode, false);
 	}
 
 
@@ -61,24 +62,37 @@ void AYggPlayerController::SetGenericTeamId_Implementation(const FGenericTeamId&
 	TeamID = _TeamID;
 }
 
-void AYggPlayerController::SetMouseMode(const FInputActionValue& Value)
+void AYggPlayerController::SetMouseMode(const FInputActionValue& Value, bool bIsMouseModeOn)
 {
-	bool bPressed = Value.Get<bool>();
-
-	if (bPressed)
+	if (bIsMouseModeOn)
 	{
-		int nX;
-		int nY;
+		int nX, nY;
 		GetViewportSize(nX, nY);
 		SetMouseLocation(nX / 2, nY / 2);
 		bShowMouseCursor = true;
+
+		SetInputMode(FInputModeGameAndUI{});
+		if (UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+		{
+			EnhancedInputSubsystem->AddMappingContext(UIModeMappingContext, (int)(EInputMappingContextPriority::UIMode));
+		}
+		if (AYggHero* Hero = Cast<AYggHero>(GetPawn()))
+		{
+			Hero->
+		}
 
 		GEngine->AddOnScreenDebugMessage(0, 1, FColor::Red, TEXT("Pressed"));
 	}
 	else
 	{
-		
 		bShowMouseCursor = false;
+
+		SetInputMode(FInputModeGameOnly{});
+		if (UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
+		{
+			EnhancedInputSubsystem->RemoveMappingContext(UIModeMappingContext);
+		}
+
 		GEngine->AddOnScreenDebugMessage(0, 1, FColor::Blue, TEXT("Released"));
 	}
 }

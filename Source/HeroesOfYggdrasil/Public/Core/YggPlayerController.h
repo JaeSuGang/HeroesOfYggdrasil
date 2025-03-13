@@ -11,6 +11,14 @@ struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
 
+UENUM()
+enum class EInputMappingContextPriority
+{
+	Character,
+	Controller,
+	UIMode
+};
+
 /**
  * 담당 코더 : 김경민
  */
@@ -36,7 +44,7 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetMouseMode(const FInputActionValue& Value);
+	void SetMouseMode(const FInputActionValue& Value, bool bIsMouseModeOn);
 
 	FGenericTeamId GetGenericTeamId() const override;
 
@@ -48,6 +56,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UInputMappingContext* DefaultMappingContext;	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UInputMappingContext* UIModeMappingContext;	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UInputAction* InputModeAction;
