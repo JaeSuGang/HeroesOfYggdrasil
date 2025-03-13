@@ -23,5 +23,6 @@ void UGreystoneRFall::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
         GreystoneCharacter->MagicCircleOff();
 
         GreystoneCharacter->GetHeroAttributeComponent()->AddTag(TEXT("Character.State.NotMoveable"));
+        GreystoneCharacter->GetHeroAttributeComponent()->AddTag(TEXT("Character.State.NotAttackable"));
     }
 }

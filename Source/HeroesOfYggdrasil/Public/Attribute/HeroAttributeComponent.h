@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Attribute/CharacterAttributeComponent.h"
+#include "Data/YggStructData.h"
 #include "HeroAttributeComponent.generated.h"
 
 /**
@@ -20,7 +21,9 @@ protected:
 public:
 	UPROPERTY(EditAnywhere)
 	UDataTable* Data;
-	
+
+	FHeroBaseStatusInfoRow* Status;
+
 	UPROPERTY(BlueprintReadOnly)
 	float SpeedRate = 1.0f;
 	UPROPERTY(BlueprintReadOnly)

@@ -37,7 +37,17 @@ void AEnemySpawner::SpawnStart()
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemySpawner::SpawningCall, SpawnDaley, true);
 }
 
-void AEnemySpawner::OnceSpawningCall(UClass* _Class, int32 _Count, double _Delay)
+//void AEnemySpawner::OnceSpawningCall(UClass* _Class, int32 _Count, double _Delay)
+//{
+//	OnceSpawnCount = 1;
+//	MaxSpawnCount = _Count;
+//	SpawningActor = _Class;
+//	SpawnDaley = _Delay;
+//
+//	SpawnStart();
+//}
+
+void AEnemySpawner::OnceSpawningCall_Implementation(UClass* _Class, int32 _Count, double _Delay)
 {
 	OnceSpawnCount = 1;
 	MaxSpawnCount = _Count;

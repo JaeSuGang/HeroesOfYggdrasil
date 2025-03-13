@@ -28,8 +28,9 @@ private:
 	void SpawningCall();
 	void SpawnStart();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void OnceSpawningCall(UClass* _Class, int32 _Count, double _Delay);
+	void OnceSpawningCall_Implementation(UClass* _Class, int32 _Count, double _Delay);
 
 private:
 	FTimerHandle TimerHandle = {};

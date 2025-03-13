@@ -14,6 +14,8 @@
 // Movement
 #include "GameFramework/CharacterMovementComponent.h"
 
+#include "Animation/YggHeroAnimInstance.h"
+
 
 // Tag
 #include "Attribute/HeroAttributeComponent.h"
@@ -153,7 +155,7 @@ void AYggHeroKhaimera::MulticastAttack_Implementation(int ServerAttackIndex)
 {
 	CurAttackIndex = ServerAttackIndex; // 서버에서 동기화된 값을 클라이언트가 받음
 	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurAttackIndex);
-	PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
+	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
 #pragma endregion
 
@@ -184,7 +186,7 @@ void AYggHeroKhaimera::ServerSkillQ_Implementation()
 void AYggHeroKhaimera::MulticastSkillQ_Implementation()
 {
 	FName MontageName = TEXT("SkillQ");
-	PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
+	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
 
 #pragma endregion
@@ -218,7 +220,7 @@ void AYggHeroKhaimera::ServerSkillE_Implementation()
 void AYggHeroKhaimera::MulticastSkillE_Implementation()
 {
 	FName MontageName = TEXT("SkillE");
-	PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
+	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
 #pragma endregion
 
@@ -250,7 +252,7 @@ void AYggHeroKhaimera::ServerSkillR_Implementation()
 void AYggHeroKhaimera::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
-	PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
+	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
 #pragma endregion
 

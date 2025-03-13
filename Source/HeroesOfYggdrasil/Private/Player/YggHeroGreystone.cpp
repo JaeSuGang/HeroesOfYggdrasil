@@ -23,6 +23,10 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Animation/HeroGreystoneAnimInstance.h"
+#include "Components/CapsuleComponent.h"
+
+#include "Engine/DataTable.h"
+#include "Data/YggStructData.h"
 
 AYggHeroGreystone::AYggHeroGreystone()
 {
@@ -36,8 +40,7 @@ void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurAttackIndex = 0;
-	MaxAttackIndex = 4;
+	HeroAttributeComponent->Status = HeroAttributeComponent->Data->FindRow<FHeroBaseStatusInfoRow>(TEXT("Greystone"), TEXT("Context"));
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
@@ -123,9 +126,9 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 {
 	if (bIsSkillR && !(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
 	{
+		RFall();
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		HeroAnimInstance->JumpMontage(TEXT("SkillR"), TEXT("GreystoneRFall"));
 		MagicCircleOff();
 	}
 
@@ -143,7 +146,7 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 		MulticastAttack(CurAttackIndex);
 
 		CurAttackIndex++;
-		if (CurAttackIndex == MaxAttackIndex)
+		if (CurAttackIndex == HeroAttributeComponent->Status->MaxAttackIndex)
 		{
 			CurAttackIndex = 0;
 		}
@@ -171,7 +174,7 @@ void AYggHeroGreystone::MulticastAttack_Implementation(int ServerAttackIndex)
 		MontageName = *FString::Printf(TEXT("FAttack%d"), CurAttackIndex);
 	}
 	
-	 PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
@@ -182,8 +185,6 @@ void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 
 	if (HasAuthority())
 	{
-		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
-		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
 		MulticastSkillQ();
 	}
 	else
@@ -200,7 +201,7 @@ void AYggHeroGreystone::ServerSkillQ_Implementation()
 void AYggHeroGreystone::MulticastSkillQ_Implementation()
 {
 	FName MontageName = TEXT("SkillQ");
-	PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
@@ -229,7 +230,7 @@ void AYggHeroGreystone::ServerSkillE_Implementation()
 void AYggHeroGreystone::MulticastSkillE_Implementation()
 {
 	FName MontageName = TEXT("SkillE");
-	PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
@@ -239,9 +240,12 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;	
 
 	Super::SkillR(Value);
-		
+
 	if (HasAuthority())
 	{
+		HeroAttributeComponent->Status->GroundSpeedRate = 4.0f;
+		GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->Status->GroundSpeedRate;
+
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillR();
@@ -267,6 +271,8 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 		PlayerController->SetControlRotation(NewControlRotation);
 	}
 
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	
 	bIsSkillR = true;
 }
 
@@ -278,7 +284,29 @@ void AYggHeroGreystone::ServerSkillR_Implementation()
 void AYggHeroGreystone::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
-	PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
+}
+
+void AYggHeroGreystone::RFall()
+{
+	if (HasAuthority())
+	{
+		MulticastRFall();
+	}
+	else
+	{
+		ServerRFall();
+	}
+}
+
+void AYggHeroGreystone::ServerRFall_Implementation()
+{
+	RFall();
+}
+
+void AYggHeroGreystone::MulticastRFall_Implementation()
+{
+	HeroAnimInstance->JumpMontage(TEXT("SkillR"), TEXT("GreystoneRFall"));
 }
 
 void AYggHeroGreystone::MagicCircleOn()
@@ -344,5 +372,13 @@ void AYggHeroGreystone::MagicCircleOff()
 			FRotator NewControlRotation = GetActorRotation();
 			PlayerController->SetControlRotation(NewControlRotation);
 		}
+
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);		
+	}
+
+	if (HasAuthority())
+	{	
+		GetCharacterMovement()->MaxWalkSpeed /= HeroAttributeComponent->Status->GroundSpeedRate;
+		HeroAttributeComponent->Status->GroundSpeedRate /= 4.0f;
 	}
 }

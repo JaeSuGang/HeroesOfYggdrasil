@@ -65,5 +65,7 @@ public:
 
 	APlayerController* PC;
 	UYggLobbyUserWidget* LobbyUserWidget;
-	FString PlayerName;
+
+	//TFunction<void()> StartButtinPlayerFunc;
+	//void BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc);
 };

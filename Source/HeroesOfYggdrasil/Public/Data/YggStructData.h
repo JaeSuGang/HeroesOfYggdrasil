@@ -25,6 +25,8 @@ public:
 };
 
 
+
+
 USTRUCT(BlueprintType)
 struct FHeroBaseStatusInfoRow : public FTableRowBase
 {
@@ -34,7 +36,11 @@ struct FHeroBaseStatusInfoRow : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	float Hp;
+	float CurHp = 100.0f; 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float MaxHp = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float HpRegen = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float GroundSpeedRate =1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
@@ -42,7 +48,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float JumpRate = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	int MaxAttackIndex;
+	int CurAttackIndex = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	int MaxAttackIndex = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float AttPower = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float DefPower = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float CriticalChance = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float CriticalDamage = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FHeroSkillInfoRow SkillQInfo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")

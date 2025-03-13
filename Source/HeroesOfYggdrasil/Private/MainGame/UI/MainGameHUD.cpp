@@ -4,15 +4,18 @@
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/MainGameMode.h"
 #include "MainGame/UI/YggLobbyUserWidget.h"
+#include "MainGame/UI/YggNicknameBarUserWidget.h"
 #include "Core/YggPlayerState.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
 #include "Components/Widget.h"
+#include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "MainGame/StageManager.h"
+#include "Player/YggHero.h"
 
 void AMainGameHUD::BeginPlay()
 {
@@ -60,19 +63,24 @@ void AMainGameHUD::StartButton()
 {
 	AStageManager* SM = AStageManager::Get(GetWorld());
 
+	LobbyUserWidget->SetPlayerName();
+
 	AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
-	PS->SetPlayerName(PlayerName);
-	
+	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
+
 	if (SM)
 	{
 		SM->StartGame();
 	}
+	//StartButtinPlayerFunc();
 }
 
 void AMainGameHUD::ReadyButton()
 {
 	LobbyUserWidget->SetPlayerName();
-	PlayerName = LobbyUserWidget->GetPlayerName();
+
+	AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
+	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
 }
 
 void AMainGameHUD::ShowLobbyWidget()
@@ -133,4 +141,9 @@ void AMainGameHUD::EnableCrossHair(bool bIsVisible)
 		}
 	}
 }
+
+//void AMainGameHUD::BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc)
+//{
+//	StartButtinPlayerFunc = _StartButtinPlayerFunc;
+//}
 
