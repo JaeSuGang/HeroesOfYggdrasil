@@ -29,6 +29,10 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	UFUNCTION(BlueprintCallable)
+	APawn* GetSpawnedSelectable() const;
+
+public:
 	UFUNCTION(Server, Reliable)
 	void SetToPosition(int nIndex);
 

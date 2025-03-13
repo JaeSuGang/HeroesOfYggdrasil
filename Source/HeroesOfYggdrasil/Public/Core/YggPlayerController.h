@@ -58,7 +58,10 @@ protected:
 	UInputMappingContext* DefaultMappingContext;	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UInputMappingContext* UIModeMappingContext;	
+	UInputMappingContext* UIModeMappingContext;
+
+	UPROPERTY()
+	UInputMappingContext* CharacterMappingContextToRestore;	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UInputAction* InputModeAction;

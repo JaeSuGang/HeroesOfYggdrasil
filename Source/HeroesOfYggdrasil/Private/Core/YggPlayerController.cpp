@@ -75,10 +75,14 @@ void AYggPlayerController::SetMouseMode(const FInputActionValue& Value, bool bIs
 		if (UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
 			EnhancedInputSubsystem->AddMappingContext(UIModeMappingContext, (int)(EInputMappingContextPriority::UIMode));
-		}
-		if (AYggHero* Hero = Cast<AYggHero>(GetPawn()))
-		{
-			Hero->
+			if (AYggHero* Hero = Cast<AYggHero>(GetPawn()))
+			{
+				if (UInputMappingContext* IMC = Hero->GetInputMappingContext())
+				{
+					CharacterMappingContextToRestore = IMC;
+					EnhancedInputSubsystem->RemoveMappingContext(IMC);
+				}
+			}
 		}
 
 		GEngine->AddOnScreenDebugMessage(0, 1, FColor::Red, TEXT("Pressed"));
@@ -91,6 +95,11 @@ void AYggPlayerController::SetMouseMode(const FInputActionValue& Value, bool bIs
 		if (UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 		{
 			EnhancedInputSubsystem->RemoveMappingContext(UIModeMappingContext);
+			if (CharacterMappingContextToRestore)
+			{
+				EnhancedInputSubsystem->AddMappingContext(CharacterMappingContextToRestore, (int)EInputMappingContextPriority::Character);
+
+			}
 		}
 
 		GEngine->AddOnScreenDebugMessage(0, 1, FColor::Blue, TEXT("Released"));
