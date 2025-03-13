@@ -65,4 +65,7 @@ public:
 
 	APlayerController* PC;
 	UYggLobbyUserWidget* LobbyUserWidget;
+
+	//TFunction<void()> StartButtinPlayerFunc;
+	//void BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc);
 };

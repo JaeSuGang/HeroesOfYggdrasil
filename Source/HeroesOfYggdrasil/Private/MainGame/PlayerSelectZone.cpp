@@ -93,6 +93,11 @@ void APlayerSelectZone::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME(APlayerSelectZone, CurrentTableIndex);
 }
 
+APawn* APlayerSelectZone::GetSpawnedSelectable() const
+{
+	return SpawnedSelectable;
+}
+
 void APlayerSelectZone::SetToPosition_Implementation(int nIndex)
 {
 	TActorIterator<APlayerStart> Iter(GetWorld());
