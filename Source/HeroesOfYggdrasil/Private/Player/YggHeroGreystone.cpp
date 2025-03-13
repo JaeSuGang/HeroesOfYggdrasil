@@ -102,8 +102,8 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 
 	if (HasAuthority())
 	{
-		// HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		// HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastAttack(CurAttackIndex);
 
 		CurAttackIndex++;
@@ -115,7 +115,6 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 	else
 	{
 		ServerAttack();
-		return;
 	}
 }
 
@@ -128,6 +127,7 @@ void AYggHeroGreystone::MulticastAttack_Implementation(int ServerAttackIndex)
 {
 	CurAttackIndex = ServerAttackIndex;
 	
+<<<<<<< Updated upstream
 	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurAttackIndex);
 	
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.Buff.FastAttackSpeed")))
@@ -136,6 +136,11 @@ void AYggHeroGreystone::MulticastAttack_Implementation(int ServerAttackIndex)
 	}
 	
 	 PlayMontage(MontageName);
+=======
+	FName MontageName = *FString::Printf(TEXT("Attack"));
+
+	HeroAnimInstance->PlayMontage(MontageName);
+>>>>>>> Stashed changes
 }
 
 void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
@@ -227,5 +232,105 @@ void AYggHeroGreystone::ServerSkillR_Implementation()
 void AYggHeroGreystone::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
+<<<<<<< Updated upstream
 	PlayMontage(MontageName);
+=======
+	HeroAnimInstance->PlayMontage(MontageName);
+}
+
+void AYggHeroGreystone::RFall()
+{
+	if (HasAuthority())
+	{
+		MulticastRFall();
+	}
+	else
+	{
+		ServerRFall();
+	}
+}
+
+void AYggHeroGreystone::ServerRFall_Implementation()
+{
+	RFall();
+}
+
+void AYggHeroGreystone::MulticastRFall_Implementation()
+{
+	HeroAnimInstance->JumpMontage(TEXT("SkillR"), TEXT("GreystoneRFall"));
+}
+
+void AYggHeroGreystone::MagicCircleOn()
+{
+	FVector WorldLocation, WorldDirection;
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+
+	if (PlayerController && PlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection))
+	{
+		FVector Start = WorldLocation;
+		FVector End = Start + (WorldDirection * 5000.0f);
+
+		FHitResult HitResult;
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, QueryParams))
+		{
+			FVector OutHitLocation = HitResult.ImpactPoint;
+
+			if (!IsValid(SkillRDecal))
+			{
+				SkillRDecal = UGameplayStatics::SpawnDecalAtLocation(
+					GetWorld(),
+					SkillRDecalMaterial,
+					FVector(1024.0f, 1024.0f, 1024.0f),
+					OutHitLocation,
+					FRotator(-90.0f, 0.0f, 0.0f),
+					0.0f
+				);
+			}
+			else
+			{
+				SkillRDecal->SetWorldLocation(OutHitLocation);
+			}
+		}
+	}
+}
+
+void AYggHeroGreystone::MagicCircleOff()
+{
+	bIsSkillR = false;
+
+	if (IsValid(SkillRDecal))
+	{
+		SetActorLocation(SkillRDecal->GetComponentLocation());
+
+		SkillRDecal->DestroyComponent();
+		SkillRDecal = nullptr;
+
+		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		if (PlayerController)
+		{
+			GetCharacterMovement()->bOrientRotationToMovement = true;
+
+			CameraBoom->bUsePawnControlRotation = true;
+			CameraBoom->TargetArmLength = 700.0f;
+			CameraBoom->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
+
+			PlayerController->bShowMouseCursor = false;
+			PlayerController->SetIgnoreLookInput(false);
+
+			FRotator NewControlRotation = GetActorRotation();
+			PlayerController->SetControlRotation(NewControlRotation);
+		}
+
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);		
+	}
+
+	if (HasAuthority())
+	{	
+		GetCharacterMovement()->MaxWalkSpeed /= HeroAttributeComponent->Status->GroundSpeedRate;
+		HeroAttributeComponent->Status->GroundSpeedRate /= 4.0f;
+	}
+>>>>>>> Stashed changes
 }
