@@ -98,7 +98,7 @@ struct FPlayAIData
 	~FPlayAIData() {}
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FAIData Data;
 
 	EEnemyAIState EnemyAIState = EEnemyAIState::Idle;
