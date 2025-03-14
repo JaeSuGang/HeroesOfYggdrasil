@@ -181,14 +181,13 @@ struct FDataTableRow : public FTableRowBase
 	FDataTableRow() {}
 	~FDataTableRow() {}
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	UDataTable* Resources;
 };
 
 
 /**
- * 언리얼에서는 무조건 UBlueprintFunctionLibrary
- * 언리얼의 규칙입니다.
+ * 
  */
 UCLASS()
 class HEROESOFYGGDRASIL_API UGlobalDataTable : public UBlueprintFunctionLibrary

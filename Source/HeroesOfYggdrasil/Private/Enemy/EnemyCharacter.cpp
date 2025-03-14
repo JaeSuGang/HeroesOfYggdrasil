@@ -20,7 +20,7 @@ AEnemyCharacter::AEnemyCharacter()
 
 void AEnemyCharacter::BeginPlay()
 {
-	EnemyAttributeComponent->AddTag(TEXT("Monster"));
+	
 	
 
 	if (DataKey == TEXT("") || true == DataKey.IsEmpty())
