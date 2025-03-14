@@ -15,23 +15,28 @@ AActor* UEnemyManager::CreateMonster(const FString& _ItemName, FVector _OriginPo
 	TSubclassOf<AEnemyCharacter> SubClass = UGlobalDataTable::GetEnemySpawnClass(GetWorld(), TEXT("BP_EnemyCharacter"));
 
 	FTransform Trans;
-	AEnemyCharacter* NewActor = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(SubClass, Trans);
-	if (nullptr == NewActor)
+	AEnemyCharacter* NewEnemyCharacter = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(SubClass, Trans);
+	if (nullptr == NewEnemyCharacter)
 	{
 		UE_LOG(LogTemp, Fatal, TEXT("%S(%u)> if (nullptr == ItemActor) Item Spawn Is Nullptr"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
 
-	NewActor->SetDataKey(_ItemName);
+	NewEnemyCharacter->SetDataKey(_ItemName);
 	Trans.SetLocation(_OriginPos);
-	NewActor->FinishSpawning(Trans);
-	AllEnemyCharacter.Add(NewActor);
+	NewEnemyCharacter->FinishSpawning(Trans);
+	AllEnemyCharacter.Add(NewEnemyCharacter);
 
-	return NewActor;
+	return NewEnemyCharacter;
 }
 
 void UEnemyManager::NetSyncMonster()
 {
+	for (size_t i = 0; i < AllEnemyCharacter.Num(); i++)
+	{
+		int CurAnimation = AllEnemyCharacter[i]->GetGMAnimInstance()->GetCurAnimationType();
+		AllEnemyCharacter[i]->ChangeAnimation_Multicast(CurAnimation);
+	}
 }
 
 
