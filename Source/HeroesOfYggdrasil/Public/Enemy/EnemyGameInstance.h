@@ -20,7 +20,6 @@ public:
 	UEnemyGameInstance();
 	~UEnemyGameInstance();
 
-	// 언리얼이 인식하게 만들어서 
 	UFUNCTION(BlueprintCallable, Category = "YggRandom")
 	FRandomStream& GetRandom()
 	{

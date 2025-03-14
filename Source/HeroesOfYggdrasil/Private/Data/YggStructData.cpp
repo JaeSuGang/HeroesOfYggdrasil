@@ -5,7 +5,7 @@
 #include "Enemy/EnemyCharacter.h"
 #include "Enemy/EnemyGameInstance.h"
 
-FName UEnemyConst::AI::EnemyAIDataName = TEXT("EnemyAIDataName");
+FName UEnemyConst::AI::EnemyAIDataName = TEXT("EnemyAIData");
 
 
 TSubclassOf<AEnemyCharacter> UGlobalDataTable::GetEnemySpawnClass(UWorld* _World, const FString& _Name)
