@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
-#include "GreystoneRLand.generated.h"
+#include "ComboResetNotify.generated.h"
 
 /**
  * 
  */
-UCLASS(meta = (DisplayName = "Greystone | Land"))
-class HEROESOFYGGDRASIL_API UGreystoneRLand : public UAnimNotify
+UCLASS(meta = (DisplayName = "Hero : Combo Reset"))
+class HEROESOFYGGDRASIL_API UComboResetNotify : public UAnimNotify
 {
 	GENERATED_BODY()
 

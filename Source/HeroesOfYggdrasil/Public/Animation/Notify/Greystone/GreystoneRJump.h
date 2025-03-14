@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (DisplayName = "Greystone | Jump"))
 class HEROESOFYGGDRASIL_API UGreystoneRJump : public UAnimNotify
 {
 	GENERATED_BODY()
