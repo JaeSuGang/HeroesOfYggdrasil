@@ -108,6 +108,7 @@ public:
 	class AEnemyAnimCharacter* SelfAnimPawn = nullptr;
 	class UEnemyBaseAnimInstance* UEnemyBaseAnimInstance = nullptr;
 	FVector OriginPos;
+	int AttackAnimationCount;
 
 };
 
@@ -141,6 +142,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	class USkeletalMesh* Mesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TMap<EEnemyAIState, UAnimMontage*> Animations;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TArray<UAnimMontage*> AttackAnimations;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	TSubclassOf<UAnimInstance> AnimationBluePrint;
 };
 
 UCLASS(BlueprintType)
@@ -157,6 +167,35 @@ public:
 };
 
 
+
+
+USTRUCT(BlueprintType)
+struct FDataTableRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FDataTableRow() {}
+	~FDataTableRow() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UDataTable* Resources;
+};
+
+
+/**
+ * 언리얼에서는 무조건 UBlueprintFunctionLibrary
+ * 언리얼의 규칙입니다.
+ */
+UCLASS()
+class HEROESOFYGGDRASIL_API UGlobalDataTable : public UBlueprintFunctionLibrary
+{
+	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintCallable)
+
+	static const FMonsterDataRow GetMonsterData(UWorld* _World, const FString& _Name);
+};
 
 
 
