@@ -27,6 +27,7 @@ AEnemyAIController::AEnemyAIController(const FObjectInitializer& ObjectInitializ
 	EnemyPerceptionComponent->bAutoRegister = true;
 
 	SetGenericTeamId(FGenericTeamId(1));
+	EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 
