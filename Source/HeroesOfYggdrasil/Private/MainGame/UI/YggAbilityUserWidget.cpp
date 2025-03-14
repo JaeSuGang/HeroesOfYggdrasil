@@ -3,3 +3,7 @@
 
 #include "MainGame/UI/YggAbilityUserWidget.h"
 
+void UYggAbilityUserWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+}
