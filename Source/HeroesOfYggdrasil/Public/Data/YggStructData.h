@@ -143,14 +143,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	class USkeletalMesh* Mesh;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TMap<EEnemyAIState, UAnimMontage*> Animations;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TArray<UAnimMontage*> AttackAnimations;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<UAnimInstance> AnimationBluePrint;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSubclassOf<class AEnemyCharacter> SpawnClass;
 };
 
 UCLASS(BlueprintType)
@@ -193,8 +197,10 @@ class HEROESOFYGGDRASIL_API UGlobalDataTable : public UBlueprintFunctionLibrary
 
 public:
 	UFUNCTION(BlueprintCallable)
-
+	static TSubclassOf<class AEnemyCharacter> GetEnemySpawnClass(UWorld* _World, const FString& _Name);
 	static const FMonsterDataRow GetMonsterData(UWorld* _World, const FString& _Name);
+
+
 };
 
 

@@ -2,25 +2,43 @@
 
 
 #include "Enemy/EnemyManager.h"
+#include "Data/YggStructData.h"
+#include "Enemy/EnemyCharacter.h"
 
-// Sets default values for this component's properties
 UEnemyManager::UEnemyManager()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+}
 
-	// ...
+AActor* UEnemyManager::CreateMonster(const FString& _ItemName, FVector _OriginPos)
+{
+	TSubclassOf<AEnemyCharacter> SubClass = UGlobalDataTable::GetEnemySpawnClass(GetWorld(), TEXT("BP_EnemyCharacter"));
+
+	FTransform Trans;
+	AEnemyCharacter* NewActor = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(SubClass, Trans);
+	if (nullptr == NewActor)
+	{
+		UE_LOG(LogTemp, Fatal, TEXT("%S(%u)> if (nullptr == ItemActor) Item Spawn Is Nullptr"), __FUNCTION__, __LINE__);
+		return nullptr;
+	}
+
+	NewActor->SetDataKey(_ItemName);
+	Trans.SetLocation(_OriginPos);
+	NewActor->FinishSpawning(Trans);
+	AllEnemyCharacter.Add(NewActor);
+
+	return NewActor;
+}
+
+void UEnemyManager::NetSyncMonster()
+{
 }
 
 
-// Called when the game starts
 void UEnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
 }
 
 
@@ -28,7 +46,5 @@ void UEnemyManager::BeginPlay()
 void UEnemyManager::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
