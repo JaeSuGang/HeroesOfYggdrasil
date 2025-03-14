@@ -31,6 +31,6 @@ public:
 	void TargetCheck(UBehaviorTreeComponent& _OwnerComp);
 
 private:
-	EEnemyAIState EnemyAIStateValue;
+	EEnemyAIState EnemyAIStateValue = EEnemyAIState::Idle;
 	
 };

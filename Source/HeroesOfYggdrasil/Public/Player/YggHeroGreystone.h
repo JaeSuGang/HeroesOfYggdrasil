@@ -21,6 +21,9 @@ protected:
 	virtual void Move(const FInputActionValue& Value) override;
 	void Jump(const FInputActionValue& Value);
 
+	void AttackPressed(const FInputActionValue& Value);
+	void AttackReleased(const FInputActionValue& Value);
+
 	virtual void Attack(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
 	void ServerAttack();
@@ -50,6 +53,7 @@ protected:
 	void ServerRFall();
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRFall();
+
 public:
 	AYggHeroGreystone();
 	~AYggHeroGreystone();
@@ -66,4 +70,7 @@ private:
 
 	UPROPERTY()
 	UDecalComponent* SkillRDecal;
+
+	bool bAttackButtonPressed = false;
+	bool bIsAttacking = false;
 };

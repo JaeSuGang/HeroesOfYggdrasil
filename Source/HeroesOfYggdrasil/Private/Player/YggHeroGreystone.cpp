@@ -82,7 +82,11 @@ void AYggHeroGreystone::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		}
 		if (ActionMap.Find(FName("Attack")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Attack);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Started, this, &AYggHeroGreystone::AttackPressed);
+		}
+		if (ActionMap.Find(FName("Attack")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Completed, this, &AYggHeroGreystone::AttackReleased);
 		}
 		if (ActionMap.Find(FName("SkillQ")))
 		{
@@ -122,6 +126,22 @@ void AYggHeroGreystone::Jump(const FInputActionValue& Value)
 {
 }
 
+void AYggHeroGreystone::AttackPressed(const FInputActionValue& Value)
+{
+	bAttackButtonPressed = true;
+
+	// 공격 중이 아닐 때만 공격 시작
+	if (!bIsAttacking && !(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
+	{
+		Attack(Value);
+	}
+}
+
+void AYggHeroGreystone::AttackReleased(const FInputActionValue& Value)
+{
+	bAttackButtonPressed = false;
+}
+
 void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 {
 	if (bIsSkillR && !(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
@@ -137,12 +157,12 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 		return;
 	}
 
+	bIsAttacking = true;
+
 	Super::Attack(Value);
 	
 	if (HasAuthority())
 	{
-		// HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		// HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
 		MulticastAttack(CurAttackIndex);
 
 		CurAttackIndex++;
@@ -164,15 +184,8 @@ void AYggHeroGreystone::ServerAttack_Implementation()
 }
 
 void AYggHeroGreystone::MulticastAttack_Implementation(int ServerAttackIndex)
-{
-	CurAttackIndex = ServerAttackIndex;
-	
-	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurAttackIndex);
-	
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.Buff.FastAttackSpeed")))
-	{
-		MontageName = *FString::Printf(TEXT("FAttack%d"), CurAttackIndex);
-	}
+{	
+	FName MontageName = *FString::Printf(TEXT("Attack"));
 	
 	HeroAnimInstance->PlayMontage(MontageName);
 }
