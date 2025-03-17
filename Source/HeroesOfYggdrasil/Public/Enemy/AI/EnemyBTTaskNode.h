@@ -30,7 +30,9 @@ public:
 
 	void TargetCheck(UBehaviorTreeComponent& _OwnerComp);
 
-private:
+protected:
 	EEnemyAIState EnemyAIStateValue = EEnemyAIState::Idle;
+private:
+	
 	
 };
