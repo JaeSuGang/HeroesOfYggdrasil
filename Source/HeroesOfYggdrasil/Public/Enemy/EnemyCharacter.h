@@ -48,7 +48,8 @@ public:
 	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UPROPERTY(EditAnywhere)
-	UCharacterAttributeComponent* EnemyAttributeComponent;
+	class UEnemyAttributeComponent* EnemyAttributeComponent;
+
 private:
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	FString DataKey = "Minion_0";

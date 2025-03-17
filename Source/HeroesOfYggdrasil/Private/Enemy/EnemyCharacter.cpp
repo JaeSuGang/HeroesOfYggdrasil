@@ -10,19 +10,17 @@
 #include "Enemy/EnemyGameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Attribute/EnemyAttributeComponent.h"
 
 
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	EnemyAttributeComponent = CreateDefaultSubobject<UCharacterAttributeComponent>(TEXT("AttributeComponent"));
+	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("AttributeComponent"));
 }
 
 void AEnemyCharacter::BeginPlay()
 {
-	
-	
-
 	if (DataKey == TEXT("") || true == DataKey.IsEmpty())
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (ItemDataKey == TEXT("") || true == ItemDataKey.IsEmpty())"), __FUNCTION__, __LINE__);
@@ -52,6 +50,7 @@ void AEnemyCharacter::BeginPlay()
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	UEnemyBaseAnimInstance* NewEnemyAnimInstance = Cast<UEnemyBaseAnimInstance>(AnimInstance);
+
 	if (nullptr != NewEnemyAnimInstance)
 	{
 		for (auto AnimPair : FindData.Animations)
