@@ -29,8 +29,8 @@ private:
 	void SpawnStart();
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
-	void OnceSpawningCall(UClass* _Class, int32 _Count, double _Delay);
-	void OnceSpawningCall_Implementation(UClass* _Class, int32 _Count, double _Delay);
+	void OnceSpawningCall(UClass* _Class, const FString& _SpawnMonsterName, int32 _Count, double _Delay);
+	void OnceSpawningCall_Implementation(UClass* _Class, const FString& _SpawnMonsterName, int32 _Count, double _Delay);
 
 private:
 	FTimerHandle TimerHandle = {};
@@ -41,6 +41,7 @@ private:
 
 	FVector SpawnRange = FVector::ZeroVector;
 	UClass* SpawningActor = nullptr;
+	FString SpawnMonsterName = {};
 	float SpawnDaley = 0.f;
 
 	bool Invalid = false;
