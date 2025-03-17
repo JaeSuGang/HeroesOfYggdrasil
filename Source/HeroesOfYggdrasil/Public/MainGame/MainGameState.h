@@ -9,6 +9,7 @@
 
 class AStageManager;
 class APlayerManager;
+class AEnemyManager;
 
 /**
  * 담당 코더 : 김경민
@@ -30,6 +31,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	APlayerManager* GetPlayerManager() const;
 
+	UFUNCTION(BlueprintCallable)
+	AEnemyManager* GetEnemyManager() const;
+
 public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APlayerManager> PlayerManagerClass;
@@ -37,9 +41,15 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AStageManager> StageManagerClass;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AEnemyManager> EnemyManagerClass;
+
 	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	APlayerManager* PlayerManager;
 
 	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	AStageManager* StageManager;
+
+	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
+	AEnemyManager* EnemyManager;
 };

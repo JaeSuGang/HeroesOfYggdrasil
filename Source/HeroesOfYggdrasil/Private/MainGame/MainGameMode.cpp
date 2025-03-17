@@ -13,6 +13,7 @@
 #include "MainGame/PlayerSelectZone.h"
 #include "MainGame/StageManager.h"
 #include "MainGame/PlayerManager.h"
+#include "MainGame/EnemyManager.h"
 
 void AMainGameMode::InitGameState()
 {
@@ -33,6 +34,7 @@ void AMainGameMode::InitGameState()
 	/* Manager Initialization */
 	MGS->PlayerManager = GetWorld()->SpawnActor<APlayerManager>(MGS->PlayerManagerClass);
 	MGS->StageManager = GetWorld()->SpawnActor<AStageManager>(MGS->StageManagerClass);
+	MGS->EnemyManager = GetWorld()->SpawnActor<AEnemyManager>(MGS->EnemyManagerClass);
 }
 
 void AMainGameMode::BeginPlay()
