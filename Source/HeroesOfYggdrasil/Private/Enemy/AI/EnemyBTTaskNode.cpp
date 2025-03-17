@@ -60,10 +60,10 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 
 	if (nullptr == TargetActor)
 	{
-		TArray<AActor*> OutActors;
+		/*TArray<AActor*> OutActors;
 		UGameplayStatics::GetAllActorsWithTag(GetWorld(), PlayAIData.Data.TargetGroupName, OutActors);
 
-		AActor* CheckActor = nullptr;
+		
 		float CurTargetDistance = TNumericLimits<float>::Max();
 		for (size_t i = 0; i < OutActors.Num(); i++)
 		{
@@ -72,6 +72,28 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 			if (TargetDis < PlayAIData.Data.TraceRange && TargetDis < CurTargetDistance)
 			{
 				TargetActor = CheckActor;
+			}
+		}
+		*/
+
+		// 태그 확인되면 수정 에정 
+
+		TArray<AActor*> AllActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
+
+	
+		AActor* CheckActor = nullptr;
+		float CurTargetDistance = TNumericLimits<float>::Max();
+		for (size_t i = 0; i < AllActors.Num(); i++)
+		{
+			if (FName("BP_YggHero") == AllActors[i]->GetName().Left(10))
+			{
+				CheckActor = AllActors[i];
+				float TargetDis = (SelfActor->GetActorLocation() - CheckActor->GetActorLocation()).Size();
+				if (TargetDis < PlayAIData.Data.TraceRange && TargetDis < CurTargetDistance)
+				{
+					TargetActor = CheckActor;
+				}
 			}
 		}
 
