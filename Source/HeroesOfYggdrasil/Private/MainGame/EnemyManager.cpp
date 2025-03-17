@@ -14,11 +14,12 @@ void AEnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	NetSyncMonster();
 }
 
-AActor* AEnemyManager::CreateMonster(const FString& _ItemName, FVector _OriginPos)
+AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _OriginPos)
 {
-	TSubclassOf<AEnemyCharacter> SubClass = UGlobalDataTable::GetEnemySpawnClass(GetWorld(), TEXT("BP_EnemyCharacter"));
+	TSubclassOf<AEnemyCharacter> SubClass = UGlobalDataTable::GetEnemySpawnClass(GetWorld(), _MonsterName);
 
 	FTransform Trans;
 	AEnemyCharacter* NewEnemyCharacter = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(SubClass, Trans);
@@ -28,7 +29,7 @@ AActor* AEnemyManager::CreateMonster(const FString& _ItemName, FVector _OriginPo
 		return nullptr;
 	}
 
-	NewEnemyCharacter->SetDataKey(_ItemName);
+	NewEnemyCharacter->SetDataKey(_MonsterName);
 	Trans.SetLocation(_OriginPos);
 	NewEnemyCharacter->FinishSpawning(Trans);
 	AllEnemyCharacter.Add(NewEnemyCharacter);
@@ -36,7 +37,7 @@ AActor* AEnemyManager::CreateMonster(const FString& _ItemName, FVector _OriginPo
 	return NewEnemyCharacter;
 }
 
-void AEnemyManager::NetSyncMonster()
+void AEnemyManager::NetSyncMonster_Implementation()
 {
 	for (size_t i = 0; i < AllEnemyCharacter.Num(); i++)
 	{

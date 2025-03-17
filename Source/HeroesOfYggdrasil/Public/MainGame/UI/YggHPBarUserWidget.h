@@ -19,7 +19,8 @@ class HEROESOFYGGDRASIL_API UYggHPBarUserWidget : public UYggUserWidget
 public:
 	void NativeOnInitialized() override;
 
-	void UpdateHPBar(float CurHP, float MaxHP);
+	UFUNCTION(BlueprintCallable)
+	void UpdateHPBar();
 
 	UFUNCTION(BlueprintCallable)
 	void UIUpdate();

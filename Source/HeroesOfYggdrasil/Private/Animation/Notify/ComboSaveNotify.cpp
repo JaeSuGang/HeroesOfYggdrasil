@@ -14,10 +14,10 @@ void UComboSaveNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
     if (!Hero) return;
 
     UHeroAttributeComponent* AttrComp = Hero->GetHeroAttributeComponent();
-    if (!AttrComp || !AttrComp->Status) return;
+    if (!AttrComp) return;
 
-    AttrComp->Status->CurAttackIndex += 1;
+    // AttrComp->Status.CurAttackIndex += 1;
     AttrComp->AddTag(TEXT("Character.State.NotAttackable"));
 
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%d"), AttrComp->Status->CurAttackIndex));
+    // GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%d"), AttrComp->Status.CurAttackIndex));
 }

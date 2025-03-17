@@ -1,6 +1,5 @@
 // Coded By AssortRock Unreal Engine Class Project
 
-
 #include "Animation/Notify/ComboResetNotify.h"
 #include "Player/YggHero.h"
 #include "Attribute/HeroAttributeComponent.h"
@@ -14,10 +13,10 @@ void UComboResetNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBa
     if (!Hero) return;
 
     UHeroAttributeComponent* AttrComp = Hero->GetHeroAttributeComponent();
-    if (!AttrComp || !AttrComp->Status) return;
+    if (!AttrComp) return;
 
-    AttrComp->Status->CurAttackIndex = 0;
-    AttrComp->AddTag(TEXT("Character.State.NotAttackable"));
+    // AttrComp->Status.CurAttackIndex = 0;
+    AttrComp->RemoveTag(TEXT("Character.State.NotAttackable"));
 
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Combo Reset"));
 }

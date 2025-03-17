@@ -16,16 +16,14 @@ class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UCharacterAttribute
 {
 	GENERATED_BODY()
 
-protected:
-
 public:
 	UPROPERTY(EditAnywhere)
 	UDataTable* Data;
-
-	FHeroBaseStatusInfoRow* Status;
 
 	UPROPERTY(BlueprintReadOnly)
 	float SpeedRate = 1.0f;
 	UPROPERTY(BlueprintReadOnly)
 	float JumpRate = 1.0f;
+	
+private:
 };
