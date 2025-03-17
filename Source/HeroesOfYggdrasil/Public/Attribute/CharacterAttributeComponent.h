@@ -6,7 +6,7 @@
 #include "Attribute/AttributeComponent.h"
 #include "CharacterAttributeComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTakeDamage, float, NewHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHealthChanged);
 
 /**
  * 담당 : 김경민
@@ -18,20 +18,25 @@ class HEROESOFYGGDRASIL_API UCharacterAttributeComponent : public UAttributeComp
 
 public:
 
+protected:
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_TakeDamage(float fAmount);
 
-	UFUNCTION(Client, Reliable, BlueprintCallable)
-	void Client_OnTakeDamage(float fAmount);
-	
 public:
 	UPROPERTY(BlueprintAssignable)
-	FOnTakeDamage Delegate_OnTakeDamage;
+	FOnHealthChanged ClientDelegate_OnHealthChanged;
+
+public:
+	UFUNCTION()
+	void OnRep_Hp();
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(ReplicatedUsing=OnRep_Hp, EditAnywhere)
 	float Hp;
 
-	
+	UPROPERTY(Replicated, EditAnywhere)
+	float MaxHp;
 };

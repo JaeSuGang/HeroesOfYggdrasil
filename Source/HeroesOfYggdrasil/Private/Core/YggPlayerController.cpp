@@ -9,6 +9,7 @@
 
 #include "MainGame/PlayerSelectZone.h"
 #include "Player/YggHero.h"
+#include "Attribute/CharacterAttributeComponent.h"
 
 AYggPlayerController::AYggPlayerController(const FObjectInitializer& ObjectInitializer)
     :
@@ -48,12 +49,12 @@ void AYggPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME(AYggPlayerController, TeamID);
 }
 
-void AYggPlayerController::Test()
+void AYggPlayerController::TestTakeDamage(float fDamage)
 {
-	APlayerSelectZone* PSZ = Cast<APlayerSelectZone>(GetPawn());
-	if (PSZ)
+	GEngine->AddOnScreenDebugMessage(0, 1, FColor::Red, FString::Printf(TEXT("Damage Taken : %f"), fDamage));
+	if (UCharacterAttributeComponent* Attribute = GetPawn()->GetComponentByClass<UCharacterAttributeComponent>())
 	{
-
+		Attribute->Server_TakeDamage(fDamage);
 	}
 }
 
