@@ -109,7 +109,6 @@ void AMainGameHUD::ShowMainGameWidget()
 
 		AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
 		
-
 		CurrentWidget->AddToViewport();
 	}
 
