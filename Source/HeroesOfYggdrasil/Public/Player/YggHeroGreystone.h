@@ -73,4 +73,9 @@ private:
 
 	bool bAttackButtonPressed = false;
 	bool bIsAttacking = false;
+
+	FTimerHandle AttackStopCheckHandle;
+
+	int CurAttackIndex = 0;
+	int MaxAttackIndex = 4;
 };

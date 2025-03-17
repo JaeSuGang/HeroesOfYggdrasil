@@ -40,7 +40,7 @@ void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	HeroAttributeComponent->Status = HeroAttributeComponent->Data->FindRow<FHeroBaseStatusInfoRow>(TEXT("Greystone"), TEXT("Context"));
+	// HeroAttributeComponent->Status = *(HeroAttributeComponent->Data->FindRow<FHeroBaseStatusInfoRow>(TEXT("Greystone"), TEXT("Context")));
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
@@ -139,7 +139,52 @@ void AYggHeroGreystone::AttackPressed(const FInputActionValue& Value)
 
 void AYggHeroGreystone::AttackReleased(const FInputActionValue& Value)
 {
-	bAttackButtonPressed = false;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("AttackReleased"));
+
+	UAnimMontage* CurrentPlayingMontage = HeroAnimInstance->GetCurrentActiveMontage();
+
+	if (CurrentPlayingMontage)
+	{
+		FString SectionName = FString::Printf(TEXT("StopAtt%d"), CurAttackIndex);
+		FName CurrentSectionName(*SectionName);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, SectionName);
+				
+		FTimerHandle TimerHandle;
+		float ElapsedTime = 0.0f;
+		float MaxWaitTime = 2.0f;
+
+		GetWorld()->GetTimerManager().SetTimer(
+			AttackStopCheckHandle,
+			[this, SectionName, CurrentSectionName, CurrentPlayingMontage, MaxWaitTime, ElapsedTime]() mutable
+		{
+			ElapsedTime += 0.01f;
+
+			FName CurrentSection = this->HeroAnimInstance->Montage_GetCurrentSection(CurrentPlayingMontage);
+
+			if (CurrentSection == CurrentSectionName)
+			{
+				this->CurAttackIndex = 0;
+				this->HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
+				this->GetWorld()->GetTimerManager().ClearTimer(AttackStopCheckHandle);
+
+				this->bIsAttacking = false;
+				this->bAttackButtonPressed = false;
+				this->HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
+			}
+			else if (ElapsedTime >= MaxWaitTime)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Timer Cleared: Section Not Found in Time"));
+				this->GetWorld()->GetTimerManager().ClearTimer(AttackStopCheckHandle);
+
+				this->bIsAttacking = false;
+				this->bAttackButtonPressed = false;
+				this->HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
+			}
+		},
+			0.01f, true
+		);
+	}
 }
 
 void AYggHeroGreystone::Attack(const FInputActionValue& Value)
@@ -166,7 +211,7 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 		MulticastAttack(CurAttackIndex);
 
 		CurAttackIndex++;
-		if (CurAttackIndex == HeroAttributeComponent->Status->MaxAttackIndex)
+		if (CurAttackIndex == MaxAttackIndex)
 		{
 			CurAttackIndex = 0;
 		}
@@ -256,8 +301,8 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->Status->GroundSpeedRate = 4.0f;
-		GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->Status->GroundSpeedRate;
+		// HeroAttributeComponent->Status.GroundSpeedRate = 4.0f;
+		// GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->Status.GroundSpeedRate;
 
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -391,7 +436,7 @@ void AYggHeroGreystone::MagicCircleOff()
 
 	if (HasAuthority())
 	{	
-		GetCharacterMovement()->MaxWalkSpeed /= HeroAttributeComponent->Status->GroundSpeedRate;
-		HeroAttributeComponent->Status->GroundSpeedRate /= 4.0f;
+		// GetCharacterMovement()->MaxWalkSpeed /= HeroAttributeComponent->Status.GroundSpeedRate;
+		// HeroAttributeComponent->Status.GroundSpeedRate /= 4.0f;
 	}
 }
