@@ -20,14 +20,14 @@ void UEnemyBaseAnimInstance::NativeUpdateAnimation(float _DeltaSeconds)
 	Super::NativeUpdateAnimation(_DeltaSeconds);
 }
 
-void UEnemyBaseAnimInstance::ChangeAnimation(int _CurAnimationType, FName _SectionName)
+void UEnemyBaseAnimInstance::ChangeAnimation(EEnemyAIState _CurAnimationType, FName _SectionName)
 {
-	if (false == AnimMontages.Contains(_CurAnimationType))
+	if (false == AnimMontages.Contains(static_cast<int>(_CurAnimationType)))
 	{
 		return;
 	}
 
-	UAnimMontage* Montage = AnimMontages[_CurAnimationType];
+	UAnimMontage* Montage = AnimMontages[static_cast<int>(_CurAnimationType)];
 
 	if (CurMontage == Montage)
 	{

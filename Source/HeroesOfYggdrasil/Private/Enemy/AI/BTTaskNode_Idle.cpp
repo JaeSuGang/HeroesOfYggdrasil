@@ -27,6 +27,7 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	FPlayAIData& AIData = GetPlayAIData(_OwnerComp);
+
 	/*if (AIData.CurPatrolTime > AIData.Data.MaxPatrolTime)
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Trace);

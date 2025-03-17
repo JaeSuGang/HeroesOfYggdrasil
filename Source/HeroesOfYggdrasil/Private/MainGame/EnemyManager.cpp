@@ -40,7 +40,7 @@ void AEnemyManager::NetSyncMonster()
 {
 	for (size_t i = 0; i < AllEnemyCharacter.Num(); i++)
 	{
-		int CurAnimation = AllEnemyCharacter[i]->GetGMAnimInstance()->GetCurAnimationType();
+		int CurAnimation = static_cast<int>(AllEnemyCharacter[i]->GetGMAnimInstance()->GetCurAnimationType());
 		AllEnemyCharacter[i]->ChangeAnimation_Multicast(CurAnimation);
 	}
 }

@@ -51,6 +51,8 @@ FPlayAIData& UEnemyBTTaskNode::GetPlayAIData(UBehaviorTreeComponent& _OwnerComp)
 	return Cast<UAIDataObject>(AIData)->PlayData;
 }
 
+TArray<AActor*> OutActors;
+
 void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 {
 	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
@@ -60,10 +62,9 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 
 	if (nullptr == TargetActor)
 	{
-		/*TArray<AActor*> OutActors;
-		UGameplayStatics::GetAllActorsWithTag(GetWorld(), PlayAIData.Data.TargetGroupName, OutActors);
+		UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Character"), OutActors);
 
-		
+		/*
 		float CurTargetDistance = TNumericLimits<float>::Max();
 		for (size_t i = 0; i < OutActors.Num(); i++)
 		{

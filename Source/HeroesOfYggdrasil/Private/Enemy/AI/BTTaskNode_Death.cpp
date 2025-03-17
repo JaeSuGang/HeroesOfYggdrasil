@@ -14,4 +14,5 @@ void UBTTaskNode_Death::Start(UBehaviorTreeComponent& _OwnerComp)
 
 void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
+	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 }

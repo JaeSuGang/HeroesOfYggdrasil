@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "GameplayTagContainer.h"
-
+#include"Data/YggEnumData.h"
 #include "EnemyBaseAnimInstance.generated.h"
 
 /**
@@ -38,16 +38,16 @@ public:
 	template<typename EnumType>
 	void ChangeAnimation(EnumType _Animation, FName _SectionName = TEXT("None"))
 	{
-		return ChangeAnimation(static_cast<int>(_Animation), _SectionName);
+		return ChangeAnimation(static_cast<EEnemyAIState>(_Animation), _SectionName);
 	}
 
-	int GetCurAnimationType()
+	EEnemyAIState GetCurAnimationType()
 	{
 		return CurAnimationType;
 	}
 
 
-	void ChangeAnimation(int _Animation, FName _SectionName = TEXT("None"));
+	void ChangeAnimation(EEnemyAIState _Animation, FName _SectionName = TEXT("None"));
 
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void ChangeAnimationEvent(UAnimMontage* _Montage, FName _SectionName);
@@ -81,7 +81,7 @@ protected:
 
 
 private:
-	int CurAnimationType = 0;
+	EEnemyAIState CurAnimationType = EEnemyAIState::Idle;
 
 	FName SectionName = TEXT("");
 
