@@ -14,6 +14,7 @@ void AEnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	NetSyncMonster();
 }
 
 AActor* AEnemyManager::CreateMonster(const FString& _ItemName, FVector _OriginPos)
