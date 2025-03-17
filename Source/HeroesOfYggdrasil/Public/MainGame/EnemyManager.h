@@ -17,15 +17,14 @@ class HEROESOFYGGDRASIL_API AEnemyManager : public AInfo
 	AEnemyManager();
 
 
+	UFUNCTION(Server, Reliable)
 	void NetSyncMonster();
 
 protected:
-	
 	virtual void BeginPlay() override;
 
 public:
 	AActor* CreateMonster(const FString& _MonsterName, FVector _OriginPos);
 
 	TArray<class AEnemyCharacter*> AllEnemyCharacter;
-
 };

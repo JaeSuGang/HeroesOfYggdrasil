@@ -14,6 +14,7 @@ void AEnemyManager::BeginPlay()
 {
 	Super::BeginPlay();
 
+	NetSyncMonster();
 }
 
 AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _OriginPos)
@@ -36,7 +37,7 @@ AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _Origi
 	return NewEnemyCharacter;
 }
 
-void AEnemyManager::NetSyncMonster()
+void AEnemyManager::NetSyncMonster_Implementation()
 {
 	for (size_t i = 0; i < AllEnemyCharacter.Num(); i++)
 	{
