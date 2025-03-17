@@ -37,7 +37,7 @@ protected:
 
 public:
 	UFUNCTION(Exec)
-	void Test();
+	void TestTakeDamage(float fDamage);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void SetGenericTeamId(const FGenericTeamId& _TeamID) override;

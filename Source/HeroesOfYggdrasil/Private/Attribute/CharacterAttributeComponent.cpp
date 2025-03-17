@@ -3,22 +3,30 @@
 
 #include "Attribute/CharacterAttributeComponent.h"
 #include "GameFramework/Character.h"
+#include "Net/UnrealNetwork.h"
 
 
 void UCharacterAttributeComponent::Server_TakeDamage_Implementation(float fAmount)
 {
 	Hp -= fAmount;
-	Client_OnTakeDamage(fAmount);
-}
-
-void UCharacterAttributeComponent::Client_OnTakeDamage_Implementation(float fAmount)
-{
-	if (ACharacter* Character = Cast<ACharacter>(GetOwner()))
+	if (GetWorld()->GetAuthGameMode())
 	{
-		if (Character->HasLocalNetOwner())
-		{
-			Delegate_OnTakeDamage.Broadcast(fAmount);
-		}
+		OnRep_Hp();
 	}
 }
 
+void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UCharacterAttributeComponent, Hp);
+	DOREPLIFETIME(UCharacterAttributeComponent, MaxHp);
+}
+
+void UCharacterAttributeComponent::OnRep_Hp()
+{
+	if (GetOwner()->HasLocalNetOwner())
+	{
+		ClientDelegate_OnHealthChanged.Broadcast();
+	}
+}
