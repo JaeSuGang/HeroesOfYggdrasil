@@ -24,11 +24,17 @@ void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME(AMainGameState, PlayerManager);
 	DOREPLIFETIME(AMainGameState, StageManager);
+	DOREPLIFETIME(AMainGameState, EnemyManager);
 }
 
 APlayerManager* AMainGameState::GetPlayerManager() const
 {
 	return PlayerManager;
+}
+
+AEnemyManager* AMainGameState::GetEnemyManager() const
+{
+	return EnemyManager;
 }
 
 AStageManager* AMainGameState::GetStageManager() const
