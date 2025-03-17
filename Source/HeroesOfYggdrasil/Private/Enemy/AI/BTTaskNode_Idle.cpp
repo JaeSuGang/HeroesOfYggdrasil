@@ -8,6 +8,7 @@
 
 UBTTaskNode_Idle::UBTTaskNode_Idle()
 {
+	EnemyAIStateValue = EEnemyAIState::Idle;
 	bNotifyTick = true;
 }
 

@@ -13,6 +13,19 @@ UCLASS(Blueprintable)
 class HEROESOFYGGDRASIL_API AEnemyManager : public AInfo
 {
 	GENERATED_BODY()
+
+	AEnemyManager();
+
+	AActor* CreateMonster(const FString& _ItemName, FVector _OriginPos);
+
+	void NetSyncMonster();
+
+protected:
 	
+	virtual void BeginPlay() override;
+
 public:
+
+	TArray<class AEnemyCharacter*> AllEnemyCharacter;
+
 };

@@ -31,6 +31,7 @@ public:
 	void TargetCheck(UBehaviorTreeComponent& _OwnerComp);
 
 protected:
+	UPROPERTY(Category = "Enemy", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EEnemyAIState EnemyAIStateValue = EEnemyAIState::Idle;
 private:
 	

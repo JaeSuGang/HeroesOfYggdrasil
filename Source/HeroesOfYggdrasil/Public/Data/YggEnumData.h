@@ -32,6 +32,7 @@ enum class EEnemyAIState : uint8
 	Strafe UMETA(DisplayName = "와리가리"),
 	Trace UMETA(DisplayName = "추적"),
 	TraceBack UMETA(DisplayName = "복귀"),
+	TraceYggdrasil UMETA(DisplayName = "이그드라실공격"),
 	Hit UMETA(DisplayName = "피격"),
 	Death UMETA(DisplayName = "죽음"),
 	DeathFallen UMETA(DisplayName = "다운"),

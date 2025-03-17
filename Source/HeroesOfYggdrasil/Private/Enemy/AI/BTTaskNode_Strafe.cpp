@@ -56,9 +56,9 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	// 복귀
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 	float Size = TargetDir.Size();
-	/*if (Size >= PlayAIData.Data.TraceRange)
+	if (Size >= PlayAIData.Data.TraceRange)
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
 		return;
-	}*/
+	}
 }

@@ -3,3 +3,15 @@
 
 #include "Enemy/AI/BTTaskNode_Death.h"
 
+UBTTaskNode_Death::UBTTaskNode_Death()
+{
+	EnemyAIStateValue = EEnemyAIState::Death;
+}
+
+void UBTTaskNode_Death::Start(UBehaviorTreeComponent& _OwnerComp)
+{
+}
+
+void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
+{
+}
