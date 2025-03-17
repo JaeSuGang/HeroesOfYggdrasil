@@ -29,4 +29,5 @@ void UCharacterAttributeComponent::OnRep_Hp()
 	{
 		ClientDelegate_OnHealthChanged.Broadcast();
 	}
+	MulticastDelegate_OnHealthChanged.Broadcast();
 }

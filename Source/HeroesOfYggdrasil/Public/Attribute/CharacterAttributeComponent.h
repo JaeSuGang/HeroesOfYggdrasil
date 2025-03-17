@@ -29,6 +29,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged ClientDelegate_OnHealthChanged;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthChanged MulticastDelegate_OnHealthChanged;
+
 public:
 	UFUNCTION()
 	void OnRep_Hp();
