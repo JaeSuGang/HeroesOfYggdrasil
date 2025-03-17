@@ -17,7 +17,7 @@ void UCharacterAttributeComponent::Client_OnTakeDamage_Implementation(float fAmo
 	{
 		if (Character->HasLocalNetOwner())
 		{
-			// Delegate_OnTakeDamage.Broadcast();
+			Delegate_OnTakeDamage.Broadcast(fAmount);
 		}
 	}
 }
