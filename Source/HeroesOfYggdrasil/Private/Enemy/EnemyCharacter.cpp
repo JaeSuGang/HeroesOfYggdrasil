@@ -11,7 +11,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Attribute/EnemyAttributeComponent.h"
-
+#include "Attribute/CharacterAttributeComponent.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -30,7 +30,7 @@ void AEnemyCharacter::BeginPlay()
 	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
 	MonsterData = &FindData;
 	AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
-
+	
 
 	if (nullptr != Con)
 	{
@@ -43,6 +43,9 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.OriginPos = GetActorLocation();
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
+
+	EnemyAttributeComponent->Server_SetHp(AIData->PlayData.CurHP);
+	EnemyAttributeComponent->Server_SetMaxHp(MonsterData->AIData.MaxHP);
 
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);

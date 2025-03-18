@@ -18,7 +18,7 @@ TSubclassOf<AEnemyCharacter> UGlobalDataTable::GetEnemySpawnClass(UWorld* _World
 	}
 
 	FMonsterDataRow* Data = Inst->MonsterDataTable->FindRow<FMonsterDataRow>(*_Name, nullptr);
-
+	
 	return *Data->SpawnClass;
 }
 
