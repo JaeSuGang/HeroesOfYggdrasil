@@ -38,18 +38,18 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 		return;
 	}
 
-	
-
-
 	APawn* SelfActor = PlayAIData.SelfPawn;
+	
+	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+	FVector TargetAxis = FVector{ (0.0, 0.0f, 1.0f) };
 
 	if (RandomInt >= 5)
 	{
-		SelfActor->AddMovementInput((FVector::ForwardVector) * PlayAIData.Data.StrafeSpeed * _DeltaSeconds);
+		SelfActor->AddMovementInput(TargetDir.RotateAngleAxis(90.0f, TargetAxis));
 	}
 	else
 	{
-		SelfActor->AddMovementInput((FVector::BackwardVector) * PlayAIData.Data.StrafeSpeed * _DeltaSeconds);
+		SelfActor->AddMovementInput(TargetDir.RotateAngleAxis(-90.0f, TargetAxis));
 	}
 	
 	
@@ -64,7 +64,7 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	}
 
 	// 복귀
-	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+	
 	float Size = TargetDir.Size();
 	if (Size >= PlayAIData.Data.TraceRange)
 	{

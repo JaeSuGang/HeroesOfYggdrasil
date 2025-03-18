@@ -2,6 +2,8 @@
 
 
 #include "Enemy/AI/BTTaskNode_ApproachToAttack.h"
+#include "GameFramework/PawnMovementComponent.h"
+
 
 UBTTaskNode_ApproachToAttack::UBTTaskNode_ApproachToAttack()
 {
@@ -37,6 +39,9 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 
 	SelfActor->AddMovementInput(TargetDir);
+	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
+	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.ApproachSpeed;
+
 
 	if (TargetDir.Size() <= PlayAIData.Data.AttackRange)
 	{

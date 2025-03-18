@@ -37,6 +37,9 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 
+	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
+	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.TraceSpeed;
+
 	// 공격준비
 	if (TargetDir.Size() <= PlayAIData.Data.StrafeRange)
 	{

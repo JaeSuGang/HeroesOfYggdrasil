@@ -30,6 +30,9 @@ void UBTTaskNode_TraceBack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* 
 	FVector TargetDir = PlayAIData.OriginPos - SelfActor->GetActorLocation();
 	SelfActor->AddMovementInput(TargetDir);
 
+	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
+	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.TraceBackSpeed;
+
 	if (TargetDir.Size() < 100.0f)
 	{
 		PlayAIData.TargetActor = nullptr;

@@ -7,6 +7,7 @@
 #include "Data/YggEnumData.h"
 #include "Data/YggStructData.h"
 #include "Enemy/EnemyCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EnemyBTTaskNode.generated.h"
 
 /**

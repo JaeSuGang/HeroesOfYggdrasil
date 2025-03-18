@@ -88,19 +88,28 @@ public:
 	double StrafeRange = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double StrafeSpeed = 30.0f;
+	double StrafeSpeed = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double StrafeTime= 2.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double AttackRange = 50.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double ApproachSpeed = 600.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double YggAttackRange = 800.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double AttackTime = 1.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double TraceBackSpeed = 1200.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double TraceSpeed = 600.0f;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
