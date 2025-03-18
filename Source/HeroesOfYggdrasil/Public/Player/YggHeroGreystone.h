@@ -30,6 +30,12 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastAttack(int ServerAttackIndex);
 
+	void StopAttack();
+	UFUNCTION(Server, Reliable)
+	void ServerStopAttack();
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastStopAttack();
+
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
 	void ServerSkillQ();
@@ -75,7 +81,4 @@ private:
 	bool bIsAttacking = false;
 
 	FTimerHandle AttackStopCheckHandle;
-
-	int CurAttackIndex = 0;
-	int MaxAttackIndex = 4;
 };

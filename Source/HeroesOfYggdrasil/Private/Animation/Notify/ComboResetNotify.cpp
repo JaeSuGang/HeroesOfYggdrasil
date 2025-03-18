@@ -15,7 +15,7 @@ void UComboResetNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBa
     UHeroAttributeComponent* AttrComp = Hero->GetHeroAttributeComponent();
     if (!AttrComp) return;
 
-    // AttrComp->Status.CurAttackIndex = 0;
+    AttrComp->ResetComboAttack();
     AttrComp->RemoveTag(TEXT("Character.State.NotAttackable"));
 
     GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Combo Reset"));

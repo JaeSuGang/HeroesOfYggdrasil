@@ -11,6 +11,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 
 // Input
 #include "EnhancedInputSubsystems.h"
@@ -62,6 +63,11 @@ AYggHero::AYggHero()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	SceneCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("StatusCamera"));
+	SceneCaptureComponent2D->SetupAttachment(RootComponent);
+	SceneCaptureComponent2D->AddRelativeLocation(FVector(100.f, 0.0f, 100.0f));
+	SceneCaptureComponent2D->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
 
 	// 폰 입력 UEnhancedInputComponent 으로 변경
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
