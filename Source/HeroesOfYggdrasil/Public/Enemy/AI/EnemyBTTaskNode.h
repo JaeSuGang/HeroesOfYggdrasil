@@ -6,6 +6,7 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "Data/YggEnumData.h"
 #include "Data/YggStructData.h"
+#include "Enemy/EnemyCharacter.h"
 #include "EnemyBTTaskNode.generated.h"
 
 /**
@@ -34,6 +35,10 @@ protected:
 	UPROPERTY(Category = "Enemy", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EEnemyAIState EnemyAIStateValue = EEnemyAIState::Idle;
 private:
-	
+	UPROPERTY(EditAnywhere, Category = "Target")
+	FBlackboardKeySelector InTargetActorKey;
+
+	UPROPERTY(EditAnywhere, Category = "Target")
+	float RotationInterSpeed;
 	
 };

@@ -3,6 +3,7 @@
 
 #include "Enemy/AI/BTTaskNode_Strafe.h"
 
+
 UBTTaskNode_Strafe::UBTTaskNode_Strafe()
 {
 	EnemyAIStateValue = EEnemyAIState::Strafe;
@@ -10,6 +11,13 @@ UBTTaskNode_Strafe::UBTTaskNode_Strafe()
 
 void UBTTaskNode_Strafe::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+
+	if (nullptr != PlayAIData.SelfAnimPawn)
+	{
+		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
+	}
+
 	Random.Initialize(10);
 	RandomInt = Random.RandRange(0, 9);
 	Time = 0.0f;
@@ -29,6 +37,8 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 		ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
 		return;
 	}
+
+	
 
 
 	APawn* SelfActor = PlayAIData.SelfPawn;

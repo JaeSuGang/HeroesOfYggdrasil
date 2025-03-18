@@ -10,6 +10,12 @@ UBTTaskNode_Hit::UBTTaskNode_Hit()
 
 void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+
+	if (nullptr != PlayAIData.SelfAnimPawn)
+	{
+		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
+	}
 }
 
 void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
