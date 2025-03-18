@@ -40,6 +40,8 @@ void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
 
+	HeroAttributeComponent->SetCombo(4);
+
 	// HeroAttributeComponent->Status = *(HeroAttributeComponent->Data->FindRow<FHeroBaseStatusInfoRow>(TEXT("Greystone"), TEXT("Context")));
 }
 
@@ -131,21 +133,31 @@ void AYggHeroGreystone::AttackPressed(const FInputActionValue& Value)
 	bAttackButtonPressed = true;
 
 	// 공격 중이 아닐 때만 공격 시작
+
+	if (!(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("NotAttackable"));
+	}
+
 	if (!bIsAttacking && !(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Attack"));
+
 		Attack(Value);
 	}
 }
 
 void AYggHeroGreystone::AttackReleased(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("AttackReleased"));
-
 	UAnimMontage* CurrentPlayingMontage = HeroAnimInstance->GetCurrentActiveMontage();
+
+	HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
+
+	StopAttack();
 
 	if (CurrentPlayingMontage)
 	{
-		FString SectionName = FString::Printf(TEXT("StopAtt%d"), CurAttackIndex);
+		FString SectionName = FString::Printf(TEXT("StopAtt%d"), HeroAttributeComponent->GetCurComboAttack());
 		FName CurrentSectionName(*SectionName);
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, SectionName);
@@ -164,7 +176,7 @@ void AYggHeroGreystone::AttackReleased(const FInputActionValue& Value)
 
 			if (CurrentSection == CurrentSectionName)
 			{
-				this->CurAttackIndex = 0;
+				this->HeroAttributeComponent->ResetComboAttack();
 				this->HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
 				this->GetWorld()->GetTimerManager().ClearTimer(AttackStopCheckHandle);
 
@@ -208,12 +220,11 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 	
 	if (HasAuthority())
 	{
-		MulticastAttack(CurAttackIndex);
+		MulticastAttack(HeroAttributeComponent->GetCurComboAttack());
 
-		CurAttackIndex++;
-		if (CurAttackIndex == MaxAttackIndex)
+		if (HeroAttributeComponent->GetCurComboAttack() == HeroAttributeComponent->GetMaxComboAttack())
 		{
-			CurAttackIndex = 0;
+			HeroAttributeComponent->ResetComboAttack();
 		}
 	}
 	else
@@ -221,6 +232,30 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 		ServerAttack();
 		return;
 	}
+}
+
+void AYggHeroGreystone::StopAttack()
+{	
+	if (HasAuthority())
+	{
+		MulticastStopAttack();
+	}
+	else
+	{
+		ServerStopAttack();
+	}
+}
+
+void AYggHeroGreystone::ServerStopAttack_Implementation()
+{
+	StopAttack();
+}
+
+void AYggHeroGreystone::MulticastStopAttack_Implementation()
+{
+	UAnimMontage* CurrentPlayingMontage = HeroAnimInstance->GetCurrentActiveMontage();
+
+	HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
 }
 
 void AYggHeroGreystone::ServerAttack_Implementation()
