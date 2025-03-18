@@ -22,14 +22,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateHPBar();
 
-	UFUNCTION(BlueprintCallable)
-	void UIUpdate();
-
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* HPBar;
-
-private:
-	float CurHP;
-	float MaxHP;
 };
