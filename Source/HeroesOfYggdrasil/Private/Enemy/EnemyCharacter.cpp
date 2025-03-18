@@ -44,8 +44,12 @@ void AEnemyCharacter::BeginPlay()
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
 
-	EnemyAttributeComponent->Server_SetHp(AIData->PlayData.CurHP);
-	EnemyAttributeComponent->Server_SetMaxHp(MonsterData->AIData.MaxHP);
+	if (EnemyAttributeComponent != nullptr)
+	{
+		EnemyAttributeComponent->Server_SetHp(AIData->PlayData.CurHP);
+		EnemyAttributeComponent->Server_SetMaxHp(MonsterData->AIData.MaxHP);
+
+	}
 
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
