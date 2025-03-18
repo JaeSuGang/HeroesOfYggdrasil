@@ -94,7 +94,10 @@ public:
 	double StrafeTime= 2.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double AttackRange = 150.0f;
+	double AttackRange = 50.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double YggAttackRange = 500.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double AttackTime = 1.5f;

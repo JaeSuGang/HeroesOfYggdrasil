@@ -29,6 +29,9 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 
 	AActor* TargetActor = PlayAIData.TargetActor;
 
+	APawn* SelfActor = PlayAIData.SelfPawn;
+	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+
 	// 이동 중 플레이어 타겟 체크
 	TargetCheck(_OwnerComp);
 	
@@ -44,17 +47,16 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	// 감지 범위 안에 플레이어 들어오면 플레이어 추적
 	if (FName("BP_YggHero") == PlayAIData.TargetActor->GetName().Left(10))
 	{
+		PlayAIData.OriginPos = SelfActor->GetActorLocation();
 		ChangeState(_OwnerComp, EEnemyAIState::Trace);
 		return;
 	}
 
-	APawn* SelfActor = PlayAIData.SelfPawn;
-	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 
 	// 공격준비
-	if (TargetDir.Size() <= PlayAIData.Data.AttackRange)
+	if (TargetDir.Size() <= PlayAIData.Data.YggAttackRange)
 	{
-		ChangeState(_OwnerComp, EEnemyAIState::Strafe);
+		ChangeState(_OwnerComp, EEnemyAIState::Attack);
 		return;
 	}
 

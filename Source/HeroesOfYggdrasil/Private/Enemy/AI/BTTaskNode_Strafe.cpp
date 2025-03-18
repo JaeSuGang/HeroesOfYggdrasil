@@ -59,7 +59,7 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	if (Time <= 0.0f)
 	{
 		Time = PlayAIData.Data.StrafeTime;
-		ChangeState(_OwnerComp, EEnemyAIState::Attack);
+		ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
 		return;
 	}
 
