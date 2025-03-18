@@ -62,14 +62,5 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 
 	SelfActor->AddMovementInput(TargetDir);
 
-	// 일단 이그드라실 추적
-
-
-	// 일정거리 안의 플레이어 발견
-
-
-	// 플레이어한테 공격당했을 경우
-
-
 
 }

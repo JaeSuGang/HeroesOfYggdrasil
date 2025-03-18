@@ -71,6 +71,8 @@ void AEnemyCharacter::BeginPlay()
 
 	}
 
+	GetCharacterMovement()->bUseRVOAvoidance = true;
+	GetCharacterMovement()->AvoidanceConsiderationRadius = 800.0f;
 
 	Super::BeginPlay();
 }
