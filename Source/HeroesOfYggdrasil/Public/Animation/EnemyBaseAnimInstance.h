@@ -73,7 +73,8 @@ protected:
 
 
 private:
-	EEnemyAIState CurAnimationType = EEnemyAIState::Idle;
+	// Default값 이그드라실 추적
+	EEnemyAIState CurAnimationType = EEnemyAIState::TraceYggdrasil;
 
 	FName SectionName = TEXT("");
 

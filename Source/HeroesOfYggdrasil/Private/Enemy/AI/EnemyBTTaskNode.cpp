@@ -78,7 +78,7 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 
-	if (nullptr == TargetActor)
+	if (nullptr == TargetActor || FName("BP_Yggdrasil") == PlayAIData.TargetActor->GetName().Left(12))
 	{
 		//UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Character"), OutActors);
 
@@ -113,6 +113,38 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 				{
 					TargetActor = CheckActor;
 				}
+			}
+		}
+
+		if (nullptr != TargetActor)
+		{
+			PlayAIData.TargetActor = TargetActor;
+		}
+	}
+}
+
+
+void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
+
+	APawn* SelfActor = PlayAIData.SelfPawn;
+	AActor* TargetActor = PlayAIData.TargetActor;
+
+	if (nullptr == TargetActor)
+	{
+		TArray<AActor*> AllActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
+
+
+		AActor* CheckActor = nullptr;
+		float CurTargetDistance = TNumericLimits<float>::Max();
+		for (size_t i = 0; i < AllActors.Num(); i++)
+		{
+			if (FName("BP_Yggdrasil") == AllActors[i]->GetName().Left(12))
+			{
+				CheckActor = AllActors[i];
+				TargetActor = CheckActor;
 			}
 		}
 

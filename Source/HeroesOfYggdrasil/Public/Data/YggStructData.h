@@ -85,10 +85,20 @@ public:
 	double TraceRange = 1000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double AttackRange = 600.0f;
+	double StrafeRange = 600.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double StrafeSpeed = 30.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double StrafeTime= 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double AttackRange = 150.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double AttackTime = 1.5f;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FName TargetGroupName = TEXT("None");
@@ -107,15 +117,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FAIData Data;
 
-	EEnemyAIState EnemyAIState = EEnemyAIState::Idle;
-	double CurHP = 100;
-	class APawn* SelfPawn = nullptr;
-	AActor* TargetActor = nullptr;
-	class AEnemyAnimCharacter* SelfAnimPawn = nullptr;
-	class UEnemyBaseAnimInstance* UEnemyBaseAnimInstance = nullptr;
-	FVector OriginPos;
-	int AttackAnimationCount;
+	EEnemyAIState EnemyAIState = EEnemyAIState::TraceYggdrasil;
 
+	double CurHP = 100;
+
+	class APawn* SelfPawn = nullptr;
+
+	AActor* TargetActor = nullptr;
+
+	class AEnemyAnimCharacter* SelfAnimPawn = nullptr;
+
+	class UEnemyBaseAnimInstance* UEnemyBaseAnimInstance = nullptr;
+
+	FVector OriginPos;
+
+	
+	
+	// int AttackAnimationCount;
+
+	
 };
 
 UCLASS(BlueprintType)

@@ -2,7 +2,7 @@
 
 
 #include "Enemy/AI/BTTaskNode_Strafe.h"
-
+#include "Data/YggStructData.h"
 
 UBTTaskNode_Strafe::UBTTaskNode_Strafe()
 {
@@ -18,9 +18,9 @@ void UBTTaskNode_Strafe::Start(UBehaviorTreeComponent& _OwnerComp)
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
-	Random.Initialize(10);
+	Random.Initialize(FMath::RandRange(0, 10000));
 	RandomInt = Random.RandRange(0, 9);
-	Time = 0.0f;
+	Time = PlayAIData.Data.StrafeTime;
 }
 
 void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -45,21 +45,21 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 
 	if (RandomInt >= 5)
 	{
-		SelfActor->AddMovementInput((FVector::ForwardVector) * 50.0f * _DeltaSeconds);
+		SelfActor->AddMovementInput((FVector::ForwardVector) * PlayAIData.Data.StrafeSpeed * _DeltaSeconds);
 	}
 	else
 	{
-		SelfActor->AddMovementInput((FVector::BackwardVector) * 50.0f * _DeltaSeconds);
+		SelfActor->AddMovementInput((FVector::BackwardVector) * PlayAIData.Data.StrafeSpeed * _DeltaSeconds);
 	}
 	
-
-	Time += _DeltaSeconds;
+	
+	Time -= _DeltaSeconds;
 
 	// 공격 준비
-	if (Time >= PlayAIData.Data.AttackTime)
+	if (Time <= 0.0f)
 	{
+		Time = PlayAIData.Data.StrafeTime;
 		ChangeState(_OwnerComp, EEnemyAIState::Attack);
-		Time = 0.0f;
 		return;
 	}
 

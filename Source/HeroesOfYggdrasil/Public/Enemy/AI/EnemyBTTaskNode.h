@@ -31,9 +31,11 @@ public:
 
 	void TargetCheck(UBehaviorTreeComponent& _OwnerComp);
 
+	void YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp);
+
 protected:
 	UPROPERTY(Category = "Enemy", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	EEnemyAIState EnemyAIStateValue = EEnemyAIState::Idle;
+	EEnemyAIState EnemyAIStateValue = EEnemyAIState::TraceYggdrasil;
 private:
 	UPROPERTY(EditAnywhere, Category = "Target")
 	FBlackboardKeySelector InTargetActorKey;
