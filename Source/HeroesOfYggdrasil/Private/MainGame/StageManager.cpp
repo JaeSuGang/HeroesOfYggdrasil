@@ -41,10 +41,15 @@ void AStageManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 void AStageManager::EnterStage_Implementation(TSubclassOf<AGameStage> stage)
 {
+	int nRound = 0;
 	if (CurrentStage)
+	{
+		nRound = CurrentStage->Round;
 		CurrentStage->Destroy();
+	}
 
 	CurrentStage = GetWorld()->SpawnActor<AGameStage>(stage);
+	CurrentStage->Round = nRound;
 }
 
 void AStageManager::StartGame_Implementation()
