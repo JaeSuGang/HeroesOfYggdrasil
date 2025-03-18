@@ -40,7 +40,7 @@ void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	HeroAttributeComponent->SetCombo(4);
+	// HeroAttributeComponent->SetCombo(4);
 
 	// HeroAttributeComponent->Status = *(HeroAttributeComponent->Data->FindRow<FHeroBaseStatusInfoRow>(TEXT("Greystone"), TEXT("Context")));
 }
@@ -157,7 +157,7 @@ void AYggHeroGreystone::AttackReleased(const FInputActionValue& Value)
 
 	if (CurrentPlayingMontage)
 	{
-		FString SectionName = FString::Printf(TEXT("StopAtt%d"), HeroAttributeComponent->GetCurComboAttack());
+		FString SectionName = FString::Printf(TEXT("StopAtt%d"), 0); // HeroAttributeComponent->GetCurComboAttack());
 		FName CurrentSectionName(*SectionName);
 
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, SectionName);
@@ -176,7 +176,7 @@ void AYggHeroGreystone::AttackReleased(const FInputActionValue& Value)
 
 			if (CurrentSection == CurrentSectionName)
 			{
-				this->HeroAttributeComponent->ResetComboAttack();
+				// this->HeroAttributeComponent->ResetComboAttack();
 				this->HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
 				this->GetWorld()->GetTimerManager().ClearTimer(AttackStopCheckHandle);
 
@@ -207,6 +207,7 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MagicCircleOff();
+		return;
 	}
 
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
@@ -220,12 +221,12 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 	
 	if (HasAuthority())
 	{
-		MulticastAttack(HeroAttributeComponent->GetCurComboAttack());
+		/*MulticastAttack(HeroAttributeComponent->GetCurComboAttack());
 
 		if (HeroAttributeComponent->GetCurComboAttack() == HeroAttributeComponent->GetMaxComboAttack())
 		{
 			HeroAttributeComponent->ResetComboAttack();
-		}
+		}*/
 	}
 	else
 	{

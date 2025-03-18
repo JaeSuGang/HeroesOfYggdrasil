@@ -16,8 +16,8 @@ void UComboSaveNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBas
     UHeroAttributeComponent* AttrComp = Hero->GetHeroAttributeComponent();
     if (!AttrComp) return;
 
-    AttrComp->SaveComboAttack();
+    // AttrComp->SaveComboAttack();
     AttrComp->AddTag(TEXT("Character.State.NotAttackable"));
 
-    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%d"), AttrComp->GetCurComboAttack()));
+    GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%d"), 0));// AttrComp->GetCurComboAttack()));
 }
