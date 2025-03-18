@@ -48,7 +48,10 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	float JumpRate = 1.0f;
 
+	UFUNCTION()
 	void SaveComboAttack();
+
+	UFUNCTION()
 	void ResetComboAttack();
 
 	//UPROPERTY(Server, Reliable)
