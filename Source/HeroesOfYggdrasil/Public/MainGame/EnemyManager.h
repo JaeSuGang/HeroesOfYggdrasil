@@ -26,5 +26,7 @@ protected:
 public:
 	AActor* CreateMonster(const FString& _MonsterName, FVector _OriginPos);
 
+	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
+
 	TArray<class AEnemyCharacter*> AllEnemyCharacter;
 };

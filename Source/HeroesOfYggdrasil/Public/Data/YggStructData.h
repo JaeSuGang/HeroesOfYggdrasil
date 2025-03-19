@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "YggEnumData.h"
+#include "Attribute/EnemyAttributeComponent.h"
 #include "YggStructData.generated.h"
 
 /**
@@ -183,7 +184,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	class USkeletalMesh* Mesh;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TMap<EEnemyAIState, UAnimMontage*> Animations;
 
@@ -192,6 +193,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<UAnimInstance> AnimationBluePrint;
+
+
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")

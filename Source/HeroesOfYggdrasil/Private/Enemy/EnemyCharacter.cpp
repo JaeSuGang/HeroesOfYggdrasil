@@ -11,19 +11,19 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Attribute/EnemyAttributeComponent.h"
-#include "Attribute/CharacterAttributeComponent.h"
+
 
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("AttributeComponent"));
+	
 }
 
 void AEnemyCharacter::BeginPlay()
 {
 	if (DataKey == TEXT("") || true == DataKey.IsEmpty())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (ItemDataKey == TEXT("") || true == ItemDataKey.IsEmpty())"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (EnemyDataKey == TEXT("") || true == EnemyDataKey.IsEmpty())"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -44,12 +44,7 @@ void AEnemyCharacter::BeginPlay()
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
 
-	if (EnemyAttributeComponent != nullptr)
-	{
-		EnemyAttributeComponent->Server_SetHp(AIData->PlayData.CurHP);
-		EnemyAttributeComponent->Server_SetMaxHp(MonsterData->AIData.MaxHP);
-
-	}
+	
 
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -82,12 +77,19 @@ void AEnemyCharacter::BeginPlay()
 	GetCharacterMovement()->AvoidanceConsiderationRadius = 800.0f;
 
 	Super::BeginPlay();
+
+	if (EnemyAttributeComponent != nullptr)
+	{
+		EnemyAttributeComponent->Server_SetHp(AIData->PlayData.CurHP);
+		EnemyAttributeComponent->Server_SetMaxHp(MonsterData->AIData.MaxHP);
+	}
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
 }
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

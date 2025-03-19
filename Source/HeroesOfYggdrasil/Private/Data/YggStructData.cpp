@@ -5,6 +5,7 @@
 #include "Enemy/EnemyCharacter.h"
 #include "Enemy/EnemyGameInstance.h"
 
+
 FName UEnemyConst::AI::EnemyAIDataName = TEXT("EnemyAIData");
 
 

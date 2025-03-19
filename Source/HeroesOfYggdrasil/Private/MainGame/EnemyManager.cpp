@@ -7,7 +7,7 @@
 
 AEnemyManager::AEnemyManager()
 {
-
+	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
 }
 
 void AEnemyManager::BeginPlay()
@@ -20,15 +20,15 @@ void AEnemyManager::BeginPlay()
 AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _OriginPos)
 {
 	TSubclassOf<AEnemyCharacter> SubClass = UGlobalDataTable::GetEnemySpawnClass(GetWorld(), _MonsterName);
-
+	
 	FTransform Trans;
 	AEnemyCharacter* NewEnemyCharacter = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(SubClass, Trans);
 	if (nullptr == NewEnemyCharacter)
 	{
-		UE_LOG(LogTemp, Fatal, TEXT("%S(%u)> if (nullptr == ItemActor) Item Spawn Is Nullptr"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Fatal, TEXT("%S(%u)> if (nullptr == EnemyActor) Enemy Spawn Is Nullptr"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
-
+	NewEnemyCharacter->SetEnemyAttributeComponent(EnemyAttributeComponent);
 	NewEnemyCharacter->SetDataKey(_MonsterName);
 	Trans.SetLocation(_OriginPos);
 	NewEnemyCharacter->FinishSpawning(Trans);
@@ -41,7 +41,7 @@ void AEnemyManager::NetSyncMonster_Implementation()
 {
 	for (size_t i = 0; i < AllEnemyCharacter.Num(); i++)
 	{
-		int CurAnimation = static_cast<int>(AllEnemyCharacter[i]->GetGMAnimInstance()->GetCurAnimationType());
+		int CurAnimation = static_cast<int>(AllEnemyCharacter[i]->GetEnemyAnimInstance()->GetCurAnimationType());
 		AllEnemyCharacter[i]->ChangeAnimation_Multicast(CurAnimation);
 	}
 }
