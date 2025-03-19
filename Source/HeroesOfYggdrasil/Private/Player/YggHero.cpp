@@ -342,6 +342,7 @@ void AYggHero::Jump()
 	Super::Jump();
 }
 
+
 void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
 {
 	float WheelValue = Value.Get<float>();

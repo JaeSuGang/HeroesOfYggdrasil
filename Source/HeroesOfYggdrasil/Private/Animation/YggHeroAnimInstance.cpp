@@ -7,10 +7,7 @@
 
 UYggHeroAnimInstance::UYggHeroAnimInstance()
 {
-	MontageMap.Add(TEXT("Attack0"), NewObject<UAnimMontage>());
-	MontageMap.Add(TEXT("Attack1"), NewObject<UAnimMontage>());
-	MontageMap.Add(TEXT("Attack2"), NewObject<UAnimMontage>());
-	MontageMap.Add(TEXT("Attack3"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("Attack"), NewObject<UAnimMontage>());
 	MontageMap.Add(TEXT("SkillQ"), NewObject<UAnimMontage>());
 	MontageMap.Add(TEXT("SkillE"), NewObject<UAnimMontage>());
 	MontageMap.Add(TEXT("SkillR"), NewObject<UAnimMontage>());
@@ -79,6 +76,11 @@ void UYggHeroAnimInstance::JumpMontage(FName MontageName, FName SectionName)
 		return;
 	}
 	Montage_JumpToSection(SectionName, MontageMap[MontageName]);
+}
+
+void UYggHeroAnimInstance::StopMontage()
+{
+	Montage_Stop(0.5f);
 }
 
 // 에임 오프셋을 계산하는 함수

@@ -30,6 +30,8 @@ public:
 	float SpeedRate = 1.0f;
 	UPROPERTY(BlueprintReadOnly)
 	float JumpRate = 1.0f;
+
+	bool IsAttackCheck();
 		
 private:
 };
