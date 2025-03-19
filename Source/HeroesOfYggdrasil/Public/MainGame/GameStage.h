@@ -22,6 +22,8 @@ public:
 	AGameStage();
 
 protected:
+	void Tick(float fDeltaTime) override;
+
 	void BeginPlay() override;
 
 	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -29,8 +31,13 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	/* 다음 스테이지에 자동으로 진입되는 조건을 블루프린트에서 Override하여 구현하면 됨 */
+	UFUNCTION(BlueprintNativeEvent)
+	bool ShouldEnterNextStage();
+
+public:
 	UFUNCTION(BlueprintCallable)
-	void SpawnEnemySpawner(FMonsterDataRow MonsterRow, FVector Location);
+	void SpawnEnemySpawner(FMonsterDataRow MonsterRow, FVector Location, int nEnemyCount, float fDelay);
 
 	UFUNCTION(Server, Reliable)
 	void EnterNextStage();
@@ -47,4 +54,10 @@ public:
 
 	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	int Round;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
+	float Timer;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite)
+	bool bIsTimerEnabled;
 };

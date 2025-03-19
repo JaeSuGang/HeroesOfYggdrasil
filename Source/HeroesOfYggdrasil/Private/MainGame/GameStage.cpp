@@ -11,12 +11,25 @@
 
 AGameStage::AGameStage()
 {
-	SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 	bAlwaysRelevant = true;
 	NetDormancy = DORM_Never;
+}
 
+void AGameStage::Tick(float fDeltaTime)
+{
+	Super::Tick(fDeltaTime);
+
+	if (bIsTimerEnabled)
+	{
+		Timer -= fDeltaTime;
+	}
+
+	if (HasAuthority() && ShouldEnterNextStage())
+	{
+		EnterNextStage();
+	}
 }
 
 void AGameStage::BeginPlay()
@@ -49,7 +62,7 @@ void AGameStage::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 	DOREPLIFETIME(AGameStage, Round);
 }
 
-void AGameStage::SpawnEnemySpawner(FMonsterDataRow MonsterRow, FVector Location)
+void AGameStage::SpawnEnemySpawner(FMonsterDataRow MonsterRow, FVector Location, int nEnemyCount, float fDelay)
 {
 	FTransform SpawnerTransform{};
 	SpawnerTransform.SetLocation(Location);
@@ -57,7 +70,7 @@ void AGameStage::SpawnEnemySpawner(FMonsterDataRow MonsterRow, FVector Location)
 	AEnemySpawner* EnemySpawner = GetWorld()->SpawnActor<AEnemySpawner>(AEnemySpawner::StaticClass(), SpawnerTransform);
 	if (EnemySpawner)
 	{
-		// EnemySpawner->OnceSpawningCall(DataRow.);
+		EnemySpawner->OnceSpawningCall(FString{ MonsterRow.AIData.EnemyName.ToString()}, nEnemyCount, fDelay);
 	}
 	else
 	{
@@ -84,6 +97,11 @@ void AGameStage::EnterNextStage_Implementation()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%S%u : Stage Manager is null"), __FUNCTION__, __LINE__);
 	}
+}
+
+bool AGameStage::ShouldEnterNextStage_Implementation()
+{
+	return false;
 }
 
 void AGameStage::OnExitStage_Implementation()

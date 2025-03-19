@@ -65,6 +65,8 @@ void AStageManager::StartGame_Implementation()
 		++ControllerIter;
 	}
 
+	CurrentStage->EnterNextStage();
+
 	ForceMainWidgetToClients();
 }
 
