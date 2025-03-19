@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Core/YggCharacter.h"
+
 #include "YggHero.generated.h"
 
 /**
@@ -12,7 +13,10 @@
  */
 
 
+ // Unreal Engine Core
+class APlayerController;
  // Camera
+
 class USpringArmComponent;
 class UCameraComponent;
 class USceneCaptureComponent2D;
@@ -21,6 +25,7 @@ class USceneCaptureComponent2D;
 class UInputMappingContext;
 class UInputAction;
 class UInputComponent;
+class UEnhancedInputComponent;
 struct FInputActionValue;
 
 // Animation
@@ -35,6 +40,8 @@ class UTimeEventComponent;
 // UI
 class UWidgetComponent;
 
+struct FHeroCameraData;
+
 
 
 
@@ -45,25 +52,11 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 public:
 	AYggHero();
 
-	UFUNCTION(Server, Reliable)
-	void ToggleAimMode();
-
-	UFUNCTION(Server, Reliable)
-	void SetAimMode(bool Value);
-
-	UFUNCTION()
-	bool GetAimMode()
-	{
-		return bAimMode;
-	}
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	UFUNCTION(NetMulticast, Reliable)
 	void SetCamera(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset);
-
-
 	void StartGameCamera(float DeltaTime);
+
+	//void CameraMove(FCameraMoveData* CameraMoveData);
 
 	UFUNCTION(BlueprintCallable)
 	UHeroAttributeComponent* GetHeroAttributeComponent()
@@ -72,32 +65,33 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	UWidgetComponent* GetWidgetComponent()
-	{
-		return WidgetComponent;
-	}	
-
 	UInputMappingContext* GetInputMappingContext()
 	{
 		return InputMappingContext;
 	}
 
 protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Look(const FInputActionValue& Value);
 	virtual void Move(const FInputActionValue& Value);
+	virtual void Jump() override;
 
 	virtual void Attack(const FInputActionValue& Value) {}
 	virtual void SkillQ(const FInputActionValue& Value) {}
 	virtual void SkillE(const FInputActionValue& Value) {}
 	virtual void SkillR(const FInputActionValue& Value) {}
 
-	virtual void MouseWheel(const FInputActionValue& Value);
-	virtual void UIModeOn(const FInputActionValue& Value);
-	virtual void UIModeOff(const FInputActionValue& Value);
+	virtual void ToggleAimMode();
+	virtual void SetAimMode(bool Value);
+
+	virtual void CameraZoomInOut(const FInputActionValue& Value);
+	virtual void ToggleUIMode();
+	virtual void SetUIMode(bool Value);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	USpringArmComponent* CameraBoom;
@@ -129,6 +123,8 @@ protected:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bAimMode = false;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bIsUIMode = false;
 
 protected:
@@ -146,6 +142,8 @@ protected:
 	float TargetArmLength;
 	FVector TargetSocketOffset;
 
+	FVector GetAimWorldLocation(APlayerController* PlayerController);
+	void AimRaycast(APlayerController* PlayerController);
 
 
 	int MaxAttackIndex;

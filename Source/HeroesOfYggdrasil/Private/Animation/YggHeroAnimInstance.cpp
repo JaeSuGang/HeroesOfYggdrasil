@@ -5,6 +5,17 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+UYggHeroAnimInstance::UYggHeroAnimInstance()
+{
+	MontageMap.Add(TEXT("Attack0"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("Attack1"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("Attack2"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("Attack3"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("SkillQ"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("SkillE"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("SkillR"), NewObject<UAnimMontage>());
+}
+
 // 애니메이션 블루프린트가 초기화될 때 실행되는 함수
 void UYggHeroAnimInstance::NativeInitializeAnimation()
 {
@@ -33,8 +44,6 @@ void UYggHeroAnimInstance::NativeUpdateAnimation(float DeltaTime)
 		return;
 	}
 
-
-
 	// 현재 이동 속도를 2D 벡터 크기로 계산 (XY 평면 속도)
 	GroundSpeed = UKismetMathLibrary::VSizeXY(CharacterMovementComponent->Velocity);
 
@@ -59,7 +68,6 @@ void UYggHeroAnimInstance::PlayMontage(FName MontageName, float PlayRate)
 	{
 		return;
 	}
-
 	// 맵에서 몽타주를 찾아 실행
 	PlayMontageEvent(MontageMap[MontageName], PlayRate);
 }

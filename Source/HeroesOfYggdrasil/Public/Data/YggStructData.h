@@ -27,6 +27,23 @@ public:
 };
 
 
+USTRUCT(BlueprintType)
+struct FHeroCameraData : public FTableRowBase
+{
+	GENERATED_BODY()
+	FHeroCameraData() {}
+	~FHeroCameraData() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float ArmLength;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FRotator CameraRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FVector SocketOffset;
+	
+};
+
 
 
 USTRUCT(BlueprintType)
