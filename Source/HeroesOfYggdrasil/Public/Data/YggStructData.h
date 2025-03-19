@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "YggEnumData.h"
+#include "Attribute/EnemyAttributeComponent.h"
 #include "YggStructData.generated.h"
 
 /**
@@ -25,6 +26,23 @@ public:
 	float ContinueTime;
 };
 
+
+USTRUCT(BlueprintType)
+struct FHeroCameraData : public FTableRowBase
+{
+	GENERATED_BODY()
+	FHeroCameraData() {}
+	~FHeroCameraData() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float ArmLength;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FRotator CameraRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FVector SocketOffset;
+	
+};
 
 
 
@@ -113,10 +131,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceSpeed = 600.0f;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	FName TargetGroupName = TEXT("None");
 };
 
 
@@ -183,32 +197,21 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	class USkeletalMesh* Mesh;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TMap<EEnemyAIState, UAnimMontage*> Animations;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	TArray<UAnimMontage*> AttackAnimations;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TArray<UAnimMontage*> AttackAnimations;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<UAnimInstance> AnimationBluePrint;
 
 
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<class AEnemyCharacter> SpawnClass;
-};
-
-UCLASS(BlueprintType)
-class UEnemyConst : public UObject
-{
-	GENERATED_BODY()
-
-public:
-	class AI
-	{
-	public:
-		static FName EnemyAIDataName;
-	};
 };
 
 

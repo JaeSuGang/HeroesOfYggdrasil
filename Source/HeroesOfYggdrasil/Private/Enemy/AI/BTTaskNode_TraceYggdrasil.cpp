@@ -28,7 +28,7 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	AActor* TargetActor = PlayAIData.TargetActor;
-
+	
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 

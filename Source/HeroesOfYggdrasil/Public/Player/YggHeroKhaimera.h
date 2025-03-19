@@ -23,6 +23,7 @@ class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 
 public:
 	AYggHeroKhaimera();
+	
 
 	UFUNCTION(BlueprintCallable)
 	void SaveAttack();
@@ -31,14 +32,13 @@ public:
 
 
 protected:
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
 	UKhaimeraAttributeComponent* KhaimeraAttributeComponent;
 
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay()override;
 	virtual void Tick(float DeltaTime)override;
-
-	virtual void Move(const FInputActionValue& Value)override;
-	virtual void Jump()override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
@@ -67,8 +67,10 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void StartSkillR();
+	UFUNCTION(BlueprintCallable)
+	void EndSkillR();
+	
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	// 임시
 	float SkillRContinueTime;
 	bool bUsingSkillR;

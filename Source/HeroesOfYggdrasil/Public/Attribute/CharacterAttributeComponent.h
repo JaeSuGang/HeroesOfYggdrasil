@@ -6,7 +6,7 @@
 #include "Attribute/AttributeComponent.h"
 #include "CharacterAttributeComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHealthChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTakeDamage, float, fAmount);
 
 /**
  * 담당 : 김경민
@@ -42,28 +42,14 @@ public:
 
 
 public:
-	/* 체력이 변했을 때 서버 컴퓨터만 실행되는 델리게이트 */
+	/* TakeDamage를 호출했을 때 같이 호출될 함수들을 이곳에 AddDynamic
+	* Server, NetMulticast, Client 함수도 Bind 가능
+	*/
 	UPROPERTY(BlueprintAssignable)
-	FOnHealthChanged ServerDelegate_OnHealthChanged;
-
-	/* 체력이 변했을 때 캐릭터의 소유자만 실행되는 델리게이트 */
-	UPROPERTY(BlueprintAssignable)
-	FOnHealthChanged ClientDelegate_OnHealthChanged;
-
-	/* 체력이 변했을 때 모두가 실행되는 델리게이트*/
-	UPROPERTY(BlueprintAssignable)
-	FOnHealthChanged MulticastDelegate_OnHealthChanged;
-
-public:
-	UFUNCTION()
-	void Foo();
-
-
-	UFUNCTION()
-	void OnRep_Hp();
+	FOnTakeDamage Delegate_OnTakeDamage;
 
 protected:
-	UPROPERTY(ReplicatedUsing=OnRep_Hp, EditAnywhere)
+	UPROPERTY(Replicated, EditAnywhere)
 	float Hp;
 
 	UPROPERTY(Replicated, EditAnywhere)

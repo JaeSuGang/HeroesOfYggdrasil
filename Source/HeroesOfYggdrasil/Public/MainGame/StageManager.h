@@ -27,6 +27,8 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	AGameStage* GetPlayingStage() const;
+
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void EnterStage(TSubclassOf<AGameStage> stage);
 
@@ -43,9 +45,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AGameStage> FirstStageToStart;
 
-	UPROPERTY(Replicated, VisibleInstanceOnly)
+	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	AGameStage* CurrentStage;
 
-	UPROPERTY(Replicated, VisibleInstanceOnly)
+	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	int32 Round;
 };

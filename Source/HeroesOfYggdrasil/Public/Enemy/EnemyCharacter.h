@@ -7,7 +7,9 @@
 #include "Enemy/EnemyAnimCharacter.h"
 #include "Data/YggEnumData.h"
 #include "Data/YggStructData.h"
+#include "Enemy/Interface/AttackInterface.h"
 #include "EnemyCharacter.generated.h"
+
 
 /**
  * 담당 : 장시혁
@@ -16,7 +18,7 @@
 class UCharacterAttributeComponent;
 
 UCLASS()
-class HEROESOFYGGDRASIL_API AEnemyCharacter : public AEnemyAnimCharacter
+class HEROESOFYGGDRASIL_API AEnemyCharacter : public AEnemyAnimCharacter, public IAttackInterface
 {
 	GENERATED_BODY()
 
@@ -33,6 +35,10 @@ public:
 		DataKey = _ItemDataKey;
 	}
 
+	void SetEnemyAttributeComponent(UEnemyAttributeComponent* _EnemyAttributeComponent)
+	{
+		EnemyAttributeComponent = _EnemyAttributeComponent;
+	}
 
 protected:
 	virtual void BeginPlay() override;
@@ -47,8 +53,11 @@ public:
 	UFUNCTION()
 	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(EditAnywhere)
-	class UEnemyAttributeComponent* EnemyAttributeComponent;
+	UPROPERTY(EditAnywhere, Replicated, Category = "YggData", meta = (AllowPrivateAccess = "true"))
+	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
+
+	void AttackStart() override;
+	void AttackEnd() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

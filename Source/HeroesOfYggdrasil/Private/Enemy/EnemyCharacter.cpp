@@ -3,6 +3,7 @@
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/CharacterAttributeComponent.h"
 #include "Data/YggStructData.h"
+#include "Data/YggConst.h"
 #include "Enemy/EnemyAIController.h"
 #include "Net/UnrealNetwork.h"
 #include "AIController.h"
@@ -11,19 +12,19 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Attribute/EnemyAttributeComponent.h"
-#include "Attribute/CharacterAttributeComponent.h"
+
 
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("AttributeComponent"));
+	
 }
 
 void AEnemyCharacter::BeginPlay()
 {
 	if (DataKey == TEXT("") || true == DataKey.IsEmpty())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (ItemDataKey == TEXT("") || true == ItemDataKey.IsEmpty())"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (EnemyDataKey == TEXT("") || true == EnemyDataKey.IsEmpty())"), __FUNCTION__, __LINE__);
 		return;
 	}
 
@@ -44,16 +45,12 @@ void AEnemyCharacter::BeginPlay()
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
 
-	if (EnemyAttributeComponent != nullptr)
-	{
-		EnemyAttributeComponent->Server_SetHp(AIData->PlayData.CurHP);
-		EnemyAttributeComponent->Server_SetMaxHp(MonsterData->AIData.MaxHP);
-
-	}
+	
 
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetAnimInstanceClass(FindData.AnimationBluePrint);
+	GetMesh()->SetGenerateOverlapEvents(true);
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	UEnemyBaseAnimInstance* NewEnemyAnimInstance = Cast<UEnemyBaseAnimInstance>(AnimInstance);
@@ -65,11 +62,11 @@ void AEnemyCharacter::BeginPlay()
 			NewEnemyAnimInstance->AnimMontages.Add(static_cast<int>(AnimPair.Key), AnimPair.Value);
 		}
 
-		for (size_t i = 0; i < FindData.AttackAnimations.Num(); i++)
+		/*for (size_t i = 0; i < FindData.AttackAnimations.Num(); i++)
 		{
 			UAnimMontage* Montage = FindData.AttackAnimations[i];
 			NewEnemyAnimInstance->AnimMontages.Add(100 + i, Montage);
-		}
+		}*/
 
 		if (nullptr != Con)
 		{
@@ -82,12 +79,19 @@ void AEnemyCharacter::BeginPlay()
 	GetCharacterMovement()->AvoidanceConsiderationRadius = 800.0f;
 
 	Super::BeginPlay();
+
+	if (EnemyAttributeComponent != nullptr)
+	{
+		EnemyAttributeComponent->Server_SetHp(AIData->PlayData.CurHP);
+		EnemyAttributeComponent->Server_SetMaxHp(MonsterData->AIData.MaxHP);
+	}
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
 }
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -105,5 +109,21 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	int a = 0;
+}
+
+void AEnemyCharacter::AttackStart()
+{
+	if (this != nullptr)
+	{
+		GetMesh()->SetCollisionProfileName(UEnemyConst::Collision::ProfileName_MonsterAttack);
+	}
+}
+
+void AEnemyCharacter::AttackEnd()
+{
+	if (this != nullptr)
+	{
+		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	}
+	
 }
