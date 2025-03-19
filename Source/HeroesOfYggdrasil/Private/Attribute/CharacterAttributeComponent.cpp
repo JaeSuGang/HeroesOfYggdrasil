@@ -9,17 +9,14 @@
 void UCharacterAttributeComponent::Server_TakeDamage_Implementation(float fAmount)
 {
 	Hp -= fAmount;
-	if (GetWorld()->GetAuthGameMode())
-	{
-		OnRep_Hp();
-	}
+
+	Delegate_OnTakeDamage.Broadcast(fAmount);
 }
 
 void UCharacterAttributeComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ClientDelegate_OnHealthChanged.AddDynamic(this, &UCharacterAttributeComponent::Foo);
 }
 
 void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -38,10 +35,6 @@ void UCharacterAttributeComponent::Server_SetMaxHp_Implementation(float fAmount)
 void UCharacterAttributeComponent::Server_SetHp_Implementation(float fAmount)
 {
 	Hp = fAmount;
-	if (GetWorld()->GetAuthGameMode())
-	{
-		OnRep_Hp();
-	}
 }
 
 float UCharacterAttributeComponent::GetHp() const
@@ -54,18 +47,3 @@ float UCharacterAttributeComponent::GetMaxHp() const
 	return MaxHp;
 }
 
-void UCharacterAttributeComponent::Foo()
-{
-
-}
-
-void UCharacterAttributeComponent::OnRep_Hp()
-{
-	if (GetOwner()->HasAuthority())
-		ServerDelegate_OnHealthChanged.Broadcast();
-
-	if (GetOwner()->HasLocalNetOwner())
-		ClientDelegate_OnHealthChanged.Broadcast();
-
-	MulticastDelegate_OnHealthChanged.Broadcast();
-}

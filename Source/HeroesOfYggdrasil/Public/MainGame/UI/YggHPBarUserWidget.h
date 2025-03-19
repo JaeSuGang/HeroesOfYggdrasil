@@ -20,7 +20,7 @@ public:
 	void NativeOnInitialized() override;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateHPBar();
+	void UpdateHPBar(float HP);
 
 protected:
 	UPROPERTY(meta = (BindWidget))
