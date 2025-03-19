@@ -39,6 +39,11 @@ void AStageManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AStageManager, Round);
 }
 
+AGameStage* AStageManager::GetCurrentStage() const
+{
+	return CurrentStage;
+}
+
 void AStageManager::EnterStage_Implementation(TSubclassOf<AGameStage> stage)
 {
 	int nRound = 0;
