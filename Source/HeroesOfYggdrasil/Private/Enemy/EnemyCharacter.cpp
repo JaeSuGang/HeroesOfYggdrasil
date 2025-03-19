@@ -50,6 +50,7 @@ void AEnemyCharacter::BeginPlay()
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetAnimInstanceClass(FindData.AnimationBluePrint);
+	GetMesh()->SetGenerateOverlapEvents(true);
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	UEnemyBaseAnimInstance* NewEnemyAnimInstance = Cast<UEnemyBaseAnimInstance>(AnimInstance);
@@ -61,11 +62,11 @@ void AEnemyCharacter::BeginPlay()
 			NewEnemyAnimInstance->AnimMontages.Add(static_cast<int>(AnimPair.Key), AnimPair.Value);
 		}
 
-		for (size_t i = 0; i < FindData.AttackAnimations.Num(); i++)
+		/*for (size_t i = 0; i < FindData.AttackAnimations.Num(); i++)
 		{
 			UAnimMontage* Montage = FindData.AttackAnimations[i];
 			NewEnemyAnimInstance->AnimMontages.Add(100 + i, Montage);
-		}
+		}*/
 
 		if (nullptr != Con)
 		{
@@ -112,10 +113,17 @@ void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 void AEnemyCharacter::AttackStart()
 {
-	GetMesh()->SetCollisionProfileName(UEnemyConst::Collision::ProfileName_MonsterAttack);
+	if (this != nullptr)
+	{
+		GetMesh()->SetCollisionProfileName(UEnemyConst::Collision::ProfileName_MonsterAttack);
+	}
 }
 
 void AEnemyCharacter::AttackEnd()
 {
-	GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	if (this != nullptr)
+	{
+		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	}
+	
 }

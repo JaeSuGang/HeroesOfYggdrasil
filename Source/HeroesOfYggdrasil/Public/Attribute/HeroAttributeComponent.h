@@ -8,7 +8,7 @@
 #include "HeroAttributeComponent.generated.h"
 
 /**
- *	김성훈
+ *	
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboChanged);
 

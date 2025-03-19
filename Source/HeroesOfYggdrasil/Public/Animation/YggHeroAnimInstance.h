@@ -23,6 +23,7 @@ class HEROESOFYGGDRASIL_API UYggHeroAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 public:
+	UYggHeroAnimInstance();
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaTime) override;
 
@@ -30,23 +31,19 @@ public:
 	void JumpMontage(FName MontageName, FName SectionName);
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void PlayMontageEvent(UAnimMontage* Montage,float PlayRate);
+
 protected:
 	void UpdateAimOffset();
-
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	TMap<FName, UAnimMontage*> MontageMap;
-
-
 
 	UPROPERTY(BlueprintReadOnly)
 	AYggHero* Hero;
 	UPROPERTY(BlueprintReadOnly)
 	UCharacterMovementComponent* CharacterMovementComponent;
 
-
 	UPROPERTY(BlueprintReadOnly)
 	UHeroAttributeComponent* HeroAttributeComponent;
-
 
 	UPROPERTY(BlueprintReadOnly)
 	float GroundSpeed;

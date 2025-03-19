@@ -27,6 +27,23 @@ public:
 };
 
 
+USTRUCT(BlueprintType)
+struct FHeroCameraData : public FTableRowBase
+{
+	GENERATED_BODY()
+	FHeroCameraData() {}
+	~FHeroCameraData() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float ArmLength;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FRotator CameraRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FVector SocketOffset;
+	
+};
+
 
 
 USTRUCT(BlueprintType)
@@ -114,10 +131,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceSpeed = 600.0f;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	FName TargetGroupName = TEXT("None");
 };
 
 
@@ -188,8 +201,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TMap<EEnemyAIState, UAnimMontage*> Animations;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	TArray<UAnimMontage*> AttackAnimations;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TArray<UAnimMontage*> AttackAnimations;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<UAnimInstance> AnimationBluePrint;

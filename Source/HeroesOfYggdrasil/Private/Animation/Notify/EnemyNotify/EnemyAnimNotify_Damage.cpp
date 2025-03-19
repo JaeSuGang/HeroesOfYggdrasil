@@ -9,7 +9,10 @@ void UEnemyAnimNotify_Damage::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 	Super::NotifyBegin( MeshComp, Animation, TotalDuration, EventReference);
 
 	IAttackInterface* Interface = Cast<IAttackInterface>(MeshComp->GetOwner());
-	Interface->AttackStart();
+	if (Interface != nullptr)
+	{
+		Interface->AttackStart();
+	}
 }
 
 void UEnemyAnimNotify_Damage::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
@@ -21,6 +24,9 @@ void UEnemyAnimNotify_Damage::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
 	IAttackInterface* Interface = Cast<IAttackInterface>(MeshComp->GetOwner());
-	// MeshComp->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName, true);
-	Interface->AttackEnd();
+	if (Interface != nullptr)
+	{
+		Interface->AttackEnd();
+	}
+	
 }
