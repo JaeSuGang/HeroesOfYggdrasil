@@ -127,6 +127,12 @@ public:
 	double AttackTime = 1.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double AwaitTime = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double StandardZeroTime= 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceBackSpeed = 1200.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
