@@ -39,7 +39,7 @@ void AStageManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AStageManager, Round);
 }
 
-AGameStage* AStageManager::GetCurrentStage() const
+AGameStage* AStageManager::GetPlayingStage() const
 {
 	return CurrentStage;
 }

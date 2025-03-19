@@ -27,7 +27,7 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	AGameStage* GetCurrentStage() const;
+	AGameStage* GetPlayingStage() const;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void EnterStage(TSubclassOf<AGameStage> stage);
