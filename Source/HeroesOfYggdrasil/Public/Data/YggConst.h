@@ -29,3 +29,24 @@ public:
 	static const FVector NormalSocketOffset;
 	static const FVector AimSocketOffset;
 };
+
+
+
+UCLASS(BlueprintType)
+class UEnemyConst : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	class AI
+	{
+	public:
+		static const FName EnemyAIDataName;
+	};
+
+	class Collision
+	{
+	public:
+		static const  FName ProfileName_MonsterAttack;
+	};
+};

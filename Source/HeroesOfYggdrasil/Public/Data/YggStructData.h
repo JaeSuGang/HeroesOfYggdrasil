@@ -201,19 +201,6 @@ public:
 	TSubclassOf<class AEnemyCharacter> SpawnClass;
 };
 
-UCLASS(BlueprintType)
-class UEnemyConst : public UObject
-{
-	GENERATED_BODY()
-
-public:
-	class AI
-	{
-	public:
-		static FName EnemyAIDataName;
-	};
-};
-
 
 
 
