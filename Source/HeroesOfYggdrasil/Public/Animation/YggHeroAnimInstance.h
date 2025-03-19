@@ -29,10 +29,13 @@ public:
 
 	void PlayMontage(FName MontageName,float PlayRate = 1.0f);
 	void JumpMontage(FName MontageName, FName SectionName);
+	void StopMontage();
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void PlayMontageEvent(UAnimMontage* Montage,float PlayRate);
 
 protected:
+
+public:
 	void UpdateAimOffset();
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	TMap<FName, UAnimMontage*> MontageMap;

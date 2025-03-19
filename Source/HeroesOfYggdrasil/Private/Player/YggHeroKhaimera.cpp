@@ -29,7 +29,6 @@ AYggHeroKhaimera::AYggHeroKhaimera()
 	KhaimeraAttributeComponent = Cast<UKhaimeraAttributeComponent>(HeroAttributeComponent);
 }
 
-
 void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -39,7 +38,8 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	{
 		if (ActionMap.Contains(FName("Attack")))
 		{
-			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, & AYggHeroKhaimera::Attack);
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHeroKhaimera::EndAttack);
 		}
 
 		if (ActionMap.Contains(FName("SkillQ")))
@@ -64,8 +64,6 @@ void AYggHeroKhaimera::BeginPlay()
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->SpeedRate;
 	GetCharacterMovement()->JumpZVelocity *= HeroAttributeComponent->JumpRate;
-	CurAttackIndex = 0;
-	MaxAttackIndex = 3;
 }
 
 void AYggHeroKhaimera::Tick(float DeltaTime)
@@ -73,46 +71,48 @@ void AYggHeroKhaimera::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-#pragma region Attack
 void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 {
+	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
+	}
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
 	{
 		return;
 	}
-
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		MulticastAttack(CurAttackIndex);
-
-		CurAttackIndex++;
-		if (CurAttackIndex == MaxAttackIndex)
-		{
-			CurAttackIndex = 0;
-		}
+		MulticastAttack(Value);
 	}
 	else
 	{
-		ServerAttack();
+		ServerAttack(Value);
 		return;
 	}
 }
 
-void AYggHeroKhaimera::ServerAttack_Implementation()
+void AYggHeroKhaimera::ServerAttack_Implementation(const FInputActionValue& Value)
 {
-	Attack(FInputActionValue());
+	Attack(Value);
 }
 
-void AYggHeroKhaimera::MulticastAttack_Implementation(int ServerAttackIndex)
+void AYggHeroKhaimera::MulticastAttack_Implementation(const FInputActionValue& Value)
 {
-	CurAttackIndex = ServerAttackIndex; // 서버에서 동기화된 값을 클라이언트가 받음
-	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurAttackIndex);
+	
+	FName MontageName = *FString::Printf(TEXT("Attack"));
 	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
-#pragma endregion
 
-#pragma region SkillQ
+
+
+
+void AYggHeroKhaimera::EndAttack(const FInputActionValue& Value)
+{
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.PressedAttack"));
+}
+
 void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
@@ -122,28 +122,25 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		MulticastSkillQ();
+		MulticastSkillQ(Value);
 	}
 	else
 	{
-		ServerSkillQ();
+		ServerSkillQ(Value);
 	}
 }
 
-void AYggHeroKhaimera::ServerSkillQ_Implementation()
+void AYggHeroKhaimera::ServerSkillQ_Implementation(const FInputActionValue& Value)
 {
-	SkillQ(FInputActionValue());
+	SkillQ(Value);
 }
 
-void AYggHeroKhaimera::MulticastSkillQ_Implementation()
+void AYggHeroKhaimera::MulticastSkillQ_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillQ");
 	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
 
-#pragma endregion
-
-#pragma region SkillE
 void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
@@ -153,29 +150,27 @@ void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		MulticastSkillE();
+		MulticastSkillE(Value);
 	}
 	else
 	{
-		ServerSkillE();
+		ServerSkillE(Value);
 	}
 }
 
-void AYggHeroKhaimera::ServerSkillE_Implementation()
+void AYggHeroKhaimera::ServerSkillE_Implementation(const FInputActionValue& Value)
 {
-	SkillE(FInputActionValue());
+	SkillE(Value);
 }
 
 
 
-void AYggHeroKhaimera::MulticastSkillE_Implementation()
+void AYggHeroKhaimera::MulticastSkillE_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillE");
 	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
-#pragma endregion
 
-#pragma region SkillR
 void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
@@ -185,37 +180,24 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		MulticastSkillR();
+		MulticastSkillR(Value);
 	}
 	else
 	{
-		ServerSkillR();
+		ServerSkillR(Value);
 	}
 }
-void AYggHeroKhaimera::ServerSkillR_Implementation()
+void AYggHeroKhaimera::ServerSkillR_Implementation(const FInputActionValue& Value)
 {
-	SkillR(FInputActionValue());
+	SkillR(Value);
 }
 
-
-
-void AYggHeroKhaimera::MulticastSkillR_Implementation()
+void AYggHeroKhaimera::MulticastSkillR_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillR");
 	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
-#pragma endregion
 
-
-void AYggHeroKhaimera::StartSkillR()
-{
-	HeroAttributeComponent->AddTag(TEXT("Character.Buff.FastAttackSpeed"));
-}
-
-void AYggHeroKhaimera::EndSkillR()
-{
-	HeroAttributeComponent->RemoveTag(TEXT("Character.Buff.FastAttackSpeed"));
-}
 
 void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -223,16 +205,7 @@ void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AYggHeroKhaimera, KhaimeraAttributeComponent);
 }
 
-void AYggHeroKhaimera::SaveAttack()
-{
-	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
-}
 
-void AYggHeroKhaimera::ResetCombo()
-{
-	CurAttackIndex = 0;
-	HeroAttributeComponent->RemoveTags({ TEXT("Character.State.NotAttackable"),TEXT("Character.State.NotMoveable") });
-}
 
 
 

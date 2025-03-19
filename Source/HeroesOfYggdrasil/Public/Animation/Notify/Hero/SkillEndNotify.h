@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
-#include "ComboResetNotify.generated.h"
+#include "SkillEndNotify.generated.h"
 
 /**
  * 
  */
-UCLASS(meta = (DisplayName = "Hero | Combo Reset"))
-class HEROESOFYGGDRASIL_API UComboResetNotify : public UAnimNotify
+UCLASS(meta = (DisplayName = "Hero | Skill End"))
+class HEROESOFYGGDRASIL_API USkillEndNotify : public UAnimNotify
 {
 	GENERATED_BODY()
 

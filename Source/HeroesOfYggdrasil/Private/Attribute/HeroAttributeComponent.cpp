@@ -14,3 +14,8 @@ void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
+
+bool UHeroAttributeComponent::IsAttackCheck()
+{
+	return HasTagExact(TEXT("Character.State.NotAttackable"));
+}

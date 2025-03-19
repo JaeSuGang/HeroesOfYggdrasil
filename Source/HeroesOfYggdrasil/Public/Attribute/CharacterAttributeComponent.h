@@ -16,31 +16,24 @@ class HEROESOFYGGDRASIL_API UCharacterAttributeComponent : public UAttributeComp
 {
 	GENERATED_BODY()
 
-public:
-
 protected:
 	void BeginPlay() override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	/* 이 유닛에게 데미지를 주는 함수 */
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_TakeDamage(float fAmount);
 
+	/* 이 유닛의 체력을 설정하는 함수 */
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_SetHp(float fAmount);
+	void Server_SetHP(float fAmount);
 
+	/* 이 유닛의 최대 체력을 설정하는 함수 */
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_SetMaxHp(float fAmount);
-
-public:
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetHp() const;
-
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	float GetMaxHp() const;
+	void Server_SetMaxHP(float fAmount);
 
 protected:
-	/* Do Not Use */
 	UFUNCTION(Client, Reliable)
 	void Client_TakeDamage(float fAmount);
 
@@ -60,10 +53,12 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnTakeDamage ClientDelegate_OnTakeDamage;
 
-protected:
-	UPROPERTY(Replicated, EditAnywhere)
-	float Hp;
+public:
+	/* Set은 Server_SetHp 함수를 사용해야 함*/
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float HP;
 
-	UPROPERTY(Replicated, EditAnywhere)
-	float MaxHp;
+	/* Set은 Server_SetMaxHp 함수를 사용해야 함*/
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float MaxHP;
 };

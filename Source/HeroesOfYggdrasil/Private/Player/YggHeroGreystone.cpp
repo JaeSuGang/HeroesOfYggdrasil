@@ -132,8 +132,6 @@ void AYggHeroGreystone::AttackPressed(const FInputActionValue& Value)
 {
 	bAttackButtonPressed = true;
 
-	// 공격 중이 아닐 때만 공격 시작
-
 	if (!(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("NotAttackable"));
@@ -296,6 +294,9 @@ void AYggHeroGreystone::MulticastSkillQ_Implementation()
 {
 	FName MontageName = TEXT("SkillQ");
 	HeroAnimInstance->PlayMontage(MontageName);
+
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	// HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 }
 
 void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
@@ -325,6 +326,8 @@ void AYggHeroGreystone::MulticastSkillE_Implementation()
 {
 	FName MontageName = TEXT("SkillE");
 	HeroAnimInstance->PlayMontage(MontageName);
+
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 }
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
