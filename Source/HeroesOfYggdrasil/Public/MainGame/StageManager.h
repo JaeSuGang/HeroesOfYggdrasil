@@ -46,6 +46,6 @@ public:
 	UPROPERTY(Replicated, VisibleInstanceOnly)
 	AGameStage* CurrentStage;
 
-	UPROPERTY(Replicated, VisibleInstanceOnly)
+	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	int32 Round;
 };

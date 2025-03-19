@@ -14,9 +14,13 @@ class HEROESOFYGGDRASIL_API AEnemyManager : public AInfo
 {
 	GENERATED_BODY()
 
+public:
 	AEnemyManager();
 
+	UFUNCTION(BlueprintCallable)
+	static AEnemyManager* Get(UWorld* WorldContext);
 
+public:
 	UFUNCTION(Server, Reliable)
 	void NetSyncMonster();
 

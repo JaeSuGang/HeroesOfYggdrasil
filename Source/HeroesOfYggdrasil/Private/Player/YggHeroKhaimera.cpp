@@ -3,8 +3,6 @@
 
 #include "Player/YggHeroKhaimera.h"
 
-#include "Engine/LocalPlayer.h"
-
 // Input
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -13,7 +11,6 @@
 
 // Movement
 #include "GameFramework/CharacterMovementComponent.h"
-
 #include "Animation/YggHeroAnimInstance.h"
 
 
@@ -37,50 +34,27 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
-
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
-		if (ActionMap.Find(FName("Move")))
+		if (ActionMap.Contains(FName("Attack")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Move")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Move);
-			UE_LOG(LogTemp, Warning, TEXT("Khaimera MoveAction Bind Succesed"));
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, & AYggHeroKhaimera::Attack);
 		}
 
-		if (ActionMap.Find(FName("Look")))
+		if (ActionMap.Contains(FName("SkillQ")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Look")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Look);
-			UE_LOG(LogTemp, Warning, TEXT("Khaimera LookAction Bind Succesed"));
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillQ")], ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillQ);
 		}
 
-		if (ActionMap.Find(FName("Jump")))
+		if (ActionMap.Contains(FName("SkillE")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Jump")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Jump);
-			UE_LOG(LogTemp, Warning, TEXT("Khaimera JumpAction Bind Succesed"));
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillE")], ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillE);
 		}
 
-		if (ActionMap.Find(FName("Attack")))
+		if (ActionMap.Contains(FName("SkillR")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
-			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
-		}
-
-		if (ActionMap.Find(FName("SkillQ")))
-		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillQ")), ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillQ);
-			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
-		}
-
-		if (ActionMap.Find(FName("SkillE")))
-		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillE")), ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillE);
-			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
-		}
-
-		if (ActionMap.Find(FName("SkillR")))
-		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillR")), ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillR);
-			UE_LOG(LogTemp, Warning, TEXT("Khaimera AttackAction Bind Succesed"));
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillR")], ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillR);
 		}
 	}
 }
@@ -90,33 +64,13 @@ void AYggHeroKhaimera::BeginPlay()
 	Super::BeginPlay();
 	GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->SpeedRate;
 	GetCharacterMovement()->JumpZVelocity *= HeroAttributeComponent->JumpRate;
-
 	CurAttackIndex = 0;
 	MaxAttackIndex = 3;
-
 }
 
 void AYggHeroKhaimera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void AYggHeroKhaimera::Move(const FInputActionValue& Value)
-{
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable")))
-	{
-		return;
-	}
-	Super::Move(Value);
-}
-
-void AYggHeroKhaimera::Jump()
-{
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable")))
-	{
-		return;
-	}
-	Super::Jump();
 }
 
 #pragma region Attack
@@ -129,7 +83,6 @@ void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastAttack(CurAttackIndex);
 
@@ -168,7 +121,6 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 	}
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillQ();
 	}
@@ -200,7 +152,6 @@ void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 	}
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillE();
 	}
@@ -233,7 +184,6 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 	}
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillR();
 	}
@@ -262,9 +212,15 @@ void AYggHeroKhaimera::StartSkillR()
 	HeroAttributeComponent->AddTag(TEXT("Character.Buff.FastAttackSpeed"));
 }
 
+void AYggHeroKhaimera::EndSkillR()
+{
+	HeroAttributeComponent->RemoveTag(TEXT("Character.Buff.FastAttackSpeed"));
+}
+
 void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AYggHeroKhaimera, KhaimeraAttributeComponent);
 }
 
 void AYggHeroKhaimera::SaveAttack()

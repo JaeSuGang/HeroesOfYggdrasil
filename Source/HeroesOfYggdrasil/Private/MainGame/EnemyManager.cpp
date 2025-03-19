@@ -2,12 +2,25 @@
 
 
 #include "MainGame/EnemyManager.h"
+
 #include "Data/YggStructData.h"
 #include "Enemy/EnemyCharacter.h"
+#include "MainGame/MainGameState.h"
 
 AEnemyManager::AEnemyManager()
 {
 	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
+}
+
+AEnemyManager* AEnemyManager::Get(UWorld* WorldContext)
+{
+	AMainGameState* MGS = WorldContext->GetGameState<AMainGameState>();
+	if (MGS)
+	{
+		return MGS->GetEnemyManager();
+	}
+
+	return nullptr;
 }
 
 void AEnemyManager::BeginPlay()
