@@ -79,6 +79,9 @@ struct FAIData
 	~FAIData() {}
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FName EnemyName = FName("");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double MaxHP = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
