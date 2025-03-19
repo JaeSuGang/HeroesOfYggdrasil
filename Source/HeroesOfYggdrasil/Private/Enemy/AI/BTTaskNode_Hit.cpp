@@ -21,4 +21,8 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
+
+	// 죽음 체크
+
+
 }
