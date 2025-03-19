@@ -38,7 +38,7 @@ void USpawnManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-
+// don't use
 void USpawnManagerComponent::StageEnemySpawn(int32 _Stage)
 {
 	FString Name = TEXT("Stage_");
@@ -55,7 +55,6 @@ void USpawnManagerComponent::StageEnemySpawn(int32 _Stage)
 		NewSpawner->MaxSpawnCount = RowDatas[i].MaxSpawnCount;
 
 		NewSpawner->SpawnRange = RowDatas[i].SpawnRange;
-		NewSpawner->SpawningActor = RowDatas[i].SpawnEnemy;
 		NewSpawner->SpawnDaley = RowDatas[i].SpawnDaley;
 
 		NewSpawner->SpawnStart();
