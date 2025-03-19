@@ -8,7 +8,7 @@
 
 void UCharacterAttributeComponent::Server_TakeDamage_Implementation(float fAmount)
 {
-	Hp -= fAmount;
+	HP -= fAmount;
 
 	ServerDelegate_OnTakeDamage.Broadcast(fAmount);
 	Client_TakeDamage(fAmount);
@@ -24,28 +24,18 @@ void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePr
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(UCharacterAttributeComponent, Hp);
-	DOREPLIFETIME(UCharacterAttributeComponent, MaxHp);
+	DOREPLIFETIME(UCharacterAttributeComponent, HP);
+	DOREPLIFETIME(UCharacterAttributeComponent, MaxHP);
 }
 
-void UCharacterAttributeComponent::Server_SetMaxHp_Implementation(float fAmount)
+void UCharacterAttributeComponent::Server_SetMaxHP_Implementation(float fAmount)
 {
-	MaxHp = fAmount;
+	MaxHP = fAmount;
 }
 
-void UCharacterAttributeComponent::Server_SetHp_Implementation(float fAmount)
+void UCharacterAttributeComponent::Server_SetHP_Implementation(float fAmount)
 {
-	Hp = fAmount;
-}
-
-float UCharacterAttributeComponent::GetHp() const
-{
-	return Hp;
-}
-
-float UCharacterAttributeComponent::GetMaxHp() const
-{
-	return MaxHp;
+	HP = fAmount;
 }
 
 void UCharacterAttributeComponent::Client_TakeDamage_Implementation(float fAmount)

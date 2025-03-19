@@ -82,8 +82,8 @@ void AEnemyCharacter::BeginPlay()
 
 	if (EnemyAttributeComponent != nullptr)
 	{
-		EnemyAttributeComponent->Server_SetHp(AIData->PlayData.CurHP);
-		EnemyAttributeComponent->Server_SetMaxHp(MonsterData->AIData.MaxHP);
+		EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
+		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
 	}
 }
 

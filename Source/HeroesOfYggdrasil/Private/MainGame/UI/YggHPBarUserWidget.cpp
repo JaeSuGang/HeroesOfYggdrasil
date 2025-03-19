@@ -39,7 +39,7 @@ void UYggHPBarUserWidget::UpdateHPBar(float HP)
     {
         if (HPBar)
     	{
-		    HPBar->SetPercent(CAC->GetHp() / CAC->GetMaxHp());
+		    HPBar->SetPercent(CAC->HP / CAC->MaxHP);
     	}
     }
 }
