@@ -33,6 +33,8 @@ public:
 	void PlayMontageEvent(UAnimMontage* Montage,float PlayRate);
 
 protected:
+
+public:
 	void UpdateAimOffset();
 	UPROPERTY(EditDefaultsOnly, Category = "Montage")
 	TMap<FName, UAnimMontage*> MontageMap;

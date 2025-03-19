@@ -5,6 +5,7 @@
 #include "Interfaces/YggHeroInterface.h"
 #include "Player/YggHeroGreystone.h"
 #include "Attribute/HeroAttributeComponent.h"
+#include "Animation/YggHeroAniminstance.h"
 
 void UGreystoneRJump::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
@@ -16,7 +17,15 @@ void UGreystoneRJump::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 
         if (CurrentMontage)
         {
-            AnimInstance->Montage_Pause(CurrentMontage);
+            // AnimInstance->Montage_Pause(CurrentMontage);
+
+            AnimInstance->Montage_Stop(0.0f, CurrentMontage);
+
+            UYggHeroAnimInstance* asdfsdfdsf = Cast< UYggHeroAnimInstance>(AnimInstance);
+
+            if (!asdfsdfdsf) return;
+
+            AnimInstance->Montage_Play(*asdfsdfdsf->MontageMap.Find(FName("Idle")));
 
             FTimerHandle TimerHandle;
             MeshComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [AnimInstance, CurrentMontage]()

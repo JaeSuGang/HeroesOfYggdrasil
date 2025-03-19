@@ -88,6 +88,31 @@ AYggHero::AYggHero()
 	ActionMap.Add(TEXT("CameraZoomInOut"), NewObject<UInputAction>());
 }
 
+void AYggHero::BeginPlay()
+{
+	Super::BeginPlay();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
+	}
+
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::TakeDamageEffect);
+	}
+}
+
+void AYggHero::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	StartGameCamera(DeltaTime);
+	if (bAimMode)
+	{
+		AimRaycast(Cast<APlayerController>(GetController()));
+	}
+}
+
 void AYggHero::ToggleAimMode()
 {
 	SetAimMode(!bAimMode);
@@ -110,6 +135,12 @@ void AYggHero::SetAimMode(bool Value)
 		CameraBoom->TargetArmLength = 700.0f;
 		CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
 	}
+}
+
+void AYggHero::TakeDamageEffect_Implementation(float Att)
+{
+	// 피 튀기는 파티클 재생. 등등.
+
 }
 
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -310,30 +341,6 @@ void AYggHero::Jump()
 	}
 	Super::Jump();
 }
-
-void AYggHero::BeginPlay()
-{
-	Super::BeginPlay();
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance != nullptr)
-	{
-		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
-	}
-}
-
-
-
-void AYggHero::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	StartGameCamera(DeltaTime);
-	if (bAimMode)
-	{
-		AimRaycast(Cast<APlayerController>(GetController()));
-	}
-}
-
-
 
 void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
 {

@@ -70,6 +70,9 @@ public:
 		return InputMappingContext;
 	}
 
+	UFUNCTION(NetMulticast, Reliable)
+	void TakeDamageEffect(float Att);
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
