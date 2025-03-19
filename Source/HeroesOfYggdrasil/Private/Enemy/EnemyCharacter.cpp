@@ -1,6 +1,7 @@
 
 
 #include "Enemy/EnemyCharacter.h"
+#include "Attribute/AttributeComponent.h"
 #include "Attribute/CharacterAttributeComponent.h"
 #include "Data/YggStructData.h"
 #include "Data/YggConst.h"
@@ -12,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Attribute/EnemyAttributeComponent.h"
+
 
 
 AEnemyCharacter::AEnemyCharacter()
@@ -109,6 +111,10 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	AYggCharacter* DamageCharacter = Cast<AYggCharacter>(OtherActor);
+	UCharacterAttributeComponent * DamageCharacterAttributeComponent = DamageCharacter->GetComponentByClass<UCharacterAttributeComponent>();
+
+	EnemyAttributeComponent->Server_TakeDamage(10.0f);
 }
 
 void AEnemyCharacter::AttackStart()
@@ -116,6 +122,7 @@ void AEnemyCharacter::AttackStart()
 	if (this != nullptr)
 	{
 		GetMesh()->SetCollisionProfileName(UEnemyConst::Collision::ProfileName_MonsterAttack);
+
 	}
 }
 

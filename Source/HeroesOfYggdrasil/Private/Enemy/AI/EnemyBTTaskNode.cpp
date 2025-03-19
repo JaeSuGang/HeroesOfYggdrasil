@@ -51,7 +51,8 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 		if (FName("BP_YggHero") == TargetActor->GetName().Left(10) || FName("BP_Yggdrasil") == TargetActor->GetName().Left(12))
 		{
 		const FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(OwningPawn->GetActorLocation(), TargetActor->GetActorLocation());
-		const FRotator TargetRot = FMath::RInterpTo(OwningPawn->GetActorRotation(), LookAtRot, _DeltaSeconds, RotationInterSpeed);
+		FRotator TargetRot = FMath::RInterpTo(OwningPawn->GetActorRotation(), LookAtRot, _DeltaSeconds, RotationInterSpeed);
+		TargetRot.Pitch = 0.0f;
 		OwningPawn->SetActorRotation(TargetRot);
 		}
 	}

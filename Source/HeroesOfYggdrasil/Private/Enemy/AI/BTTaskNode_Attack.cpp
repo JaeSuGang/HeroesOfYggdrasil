@@ -26,10 +26,16 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	
+	APawn* SelfActor = PlayAIData.SelfPawn;
+	AActor* TargetActor = PlayAIData.TargetActor;
+
 	AttackTime -= _DeltaSeconds;
 
 	if (AttackTime < PlayAIData.Data.StandardZeroTime)
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Await);
 	}
+
+	
+
 }
