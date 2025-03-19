@@ -16,6 +16,8 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
+
+	AttackTime = PlayAIData.Data.AttackTime;
 }
 
 void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -24,4 +26,10 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	
+	AttackTime -= _DeltaSeconds;
+
+	if (AttackTime < PlayAIData.Data.StandardZeroTime)
+	{
+		ChangeState(_OwnerComp, EEnemyAIState::Await);
+	}
 }

@@ -56,7 +56,7 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	Time -= _DeltaSeconds;
 
 	// 공격 준비
-	if (Time <= 0.0f)
+	if (Time <= PlayAIData.Data.StandardZeroTime)
 	{
 		Time = PlayAIData.Data.StrafeTime;
 		ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
