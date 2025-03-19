@@ -114,10 +114,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceSpeed = 600.0f;
-
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	FName TargetGroupName = TEXT("None");
 };
 
 
@@ -188,8 +184,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TMap<EEnemyAIState, UAnimMontage*> Animations;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	TArray<UAnimMontage*> AttackAnimations;
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TArray<UAnimMontage*> AttackAnimations;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<UAnimInstance> AnimationBluePrint;
