@@ -39,11 +39,10 @@ void AEnemySpawner::SpawnStart()
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemySpawner::SpawningCall, SpawnDaley, true);
 }
 
-void AEnemySpawner::OnceSpawningCall_Implementation(UClass* _Class, const FString& _SpawnMonsterName, int32 _Count, double _Delay)
+void AEnemySpawner::OnceSpawningCall_Implementation(const FString& _SpawnMonsterName, int32 _Count, double _Delay)
 {
 	OnceSpawnCount = 1;
 	MaxSpawnCount = _Count;
-	SpawningActor = _Class;
 	SpawnMonsterName = _SpawnMonsterName;
 	SpawnDaley = _Delay;
 
@@ -53,7 +52,20 @@ void AEnemySpawner::OnceSpawningCall_Implementation(UClass* _Class, const FStrin
 void AEnemySpawner::SpawningCall()
 {
 	AMainGameState* GameState = Cast<AMainGameState>(GetWorld()->GetGameState());
+	if (!GameState)
+	{
+		GetWorldTimerManager().ClearTimer(TimerHandle);
+		Destroy();
+		return;
+	}
+
 	AEnemyManager* EnemyManager = GameState->GetEnemyManager();
+	if (!EnemyManager)
+	{
+		GetWorldTimerManager().ClearTimer(TimerHandle);
+		Destroy();
+		return;
+	}
 
 	FVector Range = FVector::ZeroVector;
 
