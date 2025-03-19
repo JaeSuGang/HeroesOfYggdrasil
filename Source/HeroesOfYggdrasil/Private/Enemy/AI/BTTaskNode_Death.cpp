@@ -10,6 +10,12 @@ UBTTaskNode_Death::UBTTaskNode_Death()
 
 void UBTTaskNode_Death::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+
+	if (nullptr != PlayAIData.SelfAnimPawn)
+	{
+		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
+	}
 }
 
 void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)

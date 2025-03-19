@@ -2,8 +2,8 @@
 
 
 #include "Enemy/AI/BTService_OrientToTargetActor.h"
-#include "BehaviorTree/BlackboardComponent.h"
 #include "AIController.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -42,6 +42,7 @@ void UBTService_OrientToTargetActor::TickNode(UBehaviorTreeComponent& OwnerComp,
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	UObject* ActorObject = OwnerComp.GetBlackboardComponent()->GetValueAsObject(InTargetActorKey.SelectedKeyName);
+	
 	AActor* TargetActor = Cast<AActor>(ActorObject);
 
 	APawn* OwningPawn = OwnerComp.GetAIOwner()->GetPawn();

@@ -42,7 +42,7 @@ private:
 	bool bEnableDetourCrowdAvoidance = true;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidanve Config", meta = (EditCondition = "bEnableDetourCrowdAvoidance", UIMin = "1", UIMax = "4"))
-	int32 DetourCrowdAvoidanceQuality = 3;
+	int32 DetourCrowdAvoidanceQuality = 4;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Detour Crowd Avoidanve Config", meta = (EditCondition = "bEnableDetourCrowdAvoidance", UIMin = "1", UIMax = "4"))
 	float CollisionQueryRange = 450.0f;

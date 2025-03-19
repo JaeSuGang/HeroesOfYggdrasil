@@ -33,6 +33,10 @@ public:
 		DataKey = _ItemDataKey;
 	}
 
+	void SetEnemyAttributeComponent(UEnemyAttributeComponent* _EnemyAttributeComponent)
+	{
+		EnemyAttributeComponent = _EnemyAttributeComponent;
+	}
 
 protected:
 	virtual void BeginPlay() override;
@@ -47,8 +51,8 @@ public:
 	UFUNCTION()
 	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(EditAnywhere)
-	class UEnemyAttributeComponent* EnemyAttributeComponent;
+	UPROPERTY(EditAnywhere, Replicated, Category = "YggData", meta = (AllowPrivateAccess = "true"))
+	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
 
 private:
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

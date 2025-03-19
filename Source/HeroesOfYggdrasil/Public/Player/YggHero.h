@@ -15,6 +15,7 @@
  // Camera
 class USpringArmComponent;
 class UCameraComponent;
+class USceneCaptureComponent2D;
 
 // Input
 class UInputMappingContext;
@@ -122,7 +123,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
 	UWidgetComponent* WidgetComponent;
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "YggCamera")
+	USceneCaptureComponent2D* SceneCaptureComponent2D;
 	
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)

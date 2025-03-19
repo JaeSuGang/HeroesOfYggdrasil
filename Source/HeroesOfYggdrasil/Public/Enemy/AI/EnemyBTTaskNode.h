@@ -6,6 +6,8 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include "Data/YggEnumData.h"
 #include "Data/YggStructData.h"
+#include "Enemy/EnemyCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "EnemyBTTaskNode.generated.h"
 
 /**
@@ -30,10 +32,16 @@ public:
 
 	void TargetCheck(UBehaviorTreeComponent& _OwnerComp);
 
+	void YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp);
+
 protected:
 	UPROPERTY(Category = "Enemy", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	EEnemyAIState EnemyAIStateValue = EEnemyAIState::Idle;
+	EEnemyAIState EnemyAIStateValue = EEnemyAIState::TraceYggdrasil;
 private:
-	
+	UPROPERTY(EditAnywhere, Category = "Target")
+	FBlackboardKeySelector InTargetActorKey;
+
+	UPROPERTY(EditAnywhere, Category = "Target")
+	float RotationInterSpeed;
 	
 };

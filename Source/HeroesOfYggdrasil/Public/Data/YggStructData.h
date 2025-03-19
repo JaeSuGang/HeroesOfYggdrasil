@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "YggEnumData.h"
+#include "Attribute/EnemyAttributeComponent.h"
 #include "YggStructData.generated.h"
 
 /**
@@ -79,16 +80,41 @@ struct FAIData
 	~FAIData() {}
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FName EnemyName = FName("");
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double MaxHP = 100;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceRange = 1000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double AttackRange = 600.0f;
+	double StrafeRange = 600.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double StrafeSpeed = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double StrafeTime= 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double AttackRange = 50.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double ApproachSpeed = 600.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double YggAttackRange = 800.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double AttackTime = 1.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double TraceBackSpeed = 1200.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double TraceSpeed = 600.0f;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FName TargetGroupName = TEXT("None");
@@ -107,15 +133,25 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FAIData Data;
 
-	EEnemyAIState EnemyAIState = EEnemyAIState::Idle;
-	double CurHP = 100;
-	class APawn* SelfPawn = nullptr;
-	AActor* TargetActor = nullptr;
-	class AEnemyAnimCharacter* SelfAnimPawn = nullptr;
-	class UEnemyBaseAnimInstance* UEnemyBaseAnimInstance = nullptr;
-	FVector OriginPos;
-	int AttackAnimationCount;
+	EEnemyAIState EnemyAIState = EEnemyAIState::TraceYggdrasil;
 
+	double CurHP = 100;
+
+	class APawn* SelfPawn = nullptr;
+
+	AActor* TargetActor = nullptr;
+
+	class AEnemyAnimCharacter* SelfAnimPawn = nullptr;
+
+	class UEnemyBaseAnimInstance* UEnemyBaseAnimInstance = nullptr;
+
+	FVector OriginPos;
+
+	
+	
+	// int AttackAnimationCount;
+
+	
 };
 
 UCLASS(BlueprintType)
@@ -148,7 +184,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	class USkeletalMesh* Mesh;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TMap<EEnemyAIState, UAnimMontage*> Animations;
 
@@ -157,6 +193,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<UAnimInstance> AnimationBluePrint;
+
+
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")

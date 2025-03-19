@@ -29,6 +29,7 @@ enum class EEnemyAIState : uint8
 {
 	Idle UMETA(DisplayName = "대기"),
 	Attack UMETA(DisplayName = "공격"),
+	ApproachToAttack UMETA(DisplayName = "접근"),
 	Strafe UMETA(DisplayName = "와리가리"),
 	Trace UMETA(DisplayName = "추적"),
 	TraceBack UMETA(DisplayName = "복귀"),

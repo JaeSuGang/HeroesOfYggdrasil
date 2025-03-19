@@ -5,7 +5,8 @@
 #include "BehaviorTree/BTTaskNode.h"
 #include <Kismet/GameplayStatics.h>
 #include "BehaviorTree/BlackboardComponent.h"
-
+#include "Kismet/KismetMathLibrary.h"
+#include "AIController.h"
 
 
 UEnemyBTTaskNode::UEnemyBTTaskNode()
@@ -15,6 +16,7 @@ UEnemyBTTaskNode::UEnemyBTTaskNode()
 
 void UEnemyBTTaskNode::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+
 }
 
 EBTNodeResult::Type UEnemyBTTaskNode::ExecuteTask(UBehaviorTreeComponent& _OwnerComp, uint8* NodeMemory)
@@ -36,6 +38,22 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
+
+	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
+
+	APawn* SelfActor = PlayAIData.SelfPawn;
+	AActor* TargetActor = PlayAIData.TargetActor;
+
+	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
+
+	if (OwningPawn && TargetActor)
+	{
+
+		const FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(OwningPawn->GetActorLocation(), TargetActor->GetActorLocation());
+		const FRotator TargetRot = FMath::RInterpTo(OwningPawn->GetActorRotation(), LookAtRot, _DeltaSeconds, RotationInterSpeed);
+
+		OwningPawn->SetActorRotation(TargetRot);
+	}
 }
 
 void UEnemyBTTaskNode::ChangeState(UBehaviorTreeComponent& _OwnerComp, EEnemyAIState _State)
@@ -60,9 +78,9 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 
-	if (nullptr == TargetActor)
+	if (nullptr == TargetActor || FName("BP_Yggdrasil") == PlayAIData.TargetActor->GetName().Left(12))
 	{
-		UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Character"), OutActors);
+		//UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Character"), OutActors);
 
 		/*
 		float CurTargetDistance = TNumericLimits<float>::Max();
@@ -95,6 +113,38 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 				{
 					TargetActor = CheckActor;
 				}
+			}
+		}
+
+		if (nullptr != TargetActor)
+		{
+			PlayAIData.TargetActor = TargetActor;
+		}
+	}
+}
+
+
+void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
+
+	APawn* SelfActor = PlayAIData.SelfPawn;
+	AActor* TargetActor = PlayAIData.TargetActor;
+
+	if (nullptr == TargetActor)
+	{
+		TArray<AActor*> AllActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
+
+
+		AActor* CheckActor = nullptr;
+		float CurTargetDistance = TNumericLimits<float>::Max();
+		for (size_t i = 0; i < AllActors.Num(); i++)
+		{
+			if (FName("BP_Yggdrasil") == AllActors[i]->GetName().Left(12))
+			{
+				CheckActor = AllActors[i];
+				TargetActor = CheckActor;
 			}
 		}
 

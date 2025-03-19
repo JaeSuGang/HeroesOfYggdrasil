@@ -23,11 +23,6 @@ class HEROESOFYGGDRASIL_API UEnemyBaseAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 
 public:
-	/*virtual void NativeInitializeAnimation() override;
-	virtual void NativeThreadSafeUpdateAnimation(float DeltaTime) override;
-
-	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
-	static bool NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck);*/
 
 	UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
 
@@ -73,15 +68,13 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	float LocomotionDirection;
 
-	// UFUNCTION(BlueprintCallable, meta = (BlueprintThreadSafe))
-	// bool OwnerHaveTag(FGameplayTag _TagToCheck);
-
 	UPROPERTY(BlueprintReadOnly)
 	float RotationInterSpeed;
 
 
 private:
-	EEnemyAIState CurAnimationType = EEnemyAIState::Idle;
+	// Default값 이그드라실 추적
+	EEnemyAIState CurAnimationType = EEnemyAIState::TraceYggdrasil;
 
 	FName SectionName = TEXT("");
 

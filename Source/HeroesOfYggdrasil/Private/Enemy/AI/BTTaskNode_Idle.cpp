@@ -18,7 +18,7 @@ void UBTTaskNode_Idle::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	if (nullptr != PlayAIData.SelfAnimPawn)
 	{
-		//PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
+		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 }
 
@@ -28,11 +28,6 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 
 	FPlayAIData& AIData = GetPlayAIData(_OwnerComp);
 
-	/*if (AIData.CurPatrolTime > AIData.Data.MaxPatrolTime)
-	{
-		ChangeState(_OwnerComp, EEnemyAIState::Trace);
-		return;
-	}*/
 
 	TargetCheck(_OwnerComp);
 

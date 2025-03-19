@@ -10,11 +10,17 @@
 /**
  *	김성훈
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboChanged);
+
 class UDataTable;
 UCLASS()
 class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UCharacterAttributeComponent
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
 	UPROPERTY(EditAnywhere)
@@ -24,6 +30,6 @@ public:
 	float SpeedRate = 1.0f;
 	UPROPERTY(BlueprintReadOnly)
 	float JumpRate = 1.0f;
-	
+		
 private:
 };

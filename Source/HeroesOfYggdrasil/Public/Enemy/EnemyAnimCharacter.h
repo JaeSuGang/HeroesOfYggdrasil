@@ -26,7 +26,7 @@ public:
 	void ChangeAnimation_Multicast(int _CurAnimnation, FName _SectionName = TEXT("None"));
 	void ChangeAnimation_Multicast_Implementation(int _CurAnimnation, FName _SectionName = TEXT("None"));
 
-	UEnemyBaseAnimInstance* GetGMAnimInstance()
+	UEnemyBaseAnimInstance* GetEnemyAnimInstance()
 	{
 		return EnemyBaseAnimInstance;;
 	}

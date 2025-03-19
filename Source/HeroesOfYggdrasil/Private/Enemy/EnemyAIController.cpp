@@ -67,7 +67,7 @@ ETeamAttitude::Type AEnemyAIController::GetTeamAttitudeTowards(const AActor& Oth
 	FString PawnName = PawnToCheck->GetName().Left(10);
 
 
-	if (PawnName == TEXT("BP_YggHero"))
+	if (PawnName == TEXT("BP_YggHero") || PawnName == TEXT("BP_YggHero"))
 	{
 		return ETeamAttitude::Hostile;
 	}

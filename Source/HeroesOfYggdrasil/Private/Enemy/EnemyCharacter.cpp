@@ -16,21 +16,21 @@
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("AttributeComponent"));
+	
 }
 
 void AEnemyCharacter::BeginPlay()
 {
 	if (DataKey == TEXT("") || true == DataKey.IsEmpty())
 	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (ItemDataKey == TEXT("") || true == ItemDataKey.IsEmpty())"), __FUNCTION__, __LINE__);
+		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (EnemyDataKey == TEXT("") || true == EnemyDataKey.IsEmpty())"), __FUNCTION__, __LINE__);
 		return;
 	}
 
 	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
 	MonsterData = &FindData;
 	AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
-
+	
 
 	if (nullptr != Con)
 	{
@@ -39,10 +39,12 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.SelfPawn = this;
 		AIData->PlayData.SelfAnimPawn = this;
 		AIData->PlayData.CurHP = FindData.AIData.MaxHP;
-		AIData->PlayData.AttackAnimationCount = FindData.AttackAnimations.Num();
+		// AIData->PlayData.AttackAnimationCount = FindData.AttackAnimations.Num();
 		AIData->PlayData.OriginPos = GetActorLocation();
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
+
+	
 
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -71,14 +73,23 @@ void AEnemyCharacter::BeginPlay()
 
 	}
 
+	GetCharacterMovement()->bUseRVOAvoidance = true;
+	GetCharacterMovement()->AvoidanceConsiderationRadius = 800.0f;
 
 	Super::BeginPlay();
+
+	if (EnemyAttributeComponent != nullptr)
+	{
+		EnemyAttributeComponent->Server_SetHp(AIData->PlayData.CurHP);
+		EnemyAttributeComponent->Server_SetMaxHp(MonsterData->AIData.MaxHP);
+	}
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	
 }
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
