@@ -10,7 +10,8 @@ void UCharacterAttributeComponent::Server_TakeDamage_Implementation(float fAmoun
 {
 	Hp -= fAmount;
 
-	Delegate_OnTakeDamage.Broadcast(fAmount);
+	ServerDelegate_OnTakeDamage.Broadcast(fAmount);
+	Client_TakeDamage(fAmount);
 }
 
 void UCharacterAttributeComponent::BeginPlay()
@@ -46,4 +47,10 @@ float UCharacterAttributeComponent::GetMaxHp() const
 {
 	return MaxHp;
 }
+
+void UCharacterAttributeComponent::Client_TakeDamage_Implementation(float fAmount)
+{
+	ClientDelegate_OnTakeDamage.Broadcast(fAmount);
+}
+
 

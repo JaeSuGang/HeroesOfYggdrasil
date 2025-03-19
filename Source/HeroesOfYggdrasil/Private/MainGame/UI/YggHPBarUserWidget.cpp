@@ -25,7 +25,7 @@ void UYggHPBarUserWidget::NativeOnInitialized()
     
     if (CAC)
     {
-        CAC->Delegate_OnTakeDamage.AddDynamic(this, &UYggHPBarUserWidget::UpdateHPBar);
+        CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggHPBarUserWidget::UpdateHPBar);
     }
 }
 
