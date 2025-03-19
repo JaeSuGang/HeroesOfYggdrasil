@@ -65,10 +65,19 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
+	UYggHeroAnimInstance* GetHeroAnimInstance()
+	{
+		return HeroAnimInstance;
+	}
+
+	UFUNCTION(BlueprintCallable)
 	UInputMappingContext* GetInputMappingContext()
 	{
 		return InputMappingContext;
 	}
+
+	UFUNCTION(NetMulticast, Reliable)
+	void TakeDamageEffect(float Att);
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -82,6 +91,7 @@ protected:
 	virtual void Jump() override;
 
 	virtual void Attack(const FInputActionValue& Value) {}
+	virtual void EndAttack(const FInputActionValue& Value) {}
 	virtual void SkillQ(const FInputActionValue& Value) {}
 	virtual void SkillE(const FInputActionValue& Value) {}
 	virtual void SkillR(const FInputActionValue& Value) {}
