@@ -73,7 +73,6 @@ void UYggStageTimerUserWidget::GetStageTimer()
 		return;
 	}
 
-	AGameStage* Stage = StageManager->CurrentStage;
 	if (Stage)
 	{
 		StageTimer->SetText(FText::AsNumber(Stage->Timer));
