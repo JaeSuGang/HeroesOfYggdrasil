@@ -42,15 +42,22 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 	float Size = TargetDir.Size();
 
-	if (Size >= PlayAIData.Data.AttackRange)
-	{
-		ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
+	// 타겟이 플레이어인 경우
+	if (FName("BP_YggHero") == PlayAIData.TargetActor->GetName().Left(10))
+	{	
+		// 플레이어가 공격범위를 벗어났을 때
+		if (Size >= PlayAIData.Data.AttackRange)
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
+		}
+
+		// 추적 범위를 넘어갔을 때
+		if (Size >= PlayAIData.Data.StrafeRange)
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::Trace);
+			return;
+		}
 	}
 
-	if (Size >= PlayAIData.Data.StrafeRange)
-	{
-		ChangeState(_OwnerComp, EEnemyAIState::Trace);
-		return;
-	}
 
 }

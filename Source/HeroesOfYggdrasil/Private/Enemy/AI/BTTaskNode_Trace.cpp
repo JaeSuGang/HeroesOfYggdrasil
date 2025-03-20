@@ -3,6 +3,7 @@
 
 #include "Enemy/AI/BTTaskNode_Trace.h"
 #include "Enemy/EnemyAnimCharacter.h"
+#include "AIController.h"
 
 UBTTaskNode_Trace::UBTTaskNode_Trace()
 {
@@ -47,8 +48,13 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 		return;
 	}
 
-	// 
-	SelfActor->AddMovementInput(TargetDir);
+	AAIController* SelfController = SelfActor->GetController<AAIController>();
+	
+	if (SelfController != nullptr && TargetActor!= nullptr)
+	{
+		SelfController->MoveToActor(TargetActor);
+	}
+	
 	
 	float Size = TargetDir.Size();
 	if (Size >= PlayAIData.Data.TraceRange)

@@ -3,7 +3,7 @@
 
 #include "Enemy/AI/BTTaskNode_ApproachToAttack.h"
 #include "GameFramework/PawnMovementComponent.h"
-
+#include "AIController.h"
 
 UBTTaskNode_ApproachToAttack::UBTTaskNode_ApproachToAttack()
 {
@@ -25,8 +25,10 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 	
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-
+	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
+	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+	AAIController* SelfController = SelfActor->GetController<AAIController>();
 
 	// 타겟 null(죽음)
 	if (nullptr == TargetActor)
@@ -35,15 +37,13 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 		return;
 	}
 
-	APawn* SelfActor = PlayAIData.SelfPawn;
-	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 
-	SelfActor->AddMovementInput(TargetDir);
+	// SelfActor->AddMovementInput(TargetDir);
 	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
 	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.ApproachSpeed;
 
 
-	if (TargetDir.Size() <= PlayAIData.Data.AttackRange)
+	if (TargetDir.Size() <= PlayAIData.Data.AttackRange || FName("BP_Yggdrasil") == PlayAIData.TargetActor->GetName().Left(12))
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Attack);
 		return;
@@ -54,5 +54,10 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
 		return;
+	}
+
+	if (SelfController != nullptr && TargetActor != nullptr)
+	{
+		SelfController->MoveToActor(TargetActor, PlayAIData.Data.AttackRange / 2.0f);
 	}
 }
