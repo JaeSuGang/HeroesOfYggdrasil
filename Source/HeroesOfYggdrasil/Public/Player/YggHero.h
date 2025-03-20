@@ -19,7 +19,7 @@ class APlayerController;
 
 class USpringArmComponent;
 class UCameraComponent;
-class USceneCaptureComponent2D;
+class UCaptureComponent;
 
 // Input
 class UInputMappingContext;
@@ -76,6 +76,12 @@ public:
 		return InputMappingContext;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	UCaptureComponent* GetFaceCaptureComponent()
+	{
+		return FaceCaptureComponent;
+	}
+
 	UFUNCTION(NetMulticast, Reliable)
 	void TakeDamageEffect(float Att);
 
@@ -128,7 +134,7 @@ protected:
 	UWidgetComponent* WidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "YggCamera")
-	USceneCaptureComponent2D* SceneCaptureComponent2D;
+	UCaptureComponent* FaceCaptureComponent;
 	
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)

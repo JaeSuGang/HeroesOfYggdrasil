@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneCaptureComponent2D.h"
-#include "FaceCaptureComponent.generated.h"
+#include "CaptureComponent.generated.h"
 
 class UTextureRenderTarget2D;
 
@@ -12,16 +12,16 @@ class UTextureRenderTarget2D;
  * 
  */
 UCLASS()
-class HEROESOFYGGDRASIL_API UFaceCaptureComponent : public USceneCaptureComponent2D
+class HEROESOFYGGDRASIL_API UCaptureComponent : public USceneCaptureComponent2D
 {
 	GENERATED_BODY()
 	
 
 public:
-	UFaceCaptureComponent();
+	UCaptureComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
-	UTextureRenderTarget2D* GetFaceRenderTarget() const
+	UTextureRenderTarget2D* GetRenderTarget() const
 	{
 		return RenderTarget;
 	}
