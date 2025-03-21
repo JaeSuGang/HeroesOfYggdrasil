@@ -76,6 +76,12 @@ public:
 		return InputMappingContext;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	UCaptureComponent* GetFaceCaptureComponent()
+	{
+		return FaceCaptureComponent;
+	}
+
 	UFUNCTION(NetMulticast, Reliable)
 	void TakeDamageEffect(float Att);
 
@@ -127,7 +133,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
 	UWidgetComponent* WidgetComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "YggCamera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	UCaptureComponent* FaceCaptureComponent;
 	
 

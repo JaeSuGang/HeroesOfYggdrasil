@@ -6,7 +6,7 @@
 
 UCaptureComponent::UCaptureComponent()
 {
-	RenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("FaceRenderTarget"));
+	RenderTarget = NewObject<UTextureRenderTarget2D>();
 
 	RenderTarget->InitAutoFormat(1024, 1024);
 

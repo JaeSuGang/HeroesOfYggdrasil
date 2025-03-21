@@ -17,17 +17,18 @@ class HEROESOFYGGDRASIL_API UYggPlayerStatusUserWidget : public UYggUserWidget
 	GENERATED_BODY()
 	
 public:
-	//UFUNCTION(BlueprintCallable)
-	//void SetFaceCam(UTexture2D* Texture);
+	UFUNCTION(BlueprintCallable)
+	void SetFaceCam(UTexture2D* Texture);
 
-	//UTexture2D* ConvertRenderTargetToTexture2D(UTextureRenderTarget2D* RenderTarget);
+	UTexture2D* ConvertRenderTargetToTexture2D(UTextureRenderTarget2D* RenderTarget);
 
 protected:
-	void NativeOnInitialized() override;
+	virtual void NativeOnInitialized() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 private:
-	//UPROPERTY(meta = (BindWidget))
-	//UImage* PlayerFace;
+	UPROPERTY(meta = (BindWidget))
+	UImage* PlayerFace;
 
-	//UTexture2D* Texture2D;
+	UTexture2D* Texture2D;
 };
