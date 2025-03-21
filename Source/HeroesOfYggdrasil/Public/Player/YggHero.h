@@ -76,12 +76,6 @@ public:
 		return InputMappingContext;
 	}
 
-	UFUNCTION(BlueprintCallable)
-	UCaptureComponent* GetFaceCaptureComponent()
-	{
-		return FaceCaptureComponent;
-	}
-
 	UFUNCTION(NetMulticast, Reliable)
 	void TakeDamageEffect(float Att);
 

@@ -7,34 +7,44 @@
 UCaptureComponent::UCaptureComponent()
 {
 	RenderTarget = CreateDefaultSubobject<UTextureRenderTarget2D>(TEXT("FaceRenderTarget"));
-	
+
 	RenderTarget->InitAutoFormat(1024, 1024);
-	
+
 	PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
 	ProjectionType = ECameraProjectionMode::Orthographic;
 	CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
-	OrthoWidth = 100.0f;
 
 	TextureTarget = RenderTarget;
 
 	bCaptureEveryFrame = true;
+	bCaptureOnMovement = true;
 
-
-	/*SceneCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("StatusCamera"));
-	
-	SceneCaptureComponent2D->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
-
-	SceneCaptureComponent2D->ProjectionType = ECameraProjectionMode::Orthographic;
-	SceneCaptureComponent2D->CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
-	SceneCaptureComponent2D->OrthoWidth = 300.0f;
-
-	SceneCaptureComponent2D->AddRelativeLocation(FVector(100.f, 0.0f, 100.0f));
-	SceneCaptureComponent2D->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));*/
+	OrthoWidth = 50.0f;
 }
 
 void UCaptureComponent::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
+void UCaptureComponent::SetupFaceCapture(AActor* TargetActor)
+{
+	if (!TargetActor) return;
 
+	// 기존 목록 초기화
+	ShowOnlyActors.Empty();
+
+	// 타겟 액터만 캡처하도록 설정
+	ShowOnlyActors.Add(TargetActor);
+
+	// 캡처 강제 업데이트
+	CaptureScene();
+}
+
+void UCaptureComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// 매 프레임 캡처 보장
+	CaptureScene();
 }
