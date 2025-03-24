@@ -19,22 +19,16 @@ protected:
 
 	virtual void Look(const FInputActionValue& Value) override;	
 	virtual void Move(const FInputActionValue& Value) override;
-	void Jump(const FInputActionValue& Value);
-
-	void AttackPressed(const FInputActionValue& Value);
-	void AttackReleased(const FInputActionValue& Value);
+	void Roll(const FInputActionValue& Value);
 
 	virtual void Attack(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
 	void ServerAttack();
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastAttack(int ServerAttackIndex);
+	void MulticastAttack();
 
-	void StopAttack();
-	UFUNCTION(Server, Reliable)
-	void ServerStopAttack();
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastStopAttack();
+	virtual void EndAttack(const FInputActionValue& Value) override;
+	
 
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)

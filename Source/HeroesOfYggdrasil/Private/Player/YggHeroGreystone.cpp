@@ -28,6 +28,8 @@
 #include "Engine/DataTable.h"
 #include "Data/YggStructData.h"
 
+#include "Animation/HeroGreystoneAnimInstance.h"
+
 AYggHeroGreystone::AYggHeroGreystone()
 {
 }
@@ -80,15 +82,15 @@ void AYggHeroGreystone::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		}
 		if (ActionMap.Find(FName("Jump")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Jump")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Jump);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Jump")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Roll);
 		}
 		if (ActionMap.Find(FName("Attack")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Started, this, &AYggHeroGreystone::AttackPressed);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Started, this, &AYggHeroGreystone::Attack);
 		}
 		if (ActionMap.Find(FName("Attack")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Completed, this, &AYggHeroGreystone::AttackReleased);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Completed, this, &AYggHeroGreystone::EndAttack);
 		}
 		if (ActionMap.Find(FName("SkillQ")))
 		{
@@ -124,77 +126,15 @@ void AYggHeroGreystone::Move(const FInputActionValue& Value)
 	Super::Move(Value);
 }
 
-void AYggHeroGreystone::Jump(const FInputActionValue& Value)
+void AYggHeroGreystone::Roll(const FInputActionValue& Value)
 {
-}
+	UHeroGreystoneAnimInstance* AnimInstance = Cast<UHeroGreystoneAnimInstance>(GetMesh()->GetAnimInstance());
+	if (!AnimInstance) return;
 
-void AYggHeroGreystone::AttackPressed(const FInputActionValue& Value)
-{
-	bAttackButtonPressed = true;
+	AnimInstance->bIsRoll = true;
 
-	if (!(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("NotAttackable"));
-	}
-
-	if (!bIsAttacking && !(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Attack"));
-
-		Attack(Value);
-	}
-}
-
-void AYggHeroGreystone::AttackReleased(const FInputActionValue& Value)
-{
-	UAnimMontage* CurrentPlayingMontage = HeroAnimInstance->GetCurrentActiveMontage();
-
-	HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
-
-	StopAttack();
-
-	if (CurrentPlayingMontage)
-	{
-		FString SectionName = FString::Printf(TEXT("StopAtt%d"), 0); // HeroAttributeComponent->GetCurComboAttack());
-		FName CurrentSectionName(*SectionName);
-
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, SectionName);
-				
-		FTimerHandle TimerHandle;
-		float ElapsedTime = 0.0f;
-		float MaxWaitTime = 2.0f;
-
-		GetWorld()->GetTimerManager().SetTimer(
-			AttackStopCheckHandle,
-			[this, SectionName, CurrentSectionName, CurrentPlayingMontage, MaxWaitTime, ElapsedTime]() mutable
-		{
-			ElapsedTime += 0.01f;
-
-			FName CurrentSection = this->HeroAnimInstance->Montage_GetCurrentSection(CurrentPlayingMontage);
-
-			if (CurrentSection == CurrentSectionName)
-			{
-				// this->HeroAttributeComponent->ResetComboAttack();
-				this->HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
-				this->GetWorld()->GetTimerManager().ClearTimer(AttackStopCheckHandle);
-
-				this->bIsAttacking = false;
-				this->bAttackButtonPressed = false;
-				this->HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
-			}
-			else if (ElapsedTime >= MaxWaitTime)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Timer Cleared: Section Not Found in Time"));
-				this->GetWorld()->GetTimerManager().ClearTimer(AttackStopCheckHandle);
-
-				this->bIsAttacking = false;
-				this->bAttackButtonPressed = false;
-				this->HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
-			}
-		},
-			0.01f, true
-		);
-	}
+	FName MontageName = *FString::Printf(TEXT("Jump"));
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroGreystone::Attack(const FInputActionValue& Value)
@@ -208,23 +148,18 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 		return;
 	}
 
+	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
+	}
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
 	{
 		return;
 	}
-
-	bIsAttacking = true;
-
-	Super::Attack(Value);
-	
 	if (HasAuthority())
 	{
-		/*MulticastAttack(HeroAttributeComponent->GetCurComboAttack());
-
-		if (HeroAttributeComponent->GetCurComboAttack() == HeroAttributeComponent->GetMaxComboAttack())
-		{
-			HeroAttributeComponent->ResetComboAttack();
-		}*/
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		MulticastAttack();
 	}
 	else
 	{
@@ -233,40 +168,21 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 	}
 }
 
-void AYggHeroGreystone::StopAttack()
-{	
-	if (HasAuthority())
-	{
-		MulticastStopAttack();
-	}
-	else
-	{
-		ServerStopAttack();
-	}
-}
-
-void AYggHeroGreystone::ServerStopAttack_Implementation()
-{
-	StopAttack();
-}
-
-void AYggHeroGreystone::MulticastStopAttack_Implementation()
-{
-	UAnimMontage* CurrentPlayingMontage = HeroAnimInstance->GetCurrentActiveMontage();
-
-	HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
-}
-
 void AYggHeroGreystone::ServerAttack_Implementation()
 {
 	Attack(FInputActionValue());
 }
 
-void AYggHeroGreystone::MulticastAttack_Implementation(int ServerAttackIndex)
+void AYggHeroGreystone::MulticastAttack_Implementation()
 {	
 	FName MontageName = *FString::Printf(TEXT("Attack"));
 	
 	HeroAnimInstance->PlayMontage(MontageName);
+}
+
+void AYggHeroGreystone::EndAttack(const FInputActionValue& Value)
+{
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.PressedAttack"));
 }
 
 void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
