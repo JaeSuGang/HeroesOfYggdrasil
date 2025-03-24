@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "MainGameHUD.generated.h"
 
+class UYggLobbyUserWidget;
+
 /**
  * 
  */
@@ -60,4 +62,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = YGG)
 	UUserWidget* CurrentWidget;
+
+	APlayerController* PC;
+	UYggLobbyUserWidget* LobbyUserWidget;
+
+	//TFunction<void()> StartButtinPlayerFunc;
+	//void BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc);
 };

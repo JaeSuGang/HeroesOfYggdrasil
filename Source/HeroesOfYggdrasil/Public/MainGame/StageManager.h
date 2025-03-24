@@ -6,15 +6,7 @@
 #include "GameFramework/Info.h"
 #include "StageManager.generated.h"
 
-class APlayerSelectZone;
-
-UENUM()
-enum class EGameStage : uint8
-{
-	PreStart,
-	Reinforce,
-	Battle,
-};
+class AGameStage;
 
 /**
  * 담당 코더 : 김경민
@@ -31,29 +23,31 @@ public:
 	static AStageManager* Get(UWorld* WorldContext);
 
 protected:
+	void BeginPlay() override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	UFUNCTION(Server, Reliable)
+	AGameStage* GetPlayingStage() const;
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void EnterStage(TSubclassOf<AGameStage> stage);
+
+	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void StartGame();
 
-	UFUNCTION(Server, Reliable)
-	void OnUpdateStage();
 
-	UFUNCTION(Server, Reliable)
-	void OnExitStage();
-
-	UFUNCTION(Server, Reliable)
-	void EnterStage(EGameStage newStage, int nRound);
 
 public:
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Reliable, BlueprintCallable)
 	void ForceMainWidgetToClients();
 
 public:
-	UPROPERTY(Replicated, VisibleInstanceOnly)
-	EGameStage CurrentStage;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AGameStage> FirstStageToStart;
 
-	UPROPERTY(Replicated, VisibleInstanceOnly)
+	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
+	AGameStage* CurrentStage;
+
+	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	int32 Round;
 };

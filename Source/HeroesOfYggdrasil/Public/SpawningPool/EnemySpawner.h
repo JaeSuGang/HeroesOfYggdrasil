@@ -24,6 +24,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void OnceSpawningCall(const FString& _SpawnMonsterName, int32 _Count, double _Delay);
+	void OnceSpawningCall_Implementation(const FString& _SpawnMonsterName, int32 _Count, double _Delay);
+
 private:
 	void SpawningCall();
 	void SpawnStart();
@@ -36,7 +40,8 @@ private:
 	int CurrentSpawnCount = 0;
 
 	FVector SpawnRange = FVector::ZeroVector;
-	UClass* SpawningActor = nullptr;
+	FString SpawnMonsterName = {};
 	float SpawnDaley = 0.f;
 
+	bool Invalid = false;
 };

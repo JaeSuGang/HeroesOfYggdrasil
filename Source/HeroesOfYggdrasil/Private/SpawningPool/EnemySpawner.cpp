@@ -3,6 +3,8 @@
 
 #include "SpawningPool/EnemySpawner.h"
 #include <Components/SceneComponent.h>
+#include <MainGame/MainGameState.h>
+#include <MainGame/EnemyManager.h>
 #include <Math/UnrealMathUtility.h>
 
 // Sets default values
@@ -30,11 +32,41 @@ void AEnemySpawner::Tick(float DeltaTime)
 
 void AEnemySpawner::SpawnStart()
 {
+	if (Invalid == true)
+		return;
+
+	Invalid = true;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemySpawner::SpawningCall, SpawnDaley, true);
+}
+
+void AEnemySpawner::OnceSpawningCall_Implementation(const FString& _SpawnMonsterName, int32 _Count, double _Delay)
+{
+	OnceSpawnCount = 1;
+	MaxSpawnCount = _Count;
+	SpawnMonsterName = _SpawnMonsterName;
+	SpawnDaley = _Delay;
+
+	SpawnStart();
 }
 
 void AEnemySpawner::SpawningCall()
 {
+	AMainGameState* GameState = Cast<AMainGameState>(GetWorld()->GetGameState());
+	if (!GameState)
+	{
+		GetWorldTimerManager().ClearTimer(TimerHandle);
+		Destroy();
+		return;
+	}
+
+	AEnemyManager* EnemyManager = GameState->GetEnemyManager();
+	if (!EnemyManager)
+	{
+		GetWorldTimerManager().ClearTimer(TimerHandle);
+		Destroy();
+		return;
+	}
+
 	FVector Range = FVector::ZeroVector;
 
 	if (SpawnRange != FVector::ZeroVector)
@@ -48,9 +80,8 @@ void AEnemySpawner::SpawningCall()
 
 	for (int i = 0; i < OnceSpawnCount; ++i)
 	{
-		FVector Location = GetActorLocation();
-		AActor* NewActor = GetWorld()->SpawnActor(SpawningActor);
-		NewActor->SetActorLocation(Location + Range);
+		FVector Location = GetActorLocation() + FVector{ (1000.0f, 1000.0f) };
+		EnemyManager->CreateMonster(SpawnMonsterName, Location + Range);
 		++CurrentSpawnCount;
 
 		if (CurrentSpawnCount >= MaxSpawnCount)

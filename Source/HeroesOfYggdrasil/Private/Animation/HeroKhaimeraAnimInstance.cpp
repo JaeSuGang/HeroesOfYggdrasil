@@ -22,5 +22,4 @@ void UHeroKhaimeraAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	{ 
 		return; 
 	}
-	bIsMoveAttackable = Khaimera->GetHeroAttribute()->HasTagExact(TEXT("Character.State.MoveAttackable"));
 }

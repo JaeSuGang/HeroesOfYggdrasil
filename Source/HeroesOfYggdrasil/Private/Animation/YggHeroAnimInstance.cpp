@@ -5,6 +5,14 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+UYggHeroAnimInstance::UYggHeroAnimInstance()
+{
+	MontageMap.Add(TEXT("Attack"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("SkillQ"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("SkillE"), NewObject<UAnimMontage>());
+	MontageMap.Add(TEXT("SkillR"), NewObject<UAnimMontage>());
+}
+
 // 애니메이션 블루프린트가 초기화될 때 실행되는 함수
 void UYggHeroAnimInstance::NativeInitializeAnimation()
 {
@@ -19,6 +27,7 @@ void UYggHeroAnimInstance::NativeInitializeAnimation()
 
 	// 캐릭터의 이동 컴포넌트를 가져와 저장
 	CharacterMovementComponent = Hero->GetCharacterMovement();
+	HeroAttributeComponent = Hero->GetHeroAttributeComponent();
 }
 
 // 애니메이션이 업데이트될 때 실행되는 함수
@@ -49,16 +58,29 @@ void UYggHeroAnimInstance::NativeUpdateAnimation(float DeltaTime)
 }
 
 // 지정된 몽타주를 재생하는 함수
-void UYggHeroAnimInstance::PlayMontage(FName MontageName)
+void UYggHeroAnimInstance::PlayMontage(FName MontageName, float PlayRate)
 {
 	// MontageMap에 해당하는 키가 없으면 실행하지 않음
 	if (MontageMap.Contains(MontageName) == false)
 	{
 		return;
 	}
-
 	// 맵에서 몽타주를 찾아 실행
-	PlayMontageEvent(MontageMap[MontageName]);
+	PlayMontageEvent(MontageMap[MontageName], PlayRate);
+}
+
+void UYggHeroAnimInstance::JumpMontage(FName MontageName, FName SectionName)
+{
+	if (MontageMap.Contains(MontageName) == false)
+	{
+		return;
+	}
+	Montage_JumpToSection(SectionName, MontageMap[MontageName]);
+}
+
+void UYggHeroAnimInstance::StopMontage()
+{
+	Montage_Stop(0.5f);
 }
 
 // 에임 오프셋을 계산하는 함수

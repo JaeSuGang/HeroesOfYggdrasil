@@ -9,7 +9,7 @@
 class UUserWidget;
 
 /**
- * 담당 : 김경민
+ * 담당 코더 : 김경민
  */
 UCLASS()
 class HEROESOFYGGDRASIL_API ATitleHUD : public AHUD

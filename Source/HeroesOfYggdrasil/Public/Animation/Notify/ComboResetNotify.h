@@ -13,5 +13,6 @@ UCLASS(meta = (DisplayName = "Hero | Combo Reset"))
 class HEROESOFYGGDRASIL_API UComboResetNotify : public UAnimNotify
 {
 	GENERATED_BODY()
-	
+
+	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };

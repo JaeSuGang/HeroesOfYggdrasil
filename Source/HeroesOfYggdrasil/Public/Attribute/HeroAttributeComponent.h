@@ -3,31 +3,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Attribute/AttributeComponent.h"
+#include "Attribute/CharacterAttributeComponent.h"
+#include "Data/YggStructData.h"
 #include "HeroAttributeComponent.generated.h"
 
 /**
- *	김성훈
+ *	
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnComboChanged);
+
+class UDataTable;
 UCLASS()
-class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UAttributeComponent
+class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UCharacterAttributeComponent
 {
 	GENERATED_BODY()
 
 protected:
-	float Hp;
+	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	// 나중에 구조체로 묶어
-	bool bIsContinueSkillQ;
-	float CoolTimeSkillQ;
-	float ContinueTimeSkillQ;
+public:
+	UPROPERTY(EditAnywhere)
+	UDataTable* Data;
 
-	bool bIsContinueSkillE;
-	float CoolTimeSkillE;
-	float ContinueTimeSkillE;
+	UPROPERTY(BlueprintReadOnly)
+	float SpeedRate = 1.0f;
+	UPROPERTY(BlueprintReadOnly)
+	float JumpRate = 1.0f;
 
-	bool bIsContinueSkillR;
-	float CoolTimeSkillR;
-	float ContinueTimeSkillR;
-
+	bool IsAttackCheck();
+		
+private:
 };

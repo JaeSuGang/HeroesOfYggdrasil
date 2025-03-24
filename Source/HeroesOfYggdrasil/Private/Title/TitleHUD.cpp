@@ -7,6 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+#include "Core/YggGameInstance.h"
+
 ATitleHUD::ATitleHUD(const FObjectInitializer& objectInitializer)
 {
 	DefaultPort = TEXT("3019");

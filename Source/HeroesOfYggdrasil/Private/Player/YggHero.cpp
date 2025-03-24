@@ -11,6 +11,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 
 // Input
 #include "EnhancedInputSubsystems.h"
@@ -34,13 +35,15 @@
 // Animation
 #include "Animation/YggHeroAnimInstance.h"
 
+#include "MainGame/UI/YggNicknameBarUserWidget.h"
+#include "Components/WidgetComponent.h"
+
+// Data
+#include "Data/YggConst.h"
 
 
 AYggHero::AYggHero()
 {
-	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("AttributeComponent"));
-	HeroAttributeComponent->AddTags({ TEXT("Character.State.Attackable"),TEXT("Character.State.Moveable") });
-
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
@@ -56,21 +59,68 @@ AYggHero::AYggHero()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	// Attribute
+	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("AttributeComponent"));
+
+	// 닉네임
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(GetMesh());
+
+
+	SceneCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("StatusCamera"));
+	SceneCaptureComponent2D->SetupAttachment(RootComponent);
+	SceneCaptureComponent2D->AddRelativeLocation(FVector(100.f, 0.0f, 100.0f));
+	SceneCaptureComponent2D->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
+
 	// 폰 입력 UEnhancedInputComponent 으로 변경
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
+
+	// IA
+	ActionMap.Add(TEXT("Move"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("Look"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("Jump"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("Attack"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("SkillQ"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("SkillE"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("SkillR"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("ToggleUIMode"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("ToggleAimMode"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("CameraZoomInOut"), NewObject<UInputAction>());
 }
 
-void AYggHero::ToggleAimMode_Implementation()
+void AYggHero::BeginPlay()
 {
-	bAimMode = !bAimMode;
+	Super::BeginPlay();
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance != nullptr)
+	{
+		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
+	}
 
-	SetAimMode_Implementation(bAimMode);
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::TakeDamageEffect);
+	}
 }
 
-void AYggHero::SetAimMode_Implementation(bool Value)
+void AYggHero::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	StartGameCamera(DeltaTime);
+	if (bAimMode)
+	{
+		AimRaycast(Cast<APlayerController>(GetController()));
+	}
+}
+
+void AYggHero::ToggleAimMode()
+{
+	SetAimMode(!bAimMode);
+}
+
+void AYggHero::SetAimMode(bool Value)
 {
 	bAimMode = Value;
-
 	bUseControllerRotationYaw = bAimMode;
 
 	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
@@ -82,15 +132,21 @@ void AYggHero::SetAimMode_Implementation(bool Value)
 		CameraBoom->SocketOffset = FVector(0.0f, 45.0f, 150.0f);
 	}
 	else {
-		CameraBoom->TargetArmLength = 450.0f;
+		CameraBoom->TargetArmLength = 700.0f;
 		CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
 	}
+}
+
+void AYggHero::TakeDamageEffect_Implementation(float Att)
+{
+	// 피 튀기는 파티클 재생. 등등.
+
 }
 
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AYggHero, bAimMode);
+	DOREPLIFETIME(AYggHero, HeroAttributeComponent);
 }
 
 void AYggHero::SetCamera_Implementation(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset)
@@ -102,7 +158,7 @@ void AYggHero::SetCamera_Implementation(FVector NewCameraLocation, FRotator NewC
 	StartSocketOffset = NewSocketOffset;
 
 	// 플레이 카메라.
-	TargetArmLength = 450.0f;
+	TargetArmLength = 700.0f;
 	TargetSocketOffset = FVector(0.0f, 0.0f, 200.0f);
 	TargetCameraLocation = StartCameraLocation;
 	TargetCameraRotation = FRotator(StartCameraRotation.Pitch, StartCameraRotation.Yaw + 180.0f, StartCameraRotation.Roll);
@@ -152,22 +208,116 @@ void AYggHero::StartGameCamera(float DeltaTime)
 	}
 }
 
+// 레이캐스트
+void AYggHero::AimRaycast(APlayerController* PlayerController)
+{
+	if (!PlayerController) return;
+
+	FVector Start = PlayerController->PlayerCameraManager->GetCameraLocation(); // 카메라 위치
+	FVector End = GetAimWorldLocation(PlayerController); // 에임이 가리키는 3D 위치
+
+	FHitResult HitResult;
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(PlayerController->GetPawn()); // 플레이어 캐릭터는 무시
+
+	UWorld* World = GetWorld();
+	if (World == nullptr)
+	{
+		return;
+	}
+	bool bHit = World->LineTraceSingleByChannel(
+		HitResult,
+		Start,
+		End,
+		ECC_Visibility,
+		TraceParams
+	);
+
+	if (bHit == true)
+	{
+		AActor* HitActor = HitResult.GetActor();
+		GEngine->AddOnScreenDebugMessage(
+			1,  
+			2.0f, 
+			FColor::Red, 
+			FString::Printf(TEXT("Hit Actor: %s"), *HitActor->GetName()) 
+		);
+	}
+}
+FVector AYggHero::GetAimWorldLocation(APlayerController* PlayerController)
+{
+	if (!PlayerController) return FVector::ZeroVector;
+
+	int32 ScreenX, ScreenY;
+	PlayerController->GetViewportSize(ScreenX, ScreenY); // 화면 크기 가져오기
+
+	FVector WorldLocation, WorldDirection;
+	PlayerController->DeprojectScreenPositionToWorld(
+		ScreenX * 0.5f, ScreenY * 0.5f,  // 화면 중앙 좌표
+		WorldLocation, WorldDirection   // 월드 위치, 월드 방향
+	);
+
+	return WorldLocation + (WorldDirection * 10000.0f); // 10,000 유닛 앞 지점
+}
+
+void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
+	{
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		{
+			Subsystem->AddMappingContext(InputMappingContext, 0);
+		}
+	}
+	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
+
+	if (EnhancedInput)
+	{
+		if (ActionMap.Contains(FName("Move")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Move")], ETriggerEvent::Triggered, this, &AYggHero::Move);
+		}
+		if (ActionMap.Contains(FName("Look")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Look")], ETriggerEvent::Triggered, this, &AYggHero::Look);
+		}
+		if (ActionMap.Contains(FName("Jump")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Jump")], ETriggerEvent::Triggered, this, &AYggHero::Jump);
+		}
+		if (ActionMap.Find(FName("ToggleAimMode")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("ToggleAimMode")], ETriggerEvent::Started, this, &AYggHero::ToggleAimMode);
+		}
+		if (ActionMap.Find(FName("CameraZoomInOut")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("CameraZoomInOut")], ETriggerEvent::Triggered, this, &AYggHero::CameraZoomInOut);
+		}
+		if (ActionMap.Find(FName("ToggleUIMode")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("ToggleUIMode")], ETriggerEvent::Started, this, &AYggHero::ToggleUIMode);
+		}
+	}
+
+}
+
 void AYggHero::Look(const FInputActionValue& Value)
 {
+	if (GetController()->IsLookInputIgnored() || bIsUIMode)
+	{
+		return;
+	}
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
 	FRotator CurrentRotation = GetControlRotation();
-
 	float ClampedPitch = FMath::ClampAngle(CurrentRotation.Pitch + LookAxisVector.Y, -40.0f, 60.0f);
-
 	GetController()->SetControlRotation(FRotator(ClampedPitch, CurrentRotation.Yaw, CurrentRotation.Roll));
-
 	AddControllerYawInput(LookAxisVector.X);
 }
 
 void AYggHero::Move(const FInputActionValue& Value)
 {
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Moveable")))
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable")))
 	{
 		return;
 	}
@@ -183,24 +333,52 @@ void AYggHero::Move(const FInputActionValue& Value)
 	AddMovementInput(RightDirection, MovementVector.X);
 }
 
-void AYggHero::BeginPlay()
+void AYggHero::Jump()
 {
-	Super::BeginPlay();
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance != nullptr)
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable")))
 	{
-		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
+		return;
+	}
+	Super::Jump();
+}
+
+
+void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
+{
+	float WheelValue = Value.Get<float>();
+
+	// 마우스 휠 입력이 없으면 리턴
+	if (WheelValue == 0.0f)
+	{
+		return;
+	}
+	// 현재 SpringArm 길이를 가져옴
+	float NewLength = CameraBoom->TargetArmLength + (WheelValue * CameraConst::ZoomSpeed);
+	// 최소/최대 줌 제한
+	NewLength = FMath::Clamp(NewLength, CameraConst::MinCameraBoomLength, CameraConst::MaxCameraBoomLength);
+	// 변경된 길이 적용
+	CameraBoom->TargetArmLength = NewLength;
+}
+
+void AYggHero::ToggleUIMode()
+{
+	SetUIMode(!bIsUIMode);
+}
+
+void AYggHero::SetUIMode(bool Value)
+{
+	bIsUIMode = Value;
+	if (bIsUIMode)
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	}
+	else
+	{
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
 	}
 }
 
-void AYggHero::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 
-	//StartGameCamera(DeltaTime);
-}
 
-void AYggHero::PlayMontage(FName MontageName)
-{
-	HeroAnimInstance->PlayMontage(MontageName);
-}
+
+

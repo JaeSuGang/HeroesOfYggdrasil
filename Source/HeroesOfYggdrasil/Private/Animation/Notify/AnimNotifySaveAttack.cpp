@@ -14,7 +14,7 @@ void UAnimNotifySaveAttack::Notify(USkeletalMeshComponent* MeshComp, UAnimSequen
         if (Hero)
         {
      
-            Hero->SaveAttack();
+            //Hero->SaveAttack();
         }
     }
 }

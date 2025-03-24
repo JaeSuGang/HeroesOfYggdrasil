@@ -4,27 +4,46 @@
 
 #include "CoreMinimal.h"
 #include "Core/YggCharacter.h"
+
 #include "YggHero.generated.h"
 
 /**
- * 김성훈, 김지호ㄴ
+ * 김성훈, 김지호
  * 히어로 기본 클래스
  */
 
 
+ // Unreal Engine Core
+class APlayerController;
  // Camera
+
 class USpringArmComponent;
 class UCameraComponent;
+class USceneCaptureComponent2D;
 
 // Input
 class UInputMappingContext;
 class UInputAction;
 class UInputComponent;
+class UEnhancedInputComponent;
 struct FInputActionValue;
 
+// Animation
 class UYggHeroAnimInstance;
 
+// Attribute
 class UHeroAttributeComponent;
+
+// TimeEvent
+class UTimeEventComponent;
+
+// UI
+class UWidgetComponent;
+
+struct FHeroCameraData;
+
+
+
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
@@ -33,67 +52,90 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 public:
 	AYggHero();
 
-	UFUNCTION(Server, Reliable)
-	void ToggleAimMode();
-
-	UFUNCTION(Server, Reliable)
-	void SetAimMode(bool Value);
-
-	UFUNCTION()
-	bool GetAimMode()
-	{
-		return bAimMode;
-	}
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	UFUNCTION(NetMulticast, Reliable)
 	void SetCamera(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset);
-
-
 	void StartGameCamera(float DeltaTime);
 
+	//void CameraMove(FCameraMoveData* CameraMoveData);
+
 	UFUNCTION(BlueprintCallable)
-	UHeroAttributeComponent* GetHeroAttribute() 
+	UHeroAttributeComponent* GetHeroAttributeComponent()
 	{
 		return HeroAttributeComponent;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	UYggHeroAnimInstance* GetHeroAnimInstance()
+	{
+		return HeroAnimInstance;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	UInputMappingContext* GetInputMappingContext()
+	{
+		return InputMappingContext;
+	}
+
+	UFUNCTION(NetMulticast, Reliable)
+	void TakeDamageEffect(float Att);
+
 protected:
-
-	virtual void Look(const FInputActionValue& Value);
-	virtual void Move(const FInputActionValue& Value);
-
-	virtual void Attack(const FInputActionValue& Value) {}
-	virtual void SkillQ(const FInputActionValue& Value) {}
-	virtual void SkillE(const FInputActionValue& Value) {}
-	virtual void SkillR(const FInputActionValue& Value) {}
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void PlayMontage(FName MontageName);
+	virtual void Look(const FInputActionValue& Value);
+	virtual void Move(const FInputActionValue& Value);
+	virtual void Jump() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	virtual void Attack(const FInputActionValue& Value) {}
+	virtual void EndAttack(const FInputActionValue& Value) {}
+	virtual void SkillQ(const FInputActionValue& Value) {}
+	virtual void SkillE(const FInputActionValue& Value) {}
+	virtual void SkillR(const FInputActionValue& Value) {}
+
+	virtual void ToggleAimMode();
+	virtual void SetAimMode(bool Value);
+
+	virtual void CameraZoomInOut(const FInputActionValue& Value);
+	virtual void ToggleUIMode();
+	virtual void SetUIMode(bool Value);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	USpringArmComponent* CameraBoom;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	UCameraComponent* FollowCamera;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "YggInput")
 	UInputMappingContext* InputMappingContext;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	UPROPERTY(EditDefaultsOnly, Category = "YggInput")
 	TMap<FName, UInputAction*> ActionMap;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")
 	UYggHeroAnimInstance* HeroAnimInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
 	UHeroAttributeComponent* HeroAttributeComponent;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, replicated)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
+	UTimeEventComponent* TimeEventComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
+	UWidgetComponent* WidgetComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "YggCamera")
+	USceneCaptureComponent2D* SceneCaptureComponent2D;
+	
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bAimMode = false;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	bool bIsUIMode = false;
 
 protected:
 	bool bIsCameraTransitioning = false;
@@ -109,6 +151,9 @@ protected:
 	FRotator TargetCameraRotation;
 	float TargetArmLength;
 	FVector TargetSocketOffset;
+
+	FVector GetAimWorldLocation(APlayerController* PlayerController);
+	void AimRaycast(APlayerController* PlayerController);
 
 
 	int MaxAttackIndex;

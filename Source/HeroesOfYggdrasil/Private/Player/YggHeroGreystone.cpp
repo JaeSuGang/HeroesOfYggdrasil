@@ -1,10 +1,32 @@
 // Coded By AssortRock Unreal Engine Class Project
 
+// Project Headers
 #include "Player/YggHeroGreystone.h"
-#include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
-
 #include "Attribute/HeroAttributeComponent.h"
+
+// Unreal Framework Core Components
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/Controller.h"
+
+// Input System Modules
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubsystems.h"
+
+// Visual Components
+#include "Camera/CameraComponent.h"
+#include "Components/DecalComponent.h"
+
+// Engine Utilities
+#include "Engine/EngineTypes.h"
+#include "Kismet/GameplayStatics.h"
+
+#include "Animation/HeroGreystoneAnimInstance.h"
+#include "Components/CapsuleComponent.h"
+
+#include "Engine/DataTable.h"
+#include "Data/YggStructData.h"
 
 AYggHeroGreystone::AYggHeroGreystone()
 {
@@ -18,13 +40,19 @@ void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurAttackIndex = 0;
-	MaxAttackIndex = 4;
+	// HeroAttributeComponent->SetCombo(4);
+
+	// HeroAttributeComponent->Status = *(HeroAttributeComponent->Data->FindRow<FHeroBaseStatusInfoRow>(TEXT("Greystone"), TEXT("Context")));
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);		
+
+	if (bIsSkillR)
+	{
+		MagicCircleOn();
+	}
 }
 
 void AYggHeroGreystone::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -56,7 +84,11 @@ void AYggHeroGreystone::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		}
 		if (ActionMap.Find(FName("Attack")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Attack);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Started, this, &AYggHeroGreystone::AttackPressed);
+		}
+		if (ActionMap.Find(FName("Attack")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Completed, this, &AYggHeroGreystone::AttackReleased);
 		}
 		if (ActionMap.Find(FName("SkillQ")))
 		{
@@ -84,6 +116,11 @@ void AYggHeroGreystone::Look(const FInputActionValue& Value)
 
 void AYggHeroGreystone::Move(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable")))
+	{
+		return;
+	}
+
 	Super::Move(Value);
 }
 
@@ -91,31 +128,133 @@ void AYggHeroGreystone::Jump(const FInputActionValue& Value)
 {
 }
 
+void AYggHeroGreystone::AttackPressed(const FInputActionValue& Value)
+{
+	bAttackButtonPressed = true;
+
+	if (!(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, TEXT("NotAttackable"));
+	}
+
+	if (!bIsAttacking && !(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Attack"));
+
+		Attack(Value);
+	}
+}
+
+void AYggHeroGreystone::AttackReleased(const FInputActionValue& Value)
+{
+	UAnimMontage* CurrentPlayingMontage = HeroAnimInstance->GetCurrentActiveMontage();
+
+	HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
+
+	StopAttack();
+
+	if (CurrentPlayingMontage)
+	{
+		FString SectionName = FString::Printf(TEXT("StopAtt%d"), 0); // HeroAttributeComponent->GetCurComboAttack());
+		FName CurrentSectionName(*SectionName);
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, SectionName);
+				
+		FTimerHandle TimerHandle;
+		float ElapsedTime = 0.0f;
+		float MaxWaitTime = 2.0f;
+
+		GetWorld()->GetTimerManager().SetTimer(
+			AttackStopCheckHandle,
+			[this, SectionName, CurrentSectionName, CurrentPlayingMontage, MaxWaitTime, ElapsedTime]() mutable
+		{
+			ElapsedTime += 0.01f;
+
+			FName CurrentSection = this->HeroAnimInstance->Montage_GetCurrentSection(CurrentPlayingMontage);
+
+			if (CurrentSection == CurrentSectionName)
+			{
+				// this->HeroAttributeComponent->ResetComboAttack();
+				this->HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
+				this->GetWorld()->GetTimerManager().ClearTimer(AttackStopCheckHandle);
+
+				this->bIsAttacking = false;
+				this->bAttackButtonPressed = false;
+				this->HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
+			}
+			else if (ElapsedTime >= MaxWaitTime)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Timer Cleared: Section Not Found in Time"));
+				this->GetWorld()->GetTimerManager().ClearTimer(AttackStopCheckHandle);
+
+				this->bIsAttacking = false;
+				this->bAttackButtonPressed = false;
+				this->HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
+			}
+		},
+			0.01f, true
+		);
+	}
+}
+
 void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 {
-	Super::Attack(Value);
-
-	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
+	if (bIsSkillR && !(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))
 	{
-		return;
-	}*/
-
-	if (HasAuthority())
-	{
+		RFall();
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		MulticastAttack(CurAttackIndex);
+		MagicCircleOff();
+		return;
+	}
 
-		CurAttackIndex++;
-		if (CurAttackIndex == MaxAttackIndex)
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+
+	bIsAttacking = true;
+
+	Super::Attack(Value);
+	
+	if (HasAuthority())
+	{
+		/*MulticastAttack(HeroAttributeComponent->GetCurComboAttack());
+
+		if (HeroAttributeComponent->GetCurComboAttack() == HeroAttributeComponent->GetMaxComboAttack())
 		{
-			CurAttackIndex = 0;
-		}
+			HeroAttributeComponent->ResetComboAttack();
+		}*/
 	}
 	else
 	{
 		ServerAttack();
+		return;
 	}
+}
+
+void AYggHeroGreystone::StopAttack()
+{	
+	if (HasAuthority())
+	{
+		MulticastStopAttack();
+	}
+	else
+	{
+		ServerStopAttack();
+	}
+}
+
+void AYggHeroGreystone::ServerStopAttack_Implementation()
+{
+	StopAttack();
+}
+
+void AYggHeroGreystone::MulticastStopAttack_Implementation()
+{
+	UAnimMontage* CurrentPlayingMontage = HeroAnimInstance->GetCurrentActiveMontage();
+
+	HeroAnimInstance->Montage_SetPlayRate(CurrentPlayingMontage, 0.0f);
 }
 
 void AYggHeroGreystone::ServerAttack_Implementation()
@@ -124,37 +263,20 @@ void AYggHeroGreystone::ServerAttack_Implementation()
 }
 
 void AYggHeroGreystone::MulticastAttack_Implementation(int ServerAttackIndex)
-{
-	CurAttackIndex = ServerAttackIndex;
-	
-<<<<<<< Updated upstream
-	FName MontageName = *FString::Printf(TEXT("Attack%d"), CurAttackIndex);
-	
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.Buff.FastAttackSpeed")))
-	{
-		MontageName = *FString::Printf(TEXT("FAttack%d"), CurAttackIndex);
-	}
-	
-	 PlayMontage(MontageName);
-=======
+{	
 	FName MontageName = *FString::Printf(TEXT("Attack"));
-
+	
 	HeroAnimInstance->PlayMontage(MontageName);
->>>>>>> Stashed changes
 }
 
 void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+
 	Super::SkillQ(Value);
 
-	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
-	{
-		return;
-	}*/
 	if (HasAuthority())
 	{
-		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
-		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
 		MulticastSkillQ();
 	}
 	else
@@ -171,17 +293,18 @@ void AYggHeroGreystone::ServerSkillQ_Implementation()
 void AYggHeroGreystone::MulticastSkillQ_Implementation()
 {
 	FName MontageName = TEXT("SkillQ");
-	PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
+
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	// HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 }
 
 void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+
 	Super::SkillE(Value);
 
-	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
-	{
-		return;
-	}*/
 	if (HasAuthority())
 	{
 		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
@@ -202,28 +325,54 @@ void AYggHeroGreystone::ServerSkillE_Implementation()
 void AYggHeroGreystone::MulticastSkillE_Implementation()
 {
 	FName MontageName = TEXT("SkillE");
-	PlayMontage(MontageName);
+	HeroAnimInstance->PlayMontage(MontageName);
+
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 }
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 {
+	if (bIsSkillR) return;
+
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;	
+
 	Super::SkillR(Value);
 
-	/*if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.Attackable")))
-	{
-		return;
-	}*/
 	if (HasAuthority())
 	{
-		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Moveable"));
-		//HeroAttributeComponent->RemoveTag(TEXT("Character.State.Attackable"));
+		// HeroAttributeComponent->Status.GroundSpeedRate = 4.0f;
+		// GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->Status.GroundSpeedRate;
+
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillR();
 	}
 	else
 	{
 		ServerSkillR();
 	}
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController)
+	{
+		GetCharacterMovement()->bOrientRotationToMovement = false;
+
+		CameraBoom->bUsePawnControlRotation = false;
+		CameraBoom->TargetArmLength = 1000.0f;
+		CameraBoom->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
+
+		PlayerController->bShowMouseCursor = true;
+		PlayerController->SetIgnoreLookInput(true);
+
+		FRotator NewControlRotation = GetActorRotation();
+		PlayerController->SetControlRotation(NewControlRotation);
+	}
+
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+	
+	bIsSkillR = true;
 }
+
 void AYggHeroGreystone::ServerSkillR_Implementation()
 {
 	SkillR(FInputActionValue());
@@ -232,9 +381,6 @@ void AYggHeroGreystone::ServerSkillR_Implementation()
 void AYggHeroGreystone::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
-<<<<<<< Updated upstream
-	PlayMontage(MontageName);
-=======
 	HeroAnimInstance->PlayMontage(MontageName);
 }
 
@@ -314,7 +460,7 @@ void AYggHeroGreystone::MagicCircleOff()
 			GetCharacterMovement()->bOrientRotationToMovement = true;
 
 			CameraBoom->bUsePawnControlRotation = true;
-			CameraBoom->TargetArmLength = 700.0f;
+			CameraBoom->TargetArmLength = 450.0f;
 			CameraBoom->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
 
 			PlayerController->bShowMouseCursor = false;
@@ -329,8 +475,7 @@ void AYggHeroGreystone::MagicCircleOff()
 
 	if (HasAuthority())
 	{	
-		GetCharacterMovement()->MaxWalkSpeed /= HeroAttributeComponent->Status->GroundSpeedRate;
-		HeroAttributeComponent->Status->GroundSpeedRate /= 4.0f;
+		// GetCharacterMovement()->MaxWalkSpeed /= HeroAttributeComponent->Status.GroundSpeedRate;
+		// HeroAttributeComponent->Status.GroundSpeedRate /= 4.0f;
 	}
->>>>>>> Stashed changes
 }

@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Player/YggHero.h"
+#include "Interfaces/YggHeroInterface.h"
 #include "YggHeroGreystone.generated.h"
 
 UCLASS()
-class HEROESOFYGGDRASIL_API AYggHeroGreystone : public AYggHero
+class HEROESOFYGGDRASIL_API AYggHeroGreystone : public AYggHero, public IYggHeroInterface
 {
 	GENERATED_BODY()
 
@@ -20,11 +21,20 @@ protected:
 	virtual void Move(const FInputActionValue& Value) override;
 	void Jump(const FInputActionValue& Value);
 
+	void AttackPressed(const FInputActionValue& Value);
+	void AttackReleased(const FInputActionValue& Value);
+
 	virtual void Attack(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
 	void ServerAttack();
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastAttack(int ServerAttackIndex);
+
+	void StopAttack();
+	UFUNCTION(Server, Reliable)
+	void ServerStopAttack();
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastStopAttack();
 
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
@@ -44,8 +54,31 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillR();
 
+	void RFall();
+	UFUNCTION(Server, Reliable)
+	void ServerRFall();
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRFall();
 
 public:
 	AYggHeroGreystone();
 	~AYggHeroGreystone();
+
+	virtual void MagicCircleOn() override;
+	virtual void MagicCircleOff() override;
+
+	UPROPERTY()
+	bool bIsSkillR = false;
+
+private:
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* SkillRDecalMaterial;
+
+	UPROPERTY()
+	UDecalComponent* SkillRDecal;
+
+	bool bAttackButtonPressed = false;
+	bool bIsAttacking = false;
+
+	FTimerHandle AttackStopCheckHandle;
 };

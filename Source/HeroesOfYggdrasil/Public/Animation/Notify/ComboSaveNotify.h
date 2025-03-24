@@ -13,5 +13,6 @@ UCLASS(meta = (DisplayName = "Hero | Combo Save"))
 class HEROESOFYGGDRASIL_API UComboSaveNotify : public UAnimNotify
 {
 	GENERATED_BODY()
-	
+
+	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 };

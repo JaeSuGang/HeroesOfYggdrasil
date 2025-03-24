@@ -14,6 +14,7 @@
 
 
 
+class UKhaimeraAttributeComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
@@ -23,53 +24,40 @@ class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 public:
 	AYggHeroKhaimera();
 
-	UFUNCTION(BlueprintCallable)
-	void SaveAttack();
-	UFUNCTION(BlueprintCallable)
-	void ResetCombo();
-
-
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
+	UKhaimeraAttributeComponent* KhaimeraAttributeComponent;
+
 	virtual void BeginPlay()override;
 	virtual void Tick(float DeltaTime)override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
-	void ServerAttack();
+	void ServerAttack(const FInputActionValue& Value);
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastAttack(int ServerAttackIndex);
+	void MulticastAttack(const FInputActionValue& Value);
+
+	virtual void EndAttack(const FInputActionValue& Value) override;
 	
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
-	void ServerSkillQ();
+	void ServerSkillQ(const FInputActionValue& Value);
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastSkillQ();
+	void MulticastSkillQ(const FInputActionValue& Value);
 
 	virtual void SkillE(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
-	void ServerSkillE();
+	void ServerSkillE(const FInputActionValue& Value);
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastSkillE();
+	void MulticastSkillE(const FInputActionValue& Value);
 
 
 	virtual void SkillR(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)
-	void ServerSkillR();
+	void ServerSkillR(const FInputActionValue& Value);
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastSkillR();
+	void MulticastSkillR(const FInputActionValue& Value);
 
-	UFUNCTION(BlueprintCallable)
-	void StartSkillR();
-
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	// 임시
-	float SkillRContinueTime = 10.0f;
-	bool bUsingSkillR = false;
-
-	
-
-	
 };
