@@ -42,6 +42,7 @@ void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ActionMap.Remove(FName("Jump"));
 	// HeroAttributeComponent->SetCombo(4);
 
 	// HeroAttributeComponent->Status = *(HeroAttributeComponent->Data->FindRow<FHeroBaseStatusInfoRow>(TEXT("Greystone"), TEXT("Context")));
@@ -80,9 +81,9 @@ void AYggHeroGreystone::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Look")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Look);
 		}
-		if (ActionMap.Find(FName("Jump")))
+		if (ActionMap.Find(FName("Roll")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Jump")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Roll);
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Roll")), ETriggerEvent::Triggered, this, &AYggHeroGreystone::Roll);
 		}
 		if (ActionMap.Find(FName("Attack")))
 		{
@@ -128,12 +129,14 @@ void AYggHeroGreystone::Move(const FInputActionValue& Value)
 
 void AYggHeroGreystone::Roll(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable"))) return;
+	
 	UHeroGreystoneAnimInstance* AnimInstance = Cast<UHeroGreystoneAnimInstance>(GetMesh()->GetAnimInstance());
 	if (!AnimInstance) return;
 
 	AnimInstance->bIsRoll = true;
 
-	FName MontageName = *FString::Printf(TEXT("Jump"));
+	FName MontageName = *FString::Printf(TEXT("Roll"));
 	HeroAnimInstance->PlayMontage(MontageName);
 }
 
