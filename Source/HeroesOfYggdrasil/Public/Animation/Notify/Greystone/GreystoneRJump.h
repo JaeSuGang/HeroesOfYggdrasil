@@ -16,4 +16,5 @@ class HEROESOFYGGDRASIL_API UGreystoneRJump : public UAnimNotify
 	
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
+	FTimerHandle JumpTimerHandle;
 };

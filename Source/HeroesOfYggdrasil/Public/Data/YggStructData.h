@@ -77,7 +77,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float CriticalChance = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	float CriticalDamage = 1.0f;
+	float CriticalDamageRate = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FHeroSkillInfoRow SkillQInfo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")

@@ -18,7 +18,7 @@ void UHeroRollNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSeq
 	AYggHeroGreystone* Greystone = Cast<AYggHeroGreystone>(MeshComp->GetOwner());
 	if (!Greystone) return;
 
-	const float RollSpeed = 1000.0f; // 초당 이동 거리
+	const float RollSpeed = 1200.0f;
 	FVector RollDirection = Greystone->GetActorForwardVector();
 	FVector Movement = RollDirection * RollSpeed * FrameDeltaTime;
 

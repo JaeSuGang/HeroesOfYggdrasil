@@ -26,12 +26,37 @@ public:
 	UPROPERTY(EditAnywhere)
 	UDataTable* Data;
 
-	UPROPERTY(BlueprintReadOnly)
-	float SpeedRate = 1.0f;
-	UPROPERTY(BlueprintReadOnly)
-	float JumpRate = 1.0f;
+	//UPROPERTY(BlueprintReadOnly)
+	//float SpeedRate = 1.0f;
+	//UPROPERTY(BlueprintReadOnly)
+	//float JumpRate = 1.0f;
 
 	bool IsAttackCheck();
-		
-private:
+	
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float HPRegen;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SpeedRate;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float JumpRate;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float AttackSpeedRate;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float CriticalChance;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float CriticalDamageRate;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillQCoolTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillECoolTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillRCoolTime;
 };
