@@ -27,12 +27,16 @@ void UHeroRollNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSeq
 		MoveComp->Velocity = Movement / FrameDeltaTime;
 	}
 
-	/*UHeroGreystoneAnimInstance* AnimInstance = Cast<UHeroGreystoneAnimInstance>(MeshComp->GetAnimInstance());
+	UHeroGreystoneAnimInstance* AnimInstance = Cast<UHeroGreystoneAnimInstance>(MeshComp->GetAnimInstance());
 	if (!AnimInstance) return;
+	UAnimMontage* CurrentMontage = AnimInstance->GetCurrentActiveMontage();
+	if (!CurrentMontage) return;
 
-	float MontageSpeed = AnimInstance->Montage_GetPlayRate(AnimInstance->GetCurrentActiveMontage());
-	MontageSpeed -= FrameDeltaTime * 50.0f;
-	AnimInstance->Montage_SetPlayRate(AnimInstance->GetCurrentActiveMontage(), MontageSpeed);*/
+	float CurrentSpeed = AnimInstance->Montage_GetPlayRate(CurrentMontage);
+	float NewSpeed = FMath::Lerp(CurrentSpeed, 0.5f, FrameDeltaTime * 5.0f);
+	NewSpeed = FMath::Clamp(NewSpeed, 0.5f, 1.0f);
+
+	AnimInstance->Montage_SetPlayRate(CurrentMontage, NewSpeed);
 }
 
 void UHeroRollNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
