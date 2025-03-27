@@ -8,7 +8,6 @@
 #include "Attribute/HeroAttributeComponent.h"
 #include "Animation/YggHeroAnimInstance.h"
 
-
 void UYggAnimNotifyState_Attack::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
@@ -22,11 +21,10 @@ void UYggAnimNotifyState_Attack::NotifyTick(USkeletalMeshComponent* MeshComp, UA
 void UYggAnimNotifyState_Attack::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
+
 	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
-	if (!Hero)
-	{
-		return;
-	}
+	if (!Hero) return;
+
 	UHeroAttributeComponent* HeroAttributeComponent = Hero->GetHeroAttributeComponent();
 	UYggHeroAnimInstance* HeroAnimInstance = Hero->GetHeroAnimInstance();
 
@@ -35,7 +33,9 @@ void UYggAnimNotifyState_Attack::NotifyEnd(USkeletalMeshComponent* MeshComp, UAn
 		if (false == HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack"))) 
 		{
 			HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
-			HeroAnimInstance->StopMontage();
+			
+			float BlendOutTime = 0.2f;
+			HeroAnimInstance->Montage_Stop(BlendOutTime);
 		}
 	}
 }
