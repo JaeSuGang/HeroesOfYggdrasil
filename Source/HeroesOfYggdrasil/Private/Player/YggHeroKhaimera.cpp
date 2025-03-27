@@ -27,7 +27,7 @@
 
 #include "Data/YggStructData.h"
 
-#include "Components/SceneCaptureComponent2D.h"
+#include "Component/CaptureComponent.h"
 
 
 
@@ -40,12 +40,7 @@ AYggHeroKhaimera::AYggHeroKhaimera()
 	AttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCapsule"));
 	AttackBox->SetupAttachment(RootComponent);
 
-	if (CaptrueCameraOffsetData)
-	{
-
-		FHeroCaptureCameraOffsetData* CameraOffsetData = CaptrueCameraOffsetData->FindRow<FHeroCaptureCameraOffsetData>("Khaimera", nullptr);
-		SceneCaptureComponent2D->AddRelativeLocation(CameraOffsetData->CameraOffset);
-	}
+	
 }
 
 void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

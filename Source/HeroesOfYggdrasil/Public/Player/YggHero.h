@@ -45,6 +45,8 @@ struct FHeroCameraData;
 
 
 
+
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 {
@@ -161,8 +163,7 @@ protected:
 	
 	void AimRaycast(APlayerController* PlayerController);
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	UDataTable* CaptrueCameraOffsetData;
+
 
 	int MaxAttackIndex;
 	int CurAttackIndex;

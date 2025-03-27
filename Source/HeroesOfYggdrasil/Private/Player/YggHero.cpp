@@ -41,6 +41,10 @@
 // Data
 #include "Data/YggConst.h"
 
+#include "Data/YggStructData.h"
+
+
+
 
 AYggHero::AYggHero()
 {
@@ -69,8 +73,8 @@ AYggHero::AYggHero()
 
 	FaceCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("StatusCamera"));
 	FaceCaptureComponent->SetupAttachment(RootComponent);
-	FaceCaptureComponent->AddRelativeLocation(FVector(100.f, 0.0f, 100.0f));
-	FaceCaptureComponent->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
+	//FaceCaptureComponent->AddRelativeLocation(FVector(100.f, 0.0f, 100.0f));
+	/*FaceCaptureComponent->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));*/
 	
 	// 폰 입력 UEnhancedInputComponent 으로 변경
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
