@@ -20,13 +20,16 @@ void UBTTaskNode_TraceYggdrasil::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	// 시작할 때 타겟 이그드라실 세팅
 	YggdrasilCheck(_OwnerComp);
+
+	CheckTime = PlayAIData.Data.StandardZeroTime;
+
 }
 
 void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 	
-
+	CheckTime -= _DeltaSeconds;
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
@@ -71,10 +74,11 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 
 	//SelfActor->AddMovementInput(TargetDir);
 
-	if (SelfController != nullptr && TargetActor != nullptr)
+	if (SelfController != nullptr && TargetActor != nullptr && CheckTime < 0.0f)
 	{
 
 		SelfController->MoveToLocation(TargetActor->GetActorLocation(), PlayAIData.Data.YggAttackRange - 10.0f);
+		CheckTime = PlayAIData.Data.TargetCheckTime;
 	}
 	
 

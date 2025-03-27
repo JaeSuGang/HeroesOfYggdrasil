@@ -24,6 +24,8 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 	
+	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
@@ -60,4 +62,10 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	{
 		SelfController->MoveToActor(TargetActor, PlayAIData.Data.AttackRange / 2.0f);
 	}
+}
+
+
+void UBTTaskNode_ApproachToAttack::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
+{
+	Super::RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 }

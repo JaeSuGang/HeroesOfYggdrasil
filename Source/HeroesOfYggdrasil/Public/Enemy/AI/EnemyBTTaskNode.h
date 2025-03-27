@@ -36,13 +36,19 @@ public:
 	void YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp);
 
 protected:
+	virtual void RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds);
+
+protected:
 	UPROPERTY(Category = "Enemy", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	EEnemyAIState EnemyAIStateValue = EEnemyAIState::TraceYggdrasil;
+
+	UPROPERTY(EditAnywhere, Category = "Target")
+	float RotationInterSpeed;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Target")
 	FBlackboardKeySelector InTargetActorKey;
 
-	UPROPERTY(EditAnywhere, Category = "Target")
-	float RotationInterSpeed;
+	
 	
 };

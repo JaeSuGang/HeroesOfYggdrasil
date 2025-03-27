@@ -16,7 +16,7 @@ UEnemyBTTaskNode::UEnemyBTTaskNode()
 
 void UEnemyBTTaskNode::Start(UBehaviorTreeComponent& _OwnerComp)
 {
-
+	
 }
 
 EBTNodeResult::Type UEnemyBTTaskNode::ExecuteTask(UBehaviorTreeComponent& _OwnerComp, uint8* NodeMemory)
@@ -24,12 +24,13 @@ EBTNodeResult::Type UEnemyBTTaskNode::ExecuteTask(UBehaviorTreeComponent& _Owner
 	Super::ExecuteTask(_OwnerComp, NodeMemory);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-	Start(_OwnerComp);
 
 	if (PlayAIData.EnemyAIState != EnemyAIStateValue)
 	{
 		return EBTNodeResult::Type::Failed;
 	}
+
+	Start(_OwnerComp);
 
 	return EBTNodeResult::Type::InProgress;
 }
@@ -37,25 +38,6 @@ EBTNodeResult::Type UEnemyBTTaskNode::ExecuteTask(UBehaviorTreeComponent& _Owner
 void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
-
-
-	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
-
-	APawn* SelfActor = PlayAIData.SelfPawn;
-	AActor* TargetActor = PlayAIData.TargetActor;
-
-	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
-
-	if (OwningPawn && TargetActor)
-	{
-		if (FName("BP_YggHero") == TargetActor->GetName().Left(10) || FName("BP_Yggdrasil") == TargetActor->GetName().Left(12))
-		{
-		const FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(OwningPawn->GetActorLocation(), TargetActor->GetActorLocation());
-		FRotator TargetRot = FMath::RInterpTo(OwningPawn->GetActorRotation(), LookAtRot, _DeltaSeconds, RotationInterSpeed);
-		TargetRot.Pitch = 0.0f;
-		OwningPawn->SetActorRotation(TargetRot);
-		}
-	}
 }
 
 void UEnemyBTTaskNode::ChangeState(UBehaviorTreeComponent& _OwnerComp, EEnemyAIState _State)
@@ -157,3 +139,24 @@ void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 	}
 }
 
+void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
+{
+
+	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
+
+	APawn* SelfActor = PlayAIData.SelfPawn;
+	AActor* TargetActor = PlayAIData.TargetActor;
+
+	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
+
+	if (OwningPawn && TargetActor)
+	{
+		if (FName("BP_YggHero") == TargetActor->GetName().Left(10) || FName("BP_Yggdrasil") == TargetActor->GetName().Left(12))
+		{
+			const FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(OwningPawn->GetActorLocation(), TargetActor->GetActorLocation());
+			FRotator TargetRot = FMath::RInterpTo(OwningPawn->GetActorRotation(), LookAtRot, _DeltaSeconds, RotationInterSpeed);
+			TargetRot.Pitch = 0.0f;
+			OwningPawn->SetActorRotation(TargetRot);
+		}
+	}
+}

@@ -21,4 +21,9 @@ public:
 	void Start(UBehaviorTreeComponent& _OwnerComp);
 
 	void TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds) override;
+
+	void RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds) override;
+
+private:
+	float CheckTime;
 };
