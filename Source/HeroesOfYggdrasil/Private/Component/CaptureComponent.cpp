@@ -6,10 +6,6 @@
 
 UCaptureComponent::UCaptureComponent()
 {
-	TextureTarget = NewObject<UTextureRenderTarget2D>();
-
-	TextureTarget->InitAutoFormat(1024, 1024);
-
 	PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
 	ProjectionType = ECameraProjectionMode::Orthographic;
 	CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
@@ -27,8 +23,7 @@ void UCaptureComponent::BeginPlay()
 	if (TextureTarget == nullptr)
 	{
 		TextureTarget = NewObject<UTextureRenderTarget2D>(this);
-		TextureTarget->InitAutoFormat(1024, 1024);
-		TextureTarget->ClearColor = FLinearColor::Black;
+		TextureTarget->InitAutoFormat(128, 128);
 		TextureTarget->UpdateResource();
 	}
 
