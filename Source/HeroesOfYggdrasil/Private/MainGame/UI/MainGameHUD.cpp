@@ -4,6 +4,7 @@
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/MainGameMode.h"
 #include "MainGame/UI/YggLobbyUserWidget.h"
+#include "MainGame/UI/YggMainGameUserWidget.h"
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
 #include "Core/YggPlayerState.h"
 
@@ -110,6 +111,20 @@ void AMainGameHUD::ShowMainGameWidget()
 		AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
 		
 		CurrentWidget->AddToViewport();
+
+		//MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
+		//
+		//if (true)
+		//{
+		//
+		//}
+		//
+		//PC->GetPawn();
+		//
+		//MainGameUserWidget->GetPlayerStatusWidget();
+
+
+		
 	}
 
 	this->PlayerOwner->SetInputMode(FInputModeGameOnly{});

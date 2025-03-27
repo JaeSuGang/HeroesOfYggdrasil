@@ -7,6 +7,7 @@
 #include "MainGameHUD.generated.h"
 
 class UYggLobbyUserWidget;
+class UYggMainGameUserWidget;
 
 /**
  * 
@@ -65,6 +66,8 @@ public:
 
 	APlayerController* PC;
 	UYggLobbyUserWidget* LobbyUserWidget;
+	UYggMainGameUserWidget* MainGameUserWidget;
+
 
 	//TFunction<void()> StartButtinPlayerFunc;
 	//void BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc);

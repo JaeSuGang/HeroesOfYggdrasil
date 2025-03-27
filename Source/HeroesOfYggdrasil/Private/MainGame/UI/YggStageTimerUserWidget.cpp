@@ -12,6 +12,8 @@
 
 void UYggStageTimerUserWidget::NativeOnInitialized()
 {
+	Super::NativeOnInitialized();
+
 	SetVisibility(ESlateVisibility::Visible);
 	//SetVisibility(ESlateVisibility::Hidden);
 
