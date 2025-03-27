@@ -42,6 +42,7 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.SelfPawn = this;
 		AIData->PlayData.SelfAnimPawn = this;
 		AIData->PlayData.CurHP = FindData.AIData.MaxHP;
+
 		// AIData->PlayData.AttackAnimationCount = FindData.AttackAnimations.Num();
 		AIData->PlayData.OriginPos = GetActorLocation();
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
@@ -89,6 +90,8 @@ void AEnemyCharacter::BeginPlay()
 	}
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
+
+	
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
@@ -134,5 +137,4 @@ void AEnemyCharacter::AttackEnd()
 	{
 		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	}
-	
 }
