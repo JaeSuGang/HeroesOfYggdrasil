@@ -158,9 +158,11 @@ protected:
 	float TargetArmLength;
 	FVector TargetSocketOffset;
 
-	FVector GetAimWorldLocation(APlayerController* PlayerController);
+	
 	void AimRaycast(APlayerController* PlayerController);
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	UDataTable* CaptrueCameraOffsetData;
 
 	int MaxAttackIndex;
 	int CurAttackIndex;

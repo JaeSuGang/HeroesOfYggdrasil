@@ -134,8 +134,8 @@ void AYggHero::SetAimMode(bool Value)
 
 	if (bUseControllerRotationYaw)
 	{
-		CameraBoom->TargetArmLength = 200.0f;
-		CameraBoom->SocketOffset = FVector(0.0f, 45.0f, 150.0f);
+		CameraBoom->TargetArmLength = 150.0f;
+		CameraBoom->SocketOffset = FVector(0.0f, 45.0f, 75.0f);
 	}
 	else {
 		CameraBoom->TargetArmLength = 700.0f;
@@ -180,8 +180,10 @@ void AYggHero::StartGameCamera(float DeltaTime)
 		if (AYggPlayerController* PC = GetController<AYggPlayerController>())
 		{
 			PC->SetInputEnabled(false);
-		}
 
+			
+		}
+	
 		TransitionAlpha += DeltaTime * TransitionSpeed;
 		TransitionAlpha = FMath::Clamp(TransitionAlpha, 0.0f, 1.0f);
 
@@ -219,8 +221,20 @@ void AYggHero::AimRaycast(APlayerController* PlayerController)
 {
 	if (!PlayerController) return;
 
+	int32 ScreenX, ScreenY;
+	PlayerController->GetViewportSize(ScreenX, ScreenY); // 화면 크기 가져오기
+
+	FVector WorldLocation; 
+	FVector WorldDirection;
+	PlayerController->DeprojectScreenPositionToWorld(
+		ScreenX * 0.5f, ScreenY * 0.5f,  // 화면 중앙 좌표
+		WorldLocation, WorldDirection   // 월드 위치, 월드 방향
+	);
+
 	FVector Start = PlayerController->PlayerCameraManager->GetCameraLocation(); // 카메라 위치
-	FVector End = GetAimWorldLocation(PlayerController); // 에임이 가리키는 3D 위치
+	FVector End = WorldLocation + (WorldDirection * 1000.0f); // 에임이 가리키는 3D 위치
+
+	DrawDebugLine(GetWorld(), WorldLocation, End, FColor::Red, false, 0.1f, 0, 1.0f);
 
 	FHitResult HitResult;
 	FCollisionQueryParams TraceParams;
@@ -250,21 +264,8 @@ void AYggHero::AimRaycast(APlayerController* PlayerController)
 		);
 	}
 }
-FVector AYggHero::GetAimWorldLocation(APlayerController* PlayerController)
-{
-	if (!PlayerController) return FVector::ZeroVector;
 
-	int32 ScreenX, ScreenY;
-	PlayerController->GetViewportSize(ScreenX, ScreenY); // 화면 크기 가져오기
 
-	FVector WorldLocation, WorldDirection;
-	PlayerController->DeprojectScreenPositionToWorld(
-		ScreenX * 0.5f, ScreenY * 0.5f,  // 화면 중앙 좌표
-		WorldLocation, WorldDirection   // 월드 위치, 월드 방향
-	);
-
-	return WorldLocation + (WorldDirection * 10000.0f); // 10,000 유닛 앞 지점
-}
 
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

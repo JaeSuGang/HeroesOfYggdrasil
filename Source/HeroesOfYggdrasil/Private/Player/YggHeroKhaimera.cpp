@@ -22,17 +22,36 @@
 
 #include "Attribute/KhaimeraAttributeComponent.h"
 
+// collison
+#include "Components/BoxComponent.h"
+
+#include "Data/YggStructData.h"
+
+#include "Components/SceneCaptureComponent2D.h"
+
+
+
+
 
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
 	KhaimeraAttributeComponent = Cast<UKhaimeraAttributeComponent>(HeroAttributeComponent);
+	AttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCapsule"));
+	AttackBox->SetupAttachment(RootComponent);
+
+	if (CaptrueCameraOffsetData)
+	{
+
+		FHeroCaptureCameraOffsetData* CameraOffsetData = CaptrueCameraOffsetData->FindRow<FHeroCaptureCameraOffsetData>("Khaimera", nullptr);
+		SceneCaptureComponent2D->AddRelativeLocation(CameraOffsetData->CameraOffset);
+	}
 }
 
 void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	
+
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
@@ -100,7 +119,7 @@ void AYggHeroKhaimera::ServerAttack_Implementation(const FInputActionValue& Valu
 
 void AYggHeroKhaimera::MulticastAttack_Implementation(const FInputActionValue& Value)
 {
-	
+
 	FName MontageName = *FString::Printf(TEXT("Attack"));
 	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
 }
