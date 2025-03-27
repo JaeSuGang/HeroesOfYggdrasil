@@ -6,15 +6,13 @@
 
 UCaptureComponent::UCaptureComponent()
 {
-	RenderTarget = NewObject<UTextureRenderTarget2D>();
+	TextureTarget = NewObject<UTextureRenderTarget2D>();
 
-	RenderTarget->InitAutoFormat(1024, 1024);
+	TextureTarget->InitAutoFormat(1024, 1024);
 
 	PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_UseShowOnlyList;
 	ProjectionType = ECameraProjectionMode::Orthographic;
 	CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
-
-	TextureTarget = RenderTarget;
 
 	bCaptureEveryFrame = true;
 	bCaptureOnMovement = true;
@@ -25,6 +23,16 @@ UCaptureComponent::UCaptureComponent()
 void UCaptureComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (TextureTarget == nullptr)
+	{
+		TextureTarget = NewObject<UTextureRenderTarget2D>(this);
+		TextureTarget->InitAutoFormat(1024, 1024);
+		TextureTarget->ClearColor = FLinearColor::Black;
+		TextureTarget->UpdateResource();
+	}
+
+	this->TextureTarget = TextureTarget;
 }
 
 void UCaptureComponent::SetupFaceCapture(AActor* TargetActor)

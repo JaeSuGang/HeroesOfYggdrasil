@@ -21,9 +21,9 @@ public:
 	UCaptureComponent();
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
-	UTextureRenderTarget2D* GetRenderTarget() const
+	UTextureRenderTarget2D* GetTextureTarget() const
 	{
-		return RenderTarget;
+		return TextureTarget;
 	}
 
 	void SetupFaceCapture(AActor* TargetActor);
@@ -33,8 +33,6 @@ protected:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	UPROPERTY(EditAnywhere, Category = "YGG")
-	UTextureRenderTarget2D* RenderTarget;
 
-
+		
 };

@@ -29,13 +29,13 @@ void UYggPlayerStatusUserWidget::NativeOnInitialized()
         return;
     }
 
-    UTextureRenderTarget2D* RenderTarget = PlayerCharacter->GetFaceCaptureComponent()->GetRenderTarget();
+    UTextureRenderTarget2D* RenderTarget = PlayerCharacter->GetFaceCaptureComponent()->GetTextureTarget();
     UCaptureComponent* CaptureComponent = PlayerCharacter->GetFaceCaptureComponent();
     
     //PlayerFace->SetBrushFromTexture(RenderTarget);
 
     UTexture2D* CapturedTexture = ConvertRenderTargetToTexture2D(RenderTarget);
-        
+
     SetFaceCam(CapturedTexture);
 }
 
@@ -59,7 +59,7 @@ void UYggPlayerStatusUserWidget::NativeTick(const FGeometry& MyGeometry, float I
         return;
     }
 
-    UTextureRenderTarget2D* RenderTarget = PlayerCharacter->GetFaceCaptureComponent()->GetRenderTarget();
+    UTextureRenderTarget2D* RenderTarget = PlayerCharacter->GetFaceCaptureComponent()->GetTextureTarget();
     UCaptureComponent* CaptureComponent = PlayerCharacter->GetFaceCaptureComponent();
 
     //PlayerFace->SetBrushFromTexture(RenderTarget);
