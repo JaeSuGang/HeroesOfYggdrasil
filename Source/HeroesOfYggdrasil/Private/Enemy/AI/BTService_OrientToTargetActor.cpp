@@ -55,3 +55,5 @@ void UBTService_OrientToTargetActor::TickNode(UBehaviorTreeComponent& OwnerComp,
 		OwningPawn->SetActorRotation(TargetRot);
 	}
 }
+
+

@@ -17,16 +17,25 @@ void UBTTaskNode_Trace::Start(UBehaviorTreeComponent& _OwnerComp)
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
+	CheckTime = PlayAIData.Data.StandardZeroTime;
 }
 
 void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
+	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
+
+	CheckTime -= _DeltaSeconds;
+
+
+
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	AActor* TargetActor = PlayAIData.TargetActor;
 	APawn* SelfActor = PlayAIData.SelfPawn;
+
 
 	// 타겟 null(죽음)
 	if (nullptr == TargetActor)
@@ -49,17 +58,23 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	}
 
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
-	
-	if (SelfController != nullptr && TargetActor!= nullptr)
+	// 추적
+	if (SelfController != nullptr && TargetActor!= nullptr && CheckTime < 0.0f)
 	{
 		SelfController->MoveToActor(TargetActor);
+		CheckTime = PlayAIData.Data.TargetCheckTime;
 	}
 	
-	
+	// 복귀
 	float Size = TargetDir.Size();
 	if (Size >= PlayAIData.Data.TraceRange)
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
 		return;
 	}
+}
+
+void UBTTaskNode_Trace::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
+{
+	Super::RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 }
