@@ -29,8 +29,7 @@ void AYggPlayerController::SetupInputComponent()
 
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 	{
-		EnhancedInputComponent->BindAction(InputModeAction, ETriggerEvent::Started, this, &AYggPlayerController::SetMouseMode, true);
-		EnhancedInputComponent->BindAction(InputModeAction, ETriggerEvent::Completed, this, &AYggPlayerController::SetMouseMode, false);
+		EnhancedInputComponent->BindAction(InputModeAction, ETriggerEvent::Started, this, &AYggPlayerController::ToggleMouseMode);
 	}
 
 
@@ -63,9 +62,11 @@ void AYggPlayerController::SetGenericTeamId_Implementation(const FGenericTeamId&
 	TeamID = _TeamID;
 }
 
-void AYggPlayerController::SetMouseMode(const FInputActionValue& Value, bool bIsMouseModeOn)
+void AYggPlayerController::ToggleMouseMode()
 {
-	if (bIsMouseModeOn)
+	bMouseMode = !bMouseMode;
+
+	if (bMouseMode)
 	{
 		int nX, nY;
 		GetViewportSize(nX, nY);

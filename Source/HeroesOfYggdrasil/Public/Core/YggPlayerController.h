@@ -44,7 +44,7 @@ public:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetMouseMode(const FInputActionValue& Value, bool bIsMouseModeOn);
+	void ToggleMouseMode();
 
 	FGenericTeamId GetGenericTeamId() const override;
 
@@ -59,6 +59,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UInputMappingContext* UIModeMappingContext;
+
+	UPROPERTY()
+	bool bMouseMode;
 
 	UPROPERTY()
 	UInputMappingContext* CharacterMappingContextToRestore;	
