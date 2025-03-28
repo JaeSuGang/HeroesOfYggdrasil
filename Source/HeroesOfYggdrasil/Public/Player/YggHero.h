@@ -53,13 +53,6 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 	GENERATED_BODY()
 public:
 	AYggHero();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void SetCamera(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset);
-	void StartGameCamera(float DeltaTime);
-
-	//void CameraMove(FCameraMoveData* CameraMoveData);
-
 	UFUNCTION(BlueprintCallable)
 	UHeroAttributeComponent* GetHeroAttributeComponent()
 	{
@@ -152,25 +145,5 @@ protected:
 	bool bIsUIMode = false;
 
 protected:
-	bool bIsCameraTransitioning = false;
-	float TransitionAlpha = 0.0f;
-	float TransitionSpeed = 1.0f; // 카메라 회전 속도
 
-	FVector StartCameraLocation;
-	FRotator StartCameraRotation;
-	float StartArmLength;
-	FVector StartSocketOffset;
-
-	FVector TargetCameraLocation;
-	FRotator TargetCameraRotation;
-	float TargetArmLength;
-	FVector TargetSocketOffset;
-
-	
-	void AimRaycast(APlayerController* PlayerController);
-
-
-
-	int MaxAttackIndex;
-	int CurAttackIndex;
 };

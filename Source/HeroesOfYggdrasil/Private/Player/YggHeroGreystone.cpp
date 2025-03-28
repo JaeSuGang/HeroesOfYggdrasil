@@ -28,7 +28,7 @@
 #include "Engine/DataTable.h"
 #include "Data/YggStructData.h"
 
-#include "Animation/HeroGreystoneAnimInstance.h"
+
 
 AYggHeroGreystone::AYggHeroGreystone()
 {
