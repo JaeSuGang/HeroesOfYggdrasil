@@ -68,7 +68,11 @@ void AYggHeroKhaimera::BeginPlay()
 		HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Khaimera"));
 
 	}
-	UpdateStatus();
+	
+	if (HasAuthority())
+	{
+		UpdateStatus();
+	}
 }
 
 void AYggHeroKhaimera::Tick(float DeltaTime)

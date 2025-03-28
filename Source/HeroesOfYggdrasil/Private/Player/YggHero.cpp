@@ -146,8 +146,10 @@ void AYggHero::SetAimMode(bool Value)
 
 void AYggHero::UpdateStatus()
 {
-	GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->GroundSpeedRate;
-	GetCharacterMovement()->JumpZVelocity *= HeroAttributeComponent->JumpRate;
+	GetCharacterMovement()->MaxWalkSpeed = HeroAttributeComponent->MaxMoveSpeed;
+	GetCharacterMovement()->JumpZVelocity = 100; // HeroAttributeComponent->JumpRate;
+
+
 }
 
 void AYggHero::TakeDamageEffect_Implementation(float Att)
