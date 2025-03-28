@@ -7,6 +7,7 @@
 #include "MainGame/UI/YggMainGameUserWidget.h"
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
 #include "Core/YggPlayerState.h"
+#include "MainGame/PlayerManager.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
@@ -111,20 +112,6 @@ void AMainGameHUD::ShowMainGameWidget()
 		AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
 		
 		CurrentWidget->AddToViewport();
-
-		//MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
-		//
-		//if (true)
-		//{
-		//
-		//}
-		//
-		//PC->GetPawn();
-		//
-		//MainGameUserWidget->GetPlayerStatusWidget();
-
-
-		
 	}
 
 	this->PlayerOwner->SetInputMode(FInputModeGameOnly{});
@@ -138,6 +125,34 @@ void AMainGameHUD::CloseCurrentWidget()
 	{
 		CurrentWidget->RemoveFromParent();
 		CurrentWidget = nullptr;
+	}
+}
+
+void AMainGameHUD::PlusButtonEvent()
+{
+	if (MainGameWidgetClass)
+	{
+		MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
+		
+		MainGameUserWidget->CreateAbility();
+		MainGameUserWidget->DelAbilityPlus();
+	}
+}
+
+void AMainGameHUD::AbilitySelectEvent()
+{
+	if (MainGameWidgetClass)
+	{
+		MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
+
+		APlayerManager* PM = APlayerManager::Get(GetWorld());
+
+		if (PM)
+		{
+			PM->Server_UpgradeAttack(PC);
+		}
+
+		MainGameUserWidget->DelAbility();
 	}
 }
 

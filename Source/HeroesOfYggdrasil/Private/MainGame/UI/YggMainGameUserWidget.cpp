@@ -3,9 +3,13 @@
 
 #include "MainGame/UI/YggMainGameUserWidget.h"
 #include "MainGame/UI/YggPlayerStatusUserWidget.h"
+#include "MainGame/UI/YggOrderStatusUserWidget.h"
+#include "MainGame/UI/YggAbilityPlusUserWidget.h"
+#include "MainGame/UI/YggAbilityUserWidget.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+
 
 void UYggMainGameUserWidget::NativeOnInitialized()
 {
@@ -31,4 +35,62 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 	if (!OrderStatusUserWidgetClass)
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
+}
+
+void UYggMainGameUserWidget::CreateAbilityPlus()
+{
+	if (!AbilityPlusUserWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	AbilityPlusWidget = CreateWidget<UYggAbilityPlusUserWidget>(GetWorld(), AbilityPlusUserWidgetClass);
+
+	if (AbilityPlusWidget)
+	{
+		MainGamePanel->AddChild(AbilityPlusWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(AbilityPlusWidget->Slot))
+		{
+			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+			CanvasSlot->SetPosition(FVector2D(500.0f, 500.0f));
+		}
+	}
+}
+
+void UYggMainGameUserWidget::CreateAbility()
+{
+	if (!AbiltyUserWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	AbilityWidget = CreateWidget<UYggAbilityUserWidget>(GetWorld(), AbiltyUserWidgetClass);
+
+	if (AbilityWidget)
+	{
+		MainGamePanel->AddChild(AbilityWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(AbilityWidget->Slot))
+		{
+			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+			CanvasSlot->SetPosition(FVector2D(0.0f, 0.0f));
+		}
+	}
+}
+
+void UYggMainGameUserWidget::DelAbilityPlus()
+{
+	if (AbilityPlusWidget)
+	{
+		AbilityPlusWidget->RemoveFromParent();
+		AbilityPlusWidget = nullptr;
+	}
+}
+
+void UYggMainGameUserWidget::DelAbility()
+{
+	if (AbilityWidget)
+	{
+		AbilityWidget->RemoveFromParent();
+		AbilityWidget = nullptr;
+	}
 }

@@ -8,6 +8,7 @@
 
 class UImage;
 class UTextBlock;
+class UButton;
 
 
 /**
@@ -34,5 +35,6 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* AbilityInfo;
 
-
+	UPROPERTY(meta = (BindWidget))
+	UButton* SelectButton;
 };
