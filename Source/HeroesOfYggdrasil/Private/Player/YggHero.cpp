@@ -68,6 +68,8 @@ AYggHero::AYggHero()
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(GetMesh());
 
+	
+
 
 	FaceCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("StatusCamera"));
 	FaceCaptureComponent->SetupAttachment(RootComponent);
@@ -156,6 +158,13 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 {
 	// 피 튀기는 파티클 재생. 등등.
 
+}
+
+FHitResult AYggHero::RayCastAim(float Scope)
+{
+	FHitResult HitResult;
+
+	return HitResult;
 }
 
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

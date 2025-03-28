@@ -66,6 +66,8 @@ public:
 	{
 		return FaceCaptureComponent;
 	}
+	
+	bool IsAimMode() const { return bAimMode; }
 
 	UFUNCTION(NetMulticast, Reliable)
 	void TakeDamageEffect(float Att);
