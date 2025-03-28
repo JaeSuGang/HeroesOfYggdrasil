@@ -16,6 +16,8 @@
 
 class UKhaimeraAttributeComponent;
 
+class UBoxComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 {
@@ -59,5 +61,9 @@ protected:
 	void ServerSkillR(const FInputActionValue& Value);
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillR(const FInputActionValue& Value);
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBoxComponent* AttackBox;
 
 };

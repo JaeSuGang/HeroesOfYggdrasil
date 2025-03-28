@@ -19,7 +19,7 @@ class APlayerController;
 
 class USpringArmComponent;
 class UCameraComponent;
-class USceneCaptureComponent2D;
+class UCaptureComponent;
 
 // Input
 class UInputMappingContext;
@@ -41,6 +41,8 @@ class UTimeEventComponent;
 class UWidgetComponent;
 
 struct FHeroCameraData;
+
+
 
 
 
@@ -74,6 +76,12 @@ public:
 	UInputMappingContext* GetInputMappingContext()
 	{
 		return InputMappingContext;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	UCaptureComponent* GetFaceCaptureComponent()
+	{
+		return FaceCaptureComponent;
 	}
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -127,8 +135,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
 	UWidgetComponent* WidgetComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "YggCamera")
-	USceneCaptureComponent2D* SceneCaptureComponent2D;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
+	UCaptureComponent* FaceCaptureComponent;
 	
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
@@ -152,8 +160,9 @@ protected:
 	float TargetArmLength;
 	FVector TargetSocketOffset;
 
-	FVector GetAimWorldLocation(APlayerController* PlayerController);
+	
 	void AimRaycast(APlayerController* PlayerController);
+
 
 
 	int MaxAttackIndex;

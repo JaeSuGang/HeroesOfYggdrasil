@@ -41,8 +41,21 @@ public:
 	FRotator CameraRotation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FVector SocketOffset;
-	
 };
+
+USTRUCT(BlueprintType)
+struct FHeroCaptureCameraOffsetData : public FTableRowBase
+{
+	GENERATED_BODY()
+	FHeroCaptureCameraOffsetData() {}
+	~FHeroCaptureCameraOffsetData() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FVector CameraOffset;
+};
+
+
 
 
 

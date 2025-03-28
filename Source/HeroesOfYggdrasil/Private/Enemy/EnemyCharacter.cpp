@@ -19,7 +19,7 @@
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -42,6 +42,7 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.SelfPawn = this;
 		AIData->PlayData.SelfAnimPawn = this;
 		AIData->PlayData.CurHP = FindData.AIData.MaxHP;
+
 		// AIData->PlayData.AttackAnimationCount = FindData.AttackAnimations.Num();
 		AIData->PlayData.OriginPos = GetActorLocation();
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
@@ -87,6 +88,10 @@ void AEnemyCharacter::BeginPlay()
 		EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
 		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
 	}
+
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
+
+	
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
@@ -115,6 +120,7 @@ void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	UCharacterAttributeComponent * DamageCharacterAttributeComponent = DamageCharacter->GetComponentByClass<UCharacterAttributeComponent>();
 
 	EnemyAttributeComponent->Server_TakeDamage(10.0f);
+	AIData->PlayData.CurHP -= 10.0f;
 }
 
 void AEnemyCharacter::AttackStart()
@@ -122,7 +128,6 @@ void AEnemyCharacter::AttackStart()
 	if (this != nullptr)
 	{
 		GetMesh()->SetCollisionProfileName(UEnemyConst::Collision::ProfileName_MonsterAttack);
-
 	}
 }
 
@@ -132,5 +137,4 @@ void AEnemyCharacter::AttackEnd()
 	{
 		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	}
-	
 }
