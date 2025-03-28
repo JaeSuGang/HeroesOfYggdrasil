@@ -82,40 +82,8 @@ void AYggHeroKhaimera::Tick(float DeltaTime)
 
 void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
 {
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
-	}
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
-	{
-		return;
-	}
-	if (HasAuthority())
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		MulticastAttack(Value);
-	}
-	else
-	{
-		ServerAttack(Value);
-		return;
-	}
+	Super::Attack(Value);
 }
-
-void AYggHeroKhaimera::ServerAttack_Implementation(const FInputActionValue& Value)
-{
-	Attack(Value);
-}
-
-void AYggHeroKhaimera::MulticastAttack_Implementation(const FInputActionValue& Value)
-{
-
-	FName MontageName = *FString::Printf(TEXT("Attack"));
-	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->AttackSpeedRate);
-}
-
-
-
 
 void AYggHeroKhaimera::EndAttack(const FInputActionValue& Value)
 {

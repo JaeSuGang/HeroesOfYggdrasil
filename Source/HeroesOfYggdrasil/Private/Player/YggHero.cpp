@@ -253,8 +253,6 @@ void AYggHero::Jump()
 
 void AYggHero::Roll(const FInputActionValue& Value)
 {
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
-
 	if (HasAuthority())
 	{
 		MulticastRoll(Value);
@@ -263,6 +261,40 @@ void AYggHero::Roll(const FInputActionValue& Value)
 	{
 		ServerRoll(Value);
 	}
+}
+
+void AYggHero::Attack(const FInputActionValue& Value)
+{
+	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
+	}
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		MulticastAttack(Value);
+	}
+	else
+	{
+		ServerAttack(Value);
+		return;
+	}
+}
+
+void AYggHero::ServerAttack_Implementation(const FInputActionValue& Value)
+{
+	Attack(FInputActionValue());
+}
+
+void AYggHero::MulticastAttack_Implementation(const FInputActionValue& Value)
+{
+	FName MontageName = *FString::Printf(TEXT("Attack"));
+
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)

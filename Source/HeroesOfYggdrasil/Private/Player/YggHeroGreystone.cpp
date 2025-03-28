@@ -43,9 +43,9 @@ void AYggHeroGreystone::BeginPlay()
 	Super::BeginPlay();
 
 	ActionMap.Remove(FName("Jump"));
-	// HeroAttributeComponent->SetCombo(4);
 
-	// HeroAttributeComponent->Status = *(HeroAttributeComponent->Data->FindRow<FHeroBaseStatusInfoRow>(TEXT("Greystone"), TEXT("Context")));
+	/*HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Greystone"));
+	UpdateStatus();*/
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
@@ -88,9 +88,6 @@ void AYggHeroGreystone::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 		if (ActionMap.Find(FName("Attack")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Started, this, &AYggHeroGreystone::Attack);
-		}
-		if (ActionMap.Find(FName("Attack")))
-		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Attack")), ETriggerEvent::Completed, this, &AYggHeroGreystone::EndAttack);
 		}
 		if (ActionMap.Find(FName("SkillQ")))
@@ -135,36 +132,7 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 		return;
 	}
 
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
-	}
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
-	{
-		return;
-	}
-	if (HasAuthority())
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		MulticastAttack();
-	}
-	else
-	{
-		ServerAttack();
-		return;
-	}
-}
-
-void AYggHeroGreystone::ServerAttack_Implementation()
-{
-	Attack(FInputActionValue());
-}
-
-void AYggHeroGreystone::MulticastAttack_Implementation()
-{	
-	FName MontageName = *FString::Printf(TEXT("Attack"));
-	
-	HeroAnimInstance->PlayMontage(MontageName);
+	Super::Attack(Value);		
 }
 
 void AYggHeroGreystone::EndAttack(const FInputActionValue& Value)
@@ -199,7 +167,6 @@ void AYggHeroGreystone::MulticastSkillQ_Implementation()
 	HeroAnimInstance->PlayMontage(MontageName);
 
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-	// HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 }
 
 void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
