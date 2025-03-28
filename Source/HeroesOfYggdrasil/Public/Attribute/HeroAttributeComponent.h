@@ -22,25 +22,24 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(Server, Reliable)
+	void ServerSetBaseData(const FName& Name);
+
 public:
 	UPROPERTY(EditAnywhere)
-	UDataTable* Data;
+	UDataTable* BaseData;
 
-	UPROPERTY(BlueprintReadOnly)
-	float SpeedRate = 1.0f;
-	UPROPERTY(BlueprintReadOnly)
-	float JumpRate = 1.0f;
 
 	bool IsAttackCheck();
 	
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float HPRegen;
 
-	/*UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float SpeedRate = 1.0f;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float GroundSpeedRate;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float JumpRate = 1.0f;*/
+	float JumpRate;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float AttackSpeedRate;
@@ -51,12 +50,14 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float CriticalDamageRate;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float SkillQCoolTime;
+	
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float SkillECoolTime;
+	//UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	//float SkillQCoolTime;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float SkillRCoolTime;
+	//UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	//float SkillECoolTime;
+
+	//UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	//float SkillRCoolTime;
 };

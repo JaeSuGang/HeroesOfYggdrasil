@@ -20,15 +20,6 @@
 // Network
 #include "Net/UnrealNetwork.h"
 
-#include "Attribute/KhaimeraAttributeComponent.h"
-
-// collison
-#include "Components/BoxComponent.h"
-
-#include "Data/YggStructData.h"
-
-#include "Component/CaptureComponent.h"
-
 
 
 
@@ -36,11 +27,7 @@
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
-	KhaimeraAttributeComponent = Cast<UKhaimeraAttributeComponent>(HeroAttributeComponent);
-	/*AttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCapsule"));
-	AttackBox->SetupAttachment(RootComponent);*/
 
-	
 }
 
 void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -76,7 +63,12 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AYggHeroKhaimera::BeginPlay()
 {
 	Super::BeginPlay();
-	GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->SpeedRate;
+	if (HeroAttributeComponent)
+	{
+		HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Khaimera"));
+
+	}
+	GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->GroundSpeedRate;
 	GetCharacterMovement()->JumpZVelocity *= HeroAttributeComponent->JumpRate;
 }
 
@@ -116,7 +108,7 @@ void AYggHeroKhaimera::MulticastAttack_Implementation(const FInputActionValue& V
 {
 
 	FName MontageName = *FString::Printf(TEXT("Attack"));
-	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
+	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->AttackSpeedRate);
 }
 
 
@@ -152,7 +144,7 @@ void AYggHeroKhaimera::ServerSkillQ_Implementation(const FInputActionValue& Valu
 void AYggHeroKhaimera::MulticastSkillQ_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillQ");
-	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
@@ -182,7 +174,7 @@ void AYggHeroKhaimera::ServerSkillE_Implementation(const FInputActionValue& Valu
 void AYggHeroKhaimera::MulticastSkillE_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillE");
-	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
@@ -209,14 +201,13 @@ void AYggHeroKhaimera::ServerSkillR_Implementation(const FInputActionValue& Valu
 void AYggHeroKhaimera::MulticastSkillR_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillR");
-	HeroAnimInstance->PlayMontage(MontageName, HeroAttributeComponent->SpeedRate);
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 
 void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AYggHeroKhaimera, KhaimeraAttributeComponent);
 }
 
 

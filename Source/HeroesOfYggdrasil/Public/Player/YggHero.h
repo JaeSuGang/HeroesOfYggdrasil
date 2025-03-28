@@ -34,18 +34,8 @@ class UYggHeroAnimInstance;
 // Attribute
 class UHeroAttributeComponent;
 
-// TimeEvent
-class UTimeEventComponent;
-
 // UI
 class UWidgetComponent;
-
-struct FHeroCameraData;
-
-
-
-
-
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
@@ -127,9 +117,6 @@ protected:
 
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
 	UHeroAttributeComponent* HeroAttributeComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
-	UTimeEventComponent* TimeEventComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
 	UWidgetComponent* WidgetComponent;
