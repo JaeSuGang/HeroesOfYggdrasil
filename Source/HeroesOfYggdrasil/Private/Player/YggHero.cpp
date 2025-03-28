@@ -352,6 +352,38 @@ void AYggHero::Jump()
 	Super::Jump();
 }
 
+void AYggHero::Roll(const FInputActionValue& Value)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+
+	if (HasAuthority())
+	{
+		MulticastRoll(Value);
+	}
+	else
+	{
+		ServerRoll(Value);
+	}
+}
+
+void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)
+{
+	Roll(Value);
+}
+
+void AYggHero::MulticastRoll_Implementation(const FInputActionValue& Value)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable"))) return;
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
+	
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+
+	FName MontageName = *FString::Printf(TEXT("Roll"));
+	HeroAnimInstance->PlayMontage(MontageName);
+}
+
 
 void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
 {

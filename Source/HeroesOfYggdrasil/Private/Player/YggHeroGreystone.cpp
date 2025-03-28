@@ -124,22 +124,6 @@ void AYggHeroGreystone::Move(const FInputActionValue& Value)
 	Super::Move(Value);
 }
 
-void AYggHeroGreystone::Roll(const FInputActionValue& Value)
-{
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable"))) return;
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
-	
-	UHeroGreystoneAnimInstance* AnimInstance = Cast<UHeroGreystoneAnimInstance>(GetMesh()->GetAnimInstance());
-	if (!AnimInstance) return;
-
-	AnimInstance->bIsRoll = true;
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
-
-	FName MontageName = *FString::Printf(TEXT("Roll"));
-	HeroAnimInstance->PlayMontage(MontageName);
-}
-
 void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 {
 	if (bIsSkillR && !(HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))))

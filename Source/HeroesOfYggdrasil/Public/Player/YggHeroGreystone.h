@@ -19,7 +19,6 @@ protected:
 
 	virtual void Look(const FInputActionValue& Value) override;	
 	virtual void Move(const FInputActionValue& Value) override;
-	void Roll(const FInputActionValue& Value);
 
 	virtual void Attack(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)

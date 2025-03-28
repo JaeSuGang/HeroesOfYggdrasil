@@ -98,6 +98,12 @@ protected:
 	virtual void Move(const FInputActionValue& Value);
 	virtual void Jump() override;
 
+	virtual void Roll(const FInputActionValue& Value);
+	UFUNCTION(Server, Reliable)
+	void ServerRoll(const FInputActionValue& Value);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRoll(const FInputActionValue& Value);
+
 	virtual void Attack(const FInputActionValue& Value) {}
 	virtual void EndAttack(const FInputActionValue& Value) {}
 	virtual void SkillQ(const FInputActionValue& Value) {}

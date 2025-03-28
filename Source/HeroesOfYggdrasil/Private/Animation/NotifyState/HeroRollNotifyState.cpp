@@ -52,4 +52,5 @@ void UHeroRollNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequ
 
 	Greystone->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotRollable"));
 	Greystone->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
+	Greystone->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
 }
