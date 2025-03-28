@@ -61,4 +61,6 @@ public:
 	/* Set은 Server_SetMaxHp 함수를 사용해야 함*/
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float MaxHP;
+
+
 };

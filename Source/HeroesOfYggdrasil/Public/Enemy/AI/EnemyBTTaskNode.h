@@ -35,6 +35,8 @@ public:
 
 	void YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp);
 
+	void DeathCheck(UBehaviorTreeComponent& _OwnerComp);
+
 protected:
 	virtual void RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds);
 
@@ -44,6 +46,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Target")
 	float RotationInterSpeed;
+
+	UPROPERTY(EditAnywhere, Category = "Target")
+	double DeathCheckTime;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Target")

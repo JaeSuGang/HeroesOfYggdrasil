@@ -25,6 +25,19 @@ class HEROESOFYGGDRASIL_API AEnemyCharacter : public AEnemyAnimCharacter, public
 public:
 	AEnemyCharacter();
 
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+
+	UFUNCTION()
+	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	void AttackStart() override;
+
+	void AttackEnd() override;
+
 	const FMonsterDataRow* GetData()
 	{
 		return MonsterData;
@@ -40,24 +53,24 @@ public:
 		EnemyAttributeComponent = _EnemyAttributeComponent;
 	}
 
+	UEnemyAttributeComponent* GetEnemyAttributeComponent()
+	{
+		return EnemyAttributeComponent;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	double GetCurHp()
+	{
+		return AIData->PlayData.CurHP;
+	}
+	
+
 protected:
 	virtual void BeginPlay() override;
 
 public:	
-	virtual void Tick(float DeltaTime) override;
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
-
-	UFUNCTION()
-	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UPROPERTY(EditAnywhere, Replicated, Category = "YggData", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "YggData", meta = (AllowPrivateAccess = "true"))
 	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
-
-	void AttackStart() override;
-	void AttackEnd() override;
 
 private:
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

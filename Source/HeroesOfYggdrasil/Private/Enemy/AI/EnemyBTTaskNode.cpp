@@ -16,7 +16,8 @@ UEnemyBTTaskNode::UEnemyBTTaskNode()
 
 void UEnemyBTTaskNode::Start(UBehaviorTreeComponent& _OwnerComp)
 {
-	
+	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	DeathCheckTime = PlayAIData.Data.StandardZeroTime;
 }
 
 EBTNodeResult::Type UEnemyBTTaskNode::ExecuteTask(UBehaviorTreeComponent& _OwnerComp, uint8* NodeMemory)
@@ -38,6 +39,16 @@ EBTNodeResult::Type UEnemyBTTaskNode::ExecuteTask(UBehaviorTreeComponent& _Owner
 void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
+
+	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+
+	DeathCheckTime -= _DeltaSeconds;
+
+	if (DeathCheckTime < PlayAIData.Data.StandardZeroTime)
+	{
+		DeathCheck(_OwnerComp);
+		DeathCheckTime = PlayAIData.Data.DeathCheckTime;
+	}
 }
 
 void UEnemyBTTaskNode::ChangeState(UBehaviorTreeComponent& _OwnerComp, EEnemyAIState _State)
@@ -159,4 +170,23 @@ void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, f
 			OwningPawn->SetActorRotation(TargetRot);
 		}
 	}
+}
+
+
+
+void UEnemyBTTaskNode::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
+	APawn* SelfPawn = PlayAIData.SelfPawn;
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfPawn);
+
+	if (PlayAIData.CurHP < 0.0f)
+	{
+		if (EnemyCharacter != nullptr)
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::Death);
+		}
+	}
+
+
 }
