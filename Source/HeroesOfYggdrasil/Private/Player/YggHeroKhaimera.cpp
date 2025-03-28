@@ -41,6 +41,7 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHeroKhaimera::EndAttack);
+		
 		}
 
 		if (ActionMap.Contains(FName("SkillQ")))
@@ -80,15 +81,9 @@ void AYggHeroKhaimera::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AYggHeroKhaimera::Attack(const FInputActionValue& Value)
-{
-	Super::Attack(Value);
-}
 
-void AYggHeroKhaimera::EndAttack(const FInputActionValue& Value)
-{
-	HeroAttributeComponent->RemoveTag(TEXT("Character.State.PressedAttack"));
-}
+
+
 
 void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {

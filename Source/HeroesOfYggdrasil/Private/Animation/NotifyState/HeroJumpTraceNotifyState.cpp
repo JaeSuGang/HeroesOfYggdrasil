@@ -17,7 +17,7 @@ void UHeroJumpTraceNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
+	Hero = Cast<AYggHero>(MeshComp->GetOwner());
 	if (IsValid(Hero))
 	{
 		StartLocation = Hero->GetActorLocation();
@@ -57,7 +57,7 @@ void UHeroJumpTraceNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 void UHeroJumpTraceNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
-	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
+	
 	if (IsValid(Hero))
 	{
 		

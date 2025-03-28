@@ -73,6 +73,7 @@ public:
 	void TakeDamageEffect(float Att);
 
 	virtual void Attack(const FInputActionValue& Value);
+	virtual void Jump() override;
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -83,7 +84,6 @@ protected:
 
 	virtual void Look(const FInputActionValue& Value);
 	virtual void Move(const FInputActionValue& Value);
-	virtual void Jump() override;
 
 	virtual void Roll(const FInputActionValue& Value);
 	UFUNCTION(Server, Reliable)
@@ -96,7 +96,7 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastAttack(const FInputActionValue& Value);
 
-	virtual void EndAttack(const FInputActionValue& Value) {}
+	virtual void EndAttack(const FInputActionValue& Value);
 	virtual void SkillQ(const FInputActionValue& Value) {}
 	virtual void SkillE(const FInputActionValue& Value) {}
 	virtual void SkillR(const FInputActionValue& Value) {}
@@ -104,7 +104,7 @@ protected:
 	virtual void ToggleAimMode();
 	virtual void SetAimMode(bool Value);
 
-	virtual void UpdateStatus();
+	void UpdateStatus();
 
 	virtual void CameraZoomInOut(const FInputActionValue& Value);
 	virtual void ToggleUIMode();

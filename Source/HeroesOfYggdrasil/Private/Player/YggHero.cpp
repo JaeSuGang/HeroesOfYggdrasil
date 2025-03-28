@@ -122,6 +122,8 @@ void AYggHero::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+
+
 void AYggHero::ToggleAimMode()
 {
 	SetAimMode(!bAimMode);
@@ -149,9 +151,7 @@ void AYggHero::SetAimMode(bool Value)
 void AYggHero::UpdateStatus()
 {
 	GetCharacterMovement()->MaxWalkSpeed = HeroAttributeComponent->MaxMoveSpeed;
-	GetCharacterMovement()->JumpZVelocity = 100; // HeroAttributeComponent->JumpRate;
-
-
+	GetCharacterMovement()->JumpZVelocity = HeroAttributeComponent->JumpPower;
 }
 
 void AYggHero::TakeDamageEffect_Implementation(float Att)
@@ -160,12 +160,7 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 
 }
 
-FHitResult AYggHero::RayCastAim(float Scope)
-{
-	FHitResult HitResult;
 
-	return HitResult;
-}
 
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -304,6 +299,10 @@ void AYggHero::MulticastAttack_Implementation(const FInputActionValue& Value)
 	FName MontageName = *FString::Printf(TEXT("Attack"));
 
 	HeroAnimInstance->PlayMontage(MontageName);
+}
+void AYggHero::EndAttack(const FInputActionValue& Value)
+{
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.PressedAttack"));
 }
 
 void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)

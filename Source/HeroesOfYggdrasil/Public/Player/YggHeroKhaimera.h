@@ -13,8 +13,6 @@
  */
 
 
-class UBoxComponent;
-
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 {
@@ -30,13 +28,7 @@ protected:
 	virtual void BeginPlay()override;
 	virtual void Tick(float DeltaTime)override;
 
-	virtual void Attack(const FInputActionValue& Value) override;
-	/*UFUNCTION(Server, Reliable)
-	void ServerAttack(const FInputActionValue& Value);
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastAttack(const FInputActionValue& Value);*/
-
-	virtual void EndAttack(const FInputActionValue& Value) override;
+	
 	
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	UFUNCTION(Server, Reliable)

@@ -9,6 +9,8 @@
 /**
  * 
  */
+class AYggHero;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API UHeroJumpTraceNotifyState : public UAnimNotifyState
 {
@@ -22,4 +24,5 @@ public:
 	FVector StartLocation;
 	FVector TargetLocation;
 	bool bIsGetTarget = false;
+	AYggHero* Hero;
 };
