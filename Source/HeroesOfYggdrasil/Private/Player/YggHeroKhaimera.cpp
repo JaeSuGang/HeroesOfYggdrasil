@@ -68,8 +68,7 @@ void AYggHeroKhaimera::BeginPlay()
 		HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Khaimera"));
 
 	}
-	GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->GroundSpeedRate;
-	GetCharacterMovement()->JumpZVelocity *= HeroAttributeComponent->JumpRate;
+	UpdateStatus();
 }
 
 void AYggHeroKhaimera::Tick(float DeltaTime)

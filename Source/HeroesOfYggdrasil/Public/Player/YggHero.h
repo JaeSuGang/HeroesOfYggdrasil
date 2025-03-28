@@ -96,6 +96,8 @@ protected:
 	virtual void ToggleAimMode();
 	virtual void SetAimMode(bool Value);
 
+	virtual void UpdateStatus();
+
 	virtual void CameraZoomInOut(const FInputActionValue& Value);
 	virtual void ToggleUIMode();
 	virtual void SetUIMode(bool Value);

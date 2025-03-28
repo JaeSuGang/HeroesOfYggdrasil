@@ -144,6 +144,12 @@ void AYggHero::SetAimMode(bool Value)
 	}
 }
 
+void AYggHero::UpdateStatus()
+{
+	GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->GroundSpeedRate;
+	GetCharacterMovement()->JumpZVelocity *= HeroAttributeComponent->JumpRate;
+}
+
 void AYggHero::TakeDamageEffect_Implementation(float Att)
 {
 	// 피 튀기는 파티클 재생. 등등.
