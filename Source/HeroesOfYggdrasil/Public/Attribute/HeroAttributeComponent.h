@@ -36,15 +36,6 @@ public:
 	float HPRegen;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float GroundSpeedRate;
-
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float JumpRate;
-
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float AttackSpeedRate;
-
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float CriticalChance;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)

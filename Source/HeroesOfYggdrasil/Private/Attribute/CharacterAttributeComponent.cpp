@@ -28,6 +28,56 @@ void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePr
 	DOREPLIFETIME(UCharacterAttributeComponent, MaxHP);
 }
 
+float UCharacterAttributeComponent::GetHP() const
+{
+	return HP;
+}
+
+float UCharacterAttributeComponent::GetMaxHP() const
+{
+	return MaxHP;
+}
+
+void UCharacterAttributeComponent::Server_SetDefensePoints_Implementation(float fAmount)
+{
+	DefensePoints = fAmount;
+}
+
+float UCharacterAttributeComponent::GetDefensePoints() const
+{
+	return DefensePoints;
+}
+
+float UCharacterAttributeComponent::GetAttackPoints() const
+{
+	return AttackPoints;
+}
+
+float UCharacterAttributeComponent::GetMaxMoveSpeed() const
+{
+	return MaxMoveSpeed;
+}
+
+void UCharacterAttributeComponent::Server_SetAttackSpeedRate_Implementation(float fAmount)
+{
+	AttackSpeedRate = fAmount;
+}
+
+float UCharacterAttributeComponent::GetAttackSpeedRate() const
+{
+	return AttackSpeedRate;
+}
+
+void UCharacterAttributeComponent::Server_SetMaxMoveSpeed_Implementation(float fAmount)
+{
+	MaxMoveSpeed = fAmount;
+}
+
+void UCharacterAttributeComponent::Server_SetAttackPoints_Implementation(float fAmount)
+{
+	AttackPoints = fAmount;
+}
+
 void UCharacterAttributeComponent::Server_SetMaxHP_Implementation(float fAmount)
 {
 	MaxHP = fAmount;
