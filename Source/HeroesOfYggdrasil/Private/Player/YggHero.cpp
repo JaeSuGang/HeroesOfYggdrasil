@@ -53,7 +53,6 @@ AYggHero::AYggHero()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-
 	// 카메라 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpring"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -63,8 +62,7 @@ AYggHero::AYggHero()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	// Attribute
-	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("AttributeComponent"));
+	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("HeroAttributeComponent"));
 
 	// 닉네임
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
@@ -86,6 +84,7 @@ AYggHero::AYggHero()
 	ActionMap.Add(TEXT("SkillQ"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("SkillE"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("SkillR"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("Roll"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("ToggleUIMode"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("ToggleAimMode"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("CameraZoomInOut"), NewObject<UInputAction>());
@@ -95,6 +94,7 @@ void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	
 	if (AnimInstance != nullptr)
 	{
 		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
@@ -103,23 +103,21 @@ void AYggHero::BeginPlay()
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::TakeDamageEffect);
+
 	}
 
 	if (FaceCaptureComponent)
 	{
 		FaceCaptureComponent->SetupFaceCapture(this);
 	}
+	CameraBoom->TargetArmLength = 700.0f;
+	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
 
 }
 
 void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	StartGameCamera(DeltaTime);
-	if (bAimMode)
-	{
-		AimRaycast(Cast<APlayerController>(GetController()));
-	}
 }
 
 void AYggHero::ToggleAimMode()
@@ -146,6 +144,14 @@ void AYggHero::SetAimMode(bool Value)
 	}
 }
 
+void AYggHero::UpdateStatus()
+{
+	GetCharacterMovement()->MaxWalkSpeed = HeroAttributeComponent->MaxMoveSpeed;
+	GetCharacterMovement()->JumpZVelocity = 100; // HeroAttributeComponent->JumpRate;
+
+
+}
+
 void AYggHero::TakeDamageEffect_Implementation(float Att)
 {
 	// 피 튀기는 파티클 재생. 등등.
@@ -157,117 +163,6 @@ void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AYggHero, HeroAttributeComponent);
 }
-
-void AYggHero::SetCamera_Implementation(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset)
-{
-	// 시작 카메라 저장.
-	StartCameraLocation = NewCameraLocation;
-	StartCameraRotation = NewCameraRotation;
-	StartArmLength = NewArmLength;
-	StartSocketOffset = NewSocketOffset;
-
-	// 플레이 카메라.
-	TargetArmLength = 700.0f;
-	TargetSocketOffset = FVector(0.0f, 0.0f, 200.0f);
-	TargetCameraLocation = StartCameraLocation;
-	TargetCameraRotation = FRotator(StartCameraRotation.Pitch, StartCameraRotation.Yaw + 180.0f, StartCameraRotation.Roll);
-
-	bIsCameraTransitioning = true;
-	TransitionAlpha = 0.0f;
-}
-
-void AYggHero::StartGameCamera(float DeltaTime)
-{
-	if (bIsCameraTransitioning)
-	{
-		if (AYggPlayerController* PC = GetController<AYggPlayerController>())
-		{
-			PC->SetInputEnabled(false);
-
-			
-		}
-	
-		TransitionAlpha += DeltaTime * TransitionSpeed;
-		TransitionAlpha = FMath::Clamp(TransitionAlpha, 0.0f, 1.0f);
-
-		CameraBoom->TargetArmLength = FMath::Lerp(StartArmLength, TargetArmLength, TransitionAlpha);
-		CameraBoom->SocketOffset = FMath::Lerp(StartSocketOffset, TargetSocketOffset, TransitionAlpha);
-		CameraBoom->SetWorldLocationAndRotation(
-			FMath::Lerp(StartCameraLocation, TargetCameraLocation, TransitionAlpha),
-			FMath::Lerp(StartCameraRotation, TargetCameraRotation, TransitionAlpha)
-		);
-
-		if (APlayerController* MyController = GetWorld()->GetFirstPlayerController())
-		{
-			FRotator NewRotation = FMath::Lerp(
-				StartCameraRotation,
-				TargetCameraRotation,
-				TransitionAlpha
-			);
-			MyController->SetControlRotation(NewRotation);
-		}
-
-		if (TransitionAlpha >= 1.0f)
-		{
-			bIsCameraTransitioning = false;
-
-			if (AYggPlayerController* PC = GetController<AYggPlayerController>())
-			{
-				PC->SetInputEnabled(true);
-			}
-		}
-	}
-}
-
-// 레이캐스트
-void AYggHero::AimRaycast(APlayerController* PlayerController)
-{
-	if (!PlayerController) return;
-
-	int32 ScreenX, ScreenY;
-	PlayerController->GetViewportSize(ScreenX, ScreenY); // 화면 크기 가져오기
-
-	FVector WorldLocation; 
-	FVector WorldDirection;
-	PlayerController->DeprojectScreenPositionToWorld(
-		ScreenX * 0.5f, ScreenY * 0.5f,  // 화면 중앙 좌표
-		WorldLocation, WorldDirection   // 월드 위치, 월드 방향
-	);
-
-	FVector Start = PlayerController->PlayerCameraManager->GetCameraLocation(); // 카메라 위치
-	FVector End = WorldLocation + (WorldDirection * 1000.0f); // 에임이 가리키는 3D 위치
-
-	DrawDebugLine(GetWorld(), WorldLocation, End, FColor::Red, false, 0.1f, 0, 1.0f);
-
-	FHitResult HitResult;
-	FCollisionQueryParams TraceParams;
-	TraceParams.AddIgnoredActor(PlayerController->GetPawn()); // 플레이어 캐릭터는 무시
-
-	UWorld* World = GetWorld();
-	if (World == nullptr)
-	{
-		return;
-	}
-	bool bHit = World->LineTraceSingleByChannel(
-		HitResult,
-		Start,
-		End,
-		ECC_Visibility,
-		TraceParams
-	);
-
-	if (bHit == true)
-	{
-		AActor* HitActor = HitResult.GetActor();
-		GEngine->AddOnScreenDebugMessage(
-			1,  
-			2.0f, 
-			FColor::Red, 
-			FString::Printf(TEXT("Hit Actor: %s"), *HitActor->GetName()) 
-		);
-	}
-}
-
 
 
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -295,6 +190,10 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		if (ActionMap.Contains(FName("Jump")))
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Jump")], ETriggerEvent::Triggered, this, &AYggHero::Jump);
+		}
+		if (ActionMap.Contains(FName("Roll")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Roll")], ETriggerEvent::Started, this, &AYggHero::Roll);
 		}
 		if (ActionMap.Find(FName("ToggleAimMode")))
 		{
@@ -388,17 +287,12 @@ void AYggHero::MulticastRoll_Implementation(const FInputActionValue& Value)
 void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
 {
 	float WheelValue = Value.Get<float>();
-
-	// 마우스 휠 입력이 없으면 리턴
 	if (WheelValue == 0.0f)
 	{
 		return;
 	}
-	// 현재 SpringArm 길이를 가져옴
 	float NewLength = CameraBoom->TargetArmLength + (WheelValue * CameraConst::ZoomSpeed);
-	// 최소/최대 줌 제한
 	NewLength = FMath::Clamp(NewLength, CameraConst::MinCameraBoomLength, CameraConst::MaxCameraBoomLength);
-	// 변경된 길이 적용
 	CameraBoom->TargetArmLength = NewLength;
 }
 

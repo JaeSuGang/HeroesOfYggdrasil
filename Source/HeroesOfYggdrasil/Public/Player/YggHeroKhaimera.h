@@ -13,9 +13,6 @@
  */
 
 
-
-class UKhaimeraAttributeComponent;
-
 class UBoxComponent;
 
 UCLASS()
@@ -29,8 +26,6 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
-	UKhaimeraAttributeComponent* KhaimeraAttributeComponent;
 
 	virtual void BeginPlay()override;
 	virtual void Tick(float DeltaTime)override;
@@ -63,7 +58,6 @@ protected:
 	void MulticastSkillR(const FInputActionValue& Value);
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UBoxComponent* AttackBox;
+
 
 };

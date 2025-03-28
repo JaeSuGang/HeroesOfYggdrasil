@@ -70,7 +70,7 @@ void APlayerSelectZone::PossessedBy(AController* controller)
 {
 	Super::PossessedBy(controller);
 
-	
+
 }
 
 void APlayerSelectZone::EndPlay(EEndPlayReason::Type endReason)
@@ -136,44 +136,20 @@ void APlayerSelectZone::SelectCharacter_Implementation()
 		{
 			return;
 		}
-
-		FVector CameraLocation = FVector::ZeroVector;
-		FRotator CameraRotation = FRotator::ZeroRotator;
-		float CameraArmLength = 0.0f;
-		FVector CameraSocketOffset = FVector::ZeroVector;
-
-		// FixedPawn 카메라 위치 저장.
-		if (APawn* FixedPawn = YPC->GetPawn())
-		{
-			if (USpringArmComponent* FixedSpringArm = FixedPawn->FindComponentByClass<USpringArmComponent>())
-			{
-				CameraLocation = FixedSpringArm->GetComponentLocation();
-				CameraRotation = FixedSpringArm->GetComponentRotation();
-				CameraArmLength = FixedSpringArm->TargetArmLength;
-				CameraSocketOffset = FixedSpringArm->SocketOffset;
-			}
-		}
-
-		YPC->SetViewTarget(this);
 		YPC->UnPossess();
 		YPC->Possess(SpawnedSelectable);
-
-		// 새 Hero에 FixedPawn 카메라 정보 보내기.
-		if (AYggHero* NewHero = Cast<AYggHero>(SpawnedSelectable))
-		{
-			if (USpringArmComponent* NewSpringArm = NewHero->FindComponentByClass<USpringArmComponent>())
+		YPC->SetViewTarget(this);
+	
+		YPC->SetViewTargetWithBlend(SpawnedSelectable, 2.0f, EViewTargetBlendFunction::VTBlend_Cubic, true);
+		YPC->SetInputEnabled(false);
+		FTimerHandle BlendTimerHandle;
+		GetWorldTimerManager().SetTimer(BlendTimerHandle, 
+			[this,YPC]() 
 			{
-				NewSpringArm->TargetArmLength = CameraArmLength;
-				NewSpringArm->SocketOffset = CameraSocketOffset;
-				NewSpringArm->SetWorldLocationAndRotation(CameraLocation, CameraRotation);
-			}
-
-			YPC->SetControlRotation(CameraRotation);
-			NewHero->SetCamera(CameraLocation, CameraRotation, CameraArmLength, CameraSocketOffset);
-		}
-
-		SpawnedSelectable = nullptr;
-		this->Destroy();
+				YPC->SetInputEnabled(true); 
+				SpawnedSelectable = nullptr;
+				this->Destroy();
+			}, 2.0f, false);
 	}
 }
 

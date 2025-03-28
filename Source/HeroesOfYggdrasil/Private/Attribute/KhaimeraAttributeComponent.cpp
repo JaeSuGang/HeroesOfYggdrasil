@@ -7,8 +7,6 @@ void UKhaimeraAttributeComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	PrimaryComponentTick.bCanEverTick = true;
-
-
 }
 
 void UKhaimeraAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

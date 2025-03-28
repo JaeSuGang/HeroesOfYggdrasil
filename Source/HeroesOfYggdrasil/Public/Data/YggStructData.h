@@ -12,19 +12,7 @@
  *
  */
 
-USTRUCT(BlueprintType)
-struct FHeroSkillInfoRow : public FTableRowBase
-{
-	GENERATED_BODY()
-	FHeroSkillInfoRow() {}
-	~FHeroSkillInfoRow() {}
 
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	float CoolTime;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	float ContinueTime;
-};
 
 
 USTRUCT(BlueprintType)
@@ -43,21 +31,25 @@ public:
 	FVector SocketOffset;
 };
 
+
+
 USTRUCT(BlueprintType)
-struct FHeroCaptureCameraOffsetData : public FTableRowBase
+struct FHeroSkillInfoRow : public FTableRowBase
 {
 	GENERATED_BODY()
-	FHeroCaptureCameraOffsetData() {}
-	~FHeroCaptureCameraOffsetData() {}
+	FHeroSkillInfoRow() {}
+	~FHeroSkillInfoRow() {}
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	FVector CameraOffset;
+	float SkillCoefficient;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float CoolTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float ContinueTime;
 };
-
-
-
-
 
 USTRUCT(BlueprintType)
 struct FHeroBaseStatusInfoRow : public FTableRowBase
@@ -74,15 +66,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float HPRegen = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	float GroundSpeedRate =1.0f;
+	float MaxMoveSpeed =1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float AttackSpeedRate = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float JumpRate = 1.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	int CurAttackIndex = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	int MaxAttackIndex = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float AttPower = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
@@ -91,13 +79,22 @@ public:
 	float CriticalChance = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float CriticalDamageRate = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FHeroSkillInfoRow AttackInfo;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FHeroSkillInfoRow SkillQInfo;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FHeroSkillInfoRow SkillEInfo;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FHeroSkillInfoRow SkillRInfo;
+	
 };
+
+
 
 
 

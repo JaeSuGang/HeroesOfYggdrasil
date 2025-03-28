@@ -2,7 +2,7 @@
 
 
 #include "Animation/NotifyState/HeroRollNotifyState.h"
-#include "Animation/HeroGreystoneAnimInstance.h"
+#include "Animation/YggHeroAnimInstance.h"
 #include "Player/YggHeroGreystone.h"
 #include "Attribute/HeroAttributeComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -15,19 +15,19 @@ void UHeroRollNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSeq
 {
 	if (!MeshComp || !MeshComp->GetOwner()) return;
 
-	AYggHeroGreystone* Greystone = Cast<AYggHeroGreystone>(MeshComp->GetOwner());
-	if (!Greystone) return;
+	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
+	if (!Hero) return;
 
 	const float RollSpeed = 1200.0f;
-	FVector RollDirection = Greystone->GetActorForwardVector();
+	FVector RollDirection = Hero->GetActorForwardVector();
 	FVector Movement = RollDirection * RollSpeed * FrameDeltaTime;
 
-	if (UCharacterMovementComponent* MoveComp = Greystone->GetCharacterMovement())
+	if (UCharacterMovementComponent* MoveComp = Hero->GetCharacterMovement())
 	{
 		MoveComp->Velocity = Movement / FrameDeltaTime;
 	}
 
-	UHeroGreystoneAnimInstance* AnimInstance = Cast<UHeroGreystoneAnimInstance>(MeshComp->GetAnimInstance());
+	UYggHeroAnimInstance* AnimInstance = Cast<UYggHeroAnimInstance>(MeshComp->GetAnimInstance());
 	if (!AnimInstance) return;
 	UAnimMontage* CurrentMontage = AnimInstance->GetCurrentActiveMontage();
 	if (!CurrentMontage) return;
@@ -42,15 +42,15 @@ void UHeroRollNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSeq
 void UHeroRollNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	if (!MeshComp || !MeshComp->GetOwner()) return;
-	UHeroGreystoneAnimInstance* AnimInstance = Cast<UHeroGreystoneAnimInstance>(MeshComp->GetAnimInstance());
+	UYggHeroAnimInstance* AnimInstance = Cast<UYggHeroAnimInstance>(MeshComp->GetAnimInstance());
 	if (!AnimInstance) return;
 
 	AnimInstance->bIsRoll = false;
 
-	AYggHeroGreystone* Greystone = Cast<AYggHeroGreystone>(MeshComp->GetOwner());
-	if (!Greystone) return;
+	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
+	if (!Hero) return;
 
-	Greystone->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotRollable"));
-	Greystone->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
-	Greystone->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
+	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotRollable"));
+	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
+	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
 }

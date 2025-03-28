@@ -34,18 +34,8 @@ class UYggHeroAnimInstance;
 // Attribute
 class UHeroAttributeComponent;
 
-// TimeEvent
-class UTimeEventComponent;
-
 // UI
 class UWidgetComponent;
-
-struct FHeroCameraData;
-
-
-
-
-
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
@@ -53,13 +43,6 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 	GENERATED_BODY()
 public:
 	AYggHero();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void SetCamera(FVector NewCameraLocation, FRotator NewCameraRotation, float NewArmLength, FVector NewSocketOffset);
-	void StartGameCamera(float DeltaTime);
-
-	//void CameraMove(FCameraMoveData* CameraMoveData);
-
 	UFUNCTION(BlueprintCallable)
 	UHeroAttributeComponent* GetHeroAttributeComponent()
 	{
@@ -113,6 +96,8 @@ protected:
 	virtual void ToggleAimMode();
 	virtual void SetAimMode(bool Value);
 
+	virtual void UpdateStatus();
+
 	virtual void CameraZoomInOut(const FInputActionValue& Value);
 	virtual void ToggleUIMode();
 	virtual void SetUIMode(bool Value);
@@ -136,9 +121,6 @@ protected:
 	UHeroAttributeComponent* HeroAttributeComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
-	UTimeEventComponent* TimeEventComponent;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
 	UWidgetComponent* WidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
@@ -152,25 +134,5 @@ protected:
 	bool bIsUIMode = false;
 
 protected:
-	bool bIsCameraTransitioning = false;
-	float TransitionAlpha = 0.0f;
-	float TransitionSpeed = 1.0f; // 카메라 회전 속도
 
-	FVector StartCameraLocation;
-	FRotator StartCameraRotation;
-	float StartArmLength;
-	FVector StartSocketOffset;
-
-	FVector TargetCameraLocation;
-	FRotator TargetCameraRotation;
-	float TargetArmLength;
-	FVector TargetSocketOffset;
-
-	
-	void AimRaycast(APlayerController* PlayerController);
-
-
-
-	int MaxAttackIndex;
-	int CurAttackIndex;
 };
