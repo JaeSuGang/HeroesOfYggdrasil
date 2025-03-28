@@ -26,6 +26,5 @@ protected:
 	bool bIsMoveAttackable = false;
 
 public:
-	UPROPERTY(BlueprintReadWrite, Category = "State")
-	bool bIsRoll = false;
+	
 };

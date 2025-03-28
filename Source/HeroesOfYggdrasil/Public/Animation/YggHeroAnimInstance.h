@@ -66,6 +66,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	float Yaw;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsRoll = false;
+
 private:
 	
 };
