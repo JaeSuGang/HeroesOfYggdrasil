@@ -66,7 +66,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float HPRegen = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	float GroundSpeedRate =1.0f;
+	float MaxMoveSpeed =1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float AttackSpeedRate = 1.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")

@@ -6,6 +6,7 @@
 #include "MainGame/MainGameState.h"
 #include "MainGame/MainGamePlayerState.h"
 #include "Player/YggHero.h"
+#include "Attribute/HeroAttributeComponent.h"
 
 APlayerManager::APlayerManager()
 {
@@ -29,11 +30,78 @@ AMainGamePlayerState* APlayerManager::GetPlayerState(APlayerController* PC)
 	return PC->GetPlayerState<AMainGamePlayerState>();
 }
 
-void APlayerManager::Server_UpgradeAttack(APlayerController* PC)
+void APlayerManager::Server_UpgradeAttack_Implementation(APlayerController* PC)
 {
 	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
 	{
+		if (UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent())
+		{
+			float PrevValue = HAC->GetAttackPoints();
 
+			FCharacterUpgradeInfoRow* FoundRow = UpgradeTable->FindRow<FCharacterUpgradeInfoRow>(CHARACTER_UPGRADE_INFO_ROW_ATTACK, TEXT("Casting"));
+
+			HAC->Server_SetAttackPoints(PrevValue + FoundRow->ValueIncrementPerUpgrade);
+		}
+	}
+}
+
+void APlayerManager::Server_UpgradeDefense_Implementation(APlayerController* PC)
+{
+	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
+	{
+		if (UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent())
+		{
+			float PrevValue = HAC->GetDefensePoints();
+
+			FCharacterUpgradeInfoRow* FoundRow = UpgradeTable->FindRow<FCharacterUpgradeInfoRow>(CHARACTER_UPGRADE_INFO_ROW_DEFENSE, TEXT("Casting"));
+
+			HAC->Server_SetDefensePoints(PrevValue + FoundRow->ValueIncrementPerUpgrade);
+		}
+	}
+}
+
+void APlayerManager::Server_UpgradeHealth_Implementation(APlayerController* PC)
+{
+	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
+	{
+		if (UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent())
+		{
+			float PrevValue = HAC->GetMaxHP();
+
+			FCharacterUpgradeInfoRow* FoundRow = UpgradeTable->FindRow<FCharacterUpgradeInfoRow>(CHARACTER_UPGRADE_INFO_ROW_HEALTH, TEXT("Casting"));
+
+			HAC->Server_SetMaxHP(PrevValue + FoundRow->ValueIncrementPerUpgrade);
+		}
+	}
+}
+
+void APlayerManager::Server_UpgradeMoveSpeed_Implementation(APlayerController* PC)
+{
+	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
+	{
+		if (UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent())
+		{
+			float PrevValue = HAC->GetMaxMoveSpeed();
+
+			FCharacterUpgradeInfoRow* FoundRow = UpgradeTable->FindRow<FCharacterUpgradeInfoRow>(CHARACTER_UPGRADE_INFO_ROW_MOVE_SPEED, TEXT("Casting"));
+
+			HAC->Server_SetMaxMoveSpeed(PrevValue + FoundRow->ValueIncrementPerUpgrade);
+		}
+	}
+}
+
+void APlayerManager::Server_UpgradeAttackSpeed_Implementation(APlayerController* PC)
+{
+	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
+	{
+		if (UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent())
+		{
+			float PrevValue = HAC->GetAttackSpeedRate();
+
+			FCharacterUpgradeInfoRow* FoundRow = UpgradeTable->FindRow<FCharacterUpgradeInfoRow>(CHARACTER_UPGRADE_INFO_ROW_HEALTH, TEXT("Casting"));
+
+			HAC->Server_SetAttackSpeedRate(PrevValue + FoundRow->ValueIncrementPerUpgrade);
+		}
 	}
 }
 
@@ -47,6 +115,8 @@ int APlayerManager::GetUpgradePoints(APlayerController* Player) const
 	UE_LOG(LogTemp, Warning, TEXT("%S%u : PlayerState Casting Error Occured."), __FUNCTION__, __LINE__);
 	return 0;
 }
+
+
 
 void APlayerManager::Server_AddUpgradePoints_Implementation(APlayerController* Player, int PointsToAdd)
 {

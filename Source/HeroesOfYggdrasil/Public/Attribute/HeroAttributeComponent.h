@@ -36,6 +36,9 @@ public:
 	float HPRegen;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float JumpRate;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float CriticalChance;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)

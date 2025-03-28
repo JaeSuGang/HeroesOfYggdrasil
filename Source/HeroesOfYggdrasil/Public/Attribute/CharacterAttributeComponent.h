@@ -49,6 +49,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnStatusChangedDelegate ClientDelegate_OnStatusChanged;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnStatusChangedDelegate ServerDelegate_OnStatusChanged;
+
 public:
 	/* 이 유닛의 체력을 설정하는 함수 */
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -93,27 +96,30 @@ public:
 	float GetAttackSpeedRate() const;
 
 public:
+	UFUNCTION()
+	void OnRep_Status();
+
 	/* Set은 Server_SetHp 함수를 사용해야 함*/
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float HP;
 
 	/* Set은 Server_SetMaxHp 함수를 사용해야 함*/
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
 	float MaxHP;
 
 	/* 방어력. 최종 피격 데미지 = 데미지 * ( 100 / 100 + 방어력 ) */
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
 	float DefensePoints;
 
 	/* 평타 공격력 */
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
 	float AttackPoints;
 
 	/* 최대 이동 속도 값 */
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing=OnRep_Status, EditAnywhere, BlueprintReadOnly)
 	float MaxMoveSpeed;
 
 	/* 공격관련 애니메이션 재생속도, 기본 재생속도 = 1.0f */
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
 	float AttackSpeedRate;
 };
