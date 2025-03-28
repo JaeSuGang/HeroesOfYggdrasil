@@ -67,6 +67,12 @@ public:
 		return FaceCaptureComponent;
 	}
 
+	UFUNCTION(BlueprintCallable)
+	UCaptureComponent* GetMiniMapCaptureComponent()
+	{
+		return MiniMapCaptureComponent;
+	}
+
 	UFUNCTION(NetMulticast, Reliable)
 	void TakeDamageEffect(float Att);
 
@@ -125,7 +131,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	UCaptureComponent* FaceCaptureComponent;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
+	UCaptureComponent* MiniMapCaptureComponent;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bAimMode = false;

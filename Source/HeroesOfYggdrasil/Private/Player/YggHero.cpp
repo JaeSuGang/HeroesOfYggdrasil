@@ -72,7 +72,12 @@ AYggHero::AYggHero()
 	FaceCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("StatusCamera"));
 	FaceCaptureComponent->SetupAttachment(RootComponent);
 	FaceCaptureComponent->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
-	
+
+	MiniMapCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("MiniMapCamera"));
+	MiniMapCaptureComponent->SetupAttachment(RootComponent);
+	MiniMapCaptureComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+	MiniMapCaptureComponent->AddRelativeLocation(FVector(0.0f, 0.0f, 500.0f));
+
 	// 폰 입력 UEnhancedInputComponent 으로 변경
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
 
@@ -110,6 +115,12 @@ void AYggHero::BeginPlay()
 	{
 		FaceCaptureComponent->SetupFaceCapture(this);
 	}
+
+	if (MiniMapCaptureComponent)
+	{
+		MiniMapCaptureComponent->SetupFaceCapture(this);
+	}
+
 	CameraBoom->TargetArmLength = 700.0f;
 	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
 

@@ -12,8 +12,6 @@ UCaptureComponent::UCaptureComponent()
 
 	bCaptureEveryFrame = false;
 	bCaptureOnMovement = true;
-
-	//OrthoWidth = 50.0f;
 }
 
 void UCaptureComponent::BeginPlay()
