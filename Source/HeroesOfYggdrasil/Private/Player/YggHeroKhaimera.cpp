@@ -37,8 +37,8 @@
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
 	KhaimeraAttributeComponent = Cast<UKhaimeraAttributeComponent>(HeroAttributeComponent);
-	AttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCapsule"));
-	AttackBox->SetupAttachment(RootComponent);
+	/*AttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("AttackCapsule"));
+	AttackBox->SetupAttachment(RootComponent);*/
 
 	
 }

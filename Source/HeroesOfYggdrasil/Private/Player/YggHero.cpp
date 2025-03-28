@@ -86,6 +86,7 @@ AYggHero::AYggHero()
 	ActionMap.Add(TEXT("SkillQ"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("SkillE"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("SkillR"), NewObject<UInputAction>());
+	ActionMap.Add(TEXT("Roll"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("ToggleUIMode"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("ToggleAimMode"), NewObject<UInputAction>());
 	ActionMap.Add(TEXT("CameraZoomInOut"), NewObject<UInputAction>());
@@ -295,6 +296,10 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		if (ActionMap.Contains(FName("Jump")))
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Jump")], ETriggerEvent::Triggered, this, &AYggHero::Jump);
+		}
+		if (ActionMap.Contains(FName("Roll")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Roll")], ETriggerEvent::Started, this, &AYggHero::Roll);
 		}
 		if (ActionMap.Find(FName("ToggleAimMode")))
 		{

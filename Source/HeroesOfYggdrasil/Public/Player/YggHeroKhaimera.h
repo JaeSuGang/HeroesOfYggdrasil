@@ -63,7 +63,7 @@ protected:
 	void MulticastSkillR(const FInputActionValue& Value);
 
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UBoxComponent* AttackBox;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	//UBoxComponent* AttackBox;
 
 };
