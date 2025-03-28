@@ -40,6 +40,12 @@ public:
 	void CloseCurrentWidget();
 
 	UFUNCTION(BlueprintCallable)
+	void PlusButtonEvent();
+
+	UFUNCTION(BlueprintCallable)
+	void AbilitySelectEvent();
+
+	UFUNCTION(BlueprintCallable)
 	void EnableCrossHair(bool bIsVisible);
 
 public:

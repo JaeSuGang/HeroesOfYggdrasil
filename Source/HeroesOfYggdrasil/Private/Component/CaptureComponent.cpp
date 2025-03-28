@@ -10,10 +10,10 @@ UCaptureComponent::UCaptureComponent()
 	ProjectionType = ECameraProjectionMode::Orthographic;
 	CaptureSource = ESceneCaptureSource::SCS_FinalColorLDR;
 
-	bCaptureEveryFrame = true;
+	bCaptureEveryFrame = false;
 	bCaptureOnMovement = true;
 
-	OrthoWidth = 50.0f;
+	//OrthoWidth = 50.0f;
 }
 
 void UCaptureComponent::BeginPlay()

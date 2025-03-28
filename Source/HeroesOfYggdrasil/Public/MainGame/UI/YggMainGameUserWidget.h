@@ -8,6 +8,9 @@
 
 class UCanvasPanel;
 class UYggPlayerStatusUserWidget;
+class UYggOrderStatusUserWidget;
+class UYggAbilityPlusUserWidget;
+class UYggAbilityUserWidget;
 
 /**
  * 
@@ -23,6 +26,18 @@ public:
 		return PlayerStatusWidget;
 	}
 
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void CreateAbilityPlus();
+
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void CreateAbility();
+
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void DelAbilityPlus();
+
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void DelAbility();
+
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -37,6 +52,14 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> OrderStatusUserWidgetClass;
 
-	UYggPlayerStatusUserWidget* PlayerStatusWidget;
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> AbilityPlusUserWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> AbiltyUserWidgetClass;
+
+	UYggPlayerStatusUserWidget* PlayerStatusWidget;
+	UYggOrderStatusUserWidget* OrderStatusWidget;
+	UYggAbilityPlusUserWidget* AbilityPlusWidget;
+	UYggAbilityUserWidget* AbilityWidget;
 };
