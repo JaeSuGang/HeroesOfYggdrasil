@@ -66,6 +66,8 @@ public:
 	{
 		return FaceCaptureComponent;
 	}
+	
+	bool IsAimMode() const { return bAimMode; }
 
 	UFUNCTION(BlueprintCallable)
 	UCaptureComponent* GetMiniMapCaptureComponent()
@@ -75,6 +77,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void TakeDamageEffect(float Att);
+
+	virtual void Attack(const FInputActionValue& Value);
 
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -93,7 +97,11 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRoll(const FInputActionValue& Value);
 
-	virtual void Attack(const FInputActionValue& Value) {}
+	UFUNCTION(Server, Reliable)
+	void ServerAttack(const FInputActionValue& Value);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastAttack(const FInputActionValue& Value);
+
 	virtual void EndAttack(const FInputActionValue& Value) {}
 	virtual void SkillQ(const FInputActionValue& Value) {}
 	virtual void SkillE(const FInputActionValue& Value) {}

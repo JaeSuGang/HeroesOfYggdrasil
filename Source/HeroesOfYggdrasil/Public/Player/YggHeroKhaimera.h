@@ -31,10 +31,10 @@ protected:
 	virtual void Tick(float DeltaTime)override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
-	UFUNCTION(Server, Reliable)
+	/*UFUNCTION(Server, Reliable)
 	void ServerAttack(const FInputActionValue& Value);
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastAttack(const FInputActionValue& Value);
+	void MulticastAttack(const FInputActionValue& Value);*/
 
 	virtual void EndAttack(const FInputActionValue& Value) override;
 	

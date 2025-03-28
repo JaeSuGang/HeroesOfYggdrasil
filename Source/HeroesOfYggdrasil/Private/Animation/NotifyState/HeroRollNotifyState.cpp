@@ -3,9 +3,15 @@
 
 #include "Animation/NotifyState/HeroRollNotifyState.h"
 #include "Animation/YggHeroAnimInstance.h"
-#include "Player/YggHeroGreystone.h"
+
+#include "Player/YggHero.h"
+
 #include "Attribute/HeroAttributeComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
+#include "InputActionValue.h"
 
 void UHeroRollNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -53,4 +59,7 @@ void UHeroRollNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequ
 	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotRollable"));
 	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
 	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
+
+	if (Hero->GetHeroAttributeComponent()->HasTagExact(TEXT("Character.State.PressedAttack")))
+		Hero->Attack(FInputActionValue());
 }

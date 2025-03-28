@@ -68,6 +68,8 @@ AYggHero::AYggHero()
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(GetMesh());
 
+	
+
 
 	FaceCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("StatusCamera"));
 	FaceCaptureComponent->SetupAttachment(RootComponent);
@@ -169,6 +171,13 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 
 }
 
+FHitResult AYggHero::RayCastAim(float Scope)
+{
+	FHitResult HitResult;
+
+	return HitResult;
+}
+
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -264,8 +273,6 @@ void AYggHero::Jump()
 
 void AYggHero::Roll(const FInputActionValue& Value)
 {
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
-
 	if (HasAuthority())
 	{
 		MulticastRoll(Value);
@@ -274,6 +281,40 @@ void AYggHero::Roll(const FInputActionValue& Value)
 	{
 		ServerRoll(Value);
 	}
+}
+
+void AYggHero::Attack(const FInputActionValue& Value)
+{
+	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
+	}
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		MulticastAttack(Value);
+	}
+	else
+	{
+		ServerAttack(Value);
+		return;
+	}
+}
+
+void AYggHero::ServerAttack_Implementation(const FInputActionValue& Value)
+{
+	Attack(FInputActionValue());
+}
+
+void AYggHero::MulticastAttack_Implementation(const FInputActionValue& Value)
+{
+	FName MontageName = *FString::Printf(TEXT("Attack"));
+
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)

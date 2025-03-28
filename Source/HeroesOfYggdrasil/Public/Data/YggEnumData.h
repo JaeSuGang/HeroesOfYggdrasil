@@ -40,3 +40,4 @@ enum class EEnemyAIState : uint8
 	DeathFallen UMETA(DisplayName = "다운"),
 	MAX UMETA(DisplayName = "MAX"),
 };
+

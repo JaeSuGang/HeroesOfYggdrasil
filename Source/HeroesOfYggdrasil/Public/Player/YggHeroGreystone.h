@@ -21,10 +21,10 @@ protected:
 	virtual void Move(const FInputActionValue& Value) override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
-	UFUNCTION(Server, Reliable)
+	/*UFUNCTION(Server, Reliable)
 	void ServerAttack();
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastAttack();
+	void MulticastAttack();*/
 
 	virtual void EndAttack(const FInputActionValue& Value) override;
 	
