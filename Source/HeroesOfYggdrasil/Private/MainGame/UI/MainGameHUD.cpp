@@ -111,20 +111,6 @@ void AMainGameHUD::ShowMainGameWidget()
 		AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
 		
 		CurrentWidget->AddToViewport();
-
-		//MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
-		//
-		//if (true)
-		//{
-		//
-		//}
-		//
-		//PC->GetPawn();
-		//
-		//MainGameUserWidget->GetPlayerStatusWidget();
-
-
-		
 	}
 
 	this->PlayerOwner->SetInputMode(FInputModeGameOnly{});
@@ -138,6 +124,27 @@ void AMainGameHUD::CloseCurrentWidget()
 	{
 		CurrentWidget->RemoveFromParent();
 		CurrentWidget = nullptr;
+	}
+}
+
+void AMainGameHUD::PlusButtonEvent()
+{
+	if (MainGameWidgetClass)
+	{
+		MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
+		
+		MainGameUserWidget->CreateAbility();
+		MainGameUserWidget->DelAbilityPlus();
+	}
+}
+
+void AMainGameHUD::AbilitySelectEvent()
+{
+	if (MainGameWidgetClass)
+	{
+		MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
+
+		MainGameUserWidget->DelAbility();
 	}
 }
 

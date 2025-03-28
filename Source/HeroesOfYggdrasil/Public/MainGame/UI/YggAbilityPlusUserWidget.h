@@ -17,8 +17,7 @@ class HEROESOFYGGDRASIL_API UYggAbilityPlusUserWidget : public UYggUserWidget
 	GENERATED_BODY()
 	
 public:
-	UFUNCTION(BlueprintCallable, Category = "YGG")
-	void PlusButtonEvent();
+
 
 protected:
 	void NativeOnInitialized() override;
