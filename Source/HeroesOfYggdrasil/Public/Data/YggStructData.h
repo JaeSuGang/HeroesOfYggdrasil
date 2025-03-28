@@ -146,6 +146,9 @@ public:
 	double TargetCheckTime = 0.3f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double DeathCheckTime = 0.05f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double StandardZeroTime= 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")

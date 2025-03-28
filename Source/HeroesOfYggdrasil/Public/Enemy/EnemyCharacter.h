@@ -57,6 +57,7 @@ public:
 	{
 		return EnemyAttributeComponent;
 	}
+
 	UFUNCTION(BlueprintCallable)
 	double GetCurHp()
 	{
