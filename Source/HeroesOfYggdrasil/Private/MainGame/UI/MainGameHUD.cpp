@@ -7,6 +7,7 @@
 #include "MainGame/UI/YggMainGameUserWidget.h"
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
 #include "Core/YggPlayerState.h"
+#include "MainGame/PlayerManager.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
@@ -143,6 +144,13 @@ void AMainGameHUD::AbilitySelectEvent()
 	if (MainGameWidgetClass)
 	{
 		MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
+
+		APlayerManager* PM = APlayerManager::Get(GetWorld());
+
+		if (PM)
+		{
+			PM->Server_UpgradeAttack(PC);
+		}
 
 		MainGameUserWidget->DelAbility();
 	}
