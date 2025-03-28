@@ -28,8 +28,12 @@ void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNode
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 
-	// 죽음 체크
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	UEnemyAttributeComponent* SelfAttributeComponent = EnemyCharacter->GetEnemyAttributeComponent();
+	SelfAttributeComponent->HP;
+
+	// 죽음 체크
+	
 	/*UAttributeComponent* TargetAttributeComponent = TargetActor->FindComponentByClass<UAttributeComponent>();
 	TargetAttributeComponent->HasTag("Character");*/
 	

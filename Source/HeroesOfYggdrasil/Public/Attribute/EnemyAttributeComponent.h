@@ -13,5 +13,8 @@ UCLASS()
 class HEROESOFYGGDRASIL_API UEnemyAttributeComponent : public UCharacterAttributeComponent
 {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
