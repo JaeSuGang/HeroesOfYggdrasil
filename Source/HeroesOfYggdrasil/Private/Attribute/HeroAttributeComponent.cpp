@@ -17,7 +17,7 @@ void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UHeroAttributeComponent, HPRegen);
-	DOREPLIFETIME(UHeroAttributeComponent, JumpRate);
+	DOREPLIFETIME(UHeroAttributeComponent, JumpPower);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalChance);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalDamageRate);
 }
@@ -33,7 +33,7 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			HP = MaxHP;
 			HPRegen = Data->HPRegen;
 			MaxMoveSpeed = Data->MaxMoveSpeed;
-			JumpRate = Data->JumpRate;
+			JumpPower = Data->JumpRate;
 			AttackSpeedRate = Data->AttackSpeedRate;
 			CriticalChance = Data->CriticalChance;
 			CriticalDamageRate = Data->CriticalDamageRate;
