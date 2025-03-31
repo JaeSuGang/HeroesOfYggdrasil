@@ -39,9 +39,6 @@ void UHeroAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType
 			CurRollCount++;
 		}
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red,
-		FString::Printf(TEXT("CurRollCount: %d"), CurRollCount));
 }
 
 void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
