@@ -42,15 +42,17 @@ void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (ActionMap.IsEmpty()) return;
 	ActionMap.Remove(FName("Jump"));
 
+	if (!HeroAttributeComponent) return;
 	HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Greystone"));
 	UpdateStatus();
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);		
+	Super::Tick(DeltaTime);
 
 	if (bIsSkillR)
 	{
@@ -159,7 +161,7 @@ void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 
 void AYggHeroGreystone::ServerSkillQ_Implementation()
 {
-	SkillQ(FInputActionValue());
+	MulticastSkillQ();
 }
 
 void AYggHeroGreystone::MulticastSkillQ_Implementation()
@@ -192,7 +194,7 @@ void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
 
 void AYggHeroGreystone::ServerSkillE_Implementation()
 {
-	SkillE(FInputActionValue());
+	MulticastSkillE();
 }
 
 void AYggHeroGreystone::MulticastSkillE_Implementation()
@@ -250,7 +252,7 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 
 void AYggHeroGreystone::ServerSkillR_Implementation()
 {
-	SkillR(FInputActionValue());
+	MulticastSkillR();
 }
 
 void AYggHeroGreystone::MulticastSkillR_Implementation()

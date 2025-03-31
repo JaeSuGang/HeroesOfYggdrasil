@@ -28,6 +28,20 @@ void UHeroAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		SkillECurCoolTime -= DeltaTime;
 	if (SkillRCurCoolTime > 0.0f)
 		SkillRCurCoolTime -= DeltaTime;
+
+	if (CurRollCount < MaxRollCount)
+	{
+		RollCurCoolTime += DeltaTime;
+
+		if (RollCurCoolTime >= RollMaxCoolTime)
+		{
+			RollCurCoolTime = 0.0f;
+			CurRollCount++;
+		}
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red,
+		FString::Printf(TEXT("CurRollCount: %d"), CurRollCount));
 }
 
 void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
