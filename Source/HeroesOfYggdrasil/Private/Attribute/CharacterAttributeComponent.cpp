@@ -14,6 +14,11 @@ void UCharacterAttributeComponent::Server_TakeDamage_Implementation(float fAmoun
 	Client_TakeDamage(fAmount);
 }
 
+UCharacterAttributeComponent::UCharacterAttributeComponent()
+{
+	HP = 100.0f;
+}
+
 void UCharacterAttributeComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -31,6 +36,7 @@ void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePr
 	DOREPLIFETIME(UCharacterAttributeComponent, MaxMoveSpeed);
 	DOREPLIFETIME(UCharacterAttributeComponent, AttackSpeedRate);
 }
+
 
 float UCharacterAttributeComponent::GetHP() const
 {

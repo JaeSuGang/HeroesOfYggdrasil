@@ -9,12 +9,17 @@
 
 void UYggCapsuleComponent::BeginPlay()
 {
+	Super::BeginPlay();
 	OnComponentBeginOverlap.AddDynamic(this, &UYggCapsuleComponent::OverLap);
 }
 
 
 void UYggCapsuleComponent::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if (!GetOwner() || !GetOwner()->HasAuthority())
+	{
+		return;
+	}
 	AYggCharacter* DamageCharacter = Cast<AYggCharacter>(OtherActor);
 	if (!IsValid(DamageCharacter))
 	{
@@ -26,6 +31,7 @@ void UYggCapsuleComponent::OverLap(UPrimitiveComponent* OverlappedComponent, AAc
 		return;
 	}
 	CharacterAttributeComponent->Server_TakeDamage(10.0f);
+	FString CurHP = FString::Printf(TEXT("HP : %f"), CharacterAttributeComponent->GetHP());
 }
 
 void UYggCapsuleComponent::CollisionOn()
