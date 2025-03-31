@@ -116,6 +116,8 @@ void AYggHero::BeginPlay()
 	CameraBoom->TargetArmLength = 700.0f;
 	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
 
+	FName MontageName = *FString::Printf(TEXT("LevelStart"));
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHero::Tick(float DeltaTime)
