@@ -27,6 +27,7 @@ public:
 	}
 
 	void SetupFaceCapture(AActor* TargetActor);
+	void SetupMiniMapCapture(AActor* TargetActor);
 
 protected:
 	virtual void BeginPlay() override;

@@ -42,6 +42,20 @@ void UCaptureComponent::SetupFaceCapture(AActor* TargetActor)
 	CaptureScene();
 }
 
+void UCaptureComponent::SetupMiniMapCapture(AActor* TargetActor)
+{
+	if (!TargetActor) return;
+
+	// 기존 목록 초기화
+	ShowOnlyActors.Empty();
+
+	// 타겟 액터만 캡처하도록 설정
+	ShowOnlyActors.Add(TargetActor);
+
+	// 캡처 강제 업데이트
+	CaptureScene();
+}
+
 void UCaptureComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);

@@ -28,6 +28,7 @@
 
 // HUD
 #include "MainGame/UI/MainGameHUD.h"
+#include "MainGame/UI/YggMiniMapIconActor.h"
 
 // Tag
 #include "Attribute/HeroAttributeComponent.h"
@@ -118,9 +119,15 @@ void AYggHero::BeginPlay()
 		FaceCaptureComponent->SetupFaceCapture(this);
 	}
 
+	HeroAttributeComponent->AddTag(TEXT("Character"));
+
+	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	MiniMapIcon->SetPaperSprite(this);
+
 	if (MiniMapCaptureComponent)
 	{
-		MiniMapCaptureComponent->SetupFaceCapture(this);
+		MiniMapCaptureComponent->SetupMiniMapCapture(MiniMapIcon);
 	}
 
 	CameraBoom->TargetArmLength = 700.0f;

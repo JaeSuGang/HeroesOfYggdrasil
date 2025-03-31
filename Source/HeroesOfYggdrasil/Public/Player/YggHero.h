@@ -36,6 +36,7 @@ class UHeroAttributeComponent;
 
 // UI
 class UWidgetComponent;
+class AYggMiniMapIconActor;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
@@ -142,6 +143,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	UCaptureComponent* MiniMapCaptureComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
+	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bAimMode = false;
