@@ -21,6 +21,6 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
+	UPROPERTY(/*Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute"*/)
 	UCharacterAttributeComponent* CharacterAttributeComponent;
 };

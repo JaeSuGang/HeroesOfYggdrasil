@@ -16,6 +16,6 @@ AYggCharacter::AYggCharacter(const FObjectInitializer& ObjectInitializer)
 void AYggCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AYggCharacter, CharacterAttributeComponent);
+	//DOREPLIFETIME(AYggCharacter, CharacterAttributeComponent);
 }
 

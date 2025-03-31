@@ -48,9 +48,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UHeroAttributeComponent* GetHeroAttributeComponent()
 	{
-		return Cast<UHeroAttributeComponent>(CharacterAttributeComponent);
+		return HeroAttributeComponent;
 	}
-
 
 	UFUNCTION(BlueprintCallable)
 	UYggHeroAnimInstance* GetHeroAnimInstance()

@@ -169,7 +169,7 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AYggHero, HeroAttributeComponent);
+	//DOREPLIFETIME(AYggHero, HeroAttributeComponent);
 }
 
 
