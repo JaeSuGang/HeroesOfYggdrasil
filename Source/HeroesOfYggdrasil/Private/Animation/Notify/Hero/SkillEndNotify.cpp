@@ -11,8 +11,8 @@ void USkillEndNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 
 	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
 
-    if (!Hero) return;
-      
+    if (!Hero) return;    
+
     Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
     Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
 }

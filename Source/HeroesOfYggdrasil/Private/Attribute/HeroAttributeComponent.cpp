@@ -72,6 +72,13 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			SkillQMaxCoolTime = Data->SkillQInfo.CoolTime;
 			SkillEMaxCoolTime = Data->SkillEInfo.CoolTime;
 			SkillRMaxCoolTime = Data->SkillRInfo.CoolTime;
+
+			SkillQCurContinueTime = 0.0f;
+			SkillECurContinueTime = 0.0f;
+			SkillRCurContinueTime = 0.0f;
+			SkillQMaxContinueTime = Data->SkillQInfo.ContinueTime;
+			SkillEMaxContinueTime = Data->SkillEInfo.ContinueTime;
+			SkillRMaxContinueTime = Data->SkillRInfo.ContinueTime;
 		}
 	}
 }

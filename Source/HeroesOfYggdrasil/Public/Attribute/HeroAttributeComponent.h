@@ -50,21 +50,32 @@ public:
 	
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float SkillQCurCoolTime;
-
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float SkillECurCoolTime;
-
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float SkillRCurCoolTime;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float SkillQMaxCoolTime;
-
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float SkillEMaxCoolTime;
-
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float SkillRMaxCoolTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillQCurContinueTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillECurContinueTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillRCurContinueTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillQMaxContinueTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillEMaxContinueTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillRMaxContinueTime;
+
 
 	// 수정 필요.
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
