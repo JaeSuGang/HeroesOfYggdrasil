@@ -44,10 +44,11 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 public:
 	AYggHero();
 
+
 	UFUNCTION(BlueprintCallable)
-	virtual UCharacterAttributeComponent* GetAttributeComponent() override
+	UHeroAttributeComponent* GetHeroAttributeComponent()
 	{
-		
+		return Cast<UHeroAttributeComponent>(CharacterAttributeComponent);
 	}
 
 
@@ -127,8 +128,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")
 	UYggHeroAnimInstance* HeroAnimInstance;
 
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggAnimation")
 	UHeroAttributeComponent* HeroAttributeComponent;
+
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
 	UWidgetComponent* WidgetComponent;

@@ -16,5 +16,11 @@ class HEROESOFYGGDRASIL_API AYggCharacter : public ACharacter
 
 public:
 	AYggCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	virtual UCharacterAttributeComponent* GetAttributeComponent() { return nullptr; }
+	virtual UCharacterAttributeComponent* GetAttributeComponent() { return CharacterAttributeComponent; }
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+protected:
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
+	UCharacterAttributeComponent* CharacterAttributeComponent;
 };
