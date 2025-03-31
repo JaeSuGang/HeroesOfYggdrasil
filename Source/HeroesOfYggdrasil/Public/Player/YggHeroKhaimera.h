@@ -51,8 +51,7 @@ protected:
 	void MulticastSkillR(const FInputActionValue& Value);
 
 protected:
-	UPROPERTY()
-	TArray<UYggCapsuleComponent*> AttackCapsuleComponentArray;
+
 
 
 };

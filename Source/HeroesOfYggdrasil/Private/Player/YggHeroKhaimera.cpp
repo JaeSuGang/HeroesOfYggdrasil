@@ -27,12 +27,7 @@
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
-	for (int i = 0; i < 2; i++)
-	{
-		UYggCapsuleComponent* AttackCollisionComponent = CreateDefaultSubobject<UYggCapsuleComponent>(*FString::Printf(TEXT("AttackCapsuleComponent%d"), i));
-		AttackCollisionComponent->SetupAttachment(RootComponent);
-		AttackCapsuleComponentArray.Add(AttackCollisionComponent);
-	}
+
 }
 
 void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

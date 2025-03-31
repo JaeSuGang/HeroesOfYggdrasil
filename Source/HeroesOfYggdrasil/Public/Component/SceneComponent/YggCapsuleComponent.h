@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class HEROESOFYGGDRASIL_API UYggCapsuleComponent : public UCapsuleComponent
 {
 	GENERATED_BODY()
