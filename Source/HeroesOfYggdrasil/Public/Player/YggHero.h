@@ -43,11 +43,13 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 	GENERATED_BODY()
 public:
 	AYggHero();
+
 	UFUNCTION(BlueprintCallable)
-	UHeroAttributeComponent* GetHeroAttributeComponent()
+	virtual UCharacterAttributeComponent* GetAttributeComponent() override
 	{
-		return HeroAttributeComponent;
+		
 	}
+
 
 	UFUNCTION(BlueprintCallable)
 	UYggHeroAnimInstance* GetHeroAnimInstance()

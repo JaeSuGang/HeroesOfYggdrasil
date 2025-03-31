@@ -3,6 +3,9 @@
 
 #include "Component/SceneComponent/YggCapsuleComponent.h"
 
+#include "Core/YggCharacter.h"
+#include "Attribute/CharacterAttributeComponent.h"
+
 
 void UYggCapsuleComponent::BeginPlay()
 {
@@ -12,8 +15,8 @@ void UYggCapsuleComponent::BeginPlay()
 
 void UYggCapsuleComponent::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//AYggCharacter* DamageCharacter = Cast<AYggCharacter>(OtherActor);
-	//UCharacterAttributeComponent* DamageCharacterAttributeComponent = DamageCharacter->GetComponentByClass<UCharacterAttributeComponent>();
+	AYggCharacter* DamageCharacter = Cast<AYggCharacter>(OtherActor);
+	UCharacterAttributeComponent* DamageCharacterAttributeComponent = DamageCharacter->GetAttributeComponent<UCharacterAttributeComponent>();
 
 	//AYggChara
 

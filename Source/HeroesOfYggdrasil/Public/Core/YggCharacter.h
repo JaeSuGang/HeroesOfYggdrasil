@@ -6,6 +6,9 @@
 #include "GameFramework/Character.h"
 #include "YggCharacter.generated.h"
 
+
+class UCharacterAttributeComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggCharacter : public ACharacter
 {
@@ -13,4 +16,5 @@ class HEROESOFYGGDRASIL_API AYggCharacter : public ACharacter
 
 public:
 	AYggCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	virtual UCharacterAttributeComponent* GetAttributeComponent() { return nullptr; }
 };
