@@ -61,7 +61,7 @@ void UHeroJumpTraceNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAn
 		FVector NewLocation = FMath::Lerp(StartLocation, TargetLocation, Alpha);
 
 		FVector Direction = (TargetLocation - NewLocation);
-		Direction.Z = 0.0f; // 평면(2D) 이동 시 Z축 회전 제거
+		Direction.Z = 0.0f;
 		if (!Direction.IsNearlyZero())
 		{
 			FRotator TargetRotation = Direction.Rotation();

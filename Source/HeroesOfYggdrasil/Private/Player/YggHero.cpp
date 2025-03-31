@@ -96,6 +96,7 @@ void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	HeroAttributeComponent->AddTag(TEXT("Character"));
 	
 	if (AnimInstance != nullptr)
 	{
