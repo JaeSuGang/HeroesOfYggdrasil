@@ -44,8 +44,8 @@ void AYggHeroGreystone::BeginPlay()
 
 	ActionMap.Remove(FName("Jump"));
 
-	/*HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Greystone"));
-	UpdateStatus();*/
+	HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Greystone"));
+	UpdateStatus();
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
@@ -143,6 +143,7 @@ void AYggHeroGreystone::EndAttack(const FInputActionValue& Value)
 void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+	if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
 
 	Super::SkillQ(Value);
 
@@ -167,11 +168,13 @@ void AYggHeroGreystone::MulticastSkillQ_Implementation()
 	HeroAnimInstance->PlayMontage(MontageName);
 
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime;
 }
 
 void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+	if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
 
 	Super::SkillE(Value);
 
@@ -198,6 +201,7 @@ void AYggHeroGreystone::MulticastSkillE_Implementation()
 	HeroAnimInstance->PlayMontage(MontageName);
 
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->SkillECurCoolTime = HeroAttributeComponent->SkillEMaxCoolTime;
 }
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
@@ -205,6 +209,7 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	if (bIsSkillR) return;
 
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;	
+	if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
 
 	Super::SkillR(Value);
 
@@ -252,6 +257,8 @@ void AYggHeroGreystone::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
 	HeroAnimInstance->PlayMontage(MontageName);
+
+	HeroAttributeComponent->SkillRCurCoolTime = HeroAttributeComponent->SkillRMaxCoolTime;
 }
 
 void AYggHeroGreystone::RFall()
