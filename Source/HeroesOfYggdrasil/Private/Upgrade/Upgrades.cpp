@@ -21,6 +21,8 @@ void UHeroUpgrade_Attack::Apply_Implementation(APlayerController* PC, float fVal
 {
 	Super::Apply_Implementation(PC, fValueToApply);
 
+	fValueToApply = 5.0f;
+
 	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
 	{
 		if (UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent())
@@ -34,6 +36,8 @@ void UHeroUpgrade_Attack::Apply_Implementation(APlayerController* PC, float fVal
 void UHeroUpgrade_Defense::Apply_Implementation(APlayerController* PC, float fValueToApply)
 {
 	Super::Apply_Implementation(PC, fValueToApply);
+
+	fValueToApply = 10.0f;
 
 	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
 	{
@@ -49,6 +53,8 @@ void UHeroUpgrade_HP::Apply_Implementation(APlayerController* PC, float fValueTo
 {
 	Super::Apply_Implementation(PC, fValueToApply);
 
+	fValueToApply = 10.0f;
+
 	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
 	{
 		if (UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent())
@@ -63,6 +69,8 @@ void UHeroUpgrade_MoveSpeed::Apply_Implementation(APlayerController* PC, float f
 {
 	Super::Apply_Implementation(PC, fValueToApply);
 
+	fValueToApply = 20.0f;
+
 	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
 	{
 		if (UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent())
@@ -76,6 +84,8 @@ void UHeroUpgrade_MoveSpeed::Apply_Implementation(APlayerController* PC, float f
 void UHeroUpgrade_AttackSpeed::Apply_Implementation(APlayerController* PC, float fValueToApply)
 {
 	Super::Apply_Implementation(PC, fValueToApply);
+
+	fValueToApply = 0.1f;
 
 	if (AYggHero* Hero = Cast<AYggHero>(PC->GetPawn()))
 	{

@@ -47,7 +47,8 @@ void APlayerManager::Server_SelectUpgrade_Implementation(APlayerController* PC, 
 	{
 		if (nChoiceIndex < MPS->AvailableHeroUpgrades.Num())
 		{
-			// MPS->AvailableHeroUpgrades[nChoiceIndex]->Apply(PC, );
+			MPS->AvailableHeroUpgrades[nChoiceIndex]->Apply(PC, 0.0f);
+			MPS->AvailableHeroUpgrades.Empty();
 		}
 		else
 		{
