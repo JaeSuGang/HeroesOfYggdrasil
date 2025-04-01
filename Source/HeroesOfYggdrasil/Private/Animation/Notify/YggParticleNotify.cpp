@@ -1,0 +1,155 @@
+// Coded By AssortRock Unreal Engine Class Project
+
+
+#include "Animation/Notify/YggParticleNotify.h"
+
+#include "Kismet/GameplayStatics.h"
+
+// Particle
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
+
+// Niagara
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
+
+// Hero
+#include "Player/YggHero.h"
+#include "Attribute/HeroAttributeComponent.h"
+#include "Data/YggStructData.h"
+
+// Enermy
+#include "Enemy/EnemyCharacter.h"
+#include "Attribute/EnemyAttributeComponent.h"
+
+void UYggParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
+{
+    if (!IsValid(MeshComp) || !IsValid(MeshComp->GetOwner())) return;
+
+	if (!IsValid(PSTemplate) && !IsValid(NSTemplate)) return;
+
+	if (AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner()))
+	{
+		UHeroAttributeComponent* AttrComp = Hero->GetHeroAttributeComponent();
+		if (!IsValid(AttrComp)) return;
+
+		if (!Skills.SkillQ && !Skills.SkillE && !Skills.SkillR) return;
+
+		if (Skills.SkillQ)
+		{
+			Duration = AttrComp->SkillQMaxContinueTime;
+		}
+		else if (Skills.SkillE)
+		{
+			Duration = AttrComp->SkillEMaxContinueTime;
+		}
+		else if (Skills.SkillR)
+		{
+			Duration = AttrComp->SkillRMaxContinueTime;
+		}
+	}
+	else if (AEnemyCharacter* Enemy = Cast< AEnemyCharacter>(MeshComp->GetOwner()))
+	{
+		UEnemyAttributeComponent* EAttrComp = Enemy->GetEnemyAttributeComponent();
+		if (!IsValid(EAttrComp)) return;
+
+		// Enemy Duration 가져오기.
+	}
+
+	if (PSTemplate)
+	{
+		UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAttached(
+			PSTemplate,            // 사용할 파티클 템플릿
+			MeshComp,              // 부착 대상
+			NAME_None,             // 소켓 이름 (필요 시 변경)
+			FVector::ZeroVector,   // 상대 위치
+			FRotator::ZeroRotator, // 상대 회전
+			EAttachLocation::SnapToTarget,
+			true                   // 인스턴스화 후 자동 파괴
+		);
+
+		if (PSC)
+		{
+			// 파티클 컴포넌트가 생성된 후, 파라미터 설정
+			// PSC->SetScalarParameter("UserLifetime", Duration); // Duration을 파티클 시스템에 전달
+
+			PSC->SetScalarParameterForDefaultCustomPrimitiveData("UserLifetime", Duration);
+
+			// DelayTime 후 두 번째 파티클 스폰
+			FTimerHandle TimerHandle;
+			PSC->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, MeshComp]()
+			{
+				if (IsValid(MeshComp))
+				{
+					// 두 번째 파티클 스폰 (동일한 PSTemplate 사용)
+					UGameplayStatics::SpawnEmitterAttached(
+						PSTemplate,
+						MeshComp,
+						NAME_None,
+						FVector::ZeroVector,
+						FRotator::ZeroRotator,
+						EAttachLocation::SnapToTarget,
+						true
+					);
+				}
+			}, DelayTime, false);
+		}
+	}
+
+	else if (NSTemplate)
+	{
+		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			NSTemplate,            // 사용할 나이아가라 템플릿
+			MeshComp,              // 부착 대상
+			NAME_None,             // 소켓 이름 (필요 시 변경)
+			FVector::ZeroVector,   // 상대 위치
+			FRotator::ZeroRotator, // 상대 회전
+			EAttachLocation::SnapToTarget,
+			true                   // 인스턴스화 후 자동 파괴
+		);
+
+		if (NiagaraComp)
+		{
+			FTimerHandle TimerHandle;
+			NiagaraComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, NiagaraComp]()
+			{
+				NiagaraComp->SetFloatParameter(FName("EmitterDuration"), this->Duration);
+			}, DelayTime, false);
+		}
+	}
+}
+
+#if WITH_EDITOR
+void UYggParticleNotify::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+
+	FName PropName = PropertyChangedEvent.GetPropertyName();
+
+	if (PropName == GET_MEMBER_NAME_CHECKED(FSkills, SkillQ) && Skills.SkillQ)
+	{
+		Skills.SkillE = false;
+		Skills.SkillR = false;
+	}
+	else if (PropName == GET_MEMBER_NAME_CHECKED(FSkills, SkillE) && Skills.SkillE)
+	{
+		Skills.SkillQ = false;
+		Skills.SkillR = false;
+	}
+	else if (PropName == GET_MEMBER_NAME_CHECKED(FSkills, SkillR) && Skills.SkillR)
+	{
+		Skills.SkillQ = false;
+		Skills.SkillE = false;
+	}
+
+	if (PropName == GET_MEMBER_NAME_CHECKED(UYggParticleNotify, PSTemplate) && PSTemplate)
+	{
+		NSTemplate = nullptr;
+	}
+	else if (PropName == GET_MEMBER_NAME_CHECKED(UYggParticleNotify, NSTemplate) && NSTemplate)
+	{
+		PSTemplate = nullptr;
+	}
+}
+#endif
