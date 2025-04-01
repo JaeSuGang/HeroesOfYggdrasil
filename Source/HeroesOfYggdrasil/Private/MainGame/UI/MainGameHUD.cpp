@@ -6,7 +6,7 @@
 #include "MainGame/UI/YggLobbyUserWidget.h"
 #include "MainGame/UI/YggMainGameUserWidget.h"
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
-#include "Core/YggPlayerState.h"
+#include "MainGame/MainGamePlayerState.h"
 #include "MainGame/PlayerManager.h"
 
 #include "Blueprint/UserWidget.h"
@@ -67,7 +67,7 @@ void AMainGameHUD::StartButton()
 
 	LobbyUserWidget->SetPlayerName();
 
-	AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
+	AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
 	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
 
 	if (SM)
@@ -81,7 +81,7 @@ void AMainGameHUD::ReadyButton()
 {
 	LobbyUserWidget->SetPlayerName();
 
-	AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
+	AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
 	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
 }
 
@@ -149,7 +149,8 @@ void AMainGameHUD::AbilitySelectEvent()
 
 		if (PM)
 		{
-			PM->Server_UpgradeAttack(PC);
+			/* 더 이상 사용하지 않는 함수, 주석 처리 */
+			// PM->Server_UpgradeAttack(PC);
 		}
 
 		MainGameUserWidget->DelAbility();

@@ -8,9 +8,10 @@
 #include "PlayerManager.generated.h"
 
 class UWorld;
+class UDataTable;
+class UHeroUpgradeBase;
 class AMainGamePlayerState;
 class APlayerController;
-class UDataTable;
 
 
 #define CHARACTER_UPGRADE_INFO_ROW_ATTACK TEXT("Attack")
@@ -18,6 +19,8 @@ class UDataTable;
 #define CHARACTER_UPGRADE_INFO_ROW_HEALTH TEXT("HP")
 #define CHARACTER_UPGRADE_INFO_ROW_MOVE_SPEED TEXT("MaxMoveSpeed")
 #define CHARACTER_UPGRADE_INFO_ROW_ATTACK_SPEED TEXT("AttackSpeedRate")
+
+
 
 USTRUCT(BlueprintType)
 struct HEROESOFYGGDRASIL_API FCharacterUpgradeInfoRow : public FTableRowBase
@@ -29,6 +32,15 @@ struct HEROESOFYGGDRASIL_API FCharacterUpgradeInfoRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int MaxUpgrade;
+};
+
+USTRUCT(BlueprintType)
+struct HEROESOFYGGDRASIL_API FHeroUpgradeRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UHeroUpgradeBase> HeroUpgradeClass;
 };
 
 /**
@@ -48,21 +60,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	static AMainGamePlayerState* GetPlayerState(APlayerController* PC);
 
+protected:
+	void BeginPlay() override;
+
 public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_UpgradeAttack(APlayerController* PC);
+	void Server_SelectUpgrade(APlayerController* PC, int nChoiceIndex);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_UpgradeDefense(APlayerController* PC);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_UpgradeHealth(APlayerController* PC);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_UpgradeMoveSpeed(APlayerController* PC);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_UpgradeAttackSpeed(APlayerController* PC);
+	void Server_GenerateAvailableUpgradesForPlayer(APlayerController* PC, int nChoices);
 
 	UFUNCTION(BlueprintCallable)
 	int GetUpgradePoints(APlayerController* Player) const;
@@ -73,11 +79,15 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_SetUpgradePoints(APlayerController* Player, int PointsToSet);
 
+protected:
+	void SetHeroUpgradesFromTable();
+
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (RowType = "FCharacterUpgradeInfoRow"))
-	UDataTable* UpgradeTable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (RowType = "FHeroUpgradeRow"))
+	UDataTable* HeroUpgradesTable;
 
 protected:
-
+	UPROPERTY()
+	TArray<TSubclassOf<UHeroUpgradeBase>> HeroUpgrades;
 
 };
