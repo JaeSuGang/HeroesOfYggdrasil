@@ -241,7 +241,7 @@ public:
 
 
 USTRUCT(BlueprintType)
-struct FMonsterDataRow : public FTableRowBase
+struct FProjectileDataRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
