@@ -19,6 +19,9 @@ AEnemyProjectile::AEnemyProjectile()
     ProjectileMovement->MaxSpeed = 2000.f;
     ProjectileMovement->bRotationFollowsVelocity = true;
     ProjectileMovement->bShouldBounce = false;
+
+    
+
 }
 
 // Called when the game starts or when spawned

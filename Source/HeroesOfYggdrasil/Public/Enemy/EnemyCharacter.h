@@ -64,8 +64,8 @@ public:
 		return AIData->PlayData.CurHP;
 	}
 	
-	/*UFUNCTION(BlueprintCallable)
-	void SpawnAndFireArrow();*/
+	UFUNCTION(BlueprintCallable)
+	void SpawnAndFireArrow();
 
 	
 

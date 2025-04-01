@@ -229,9 +229,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TMap<EEnemyAIState, UAnimMontage*> Animations;
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	TArray<UAnimMontage*> AttackAnimations;*/
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<UAnimInstance> AnimationBluePrint;
 
@@ -242,6 +239,23 @@ public:
 	TSubclassOf<class AEnemyCharacter> SpawnClass;
 };
 
+
+USTRUCT(BlueprintType)
+struct FMonsterDataRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FMonsterDataRow() {}
+	~FMonsterDataRow() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSubclassOf<UAnimInstance> AnimationBluePrint;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSubclassOf<class AEnemyCharacter> SpawnClass;
+};
 
 
 
