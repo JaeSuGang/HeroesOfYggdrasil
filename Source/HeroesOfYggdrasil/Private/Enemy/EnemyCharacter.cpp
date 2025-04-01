@@ -21,10 +21,12 @@
 #include "AIController.h"
 
 #include "Enemy/EnemyGameInstance.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Attribute/EnemyAttributeComponent.h"
+#include "MainGame/UI/YggMiniMapIconActor.h"
 #include "Enemy/EnemyAIController.h"
 #include "Enemy/EnemyProjectile.h"
-
-
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -122,7 +124,12 @@ void AEnemyCharacter::BeginPlay()
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 
-	
+	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	MiniMapIcon->SetPaperSprite(FName("Monster"));
+	MiniMapIcon->SetAttachedCharacter(this);
+	MiniMapIcon->AddToCaptureComponent();
+
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
