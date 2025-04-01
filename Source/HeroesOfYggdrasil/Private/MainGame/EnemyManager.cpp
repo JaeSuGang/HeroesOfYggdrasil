@@ -9,7 +9,7 @@
 
 AEnemyManager::AEnemyManager()
 {
-	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
+	//EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
 }
 
 AEnemyManager* AEnemyManager::Get(UWorld* WorldContext)
@@ -35,16 +35,17 @@ AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _Origi
 	TSubclassOf<AEnemyCharacter> SubClass = UGlobalDataTable::GetEnemySpawnClass(GetWorld(), _MonsterName);
 	
 	FTransform Trans;
-	AEnemyCharacter* NewEnemyCharacter = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(SubClass, Trans);
+	AEnemyCharacter* NewEnemyCharacter = GetWorld()->SpawnActor<AEnemyCharacter>(SubClass, Trans);
 	if (nullptr == NewEnemyCharacter)
 	{
 		UE_LOG(LogTemp, Fatal, TEXT("%S(%u)> if (nullptr == EnemyActor) Enemy Spawn Is Nullptr"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
-	NewEnemyCharacter->SetEnemyAttributeComponent(EnemyAttributeComponent);
+	//NewEnemyCharacter->SetEnemyAttributeComponent(EnemyAttributeComponent);
 	NewEnemyCharacter->SetDataKey(_MonsterName);
 	Trans.SetLocation(_OriginPos);
-	NewEnemyCharacter->FinishSpawning(Trans);
+	FVector Location = Trans.GetLocation();
+	NewEnemyCharacter->SetActorLocation(Location);
 	AllEnemyCharacter.Add(NewEnemyCharacter);
 
 	return NewEnemyCharacter;

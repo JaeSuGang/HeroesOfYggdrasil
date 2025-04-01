@@ -13,13 +13,15 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Attribute/EnemyAttributeComponent.h"
+#include "Enemy/EnemyProjectile.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -45,15 +47,16 @@ void AEnemyCharacter::BeginPlay()
 
 		// AIData->PlayData.AttackAnimationCount = FindData.AttackAnimations.Num();
 		AIData->PlayData.OriginPos = GetActorLocation();
+		AIData->PlayData.OriginPos.Z = 0.0f;
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
-
 	
-
+	GetMesh()->SetCollisionProfileName("MonsterCollision");
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetAnimInstanceClass(FindData.AnimationBluePrint);
 	GetMesh()->SetGenerateOverlapEvents(true);
+	GetMesh()->SetSimulatePhysics(false);
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	UEnemyBaseAnimInstance* NewEnemyAnimInstance = Cast<UEnemyBaseAnimInstance>(AnimInstance);

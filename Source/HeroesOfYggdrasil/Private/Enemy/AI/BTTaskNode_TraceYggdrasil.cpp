@@ -2,7 +2,7 @@
 
 
 #include "Enemy/AI/BTTaskNode_TraceYggdrasil.h"
-#include "Enemy/EnemyAIController.h"
+
 
 UBTTaskNode_TraceYggdrasil::UBTTaskNode_TraceYggdrasil()
 {
@@ -37,20 +37,24 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+	TargetDir.Z = 0.0f;
+	
 	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
 	
-	
+
+	float ReturnSize = TargetDir.Size() - 100.0f;
+
 
 	// 이동 중 플레이어 타겟 체크
 	TargetCheck(_OwnerComp);
-	
-	
+
 	// 이그드라실 null(죽음)
 	if (nullptr == TargetActor)
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Idle);
 		return;
 	}
+	
 
 	// 감지 범위 안에 플레이어 들어오면 플레이어 추적
 	if (FName("BP_YggHero") == PlayAIData.TargetActor->GetName().Left(10))
@@ -60,24 +64,23 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 		return;
 	}
 
-	TargetDir.Z = 0.0f;
-	float ReturnSize = TargetDir.Size() - 50.0f;
+	
 
 	// 공격준비
-	if (ReturnSize <= PlayAIData.Data.YggAttackRange)
+	if (ReturnSize <= (PlayAIData.Data.YggAttackRange) * 1.1f )
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Attack);
 		return;
 	}
 
-	//SelfActor->AddMovementInput(TargetDir);
-
-	if (SelfController != nullptr && TargetActor != nullptr && CheckTime < 0.0f)
+	// 이그드라실 추적
+	if (SelfController != nullptr && TargetActor != nullptr)
 	{
-
-		SelfController->MoveToLocation(TargetActor->GetActorLocation(), PlayAIData.Data.YggAttackRange - 10.0f);
-		CheckTime = PlayAIData.Data.TargetCheckTime;
+		FVector TargetVector = TargetActor->GetActorLocation();
+		//TargetVector.Z = 0.0f;
+		FVector SelfLocation = SelfActor->GetActorLocation();
+		FVector Location = TargetVector - SelfLocation;
+		float Size = Location.Size();
+		SelfController->MoveToLocation(TargetVector, PlayAIData.Data.YggAttackRange);
 	}
-	
-
 }
