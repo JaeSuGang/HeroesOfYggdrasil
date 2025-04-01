@@ -21,8 +21,13 @@ public:
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference);
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference);
 	
+	TObjectPtr<AYggHero> Hero;
 	FVector StartLocation;
 	FVector TargetLocation;
-	bool bIsGetTarget = false;
-	AYggHero* Hero;
+
+	float ElapsedTime = 0.0f;
+	float MoveDuration = 0.8f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float JumpHeight;
 };

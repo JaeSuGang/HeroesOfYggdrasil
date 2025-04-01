@@ -7,10 +7,38 @@
 
 #include "Data/YggStructData.h"
 
+UHeroAttributeComponent::UHeroAttributeComponent()
+{
+	PrimaryComponentTick.bCanEverTick = true;
+}
+
 void UHeroAttributeComponent::BeginPlay()
 {
     Super::BeginPlay();   
     
+}
+
+void UHeroAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (SkillQCurCoolTime > 0.0f)
+		SkillQCurCoolTime -= DeltaTime;
+	if (SkillECurCoolTime > 0.0f)
+		SkillECurCoolTime -= DeltaTime;
+	if (SkillRCurCoolTime > 0.0f)
+		SkillRCurCoolTime -= DeltaTime;
+
+	if (CurRollCount < MaxRollCount)
+	{
+		RollCurCoolTime += DeltaTime;
+
+		if (RollCurCoolTime >= RollMaxCoolTime)
+		{
+			RollCurCoolTime = 0.0f;
+			CurRollCount++;
+		}
+	}
 }
 
 void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -37,6 +65,13 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			AttackSpeedRate = Data->AttackSpeedRate;
 			CriticalChance = Data->CriticalChance;
 			CriticalDamageRate = Data->CriticalDamageRate;
+		
+			SkillQCurCoolTime = 0.0f;
+			SkillECurCoolTime = 0.0f;
+			SkillRCurCoolTime = 0.0f;
+			SkillQMaxCoolTime = Data->SkillQInfo.CoolTime;
+			SkillEMaxCoolTime = Data->SkillEInfo.CoolTime;
+			SkillRMaxCoolTime = Data->SkillRInfo.CoolTime;
 		}
 	}
 }

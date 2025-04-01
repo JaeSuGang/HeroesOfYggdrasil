@@ -42,15 +42,17 @@ void AYggHeroGreystone::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (ActionMap.IsEmpty()) return;
 	ActionMap.Remove(FName("Jump"));
 
-	/*HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Greystone"));
-	UpdateStatus();*/
+	if (!HeroAttributeComponent) return;
+	HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Greystone"));
+	UpdateStatus();
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);		
+	Super::Tick(DeltaTime);
 
 	if (bIsSkillR)
 	{
@@ -143,6 +145,7 @@ void AYggHeroGreystone::EndAttack(const FInputActionValue& Value)
 void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+	if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
 
 	Super::SkillQ(Value);
 
@@ -158,7 +161,7 @@ void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 
 void AYggHeroGreystone::ServerSkillQ_Implementation()
 {
-	SkillQ(FInputActionValue());
+	MulticastSkillQ();
 }
 
 void AYggHeroGreystone::MulticastSkillQ_Implementation()
@@ -167,11 +170,13 @@ void AYggHeroGreystone::MulticastSkillQ_Implementation()
 	HeroAnimInstance->PlayMontage(MontageName);
 
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime;
 }
 
 void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+	if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
 
 	Super::SkillE(Value);
 
@@ -189,7 +194,7 @@ void AYggHeroGreystone::SkillE(const FInputActionValue& Value)
 
 void AYggHeroGreystone::ServerSkillE_Implementation()
 {
-	SkillE(FInputActionValue());
+	MulticastSkillE();
 }
 
 void AYggHeroGreystone::MulticastSkillE_Implementation()
@@ -198,6 +203,7 @@ void AYggHeroGreystone::MulticastSkillE_Implementation()
 	HeroAnimInstance->PlayMontage(MontageName);
 
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->SkillECurCoolTime = HeroAttributeComponent->SkillEMaxCoolTime;
 }
 
 void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
@@ -205,6 +211,7 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	if (bIsSkillR) return;
 
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;	
+	if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
 
 	Super::SkillR(Value);
 
@@ -245,13 +252,15 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 
 void AYggHeroGreystone::ServerSkillR_Implementation()
 {
-	SkillR(FInputActionValue());
+	MulticastSkillR();
 }
 
 void AYggHeroGreystone::MulticastSkillR_Implementation()
 {
 	FName MontageName = TEXT("SkillR");
 	HeroAnimInstance->PlayMontage(MontageName);
+
+	HeroAttributeComponent->SkillRCurCoolTime = HeroAttributeComponent->SkillRMaxCoolTime;
 }
 
 void AYggHeroGreystone::RFall()

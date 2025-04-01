@@ -63,7 +63,8 @@ AYggHero::AYggHero()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("HeroAttributeComponent"));
+	CharacterAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("HeroAttributeComponent"));
+	HeroAttributeComponent = Cast<UHeroAttributeComponent>(CharacterAttributeComponent);
 
 	// 닉네임
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
@@ -99,6 +100,7 @@ void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	HeroAttributeComponent->AddTag(TEXT("Character"));
 	
 	if (AnimInstance != nullptr)
 	{
@@ -127,6 +129,8 @@ void AYggHero::BeginPlay()
 	CameraBoom->TargetArmLength = 700.0f;
 	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
 
+	FName MontageName = *FString::Printf(TEXT("LevelStart"));
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHero::Tick(float DeltaTime)
@@ -177,7 +181,7 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AYggHero, HeroAttributeComponent);
+	//DOREPLIFETIME(AYggHero, HeroAttributeComponent);
 }
 
 
@@ -269,14 +273,40 @@ void AYggHero::Jump()
 
 void AYggHero::Roll(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
+	if (HeroAttributeComponent->CurRollCount <= 0) return;
+
 	if (HasAuthority())
 	{
+		HeroAttributeComponent->CurRollCount -= 1;
 		MulticastRoll(Value);
 	}
 	else
 	{
 		ServerRoll(Value);
 	}
+}
+
+void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
+	if (HeroAttributeComponent->CurRollCount <= 0) return;
+	HeroAttributeComponent->CurRollCount -= 1;
+
+	MulticastRoll(Value);
+}
+
+void AYggHero::MulticastRoll_Implementation(const FInputActionValue& Value)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable"))) return;
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
+
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+
+	FName MontageName = *FString::Printf(TEXT("Roll"));
+	HeroAnimInstance->PlayMontage(MontageName);
 }
 
 void AYggHero::Attack(const FInputActionValue& Value)
@@ -316,25 +346,6 @@ void AYggHero::EndAttack(const FInputActionValue& Value)
 {
 	HeroAttributeComponent->RemoveTag(TEXT("Character.State.PressedAttack"));
 }
-
-void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)
-{
-	Roll(Value);
-}
-
-void AYggHero::MulticastRoll_Implementation(const FInputActionValue& Value)
-{
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable"))) return;
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
-	
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-
-	FName MontageName = *FString::Printf(TEXT("Roll"));
-	HeroAnimInstance->PlayMontage(MontageName);
-}
-
 
 void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
 {

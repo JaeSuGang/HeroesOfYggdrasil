@@ -9,7 +9,7 @@
 
 AEnemyManager::AEnemyManager()
 {
-	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
+	//EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
 }
 
 AEnemyManager* AEnemyManager::Get(UWorld* WorldContext)
@@ -41,7 +41,6 @@ AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _Origi
 		UE_LOG(LogTemp, Fatal, TEXT("%S(%u)> if (nullptr == EnemyActor) Enemy Spawn Is Nullptr"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
-	NewEnemyCharacter->SetEnemyAttributeComponent(EnemyAttributeComponent);
 	NewEnemyCharacter->SetDataKey(_MonsterName);
 	Trans.SetLocation(_OriginPos);
 	NewEnemyCharacter->FinishSpawning(Trans);

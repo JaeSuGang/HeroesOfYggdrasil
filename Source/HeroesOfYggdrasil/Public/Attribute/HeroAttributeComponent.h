@@ -18,8 +18,12 @@ class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UCharacterAttribute
 {
 	GENERATED_BODY()
 
+public:
+	UHeroAttributeComponent();
+
 protected:
 	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(Server, Reliable)
@@ -43,15 +47,35 @@ public:
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float CriticalDamageRate;
-
 	
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillQCurCoolTime;
 
-	//UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	//float SkillQCoolTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillECurCoolTime;
 
-	//UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	//float SkillECoolTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillRCurCoolTime;
 
-	//UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	//float SkillRCoolTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillQMaxCoolTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillEMaxCoolTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillRMaxCoolTime;
+
+	// 수정 필요.
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	int CurRollCount = 3;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	int MaxRollCount = 3;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float RollCurCoolTime = 0.0f;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float RollMaxCoolTime = 5.0f;
 };

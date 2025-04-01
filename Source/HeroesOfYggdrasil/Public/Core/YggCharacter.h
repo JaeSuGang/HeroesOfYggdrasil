@@ -6,6 +6,10 @@
 #include "GameFramework/Character.h"
 #include "YggCharacter.generated.h"
 
+
+class UCharacterAttributeComponent;
+class UYggCapsuleComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggCharacter : public ACharacter
 {
@@ -13,4 +17,18 @@ class HEROESOFYGGDRASIL_API AYggCharacter : public ACharacter
 
 public:
 	AYggCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+	virtual UCharacterAttributeComponent* GetAttributeComponent() { return CharacterAttributeComponent; }
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UYggCapsuleComponent* GetAttackCapsuleComponent(const FName& Key);
+
+protected:
+	UPROPERTY(/*Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute"*/)
+	UCharacterAttributeComponent* CharacterAttributeComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FName, UYggCapsuleComponent*> AttackCapsuleComponentMap;
+
+	
 };

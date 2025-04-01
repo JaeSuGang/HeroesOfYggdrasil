@@ -22,12 +22,22 @@
 
 
 
-
+#include "Component/SceneComponent/YggCapsuleComponent.h"
+#include "Component/SceneComponent/YggParticleSystemComponent.h"
 
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
-
+	{
+		UYggCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggCapsuleComponent>(TEXT("LeftAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(),TEXT("weapon_l"));
+		AttackCapsuleComponentMap.Add(TEXT("LeftAttack"), AttackCapsuleComponent);
+	}
+	{
+		UYggCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggCapsuleComponent>(TEXT("RightAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("weapon_r"));
+		AttackCapsuleComponentMap.Add(TEXT("RightAttack"), AttackCapsuleComponent);
+	}
 }
 
 void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -41,7 +51,6 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHeroKhaimera::EndAttack);
-		
 		}
 
 		if (ActionMap.Contains(FName("SkillQ")))
@@ -94,6 +103,7 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		MulticastSkillQ(Value);
 	}
 	else
@@ -122,6 +132,7 @@ void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		MulticastSkillE(Value);
 	}
 	else
@@ -152,6 +163,7 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		MulticastSkillR(Value);
 	}
 	else
@@ -159,6 +171,7 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 		ServerSkillR(Value);
 	}
 }
+
 void AYggHeroKhaimera::ServerSkillR_Implementation(const FInputActionValue& Value)
 {
 	SkillR(Value);
@@ -175,11 +188,5 @@ void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
-
-
-
-
-
-
 
 
