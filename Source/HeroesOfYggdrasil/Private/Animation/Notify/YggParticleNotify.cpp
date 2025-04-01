@@ -57,34 +57,29 @@ void UYggParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 		// Enemy Duration 가져오기.
 	}
 
+	// YggParticleNotify.cpp
 	if (PSTemplate)
 	{
 		UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAttached(
-			PSTemplate,            // 사용할 파티클 템플릿
-			MeshComp,              // 부착 대상
-			NAME_None,             // 소켓 이름 (필요 시 변경)
-			FVector::ZeroVector,   // 상대 위치
-			FRotator::ZeroRotator, // 상대 회전
+			PSTemplate,
+			MeshComp,
+			NAME_None,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
 			EAttachLocation::SnapToTarget,
-			true                   // 인스턴스화 후 자동 파괴
+			true
 		);
 
-		if (PSC)
+		if (PSC && DelayedPSTemplate) // DelayedPSTemplate이 유효한지 확인
 		{
-			// 파티클 컴포넌트가 생성된 후, 파라미터 설정
-			// PSC->SetScalarParameter("UserLifetime", Duration); // Duration을 파티클 시스템에 전달
-
-			PSC->SetScalarParameterForDefaultCustomPrimitiveData("UserLifetime", Duration);
-
-			// DelayTime 후 두 번째 파티클 스폰
+			// 2초 후 15초 지속 파티클 스폰
 			FTimerHandle TimerHandle;
 			PSC->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, MeshComp]()
 			{
 				if (IsValid(MeshComp))
 				{
-					// 두 번째 파티클 스폰 (동일한 PSTemplate 사용)
 					UGameplayStatics::SpawnEmitterAttached(
-						PSTemplate,
+						DelayedPSTemplate, // 15초 파티클
 						MeshComp,
 						NAME_None,
 						FVector::ZeroVector,
@@ -93,10 +88,9 @@ void UYggParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 						true
 					);
 				}
-			}, DelayTime, false);
+			}, 2.0f, false); // 2초 딜레이
 		}
 	}
-
 	else if (NSTemplate)
 	{
 		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(

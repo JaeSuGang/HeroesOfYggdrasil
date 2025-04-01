@@ -39,6 +39,9 @@ class HEROESOFYGGDRASIL_API UYggParticleNotify : public UAnimNotify
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Particle System"))
+	TObjectPtr<UParticleSystem> DelayedPSTemplate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Particle System"))
 	TObjectPtr<UParticleSystem> PSTemplate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Niagara System", ToolTip = "The niagara system to spawn for the notify state"))
