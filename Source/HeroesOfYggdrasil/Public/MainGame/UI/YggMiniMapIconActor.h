@@ -18,15 +18,21 @@ public:
 	AYggMiniMapIconActor();
 
 	void SetPaperSprite(AActor* Actor);
+	void SetPaperSprite(FName IConName);
 
 	UPaperSpriteComponent* GetPaperSpriteComponent()
 	{
 		return PaperSpriteComponent;
 	}
 
+	void SetAttachedCharacter(AActor* Character);
+
+	void AddToCaptureComponent();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
 
 public:	
 	// Called every frame
@@ -40,4 +46,6 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	UYggUIDataAsset* UIDataAsset;
+
+	AActor* AttachedCharacter;
 };

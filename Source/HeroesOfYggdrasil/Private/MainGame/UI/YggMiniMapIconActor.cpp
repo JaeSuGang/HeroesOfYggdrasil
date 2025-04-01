@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "Player/YggHero.h"
 #include "Attribute/HeroAttributeComponent.h"
+#include "Component/CaptureComponent.h"
 
 // Sets default values
 AYggMiniMapIconActor::AYggMiniMapIconActor()
@@ -18,7 +19,7 @@ AYggMiniMapIconActor::AYggMiniMapIconActor()
 
 	PaperSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("PaperSpriteComponent"));
 	PaperSpriteComponent->SetupAttachment(DefaultScene);
-	PaperSpriteComponent->SetRelativeRotation(FQuat::MakeFromEuler({ 90.0f, 0.0f, 0.0f }));
+	PaperSpriteComponent->SetRelativeRotation(FQuat::MakeFromEuler({ -90.0f, 0.0f, 0.0f }));
 	PaperSpriteComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	PaperSpriteComponent->bVisibleInSceneCaptureOnly = true;
 
@@ -30,6 +31,7 @@ AYggMiniMapIconActor::AYggMiniMapIconActor()
 void AYggMiniMapIconActor::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
@@ -38,6 +40,14 @@ void AYggMiniMapIconActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    if (AttachedCharacter)
+    {
+        FRotator NewRotation = AttachedCharacter->GetActorRotation();
+        NewRotation.Pitch;
+        NewRotation.Roll;
+        NewRotation.Yaw;
+        SetActorRotation(FRotator(NewRotation.Roll, NewRotation.Pitch, 0.0f));
+    }
 }
 
 void AYggMiniMapIconActor::SetPaperSprite(AActor* Actor)
@@ -58,6 +68,32 @@ void AYggMiniMapIconActor::SetPaperSprite(AActor* Actor)
         {
             PaperSpriteComponent->SetSprite(Icon.Value);
             break;
+        }
+    }
+}
+
+void AYggMiniMapIconActor::SetPaperSprite(FName IConName)
+{
+    TMap<FName, UPaperSprite*>& IconData = UIDataAsset->IconSetting;
+
+    if (IconData.Contains(IConName))
+    {
+        PaperSpriteComponent->SetSprite(IconData[IConName]);
+    }
+}
+
+void AYggMiniMapIconActor::SetAttachedCharacter(AActor* Character)
+{
+    AttachedCharacter = Character;
+}
+
+void AYggMiniMapIconActor::AddToCaptureComponent()
+{
+    if (AYggHero* Hero = Cast<AYggHero>(GetWorld()->GetFirstPlayerController()->GetPawn()))
+    {
+        if (UCaptureComponent* MinMapCapture = Hero->GetMiniMapCaptureComponent())
+        {
+            MinMapCapture->SetupMiniMapCapture(this);
         }
     }
 }

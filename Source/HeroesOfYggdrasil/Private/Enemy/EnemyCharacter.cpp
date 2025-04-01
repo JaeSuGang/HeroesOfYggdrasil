@@ -13,8 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Attribute/EnemyAttributeComponent.h"
-
-
+#include "MainGame/UI/YggMiniMapIconActor.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -91,7 +90,12 @@ void AEnemyCharacter::BeginPlay()
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 
-	
+	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	MiniMapIcon->SetPaperSprite(FName("Monster"));
+	MiniMapIcon->SetAttachedCharacter(this);
+	MiniMapIcon->AddToCaptureComponent();
+
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)

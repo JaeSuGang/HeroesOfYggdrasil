@@ -46,9 +46,6 @@ void UCaptureComponent::SetupMiniMapCapture(AActor* TargetActor)
 {
 	if (!TargetActor) return;
 
-	// 기존 목록 초기화
-	ShowOnlyActors.Empty();
-
 	// 타겟 액터만 캡처하도록 설정
 	ShowOnlyActors.Add(TargetActor);
 
