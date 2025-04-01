@@ -245,16 +245,11 @@ struct FProjectileDataRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FMonsterDataRow() {}
-	~FMonsterDataRow() {}
+	FProjectileDataRow() {}
+	~FProjectileDataRow() {}
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	TSubclassOf<UAnimInstance> AnimationBluePrint;
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	TSubclassOf<class AEnemyCharacter> SpawnClass;
 };
 
 
