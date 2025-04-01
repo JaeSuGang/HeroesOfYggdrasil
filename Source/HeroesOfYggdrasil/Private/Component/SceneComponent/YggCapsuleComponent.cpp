@@ -10,11 +10,11 @@
 void UYggCapsuleComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	OnComponentBeginOverlap.AddDynamic(this, &UYggCapsuleComponent::OverLap);
+	OnComponentBeginOverlap.AddDynamic(this, &UYggCapsuleComponent::OverLapBegin);
 }
 
 
-void UYggCapsuleComponent::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void UYggCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!GetOwner() || !GetOwner()->HasAuthority())
 	{
@@ -25,13 +25,14 @@ void UYggCapsuleComponent::OverLap(UPrimitiveComponent* OverlappedComponent, AAc
 	{
 		return;
 	}
-	UCharacterAttributeComponent* CharacterAttributeComponent = DamageCharacter->GetAttributeComponent();
-	if (!IsValid(CharacterAttributeComponent))
+	UCharacterAttributeComponent* DamageCharacterAttributeComponent = DamageCharacter->GetAttributeComponent();
+	if (!IsValid(DamageCharacterAttributeComponent))
 	{
 		return;
 	}
-	CharacterAttributeComponent->Server_TakeDamage(10.0f);
-	FString CurHP = FString::Printf(TEXT("HP : %f"), CharacterAttributeComponent->GetHP());
+	DamageCharacterAttributeComponent->Server_TakeDamage(10.0f);
+	FString CurHP = FString::Printf(TEXT("HP : %f"), DamageCharacterAttributeComponent->GetHP());
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, CurHP);
 }
 
 void UYggCapsuleComponent::CollisionOn()
