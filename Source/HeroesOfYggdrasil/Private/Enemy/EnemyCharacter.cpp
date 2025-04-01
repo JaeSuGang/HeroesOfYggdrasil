@@ -50,13 +50,13 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.OriginPos.Z = 0.0f;
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
-
 	
-
+	GetMesh()->SetCollisionProfileName("MonsterCollision");
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetAnimInstanceClass(FindData.AnimationBluePrint);
 	GetMesh()->SetGenerateOverlapEvents(true);
+	GetMesh()->SetSimulatePhysics(false);
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	UEnemyBaseAnimInstance* NewEnemyAnimInstance = Cast<UEnemyBaseAnimInstance>(AnimInstance);
