@@ -110,7 +110,13 @@ public:
 	FName EnemyName = FName("");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double MaxHP = 100;
+	double MaxHP = 30;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double EnemyAttackPoints = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double EnemyDefensePoints = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceRange = 1000.0f;
@@ -223,9 +229,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TMap<EEnemyAIState, UAnimMontage*> Animations;
 
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	TArray<UAnimMontage*> AttackAnimations;*/
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<UAnimInstance> AnimationBluePrint;
 
@@ -236,6 +239,18 @@ public:
 	TSubclassOf<class AEnemyCharacter> SpawnClass;
 };
 
+
+USTRUCT(BlueprintType)
+struct FProjectileDataRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FProjectileDataRow() {}
+	~FProjectileDataRow() {}
+
+public:
+
+};
 
 
 

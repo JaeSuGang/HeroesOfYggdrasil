@@ -1,25 +1,56 @@
 
 
 #include "Enemy/EnemyCharacter.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
+
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+
 #include "Attribute/AttributeComponent.h"
 #include "Attribute/CharacterAttributeComponent.h"
+#include "Attribute/EnemyAttributeComponent.h"
+
 #include "Data/YggStructData.h"
 #include "Data/YggConst.h"
-#include "Enemy/EnemyAIController.h"
-#include "Net/UnrealNetwork.h"
-#include "AIController.h"
+
+#include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+
+#include "AIController.h"
+
 #include "Enemy/EnemyGameInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Attribute/EnemyAttributeComponent.h"
-
-
+#include "MainGame/UI/YggMiniMapIconActor.h"
+#include "Enemy/EnemyAIController.h"
+#include "Enemy/EnemyProjectile.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
+}
 
+void AEnemyCharacter::SpawnAndFireArrow()
+{
+	if (!ArrowClass) return;
+
+	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ArrowClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (Arrow != nullptr)
+	{
+		FVector LaunchDirection = GetActorForwardVector();
+		Arrow->FindComponentByClass<UProjectileMovementComponent>()->Velocity = LaunchDirection * 2000.f;
+	}
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -34,7 +65,7 @@ void AEnemyCharacter::BeginPlay()
 	MonsterData = &FindData;
 	AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
 	
-
+	// 몬스터 데이터 세팅
 	if (nullptr != Con)
 	{
 		AIData = NewObject<UAIDataObject>(this);
@@ -45,31 +76,28 @@ void AEnemyCharacter::BeginPlay()
 
 		// AIData->PlayData.AttackAnimationCount = FindData.AttackAnimations.Num();
 		AIData->PlayData.OriginPos = GetActorLocation();
+		AIData->PlayData.OriginPos.Z = 0.0f;
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
-
 	
-
+	// 메시 세팅
+	GetMesh()->SetCollisionProfileName("MonsterCollision");
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetAnimInstanceClass(FindData.AnimationBluePrint);
 	GetMesh()->SetGenerateOverlapEvents(true);
+	GetMesh()->SetSimulatePhysics(false);
 
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	UEnemyBaseAnimInstance* NewEnemyAnimInstance = Cast<UEnemyBaseAnimInstance>(AnimInstance);
 
+	// 애니메이션 세팅
 	if (nullptr != NewEnemyAnimInstance)
 	{
 		for (auto AnimPair : FindData.Animations)
 		{
 			NewEnemyAnimInstance->AnimMontages.Add(static_cast<int>(AnimPair.Key), AnimPair.Value);
 		}
-
-		/*for (size_t i = 0; i < FindData.AttackAnimations.Num(); i++)
-		{
-			UAnimMontage* Montage = FindData.AttackAnimations[i];
-			NewEnemyAnimInstance->AnimMontages.Add(100 + i, Montage);
-		}*/
 
 		if (nullptr != Con)
 		{
@@ -78,20 +106,30 @@ void AEnemyCharacter::BeginPlay()
 
 	}
 
+	// 무브넌트 컴포넌트 세팅
 	GetCharacterMovement()->bUseRVOAvoidance = true;
-	GetCharacterMovement()->AvoidanceConsiderationRadius = 800.0f;
+	GetCharacterMovement()->AvoidanceConsiderationRadius = 450.0f;
 
 	Super::BeginPlay();
 
+	// AttributeComponent 세팅
 	if (EnemyAttributeComponent != nullptr)
 	{
 		EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
 		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
+		EnemyAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
+		EnemyAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 	}
 
+	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 
-	
+	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	MiniMapIcon->SetPaperSprite(FName("Monster"));
+	MiniMapIcon->SetAttachedCharacter(this);
+	MiniMapIcon->AddToCaptureComponent();
+
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
@@ -116,11 +154,13 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AYggCharacter* DamageCharacter = Cast<AYggCharacter>(OtherActor);
-	UCharacterAttributeComponent * DamageCharacterAttributeComponent = DamageCharacter->GetComponentByClass<UCharacterAttributeComponent>();
+	AYggCharacter* HeroCharacter = Cast<AYggCharacter>(OtherActor);
+	UCharacterAttributeComponent * HeroCharacterAttributeComponent = HeroCharacter->GetComponentByClass<UCharacterAttributeComponent>();
+	float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
 
-	/*EnemyAttributeComponent->Server_TakeDamage(10.0f);
-	AIData->PlayData.CurHP -= 10.0f;*/
+
+	EnemyAttributeComponent->Server_TakeDamage(HeroAttackPoints);
+	AIData->PlayData.CurHP -= HeroAttackPoints;
 }
 
 void AEnemyCharacter::AttackStart()

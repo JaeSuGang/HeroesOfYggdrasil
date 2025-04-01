@@ -36,6 +36,7 @@ class UHeroAttributeComponent;
 
 // UI
 class UWidgetComponent;
+class AYggMiniMapIconActor;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
@@ -43,6 +44,8 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 	GENERATED_BODY()
 public:
 	AYggHero();
+
+
 	UFUNCTION(BlueprintCallable)
 	UHeroAttributeComponent* GetHeroAttributeComponent()
 	{
@@ -68,6 +71,12 @@ public:
 	}
 	
 	bool IsAimMode() const { return bAimMode; }
+
+	UFUNCTION(BlueprintCallable)
+	UCaptureComponent* GetMiniMapCaptureComponent()
+	{
+		return MiniMapCaptureComponent;
+	}
 
 	UFUNCTION(NetMulticast, Reliable)
 	void TakeDamageEffect(float Att);
@@ -125,15 +134,22 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")
 	UYggHeroAnimInstance* HeroAnimInstance;
 
-	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggAnimation")
 	UHeroAttributeComponent* HeroAttributeComponent;
+
+	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
 	UWidgetComponent* WidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	UCaptureComponent* FaceCaptureComponent;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
+	UCaptureComponent* MiniMapCaptureComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
+	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bAimMode = false;
@@ -142,5 +158,6 @@ protected:
 	bool bIsUIMode = false;
 
 protected:
+
 
 };

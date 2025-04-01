@@ -65,6 +65,10 @@ void UYggHeroAnimInstance::PlayMontage(FName MontageName, float PlayRate)
 	{
 		return;
 	}
+	if (MontageMap[MontageName] == nullptr) 
+	{
+		return;
+	}
 	// 맵에서 몽타주를 찾아 실행
 	PlayMontageEvent(MontageMap[MontageName], PlayRate);
 }

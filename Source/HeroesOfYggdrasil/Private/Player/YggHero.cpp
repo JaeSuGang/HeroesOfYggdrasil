@@ -28,6 +28,7 @@
 
 // HUD
 #include "MainGame/UI/MainGameHUD.h"
+#include "MainGame/UI/YggMiniMapIconActor.h"
 
 // Tag
 #include "Attribute/HeroAttributeComponent.h"
@@ -62,19 +63,22 @@ AYggHero::AYggHero()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("HeroAttributeComponent"));
+	CharacterAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("HeroAttributeComponent"));
+	HeroAttributeComponent = Cast<UHeroAttributeComponent>(CharacterAttributeComponent);
 
 	// 닉네임
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(GetMesh());
 
-	
-
-
 	FaceCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("StatusCamera"));
 	FaceCaptureComponent->SetupAttachment(RootComponent);
 	FaceCaptureComponent->SetRelativeRotation(FRotator(0.0f, 180.0f, 0.0f));
-	
+
+	MiniMapCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("MiniMapCamera"));
+	MiniMapCaptureComponent->SetupAttachment(RootComponent);
+	MiniMapCaptureComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+	MiniMapCaptureComponent->AddRelativeLocation(FVector(0.0f, 0.0f, 1000.0f));
+
 	// 폰 입력 UEnhancedInputComponent 으로 변경
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
 
@@ -113,6 +117,15 @@ void AYggHero::BeginPlay()
 	{
 		FaceCaptureComponent->SetupFaceCapture(this);
 	}
+
+	HeroAttributeComponent->AddTag(TEXT("Character"));
+
+	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+	MiniMapIcon->SetPaperSprite(FName("Character"));
+	MiniMapIcon->SetAttachedCharacter(this);
+	MiniMapCaptureComponent->SetupMiniMapCapture(MiniMapIcon);
+
 	CameraBoom->TargetArmLength = 700.0f;
 	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
 
@@ -168,7 +181,7 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AYggHero, HeroAttributeComponent);
+	//DOREPLIFETIME(AYggHero, HeroAttributeComponent);
 }
 
 

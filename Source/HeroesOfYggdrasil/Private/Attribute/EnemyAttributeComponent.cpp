@@ -7,6 +7,8 @@
 void UEnemyAttributeComponent::BeginPlay()
 {
     Super::BeginPlay();
+
+   
 }
 
 void UEnemyAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

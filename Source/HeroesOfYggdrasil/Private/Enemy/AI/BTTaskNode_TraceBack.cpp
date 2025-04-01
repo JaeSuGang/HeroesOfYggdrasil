@@ -24,19 +24,24 @@ void UBTTaskNode_TraceBack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* 
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-
 	APawn* SelfActor = PlayAIData.SelfPawn;
-
-	FVector TargetDir = PlayAIData.OriginPos - SelfActor->GetActorLocation();
-	SelfActor->AddMovementInput(TargetDir);
-
 	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
+	AActor* TargetActor = PlayAIData.TargetActor;
+	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+	FVector OrigninDir = PlayAIData.OriginPos - SelfActor->GetActorLocation();
+	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
+
 	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.TraceBackSpeed;
 
-	if (TargetDir.Size() < 100.0f)
+	SelfController->MoveToLocation(PlayAIData.OriginPos, 50.0f);
+
+	float OrigninDirSize = OrigninDir.Size();
+
+	if (OrigninDir.Size() < 300.0f)
 	{
 		PlayAIData.TargetActor = nullptr;
 		ChangeState(_OwnerComp, EEnemyAIState::TraceYggdrasil);
 		return;
 	}
 }
+

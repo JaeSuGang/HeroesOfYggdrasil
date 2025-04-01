@@ -34,6 +34,7 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	AActor* TargetActor = PlayAIData.TargetActor;
+
 	APawn* SelfActor = PlayAIData.SelfPawn;
 
 
