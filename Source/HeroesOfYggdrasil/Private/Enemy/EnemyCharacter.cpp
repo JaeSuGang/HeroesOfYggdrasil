@@ -87,6 +87,8 @@ void AEnemyCharacter::BeginPlay()
 	{
 		EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
 		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
+		EnemyAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
+		EnemyAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 	}
 
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
@@ -116,11 +118,13 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AYggCharacter* DamageCharacter = Cast<AYggCharacter>(OtherActor);
-	UCharacterAttributeComponent * DamageCharacterAttributeComponent = DamageCharacter->GetComponentByClass<UCharacterAttributeComponent>();
+	AYggCharacter* HeroCharacter = Cast<AYggCharacter>(OtherActor);
+	UCharacterAttributeComponent * HeroCharacterAttributeComponent = HeroCharacter->GetComponentByClass<UCharacterAttributeComponent>();
+	float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
 
-	/*EnemyAttributeComponent->Server_TakeDamage(10.0f);
-	AIData->PlayData.CurHP -= 10.0f;*/
+
+	EnemyAttributeComponent->Server_TakeDamage(HeroAttackPoints);
+	AIData->PlayData.CurHP -= HeroAttackPoints;
 }
 
 void AEnemyCharacter::AttackStart()

@@ -110,7 +110,13 @@ public:
 	FName EnemyName = FName("");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double MaxHP = 100;
+	double MaxHP = 30;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double EnemyAttackPoints = 10;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double EnemyDefensePoints = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceRange = 1000.0f;
