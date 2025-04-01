@@ -43,9 +43,9 @@ public:
 		return MonsterData;
 	}
 
-	void SetDataKey(const FString& _ItemDataKey)
+	void SetDataKey(const FString& _MonsterDataKey)
 	{
-		DataKey = _ItemDataKey;
+		DataKey = _MonsterDataKey;
 	}
 
 	void SetEnemyAttributeComponent(UEnemyAttributeComponent* _EnemyAttributeComponent)
@@ -80,14 +80,16 @@ public:
 	TSubclassOf<class AEnemyProjectile> ArrowClass;
 
 private:
+	// 몬스터 이름 데이터
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	FString DataKey = "Minion_0";
+	FString DataKey = "";
 
 	const FMonsterDataRow* MonsterData = nullptr;
 
 	UPROPERTY(Category = "YggData", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAIDataObject* AIData = nullptr;
 
+	// 애니메이션
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "YggData", meta = (AllowPrivateAccess = "true"))
 	EEnemyAIState CurAnimnation = EEnemyAIState::Idle;
 };
