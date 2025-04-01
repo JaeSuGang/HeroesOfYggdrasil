@@ -10,6 +10,7 @@
 #include "Enemy/Interface/AttackInterface.h"
 #include "EnemyCharacter.generated.h"
 
+class AYggMiniMapIconActor;
 
 /**
  * 담당 : 장시혁
@@ -97,6 +98,9 @@ private:
 	// 애니메이션
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "YggData", meta = (AllowPrivateAccess = "true"))
 	EEnemyAIState CurAnimnation = EEnemyAIState::Idle;
+
+	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
+	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
 };
 
 

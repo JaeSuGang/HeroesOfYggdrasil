@@ -34,9 +34,6 @@ void UYggPlayerStatusUserWidget::NativeOnInitialized()
     UTexture2D* CapturedTexture = ConvertRenderTargetToTexture2D(RenderTarget);
 
     SetFaceCam(CapturedTexture);
-    //FTimerHandle CaptureTimerHandle;
-    //GetWorld()->GetTimerManager().SetTimer(CaptureTimerHandle, [this, CapturedTexture]() { SetFaceCam(CapturedTexture); }, 0.5f, true);
-
 }
 
 void UYggPlayerStatusUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

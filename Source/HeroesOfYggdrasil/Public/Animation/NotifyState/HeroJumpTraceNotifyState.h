@@ -24,8 +24,10 @@ public:
 	TObjectPtr<AYggHero> Hero;
 	FVector StartLocation;
 	FVector TargetLocation;
-	bool bIsGetTarget = false;
 
 	float ElapsedTime = 0.0f;
 	float MoveDuration = 0.8f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float JumpHeight;
 };

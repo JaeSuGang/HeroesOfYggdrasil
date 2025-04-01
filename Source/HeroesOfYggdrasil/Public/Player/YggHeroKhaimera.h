@@ -14,6 +14,8 @@
 
 class UYggCapsuleComponent;
 
+class UYggParticleSystemComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 {
@@ -51,7 +53,6 @@ protected:
 	void MulticastSkillR(const FInputActionValue& Value);
 
 protected:
-
-
+	
 
 };

@@ -12,8 +12,6 @@ UCaptureComponent::UCaptureComponent()
 
 	bCaptureEveryFrame = false;
 	bCaptureOnMovement = true;
-
-	//OrthoWidth = 50.0f;
 }
 
 void UCaptureComponent::BeginPlay()
@@ -36,6 +34,17 @@ void UCaptureComponent::SetupFaceCapture(AActor* TargetActor)
 
 	// 기존 목록 초기화
 	ShowOnlyActors.Empty();
+
+	// 타겟 액터만 캡처하도록 설정
+	ShowOnlyActors.Add(TargetActor);
+
+	// 캡처 강제 업데이트
+	CaptureScene();
+}
+
+void UCaptureComponent::SetupMiniMapCapture(AActor* TargetActor)
+{
+	if (!TargetActor) return;
 
 	// 타겟 액터만 캡처하도록 설정
 	ShowOnlyActors.Add(TargetActor);

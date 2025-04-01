@@ -3,6 +3,8 @@
 
 #include "Core/YggCharacter.h"
 
+#include "Component/SceneComponent/YggCapsuleComponent.h"
+
 #include "Net/UnrealNetwork.h"
 
 AYggCharacter::AYggCharacter(const FObjectInitializer& ObjectInitializer)
@@ -17,5 +19,14 @@ void AYggCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	//DOREPLIFETIME(AYggCharacter, CharacterAttributeComponent);
+}
+
+UYggCapsuleComponent* AYggCharacter::GetAttackCapsuleComponent(const FName& Key)
+{
+	if (AttackCapsuleComponentMap.Contains(Key))
+	{
+		return AttackCapsuleComponentMap[Key];
+	}
+	return nullptr;
 }
 
