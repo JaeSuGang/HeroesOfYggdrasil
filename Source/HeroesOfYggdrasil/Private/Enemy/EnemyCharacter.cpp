@@ -1,20 +1,28 @@
 
 
 #include "Enemy/EnemyCharacter.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
+
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+
 #include "Attribute/AttributeComponent.h"
 #include "Attribute/CharacterAttributeComponent.h"
+#include "Attribute/EnemyAttributeComponent.h"
+
 #include "Data/YggStructData.h"
 #include "Data/YggConst.h"
-#include "Enemy/EnemyAIController.h"
-#include "Net/UnrealNetwork.h"
-#include "AIController.h"
-#include "BehaviorTree/BlackboardComponent.h"
-#include "Enemy/EnemyGameInstance.h"
-#include "GameFramework/CharacterMovementComponent.h"
+
 #include "Components/CapsuleComponent.h"
-#include "Attribute/EnemyAttributeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
+#include "AIController.h"
+
+#include "Enemy/EnemyGameInstance.h"
+#include "Enemy/EnemyAIController.h"
 #include "Enemy/EnemyProjectile.h"
-#include "Kismet/GameplayStatics.h"
 
 
 
@@ -22,6 +30,25 @@ AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
+}
+
+void AEnemyCharacter::SpawnAndFireArrow()
+{
+	if (!ArrowClass) return;
+
+	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ArrowClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (Arrow != nullptr)
+	{
+		FVector LaunchDirection = GetActorForwardVector();
+		Arrow->FindComponentByClass<UProjectileMovementComponent>()->Velocity = LaunchDirection * 2000.f;
+	}
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -36,7 +63,7 @@ void AEnemyCharacter::BeginPlay()
 	MonsterData = &FindData;
 	AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
 	
-
+	// 몬스터 데이터 세팅
 	if (nullptr != Con)
 	{
 		AIData = NewObject<UAIDataObject>(this);
@@ -51,6 +78,7 @@ void AEnemyCharacter::BeginPlay()
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
 	
+	// 메시 세팅
 	GetMesh()->SetCollisionProfileName("MonsterCollision");
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -61,18 +89,13 @@ void AEnemyCharacter::BeginPlay()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	UEnemyBaseAnimInstance* NewEnemyAnimInstance = Cast<UEnemyBaseAnimInstance>(AnimInstance);
 
+	// 애니메이션 세팅
 	if (nullptr != NewEnemyAnimInstance)
 	{
 		for (auto AnimPair : FindData.Animations)
 		{
 			NewEnemyAnimInstance->AnimMontages.Add(static_cast<int>(AnimPair.Key), AnimPair.Value);
 		}
-
-		/*for (size_t i = 0; i < FindData.AttackAnimations.Num(); i++)
-		{
-			UAnimMontage* Montage = FindData.AttackAnimations[i];
-			NewEnemyAnimInstance->AnimMontages.Add(100 + i, Montage);
-		}*/
 
 		if (nullptr != Con)
 		{
@@ -81,11 +104,13 @@ void AEnemyCharacter::BeginPlay()
 
 	}
 
+	// 무브넌트 컴포넌트 세팅
 	GetCharacterMovement()->bUseRVOAvoidance = true;
-	GetCharacterMovement()->AvoidanceConsiderationRadius = 800.0f;
+	GetCharacterMovement()->AvoidanceConsiderationRadius = 450.0f;
 
 	Super::BeginPlay();
 
+	// AttributeComponent 세팅
 	if (EnemyAttributeComponent != nullptr)
 	{
 		EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
@@ -94,6 +119,7 @@ void AEnemyCharacter::BeginPlay()
 		EnemyAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 	}
 
+	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 
 	
