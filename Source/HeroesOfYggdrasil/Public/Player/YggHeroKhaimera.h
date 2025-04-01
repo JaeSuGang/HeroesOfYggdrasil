@@ -14,6 +14,8 @@
 
 class UYggCapsuleComponent;
 
+class UYggParticleSystemComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroKhaimera : public AYggHero
 {
@@ -51,7 +53,12 @@ protected:
 	void MulticastSkillR(const FInputActionValue& Value);
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FName, UYggCapsuleComponent*> AttackCapsuleComponentMap; 
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<FName, UYggParticleSystemComponent*> ParticleSystemMap;
 
+	void CreateParticleComponent();
 
 };

@@ -23,10 +23,27 @@
 
 
 #include "Component/SceneComponent/YggCapsuleComponent.h"
+#include "Component/SceneComponent/YggParticleSystemComponent.h"
 
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
+	{
+		UYggCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggCapsuleComponent>(TEXT("LeftAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(),TEXT("weapon_l"));
+		AttackCapsuleComponentMap.Add(TEXT("LeftAttack"), AttackCapsuleComponent);
+	}
+	{
+		UYggCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggCapsuleComponent>(TEXT("RightAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("weapon_r"));
+		AttackCapsuleComponentMap.Add(TEXT("RightAttack"), AttackCapsuleComponent);
+	}
+
+	CreateParticleComponent();
+
+
+
+
 
 }
 
@@ -41,7 +58,6 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHeroKhaimera::EndAttack);
-		
 		}
 
 		if (ActionMap.Contains(FName("SkillQ")))
@@ -94,6 +110,7 @@ void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		MulticastSkillQ(Value);
 	}
 	else
@@ -122,6 +139,7 @@ void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		MulticastSkillE(Value);
 	}
 	else
@@ -152,6 +170,7 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		MulticastSkillR(Value);
 	}
 	else
@@ -159,6 +178,7 @@ void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
 		ServerSkillR(Value);
 	}
 }
+
 void AYggHeroKhaimera::ServerSkillR_Implementation(const FInputActionValue& Value)
 {
 	SkillR(Value);
@@ -176,10 +196,45 @@ void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
+void AYggHeroKhaimera::CreateParticleComponent()
+{
+	{
+		UYggParticleSystemComponent* ParticleSystemComponent = CreateDefaultSubobject<UYggParticleSystemComponent>(TEXT("FX_Leap_AOE"));
+		ParticleSystemComponent->SetupAttachment(GetMesh(), TEXT("FX_Leap_AOE"));
+		ParticleSystemMap.Add(TEXT("FX_Leap_AOE"), ParticleSystemComponent);
+	}
 
+	{
+		UYggParticleSystemComponent* ParticleSystemComponent = CreateDefaultSubobject<UYggParticleSystemComponent>(TEXT("FX_Passive"));
+		ParticleSystemComponent->SetupAttachment(GetMesh(), TEXT("FX_Passive"));
+		ParticleSystemMap.Add(TEXT("FX_Passive"), ParticleSystemComponent);
+	}
 
-
-
-
+	{
+		UYggParticleSystemComponent* ParticleSystemComponent = CreateDefaultSubobject<UYggParticleSystemComponent>(TEXT("FX_CoreTrail_01"));
+		ParticleSystemComponent->SetupAttachment(GetMesh(), TEXT("FX_CoreTrail_01"));
+		ParticleSystemMap.Add(TEXT("FX_CoreTrail_01"), ParticleSystemComponent);
+	}
+	{
+		UYggParticleSystemComponent* ParticleSystemComponent = CreateDefaultSubobject<UYggParticleSystemComponent>(TEXT("FX_Trail_L_01"));
+		ParticleSystemComponent->SetupAttachment(GetMesh(), TEXT("FX_Trail_L_01"));
+		ParticleSystemMap.Add(TEXT("FX_Trail_L_01"), ParticleSystemComponent);
+	}
+	{
+		UYggParticleSystemComponent* ParticleSystemComponent = CreateDefaultSubobject<UYggParticleSystemComponent>(TEXT("FX_Trail_L_02"));
+		ParticleSystemComponent->SetupAttachment(GetMesh(), TEXT("FX_Trail_L_02"));
+		ParticleSystemMap.Add(TEXT("FX_Trail_L_02"), ParticleSystemComponent);
+	}
+	{
+		UYggParticleSystemComponent* ParticleSystemComponent = CreateDefaultSubobject<UYggParticleSystemComponent>(TEXT("FX_Trail_R_01"));
+		ParticleSystemComponent->SetupAttachment(GetMesh(), TEXT("FX_Trail_R_01"));
+		ParticleSystemMap.Add(TEXT("FX_Trail_R_01"), ParticleSystemComponent);
+	}
+	{
+		UYggParticleSystemComponent* ParticleSystemComponent = CreateDefaultSubobject<UYggParticleSystemComponent>(TEXT("FX_Trail_R_02"));
+		ParticleSystemComponent->SetupAttachment(GetMesh(), TEXT("FX_Trail_R_02"));
+		ParticleSystemMap.Add(TEXT("FX_Trail_R_02"), ParticleSystemComponent);
+	}
+}
 
 
