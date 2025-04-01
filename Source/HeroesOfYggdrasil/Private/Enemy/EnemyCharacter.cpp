@@ -13,6 +13,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Attribute/EnemyAttributeComponent.h"
+#include "Enemy/AEnemyProjectile.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
