@@ -24,7 +24,7 @@ public:
 	UYggCapsuleComponent* GetAttackCapsuleComponent(const FName& Key);
 
 protected:
-	UPROPERTY(/*Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAttribute"*/)
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 	UCharacterAttributeComponent* CharacterAttributeComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
