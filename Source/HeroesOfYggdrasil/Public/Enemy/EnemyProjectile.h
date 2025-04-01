@@ -25,6 +25,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	class UProjectileMovementComponent* GetProjectileMovement()
+	{
+		return ProjectileMovement;
+	}
 protected:
 	UPROPERTY(EditAnywhere, Category = "EnemyProjectile")
 	UStaticMeshComponent* ArrowMesh;

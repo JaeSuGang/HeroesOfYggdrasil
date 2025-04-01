@@ -54,7 +54,7 @@ void AEnemyCharacter::SpawnAndFireArrow()
 	if (Arrow != nullptr)
 	{
 		FVector LaunchDirection = GetActorForwardVector();
-		Arrow->FindComponentByClass<UProjectileMovementComponent>()->Velocity = LaunchDirection * 1500.f;
+		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 1500.f;
 	}
 }
 
@@ -90,9 +90,6 @@ void AEnemyCharacter::BeginPlay()
 	{
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
-
-	
-
 
 	
 	// 메시 세팅
