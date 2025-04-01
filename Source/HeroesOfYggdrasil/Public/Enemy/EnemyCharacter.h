@@ -64,6 +64,10 @@ public:
 		return AIData->PlayData.CurHP;
 	}
 	
+	/*UFUNCTION(BlueprintCallable)
+	void SpawnAndFireArrow();*/
+
+	
 
 protected:
 	virtual void BeginPlay() override;
@@ -71,6 +75,9 @@ protected:
 public:	
 	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "YggData", meta = (AllowPrivateAccess = "true"))
 	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<class AEnemyProjectile> ArrowClass;
 
 private:
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

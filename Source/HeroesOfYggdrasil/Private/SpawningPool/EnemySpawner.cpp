@@ -80,7 +80,7 @@ void AEnemySpawner::SpawningCall()
 
 	for (int i = 0; i < OnceSpawnCount; ++i)
 	{
-		FVector Location = GetActorLocation() + FVector{ (1000.0f, 1000.0f) };
+		FVector Location = GetActorLocation();
 		EnemyManager->CreateMonster(SpawnMonsterName, Location + Range);
 		++CurrentSpawnCount;
 
