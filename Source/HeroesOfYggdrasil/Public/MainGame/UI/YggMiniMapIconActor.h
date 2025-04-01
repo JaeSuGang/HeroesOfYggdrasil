@@ -46,5 +46,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UYggUIDataAsset* UIDataAsset;
 
-	TObjectPtr<AActor> AttachedCharacter;
+	UPROPERTY(EditAnywhere)
+	AActor* AttachedCharacter;
 };
