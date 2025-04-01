@@ -77,7 +77,7 @@ public:
 	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	TSubclassOf<class AAEnemyProjectile> ArrowClass;
+	TSubclassOf<class AEnemyProjectile> ArrowClass;
 
 private:
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

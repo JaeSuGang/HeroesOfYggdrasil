@@ -70,11 +70,9 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 		return;
 	}
 
-	//SelfActor->AddMovementInput(TargetDir);
-
+	// 이그드라실 추적
 	if (SelfController != nullptr && TargetActor != nullptr && CheckTime < 0.0f)
 	{
-
 		SelfController->MoveToLocation(TargetActor->GetActorLocation(), PlayAIData.Data.YggAttackRange - 10.0f);
 		CheckTime = PlayAIData.Data.TargetCheckTime;
 	}
