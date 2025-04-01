@@ -55,6 +55,11 @@ void UHeroJumpTraceNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAn
 		ElapsedTime += FrameDeltaTime;
 
 		float Alpha = FMath::Clamp(ElapsedTime / MoveDuration, 0.0f, 1.0f);
+		if (Alpha >= 1.0f)
+		{
+			Hero->SetActorLocation(TargetLocation);
+			return; // 더 이상 위치 보정 안함
+		}
 		FVector NewLocation = FMath::Lerp(StartLocation, TargetLocation, Alpha);
 
 		// ★ 추가: 점프 곡선 (포물선) 적용
@@ -70,7 +75,7 @@ void UHeroJumpTraceNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAn
 			Hero->SetActorRotation(TargetRotation);
 		}
 
-		Hero->SetActorLocation(NewLocation);
+		Hero->SetActorLocation(NewLocation,true);
 	}
 }
 
