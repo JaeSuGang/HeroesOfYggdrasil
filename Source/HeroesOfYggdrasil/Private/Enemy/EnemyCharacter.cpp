@@ -31,7 +31,8 @@
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
+	CharacterAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("CharacterAttributeComponent"));
+	EnemyAttributeComponent = Cast<UEnemyAttributeComponent>(CharacterAttributeComponent);
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AEnemyAIController::StaticClass();
 }
@@ -129,7 +130,7 @@ void AEnemyCharacter::BeginPlay()
 	// AttributeComponent 세팅
 	if (EnemyAttributeComponent != nullptr && Con != nullptr)
 	{
-		EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
+		//EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
 		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
 		EnemyAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
 		EnemyAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PaperSpriteComponent.h"
 #include "MainGame/UI/YggUIDataAsset.h"
 #include "YggMiniMapIconActor.generated.h"
 
@@ -20,7 +19,7 @@ public:
 	void SetPaperSprite(AActor* Actor);
 	void SetPaperSprite(FName IConName);
 
-	UPaperSpriteComponent* GetPaperSpriteComponent()
+	class UPaperSpriteComponent* GetPaperSpriteComponent()
 	{
 		return PaperSpriteComponent;
 	}
@@ -47,5 +46,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UYggUIDataAsset* UIDataAsset;
 
+	UPROPERTY(EditAnywhere)
 	AActor* AttachedCharacter;
 };

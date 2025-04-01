@@ -11,6 +11,7 @@ void UYggCapsuleComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	OnComponentBeginOverlap.AddDynamic(this, &UYggCapsuleComponent::OverLapBegin);
+	CollisionOff();
 }
 
 

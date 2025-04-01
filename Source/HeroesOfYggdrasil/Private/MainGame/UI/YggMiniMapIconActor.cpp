@@ -6,6 +6,7 @@
 #include "Core/YggGameInstance.h"
 #include "GameFramework/Character.h"
 #include "Player/YggHero.h"
+#include "PaperSpriteComponent.h"
 #include "Attribute/HeroAttributeComponent.h"
 #include "Component/CaptureComponent.h"
 
@@ -40,7 +41,7 @@ void AYggMiniMapIconActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    if (AttachedCharacter)
+    if (IsValid(AttachedCharacter))
     {
         FRotator NewRotation = AttachedCharacter->GetActorRotation();
         NewRotation.Pitch;
