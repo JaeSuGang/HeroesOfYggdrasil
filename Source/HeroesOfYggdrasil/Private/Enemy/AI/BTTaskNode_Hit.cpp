@@ -29,8 +29,15 @@ void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNode
 	AActor* TargetActor = PlayAIData.TargetActor;
 
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
-	UEnemyAttributeComponent* SelfAttributeComponent = EnemyCharacter->GetEnemyAttributeComponent();
-	SelfAttributeComponent->HP;
+	if (EnemyCharacter != nullptr)
+	{
+		UEnemyAttributeComponent* SelfAttributeComponent = EnemyCharacter->GetEnemyAttributeComponent();
+		if (SelfAttributeComponent != nullptr)
+		{
+			SelfAttributeComponent->HP;
+		}
+	}
+	
 
 	// 죽음 체크
 	

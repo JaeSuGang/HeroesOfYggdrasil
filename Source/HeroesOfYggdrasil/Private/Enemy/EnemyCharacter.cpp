@@ -30,11 +30,16 @@ AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	AIControllerClass = AEnemyAIController::StaticClass();
 }
 
 void AEnemyCharacter::SpawnAndFireArrow()
 {
-	if (!ArrowClass) return;
+	if (ProjectileClass == nullptr)
+	{
+		return;
+	}
 
 	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
 	FRotator SpawnRotation = GetActorRotation();
@@ -42,12 +47,12 @@ void AEnemyCharacter::SpawnAndFireArrow()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
-	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ArrowClass, SpawnLocation, SpawnRotation, SpawnParams);
+	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
 
 	if (Arrow != nullptr)
 	{
 		FVector LaunchDirection = GetActorForwardVector();
-		Arrow->FindComponentByClass<UProjectileMovementComponent>()->Velocity = LaunchDirection * 2000.f;
+		Arrow->FindComponentByClass<UProjectileMovementComponent>()->Velocity = LaunchDirection * 1500.f;
 	}
 }
 
@@ -61,12 +66,13 @@ void AEnemyCharacter::BeginPlay()
 
 	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
 	MonsterData = &FindData;
+
 	AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
-	
-	// 몬스터 데이터 세팅
-	if (nullptr != Con)
+
+
+	AIData = NewObject<UAIDataObject>(this);
+	if (AIData != nullptr)
 	{
-		AIData = NewObject<UAIDataObject>(this);
 		AIData->PlayData.Data = FindData.AIData;
 		AIData->PlayData.SelfPawn = this;
 		AIData->PlayData.SelfAnimPawn = this;
@@ -75,8 +81,17 @@ void AEnemyCharacter::BeginPlay()
 		// AIData->PlayData.AttackAnimationCount = FindData.AttackAnimations.Num();
 		AIData->PlayData.OriginPos = GetActorLocation();
 		AIData->PlayData.OriginPos.Z = 0.0f;
+	}
+		
+	// 몬스터 데이터 세팅
+	if (nullptr != Con)
+	{
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
+
+	
+
+
 	
 	// 메시 세팅
 	GetMesh()->SetCollisionProfileName("MonsterCollision");
@@ -110,8 +125,10 @@ void AEnemyCharacter::BeginPlay()
 
 	Super::BeginPlay();
 
+
+
 	// AttributeComponent 세팅
-	if (EnemyAttributeComponent != nullptr)
+	if (EnemyAttributeComponent != nullptr && Con != nullptr)
 	{
 		EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
 		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);

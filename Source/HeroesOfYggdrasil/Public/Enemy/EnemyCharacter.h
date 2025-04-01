@@ -64,6 +64,11 @@ public:
 		return AIData->PlayData.CurHP;
 	}
 	
+	FString GetDataKey()
+	{
+		return DataKey;
+	}
+
 	UFUNCTION(BlueprintCallable)
 	void SpawnAndFireArrow();
 
@@ -77,7 +82,7 @@ public:
 	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	TSubclassOf<class AEnemyProjectile> ArrowClass;
+	TSubclassOf<class AEnemyProjectile> ProjectileClass;
 
 private:
 	// 몬스터 이름 데이터

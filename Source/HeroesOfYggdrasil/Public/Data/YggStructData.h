@@ -105,6 +105,7 @@ struct FAIData
 	GENERATED_BODY()
 	FAIData() {}
 	~FAIData() {}
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	FName EnemyName = FName("");
@@ -161,6 +162,22 @@ public:
 	double TraceSpeed = 600.0f;
 };
 
+USTRUCT(BlueprintType)
+struct FProjectileData
+{
+	GENERATED_BODY()
+	FProjectileData() {}
+	~FProjectileData() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double InitialSpeed = 2000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double MaxSpeed = 2000.0f;
+
+	
+};
 
 USTRUCT(BlueprintType)
 struct FPlayAIData
@@ -232,9 +249,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<UAnimInstance> AnimationBluePrint;
 
-
-
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<class AEnemyCharacter> SpawnClass;
 };
@@ -249,7 +263,11 @@ struct FProjectileDataRow : public FTableRowBase
 	~FProjectileDataRow() {}
 
 public:
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FProjectileData ProjectileData;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSoftObjectPtr<UStaticMesh> StaticMesh;
 };
 
 

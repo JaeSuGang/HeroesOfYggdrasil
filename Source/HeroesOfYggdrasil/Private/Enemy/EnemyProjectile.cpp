@@ -4,37 +4,39 @@
 #include "Enemy/EnemyProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Engine/DataTable.h"
 
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-    ArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArrowMesh"));
-    RootComponent = ArrowMesh;
-
     ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("EnemyProjectileMovement"));
-    ProjectileMovement->InitialSpeed = 2000.f;
-    ProjectileMovement->MaxSpeed = 2000.f;
-    ProjectileMovement->bRotationFollowsVelocity = true;
-    ProjectileMovement->bShouldBounce = false;
-
-    
-
+   
 }
 
 // Called when the game starts or when spawned
 void AEnemyProjectile::BeginPlay()
 {
-	Super::BeginPlay();
-	
+    Super::BeginPlay();
+    FProjectileDataRow* ProjectileDataRow = EnemyProjectileData->FindRow<FProjectileDataRow>(FName("Arrow"), nullptr);
+
+
+    ProjectileMovement->InitialSpeed = ProjectileDataRow->ProjectileData.InitialSpeed;
+    ProjectileMovement->MaxSpeed = ProjectileDataRow->ProjectileData.MaxSpeed;
+    ProjectileMovement->bRotationFollowsVelocity = true;
+    ProjectileMovement->bShouldBounce = false;
+
+    if (ProjectileDataRow != nullptr)
+    {
+        UStaticMesh* StaticMesh = ProjectileDataRow->StaticMesh.LoadSynchronous();
+        
+    }
 }
 
 // Called every frame
 void AEnemyProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 

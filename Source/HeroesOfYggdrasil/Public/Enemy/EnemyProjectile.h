@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Data/YggEnumData.h"
+#include "Data/YggStructData.h"
 #include "EnemyProjectile.generated.h"
 
 UCLASS()
@@ -24,8 +26,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = Projectile)
+	UPROPERTY(EditAnywhere, Category = "EnemyProjectile")
 	UStaticMeshComponent* ArrowMesh;
+
+	UPROPERTY(EditAnywhere)
+	UDataTable* EnemyProjectileData = nullptr;
 
 	UPROPERTY(EditAnywhere, Category = Movement)
 	class UProjectileMovementComponent* ProjectileMovement;
