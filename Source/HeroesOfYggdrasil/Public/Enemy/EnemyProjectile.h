@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Data/YggEnumData.h"
 #include "Data/YggStructData.h"
+#include "Player/YggHero.h"
 #include "EnemyProjectile.generated.h"
 
 UCLASS()
@@ -29,6 +30,9 @@ public:
 	{
 		return ProjectileMovement;
 	}
+	UFUNCTION()
+	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* DefualtSceneRoot;
@@ -41,4 +45,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Movement)
 	class UProjectileMovementComponent* ProjectileMovement;
+
+	UPROPERTY(VisibleAnywhere, Category = "Arrow", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class USphereComponent> ArrowCollision;
+
+	UPROPERTY(EditAnywhere)
+	float DestroyTime;
 };

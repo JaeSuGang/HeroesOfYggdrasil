@@ -72,7 +72,6 @@ void AEnemyCharacter::BeginPlay()
 
 	AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
 
-
 	AIData = NewObject<UAIDataObject>(this);
 	if (AIData != nullptr)
 	{
@@ -80,8 +79,6 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.SelfPawn = this;
 		AIData->PlayData.SelfAnimPawn = this;
 		AIData->PlayData.CurHP = FindData.AIData.MaxHP;
-
-		// AIData->PlayData.AttackAnimationCount = FindData.AttackAnimations.Num();
 		AIData->PlayData.OriginPos = GetActorLocation();
 		AIData->PlayData.OriginPos.Z = 0.0f;
 	}
