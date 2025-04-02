@@ -171,6 +171,7 @@ void AEnemyCharacter::AttackEnd()
 }
 
 
+// 궁수 화살 발사
 
 void AEnemyCharacter::SpawnAndFireArrow()
 {
@@ -203,4 +204,13 @@ void AEnemyCharacter::HideArrow()
 void AEnemyCharacter::RevealArrow()
 {
 	GetMesh()->UnHideBoneByName(FName("arrow_nock"));
+}
+
+
+
+// 저주술사 
+
+void AEnemyCharacter::SpawnPoisonedArea()
+{
+
 }

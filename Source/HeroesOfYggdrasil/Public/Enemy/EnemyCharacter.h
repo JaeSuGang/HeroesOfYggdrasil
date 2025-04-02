@@ -79,6 +79,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RevealArrow();
 
+	UFUNCTION(BlueprintCallable)
+	void SpawnPoisonedArea();
+
 protected:
 	virtual void BeginPlay() override;
 

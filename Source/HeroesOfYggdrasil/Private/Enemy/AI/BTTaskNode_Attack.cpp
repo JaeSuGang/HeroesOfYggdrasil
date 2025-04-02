@@ -25,10 +25,10 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	// 궁수면 화살 보이게
 	if (EnemyCharacter != nullptr)
 	{
-		FString str = EnemyCharacter->GetDataKey();
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
 		// 미니언 궁수
-		if (FString("Minion_Archer") == EnemyCharacter->GetDataKey())
+		if (FString("Minion_Archer") == DataKeyStr)
 		{
 			EnemyCharacter->RevealArrow();
 		}

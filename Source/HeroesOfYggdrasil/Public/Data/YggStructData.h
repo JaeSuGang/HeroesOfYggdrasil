@@ -144,6 +144,9 @@ public:
 	double AttackTime = 1.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double RangeAttackTime = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double AwaitTime = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")

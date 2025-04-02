@@ -29,8 +29,24 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	AActor* TargetActor = PlayAIData.TargetActor;
 	APawn* SelfActor = PlayAIData.SelfPawn;
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
 	AwaitTime -= _DeltaSeconds;
+	
+	if (EnemyCharacter != nullptr && AwaitTime <= PlayAIData.Data.RangeAttackTime)
+	{
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
+		
+		// 저주술사인 경우
+		if (FString("Minion_Witch") == DataKeyStr)
+		{
+			//EnemyCharacter->spawnrange();
+			return;
+		}
+	}
+
+	
+
 
 	if (AwaitTime < PlayAIData.Data.StandardZeroTime)
 	{

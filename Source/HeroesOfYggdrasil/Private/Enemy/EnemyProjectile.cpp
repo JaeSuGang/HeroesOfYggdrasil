@@ -30,8 +30,8 @@ AEnemyProjectile::AEnemyProjectile()
 void AEnemyProjectile::BeginPlay()
 {
     Super::BeginPlay();
-    FProjectileDataRow* ProjectileDataRow = EnemyProjectileData->FindRow<FProjectileDataRow>(FName("Arrow"), nullptr);
 
+    FProjectileDataRow* ProjectileDataRow = EnemyProjectileData->FindRow<FProjectileDataRow>(FName("Arrow"), nullptr);
 
     ProjectileMovement->InitialSpeed = ProjectileDataRow->ProjectileData.InitialSpeed;
     ProjectileMovement->MaxSpeed = ProjectileDataRow->ProjectileData.MaxSpeed;
@@ -82,6 +82,4 @@ void AEnemyProjectile::OverLap(UPrimitiveComponent* OverlappedComponent, AActor*
             ArrowCollision->Deactivate();
         }
     }
-
-    
 }
