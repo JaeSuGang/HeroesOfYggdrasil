@@ -66,6 +66,19 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float SkillRMaxCoolTime;
 
+	
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	FHeroSkillInfoRow SkillQInfo;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	FHeroSkillInfoRow SkillEInfo;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	FHeroSkillInfoRow SkillRInfo;
+
+
+
 	// 수정 필요.
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	int CurRollCount = 3;

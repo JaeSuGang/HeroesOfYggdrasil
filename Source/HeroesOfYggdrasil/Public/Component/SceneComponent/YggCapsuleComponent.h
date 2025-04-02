@@ -14,11 +14,8 @@ class HEROESOFYGGDRASIL_API UYggCapsuleComponent : public UCapsuleComponent
 {
 	GENERATED_BODY()
 public:
-	
-
-	
 	UFUNCTION(BlueprintCallable)
-	void CollisionOn();
+	virtual void CollisionOn();
 	UFUNCTION(BlueprintCallable)
-	void CollisionOff();
+	virtual void CollisionOff();
 };
