@@ -5,7 +5,6 @@
 
 #include "Net/UnrealNetwork.h"
 
-#include "Upgrade/Upgrades.h"
 
 void AMainGamePlayerState::ServerSetPlayerName_Implementation(const FString& name)
 {
@@ -23,11 +22,6 @@ void AMainGamePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 int AMainGamePlayerState::GetUpgradePoints() const
 {
 	return UpgradePoints;
-}
-
-UHeroUpgradeBase* AMainGamePlayerState::InstantiateHeroUpgrade(TSubclassOf<UHeroUpgradeBase> NewHeroUpgradeClass)
-{
-	return NewObject<UHeroUpgradeBase>(NewHeroUpgradeClass);
 }
 
 void AMainGamePlayerState::SetUpgradePoints_Implementation(int NewPoints)

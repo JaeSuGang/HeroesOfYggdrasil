@@ -37,16 +37,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int GetUpgradePoints() const;
 
-	UFUNCTION(BlueprintCallable)
-	UHeroUpgradeBase* InstantiateHeroUpgrade(TSubclassOf<UHeroUpgradeBase> NewHeroUpgradeClass);
-
 public:
 	UPROPERTY(BlueprintAssignable, BlueprintReadWrite)
 	FOnUpgradePointsChangedDelegate ClientDelegate_OnUpgradePointsChanged;
-
-	/* Only Valid To Server */
-	UPROPERTY()
-	TArray<UHeroUpgradeBase*> AvailableHeroUpgrades;
 
 protected:
 
