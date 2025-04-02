@@ -62,10 +62,10 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 
 	if (AttackTime < PlayAIData.Data.StandardZeroTime)
 	{
-		FString str = EnemyCharacter->GetDataKey();
+		FString DataKeyString = EnemyCharacter->GetDataKey();
 		
 		// 미니언 궁수
-		if (FString("Minion_Archer") == EnemyCharacter->GetDataKey())
+		if (FString("Minion_Archer") == DataKeyString)
 		{
 			EnemyCharacter->SpawnAndFireArrow();
 			EnemyCharacter->HideArrow();
