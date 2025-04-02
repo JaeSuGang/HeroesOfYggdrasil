@@ -44,7 +44,7 @@ void AEnemyCharacter::SpawnAndFireArrow()
 		return;
 	}
 
-	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
+	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
 	FRotator SpawnRotation = GetActorRotation();
 
 	FActorSpawnParameters SpawnParams;
@@ -55,7 +55,7 @@ void AEnemyCharacter::SpawnAndFireArrow()
 	if (Arrow != nullptr)
 	{
 		FVector LaunchDirection = GetActorForwardVector();
-		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 1500.f;
+		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 2000.f;
 	}
 }
 

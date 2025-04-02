@@ -11,9 +11,10 @@ AEnemyProjectile::AEnemyProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+    DefualtSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefualtSceneRoot"));
     ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("EnemyProjectileMovement"));
     ArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArrowMesh"));
-    RootComponent = ArrowMesh;
+    ArrowMesh->SetupAttachment(DefualtSceneRoot);
 }
 
 // Called when the game starts or when spawned
@@ -32,9 +33,12 @@ void AEnemyProjectile::BeginPlay()
     if (ProjectileDataRow != nullptr)
     {
         UStaticMesh* StaticMesh = ProjectileDataRow->StaticMesh.LoadSynchronous();
-        ArrowMesh->SetStaticMesh(StaticMesh);
-        ArrowMesh->SetMobility(EComponentMobility::Movable);
-        ArrowMesh->SetSimulatePhysics(false);
+        if (StaticMesh != nullptr)
+        {
+            ArrowMesh->SetStaticMesh(StaticMesh);
+            ArrowMesh->SetMobility(EComponentMobility::Movable);
+            ArrowMesh->SetSimulatePhysics(false);
+        }
     }
 }
 

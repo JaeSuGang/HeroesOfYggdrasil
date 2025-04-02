@@ -101,6 +101,8 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
 	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
+
+
 };
 
 

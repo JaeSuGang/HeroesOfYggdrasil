@@ -30,11 +30,14 @@ public:
 		return ProjectileMovement;
 	}
 protected:
-	UPROPERTY(EditAnywhere, Category = "EnemyProjectile")
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* DefualtSceneRoot;
+
+	UPROPERTY(VisibleAnywhere, Category = "Arrow", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ArrowMesh;
 
 	UPROPERTY(EditAnywhere)
-	UDataTable* EnemyProjectileData = nullptr;
+	UDataTable* EnemyProjectileData;
 
 	UPROPERTY(EditAnywhere, Category = Movement)
 	class UProjectileMovementComponent* ProjectileMovement;

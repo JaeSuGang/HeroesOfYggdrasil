@@ -171,10 +171,13 @@ struct FProjectileData
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double InitialSpeed = 2000.0f;
+	double InitialSpeed = 3000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double MaxSpeed = 2000.0f;
+	double MaxSpeed = 3000.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double InitialLocationFloat = 100.0f;
 
 	
 };
