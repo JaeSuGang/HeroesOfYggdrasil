@@ -28,6 +28,9 @@
 #include "Enemy/EnemyAIController.h"
 #include "Enemy/EnemyProjectile.h"
 
+#include "Components/WidgetComponent.h"
+#include "MainGame/UI/YggMHPBarUserWidget.h"
+
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -35,6 +38,11 @@ AEnemyCharacter::AEnemyCharacter()
 	EnemyAttributeComponent = Cast<UEnemyAttributeComponent>(CharacterAttributeComponent);
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AEnemyAIController::StaticClass();
+	
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(GetMesh());
+	WidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 void AEnemyCharacter::SpawnAndFireArrow()
@@ -145,6 +153,12 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
 
+	
+	WidgetComponent->SetWidgetClass(MHPBarUserWidgetClass);
+
+
+	
+	
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
