@@ -76,8 +76,9 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 
 
 		ChangeState(_OwnerComp, EEnemyAIState::Await);
+		AttackTime = PlayAIData.Data.AttackTime;
+		return;
 	}
-
 }
 
 void UBTTaskNode_Attack::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)

@@ -30,28 +30,16 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	AActor* TargetActor = PlayAIData.TargetActor;
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	
+	EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
 
 	AwaitTime -= _DeltaSeconds;
-	
-	if (EnemyCharacter != nullptr && AwaitTime <= PlayAIData.Data.RangeAttackTime)
-	{
-		FString DataKeyStr = EnemyCharacter->GetDataKey();
-		
-		// 저주술사인 경우
-		if (FString("Minion_Witch") == DataKeyStr)
-		{
-			//EnemyCharacter->spawnrange();
-			return;
-		}
-	}
-
-	
-
 
 	if (AwaitTime < PlayAIData.Data.StandardZeroTime)
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Attack);
 		AwaitTime = PlayAIData.Data.AwaitTime;
+		return;
 	}
 
 
@@ -65,6 +53,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 		if (Size >= PlayAIData.Data.AttackRange)
 		{
 			ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
+			return;
 		}
 
 		// 추적 범위를 넘어갔을 때
