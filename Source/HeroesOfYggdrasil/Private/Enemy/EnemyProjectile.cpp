@@ -67,13 +67,21 @@ void AEnemyProjectile::Tick(float DeltaTime)
 
 void AEnemyProjectile::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    AYggHero* Hero = Cast<AYggHero>(OtherActor);
-    if (Hero != nullptr)
+    if (IsValid(OtherActor))
     {
-        ArrowMesh->AttachToComponent(Hero->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
-        ProjectileMovement->StopMovementImmediately();
-        ArrowCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-        ArrowCollision->Deactivate();
-        ArrowMesh->SetSimulatePhysics(false);
+        AYggHero* Hero = Cast<AYggHero>(OtherActor);
+        
+        if (Hero != nullptr)
+        {
+            ArrowMesh->AttachToComponent(Hero->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
+            ArrowMesh->SetSimulatePhysics(false);
+
+            ProjectileMovement->StopMovementImmediately();
+
+            ArrowCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            ArrowCollision->Deactivate();
+        }
     }
+
+    
 }

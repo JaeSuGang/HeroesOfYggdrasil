@@ -73,7 +73,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnAndFireArrow();
 
-	
+	UFUNCTION(BlueprintCallable)
+	void HideArrow();
+
+	UFUNCTION(BlueprintCallable)
+	void RevealArrow();
 
 protected:
 	virtual void BeginPlay() override;

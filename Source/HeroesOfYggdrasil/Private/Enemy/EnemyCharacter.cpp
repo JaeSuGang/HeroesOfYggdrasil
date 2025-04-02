@@ -37,27 +37,6 @@ AEnemyCharacter::AEnemyCharacter()
 	AIControllerClass = AEnemyAIController::StaticClass();
 }
 
-void AEnemyCharacter::SpawnAndFireArrow()
-{
-	if (ProjectileClass == nullptr)
-	{
-		return;
-	}
-
-	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
-	FRotator SpawnRotation = GetActorRotation();
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-
-	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-
-	if (Arrow != nullptr)
-	{
-		FVector LaunchDirection = GetActorForwardVector();
-		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 2000.f;
-	}
-}
 
 void AEnemyCharacter::BeginPlay()
 {
@@ -189,4 +168,39 @@ void AEnemyCharacter::AttackEnd()
 	{
 		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	}
+}
+
+
+
+void AEnemyCharacter::SpawnAndFireArrow()
+{
+	if (ProjectileClass == nullptr)
+	{
+		return;
+	}
+
+	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (Arrow != nullptr)
+	{
+		FVector LaunchDirection = GetActorForwardVector();
+		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 2000.f;
+	}
+}
+
+void AEnemyCharacter::HideArrow()
+{
+	GetMesh()->HideBoneByName(FName("arrow_nock"), EPhysBodyOp::PBO_None);
+
+}
+
+void AEnemyCharacter::RevealArrow()
+{
+	GetMesh()->UnHideBoneByName(FName("arrow_nock"));
 }

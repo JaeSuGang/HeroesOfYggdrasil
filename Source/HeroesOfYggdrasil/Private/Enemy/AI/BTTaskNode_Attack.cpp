@@ -11,13 +11,27 @@ UBTTaskNode_Attack::UBTTaskNode_Attack()
 void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 {
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-
+	APawn* SelfActor = PlayAIData.SelfPawn;
 	if (nullptr != PlayAIData.SelfAnimPawn)
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
 	AttackTime = PlayAIData.Data.AttackTime;
+	
+
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	
+	// 궁수면 화살 보이게
+	if (EnemyCharacter != nullptr)
+	{
+		FString str = EnemyCharacter->GetDataKey();
+		// 미니언 궁수
+		if (FString("Minion_Archer") == EnemyCharacter->GetDataKey())
+		{
+			EnemyCharacter->RevealArrow();
+		}
+	}
 }
 
 void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -41,10 +55,13 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	if (AttackTime < PlayAIData.Data.StandardZeroTime)
 	{
 		FString str = EnemyCharacter->GetDataKey();
+		// 미니언 궁수
 		if (FString("Minion_Archer") == EnemyCharacter->GetDataKey())
 		{
 			EnemyCharacter->SpawnAndFireArrow();
+			EnemyCharacter->HideArrow();
 		}
+
 		ChangeState(_OwnerComp, EEnemyAIState::Await);
 	}
 

@@ -41,9 +41,12 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 
 
 	// SelfActor->AddMovementInput(TargetDir);
-	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
-	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.ApproachSpeed;
-
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	
+	EnemyCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.ApproachSpeed;
+	
+	
+	
 
 	if (TargetDir.Size() <= PlayAIData.Data.AttackRange || FName("BP_Yggdrasil") == PlayAIData.TargetActor->GetName().Left(12))
 	{
