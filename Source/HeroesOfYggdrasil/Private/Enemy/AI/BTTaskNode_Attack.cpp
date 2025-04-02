@@ -26,12 +26,20 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	if (EnemyCharacter != nullptr)
 	{
 		FString str = EnemyCharacter->GetDataKey();
+
 		// 미니언 궁수
 		if (FString("Minion_Archer") == EnemyCharacter->GetDataKey())
 		{
 			EnemyCharacter->RevealArrow();
 		}
+
+		// 저주술사
+
+
 	}
+
+
+
 }
 
 void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -55,12 +63,17 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	if (AttackTime < PlayAIData.Data.StandardZeroTime)
 	{
 		FString str = EnemyCharacter->GetDataKey();
+		
 		// 미니언 궁수
 		if (FString("Minion_Archer") == EnemyCharacter->GetDataKey())
 		{
 			EnemyCharacter->SpawnAndFireArrow();
 			EnemyCharacter->HideArrow();
 		}
+
+		// 저주술사
+
+
 
 		ChangeState(_OwnerComp, EEnemyAIState::Await);
 	}
