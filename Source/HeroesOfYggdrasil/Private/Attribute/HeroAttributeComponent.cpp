@@ -62,10 +62,15 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			HPRegen = Data->HPRegen;
 			MaxMoveSpeed = Data->MaxMoveSpeed;
 			JumpPower = Data->JumpRate;
+			AttackPoints = Data->AttPower;
 			AttackSpeedRate = Data->AttackSpeedRate;
 			CriticalChance = Data->CriticalChance;
 			CriticalDamageRate = Data->CriticalDamageRate;
 		
+			SkillQInfo = Data->SkillQInfo;
+			SkillEInfo = Data->SkillEInfo;
+			SkillRInfo = Data->SkillRInfo;
+
 			SkillQCurCoolTime = 0.0f;
 			SkillECurCoolTime = 0.0f;
 			SkillRCurCoolTime = 0.0f;
