@@ -21,12 +21,11 @@
 #include "AIController.h"
 
 #include "Enemy/EnemyGameInstance.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "Attribute/EnemyAttributeComponent.h"
 #include "MainGame/UI/YggMiniMapIconActor.h"
 #include "Enemy/EnemyAIController.h"
 #include "Enemy/EnemyProjectile.h"
+#include "Enemy/EnemyRangeAttack.h"
+#include "Enemy/EnemyWarningRange.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -37,27 +36,6 @@ AEnemyCharacter::AEnemyCharacter()
 	AIControllerClass = AEnemyAIController::StaticClass();
 }
 
-void AEnemyCharacter::SpawnAndFireArrow()
-{
-	if (ProjectileClass == nullptr)
-	{
-		return;
-	}
-
-	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
-	FRotator SpawnRotation = GetActorRotation();
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-
-	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-
-	if (Arrow != nullptr)
-	{
-		FVector LaunchDirection = GetActorForwardVector();
-		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 2000.f;
-	}
-}
 
 void AEnemyCharacter::BeginPlay()
 {
@@ -190,3 +168,122 @@ void AEnemyCharacter::AttackEnd()
 		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	}
 }
+
+
+// 궁수 화살 발사
+
+void AEnemyCharacter::SpawnAndFireArrow()
+{
+	if (ProjectileClass == nullptr)
+	{
+		return;
+	}
+
+	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (Arrow != nullptr)
+	{
+		FVector LaunchDirection = GetActorForwardVector();
+		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 2000.f;
+	}
+}
+
+void AEnemyCharacter::HideArrow()
+{
+	GetMesh()->HideBoneByName(FName("arrow_nock"), EPhysBodyOp::PBO_None);
+
+}
+
+void AEnemyCharacter::RevealArrow()
+{
+	GetMesh()->UnHideBoneByName(FName("arrow_nock"));
+}
+
+
+
+// 저주술사 
+
+
+// 위험 범위
+void AEnemyCharacter::SpawnWarningRange(AActor* _Actor)
+{
+	SpawnWarningOutRange(_Actor);
+	SpawnWarningInRange(_Actor);
+}
+
+void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
+{
+	if (!WarningOutRangeClass || !_Actor)
+		return;
+
+	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
+	FVector SpawnLocation = _Actor->GetActorLocation();
+
+	if (Capsule)
+	{
+		float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+		SpawnLocation -= FVector(0, 0, HalfHeight);
+	}
+
+	FRotator SpawnRotation = _Actor->GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	GetWorld()->SpawnActor<AEnemyWarningRange>(
+		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
+}
+
+void AEnemyCharacter::SpawnWarningInRange(AActor* _Actor)
+{
+	if (!WarningInRangeClass || !_Actor)
+		return;
+
+	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
+	FVector SpawnLocation = _Actor->GetActorLocation();
+
+	if (Capsule)
+	{
+		float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+		SpawnLocation -= FVector(0, 0, HalfHeight);
+	}
+
+	FRotator SpawnRotation = _Actor->GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	
+	WarningInRangeClass = GetWorld()->SpawnActor<AEnemyWarningRange>(AEnemyWarningRange::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
+}
+
+// 공격
+
+void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
+{
+	if (RangeAttackClass == nullptr)
+	{
+		return;
+	}
+
+	FVector SpawnLocation = GetActorLocation() + GetActorRightVector() * -50.0f + GetActorUpVector() * 50.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyRangeAttack* RangeAttack = GetWorld()->SpawnActor<AEnemyRangeAttack>(RangeAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (RangeAttack != nullptr)
+	{
+		const float Speed = 2000.f;
+		FVector Direction = (_TargetLocation - SpawnLocation).GetSafeNormal();
+		RangeAttack->GetProjectileMovement()->Velocity = Direction * Speed;
+	}
+}
+

@@ -2,6 +2,8 @@
 
 
 #include "Enemy/AI/BTTaskNode_Attack.h"
+#include "Enemy/EnemyWarningRange.h"
+
 
 UBTTaskNode_Attack::UBTTaskNode_Attack()
 {
@@ -11,6 +13,11 @@ UBTTaskNode_Attack::UBTTaskNode_Attack()
 void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 {
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	APawn* SelfActor = PlayAIData.SelfPawn;
+	AActor* TargetActor = PlayAIData.TargetActor;
+	TargetRangeLocation = TargetActor->GetActorLocation();
+
+
 
 	if (nullptr != PlayAIData.SelfAnimPawn)
 	{
@@ -18,6 +25,26 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	}
 
 	AttackTime = PlayAIData.Data.AttackTime;
+
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	
+	// 궁수면 화살 보이게
+	if (EnemyCharacter != nullptr)
+	{
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
+
+		// 미니언 궁수
+		if (FString("Minion_Archer") == DataKeyStr)
+		{
+			EnemyCharacter->RevealArrow();
+		}
+
+		// 저주술사
+		if (FString("Minion_Witch") == DataKeyStr)
+		{
+			EnemyCharacter->SpawnWarningRange(TargetActor);
+		}
+	}
 }
 
 void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -31,6 +58,18 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
+
+	FString DataKeyString = EnemyCharacter->GetDataKey();
+
+	// 저주술사
+	if (FString("Minion_Witch") == DataKeyString)
+	{
+		if (EnemyCharacter->GetWarningIntRangeClass() != nullptr)
+		{
+			EnemyCharacter->GetWarningIntRangeClass()->UpdateRange(_DeltaSeconds);
+		}
+	}
+
 	if (SelfController)
 	{
 		SelfController->StopMovement();
@@ -40,14 +79,24 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 
 	if (AttackTime < PlayAIData.Data.StandardZeroTime)
 	{
-		FString str = EnemyCharacter->GetDataKey();
-		if (FString("Minion_Archer") == EnemyCharacter->GetDataKey())
+		
+		
+		// 미니언 궁수
+		if (FString("Minion_Archer") == DataKeyString)
 		{
 			EnemyCharacter->SpawnAndFireArrow();
+			EnemyCharacter->HideArrow();
 		}
-		ChangeState(_OwnerComp, EEnemyAIState::Await);
-	}
+		// 저주술사
+		if (FString("Minion_Witch") == DataKeyString)
+		{
+			EnemyCharacter->ThrowPoisonedBall(TargetRangeLocation);
+		}
 
+		ChangeState(_OwnerComp, EEnemyAIState::Await);
+		AttackTime = PlayAIData.Data.AttackTime;
+		return;
+	}
 }
 
 void UBTTaskNode_Attack::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)

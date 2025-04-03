@@ -41,14 +41,30 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 
 
 	// SelfActor->AddMovementInput(TargetDir);
-	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
-	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.ApproachSpeed;
-
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	
+	EnemyCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.ApproachSpeed;
+	
+	
+	
 
 	if (TargetDir.Size() <= PlayAIData.Data.AttackRange || FName("BP_Yggdrasil") == PlayAIData.TargetActor->GetName().Left(12))
 	{
-		ChangeState(_OwnerComp, EEnemyAIState::Attack);
-		return;
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
+
+		// 저주술사인 경우
+		if (FString("Minion_Witch") == DataKeyStr)
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::Await);
+			return;
+		}
+		// 일반적인 캐릭터인 경우
+		else
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::Attack);
+			return;
+		}
+		
 	}
 
 	float Size = TargetDir.Size();
