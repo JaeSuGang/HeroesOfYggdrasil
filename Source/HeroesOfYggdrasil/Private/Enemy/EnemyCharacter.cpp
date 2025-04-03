@@ -31,7 +31,6 @@ AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	CharacterAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("CharacterAttributeComponent"));
-	EnemyAttributeComponent = Cast<UEnemyAttributeComponent>(CharacterAttributeComponent);
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AEnemyAIController::StaticClass();
 }
@@ -103,12 +102,12 @@ void AEnemyCharacter::BeginPlay()
 
 
 	// AttributeComponent 세팅
-	if (EnemyAttributeComponent != nullptr && Con != nullptr)
+	if (CharacterAttributeComponent != nullptr && Con != nullptr)
 	{
-		//EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
-		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
-		EnemyAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
-		EnemyAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
+		CharacterAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
+		CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
+		CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
+		CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 	}
 
 	// 충돌 설정
@@ -149,7 +148,7 @@ void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
 
 
-	EnemyAttributeComponent->Server_TakeDamage(HeroAttackPoints);
+	CharacterAttributeComponent->Server_TakeDamage(HeroAttackPoints);
 	AIData->PlayData.CurHP -= HeroAttackPoints;
 }
 

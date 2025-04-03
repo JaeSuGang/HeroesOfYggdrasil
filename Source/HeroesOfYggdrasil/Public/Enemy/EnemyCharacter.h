@@ -49,16 +49,6 @@ public:
 		DataKey = _MonsterDataKey;
 	}
 
-	void SetEnemyAttributeComponent(UEnemyAttributeComponent* _EnemyAttributeComponent)
-	{
-		EnemyAttributeComponent = _EnemyAttributeComponent;
-	}
-
-	UEnemyAttributeComponent* GetEnemyAttributeComponent()
-	{
-		return EnemyAttributeComponent;
-	}
-
 	UFUNCTION(BlueprintCallable)
 	double GetCurHp()
 	{
@@ -102,9 +92,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "YggData", meta = (AllowPrivateAccess = "true"))
-	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class AEnemyProjectile> ProjectileClass;
 
