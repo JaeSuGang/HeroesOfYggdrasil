@@ -33,6 +33,9 @@ public:
 	UFUNCTION()
 	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+public:
+	
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* DefualtSceneRoot;
@@ -40,14 +43,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Arrow", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ArrowMesh;
 
+	UPROPERTY(VisibleAnywhere, Category = "Arrow", meta = (AllowPrivateAccess = "true"))
+	UYggAttackCapsuleComponent* ArrowCollision;
+
 	UPROPERTY(EditAnywhere)
 	UDataTable* EnemyProjectileData;
 
 	UPROPERTY(EditAnywhere, Category = Movement)
 	class UProjectileMovementComponent* ProjectileMovement;
-
-	UPROPERTY(VisibleAnywhere, Category = "Arrow", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class USphereComponent> ArrowCollision;
 
 	UPROPERTY(EditAnywhere)
 	float DestroyTime;

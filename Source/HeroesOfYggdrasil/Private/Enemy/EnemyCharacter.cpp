@@ -49,7 +49,6 @@ AEnemyCharacter::AEnemyCharacter()
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
 		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
 		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
-
 	}
 }
 
