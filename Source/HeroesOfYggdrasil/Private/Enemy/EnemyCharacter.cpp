@@ -118,10 +118,23 @@ void AEnemyCharacter::BeginPlay()
 		CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
 		CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
 		CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
+		
+		// 위젯
+		MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
+	
+		if (!MHPBarUserWidget)
+			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+		MHPBarUserWidget->SetAttachedCharacter(this);
+		WidgetComponent->SetWidget(MHPBarUserWidget);
 	}
 
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
+	if (CharacterAttributeComponent != nullptr)
+	{
+		CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
+	}
+
 
 	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
@@ -129,13 +142,7 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
 
-	MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
-	if (!MHPBarUserWidget)
-		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-	MHPBarUserWidget->SetAttachedCharacter(this);
-	WidgetComponent->SetWidget(MHPBarUserWidget);
 	
-	EnemyAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
 	
 }
 
@@ -168,6 +175,7 @@ void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 	CharacterAttributeComponent->Server_TakeDamage(HeroAttackPoints);
 	AIData->PlayData.CurHP -= HeroAttackPoints;
+	//MHPBarUserWidget->UpdateHPBar(HeroAttackPoints);
 }
 
 void AEnemyCharacter::AttackStart()

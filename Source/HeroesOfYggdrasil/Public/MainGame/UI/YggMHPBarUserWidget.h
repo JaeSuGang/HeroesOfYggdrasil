@@ -8,7 +8,7 @@
 
 class UProgressBar;
 class AEnemyCharacter;
-class UEnemyAttributeComponent;
+class UCharacterAttributeComponent;
 
 /**
  * 
@@ -32,7 +32,7 @@ public:
 	AEnemyCharacter* EnemyCharacter;
 	
 	UPROPERTY()
-	UEnemyAttributeComponent* CAC;
+	UCharacterAttributeComponent* CAC;
 	
 
 protected:

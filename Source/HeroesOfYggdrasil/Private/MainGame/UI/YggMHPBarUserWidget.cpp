@@ -51,6 +51,9 @@ void UYggMHPBarUserWidget::UpdateHPBar(float HP)
 
 void UYggMHPBarUserWidget::SetAttachedCharacter(AActor* Character)
 {
-    EnemyCharacter = Cast<AEnemyCharacter>(Character);
-    CAC = EnemyCharacter->GetEnemyAttributeComponent();
+    if (Character != nullptr)
+    {
+        EnemyCharacter = Cast<AEnemyCharacter>(Character);
+        CAC = EnemyCharacter->GetAttributeComponent();
+    }
 }
