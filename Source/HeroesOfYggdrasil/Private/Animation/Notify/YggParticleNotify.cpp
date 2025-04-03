@@ -6,8 +6,12 @@
 #include "Kismet/GameplayStatics.h"
 
 // Particle
+#include "Particles/Emitter.h"
+#include "Particles/ParticleEmitter.h"
 #include "Particles/ParticleSystem.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleLODLevel.h"
+#include "Particles/ParticleModuleRequired.h"
 
 // Niagara
 #include "NiagaraComponent.h"
@@ -57,10 +61,9 @@ void UYggParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 		// Enemy Duration 가져오기.
 	}
 
-	// YggParticleNotify.cpp
 	if (PSTemplate)
 	{
-		UParticleSystemComponent* PSC = UGameplayStatics::SpawnEmitterAttached(
+		UParticleSystemComponent* PSComp = UGameplayStatics::SpawnEmitterAttached(
 			PSTemplate,
 			MeshComp,
 			NAME_None,
@@ -70,47 +73,34 @@ void UYggParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 			true
 		);
 
-		if (PSC && DelayedPSTemplate) // DelayedPSTemplate이 유효한지 확인
+		DisableOtherEmitters(PSComp, Emitters);
+
+		FTimerHandle TimerHandle;
+		PSComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, PSComp]()
 		{
-			// 2초 후 15초 지속 파티클 스폰
-			FTimerHandle TimerHandle;
-			PSC->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, MeshComp]()
-			{
-				if (IsValid(MeshComp))
-				{
-					UGameplayStatics::SpawnEmitterAttached(
-						DelayedPSTemplate, // 15초 파티클
-						MeshComp,
-						NAME_None,
-						FVector::ZeroVector,
-						FRotator::ZeroRotator,
-						EAttachLocation::SnapToTarget,
-						true
-					);
-				}
-			}, 2.0f, false); // 2초 딜레이
-		}
+			EndParticle(PSComp, Emitters);
+		}, Duration, false);
 	}
 	else if (NSTemplate)
 	{
-		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
-			NSTemplate,            // 사용할 나이아가라 템플릿
-			MeshComp,              // 부착 대상
-			NAME_None,             // 소켓 이름 (필요 시 변경)
-			FVector::ZeroVector,   // 상대 위치
-			FRotator::ZeroRotator, // 상대 회전
-			EAttachLocation::SnapToTarget,
-			true                   // 인스턴스화 후 자동 파괴
-		);
+		//UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+		//	NSTemplate,            // 사용할 나이아가라 템플릿
+		//	MeshComp,              // 부착 대상
+		//	NAME_None,             // 소켓 이름 (필요 시 변경)
+		//	FVector::ZeroVector,   // 상대 위치
+		//	FRotator::ZeroRotator, // 상대 회전
+		//	EAttachLocation::SnapToTarget,
+		//	true                   // 인스턴스화 후 자동 파괴
+		//);
 
-		if (NiagaraComp)
-		{
-			FTimerHandle TimerHandle;
-			NiagaraComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, NiagaraComp]()
-			{
-				NiagaraComp->SetFloatParameter(FName("EmitterDuration"), this->Duration);
-			}, DelayTime, false);
-		}
+		//if (NiagaraComp)
+		//{
+		//	FTimerHandle TimerHandle;
+		//	NiagaraComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, NiagaraComp]()
+		//	{
+		//		NiagaraComp->SetFloatParameter(FName("EmitterDuration"), this->Duration);
+		//	}, DelayTime, false);
+		//}
 	}
 }
 
@@ -147,3 +137,63 @@ void UYggParticleNotify::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	}
 }
 #endif
+
+void UYggParticleNotify::DisableOtherEmitters(UParticleSystemComponent* PSComp, const TArray<FString>& EmittersToDisable)
+{
+	if (!IsValid(PSComp) || !IsValid(PSComp->Template)) return;
+
+	// PSComp의 템플릿에서 각 Emitter를 순회합니다.
+	for (UParticleEmitter* Emitter : PSComp->Template->Emitters)
+	{
+		if (!Emitter)
+		{
+			continue;
+		}
+
+		FName EmitterFName = Emitter->GetEmitterName();
+
+		// EmittersToDisable에 포함되어 있다면 활성화, 아니면 비활성화.
+		bool bShouldEnable = EmittersToDisable.Contains(EmitterFName.ToString());
+		PSComp->SetEmitterEnable(EmitterFName, bShouldEnable);
+	}
+}
+
+void UYggParticleNotify::EndParticle(UParticleSystemComponent* PSComp, const TArray<FString>& EmittersToDisable)
+{
+	if (!IsValid(PSComp) || !IsValid(PSComp->Template)) return;
+
+	float ActiveEmitterDuration = 0.0f;
+
+	// PSComp의 템플릿에서 각 Emitter를 순회.
+	for (UParticleEmitter* Emitter : PSComp->Template->Emitters)
+	{
+		if (!Emitter)
+		{
+			continue;
+		}
+
+		FName EmitterFName = Emitter->GetEmitterName();
+
+		// EmittersToDisable에 포함되어 있다면 비활성화, 아니면 활성화.
+		bool bShouldEnable = !EmittersToDisable.Contains(EmitterFName.ToString());
+		PSComp->SetEmitterEnable(EmitterFName, bShouldEnable);
+
+		// 활성화 되어있는 Emitter의 LODLevel 0의 EmitterDuration을 Get.
+		if (bShouldEnable && Emitter->LODLevels.Num() > 0)
+		{
+			UParticleLODLevel* LODLevel = Emitter->LODLevels[0];
+			if (LODLevel && LODLevel->RequiredModule)
+			{
+				float GettedDuration = LODLevel->RequiredModule->EmitterDuration;
+				ActiveEmitterDuration = FMath::Max(ActiveEmitterDuration, GettedDuration);
+			}
+		}
+
+		// ActiveEmitterDuration이후로 종료.
+		FTimerHandle TimerHandle;
+		PSComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [EmitterFName, PSComp]()
+		{
+			PSComp->SetEmitterEnable(EmitterFName, false);
+		}, ActiveEmitterDuration, false);
+	}
+}

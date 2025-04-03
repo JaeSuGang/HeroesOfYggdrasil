@@ -33,22 +33,23 @@ class HEROESOFYGGDRASIL_API UYggParticleNotify : public UAnimNotify
 	
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
+	void DisableOtherEmitters(UParticleSystemComponent* PSComp, const TArray<FString>& EmittersToDisable);
+	void EndParticle(UParticleSystemComponent* PSComp, const TArray<FString>& EmittersToDisable);
+
+
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Particle System"))
-	TObjectPtr<UParticleSystem> DelayedPSTemplate;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Particle System"))
 	TObjectPtr<UParticleSystem> PSTemplate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Niagara System", ToolTip = "The niagara system to spawn for the notify state"))
 	TObjectPtr<UNiagaraSystem> NSTemplate;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem")
-	float DelayTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Emitters"))
+	TArray<FString> Emitters;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem")
 	float Duration;
