@@ -111,7 +111,7 @@ private:
 	UWidgetComponent* WidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
-	UYggMHPBarUserWidget* WidgetInstance;
+	UYggMHPBarUserWidget* MHPBarUserWidget;
 };
 
 

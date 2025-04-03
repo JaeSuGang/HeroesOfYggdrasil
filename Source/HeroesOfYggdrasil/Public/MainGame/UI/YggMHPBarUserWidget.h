@@ -8,6 +8,7 @@
 
 class UProgressBar;
 class AEnemyCharacter;
+class UEnemyAttributeComponent;
 
 /**
  * 
@@ -29,16 +30,10 @@ public:
 
 	UPROPERTY()
 	AEnemyCharacter* EnemyCharacter;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Owner")
-	AActor* OwningActor;
-
-	void SetOwningActor(AActor* NewOwner) { OwningActor = NewOwner; }
-	class UWidgetComponent* GetOwningWidgetComponent();
-	AActor* GetOwningActorFromWidget(UUserWidget* Widget);
-
-public:
-	void Test();
+	
+	UPROPERTY()
+	UEnemyAttributeComponent* CAC;
+	
 
 protected:
 	UPROPERTY(meta = (BindWidget))

@@ -30,6 +30,7 @@
 
 #include "Components/WidgetComponent.h"
 #include "MainGame/UI/YggMHPBarUserWidget.h"
+#include "MainGame/UI/MainGameHUD.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -135,13 +136,16 @@ void AEnemyCharacter::BeginPlay()
 
 
 
+
 	// AttributeComponent 세팅
 	if (EnemyAttributeComponent != nullptr && Con != nullptr)
 	{
-		//EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
+		EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
 		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
 		EnemyAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
 		EnemyAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
+
+
 	}
 
 	// 충돌 설정
@@ -153,11 +157,13 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
 
+	MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
+	if (!MHPBarUserWidget)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+	MHPBarUserWidget->SetAttachedCharacter(this);
+	WidgetComponent->SetWidget(MHPBarUserWidget);
 	
-	WidgetComponent->SetWidgetClass(MHPBarUserWidgetClass);
-
-
-	
+	EnemyAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
 	
 }
 

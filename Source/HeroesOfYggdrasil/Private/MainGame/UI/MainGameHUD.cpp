@@ -19,6 +19,8 @@
 #include "MainGame/StageManager.h"
 #include "Player/YggHero.h"
 
+#include "MainGame/UI/YggMHPBarUserWidget.h"
+
 void AMainGameHUD::BeginPlay()
 {
 	Super::BeginPlay();
