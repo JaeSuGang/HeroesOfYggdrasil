@@ -11,28 +11,50 @@
  * 
  */
 
+
 UENUM(BlueprintType)
-enum class EAttackType : uint8
+enum class EDamageType :uint8
 {
 	Normal UMETA(DisplayName = "Normal"),
-	SkillQ UMETA(DisplayName = "SkillQ"),
-	SkillE UMETA(DisplayName = "SkillE"),
-	SkillR UMETA(DisplayName = "SkillR")
+	Tick UMETA(DisplayName = "Tick"),
 };
 
-UCLASS()
+UENUM(BlueprintType)
+enum class ECharacterType :uint8
+{
+	Hero UMETA(DisplayName = "Hero"),
+	Enemy UMETA(DisplayName = "Enemy"),
+};
+
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class HEROESOFYGGDRASIL_API UYggAttackCapsuleComponent : public UYggCapsuleComponent
 {
 	GENERATED_BODY()
 public:
+	UYggAttackCapsuleComponent();
+	virtual void BeginPlay() override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	UFUNCTION()
 	virtual void OverLapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	virtual void OverLapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	
-	virtual void BeginPlay() override;
-
 	virtual void CollisionOn() override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EAttackType AttackType;
+	float Coefficient;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> OverlappedActors;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EDamageType DamageType;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ECharacterType CharacterType;
+
+	float CurTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DelayTime;
 };
