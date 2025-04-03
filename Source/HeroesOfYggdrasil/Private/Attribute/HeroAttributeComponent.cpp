@@ -67,6 +67,10 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			CriticalChance = Data->CriticalChance;
 			CriticalDamageRate = Data->CriticalDamageRate;
 		
+			SkillQInfo = Data->SkillQInfo;
+			SkillEInfo = Data->SkillEInfo;
+			SkillRInfo = Data->SkillRInfo;
+
 			SkillQCurCoolTime = 0.0f;
 			SkillECurCoolTime = 0.0f;
 			SkillRCurCoolTime = 0.0f;
@@ -74,10 +78,12 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			SkillEMaxCoolTime = Data->SkillEInfo.CoolTime;
 			SkillRMaxCoolTime = Data->SkillRInfo.CoolTime;
 
-			SkillQInfo = Data->SkillQInfo;
-			SkillEInfo = Data->SkillEInfo;
-			SkillRInfo = Data->SkillRInfo;
-		
+			SkillQCurContinueTime = 0.0f;
+			SkillECurContinueTime = 0.0f;
+			SkillRCurContinueTime = 0.0f;
+			SkillQMaxContinueTime = Data->SkillQInfo.ContinueTime;
+			SkillEMaxContinueTime = Data->SkillEInfo.ContinueTime;
+			SkillRMaxContinueTime = Data->SkillRInfo.ContinueTime;
 		}
 	}
 }
