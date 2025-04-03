@@ -27,7 +27,7 @@ class HEROESOFYGGDRASIL_API UYggAttackCapsuleComponent : public UYggCapsuleCompo
 public:
 	UFUNCTION()
 	virtual void OverLapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	virtual void OverLapTick(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
 	virtual void BeginPlay() override;
 
 	virtual void CollisionOn() override;
