@@ -11,6 +11,7 @@ UEnemyGameInstance::UEnemyGameInstance()
 	{
 		FString DataPath = TEXT("/Script/Engine.DataTable'/Game/Data/DT_EnemyDataTable.DT_EnemyDataTable'");
 		ConstructorHelpers::FObjectFinder<UDataTable> FinderDataTables(*DataPath);
+	
 		if (true == FinderDataTables.Succeeded())
 		{
 			DataTables = FinderDataTables.Object;

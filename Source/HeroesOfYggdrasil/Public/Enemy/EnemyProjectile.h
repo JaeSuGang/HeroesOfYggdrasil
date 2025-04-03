@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Data/YggEnumData.h"
+#include "Data/YggStructData.h"
+#include "Player/YggHero.h"
 #include "EnemyProjectile.generated.h"
 
 UCLASS()
@@ -23,10 +26,29 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	class UProjectileMovementComponent* GetProjectileMovement()
+	{
+		return ProjectileMovement;
+	}
+	UFUNCTION()
+	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 protected:
-	UPROPERTY(EditAnywhere, Category = Projectile)
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* DefualtSceneRoot;
+
+	UPROPERTY(VisibleAnywhere, Category = "Arrow", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ArrowMesh;
+
+	UPROPERTY(EditAnywhere)
+	UDataTable* EnemyProjectileData;
 
 	UPROPERTY(EditAnywhere, Category = Movement)
 	class UProjectileMovementComponent* ProjectileMovement;
+
+	UPROPERTY(VisibleAnywhere, Category = "Arrow", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class USphereComponent> ArrowCollision;
+
+	UPROPERTY(EditAnywhere)
+	float DestroyTime;
 };

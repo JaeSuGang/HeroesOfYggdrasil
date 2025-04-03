@@ -6,6 +6,7 @@
 #include "Data/YggStructData.h"
 #include "Enemy/EnemyCharacter.h"
 #include "MainGame/MainGameState.h"
+#include "Enemy/EnemyAIController.h"
 
 AEnemyManager::AEnemyManager()
 {
@@ -44,7 +45,9 @@ AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _Origi
 	NewEnemyCharacter->SetDataKey(_MonsterName);
 	Trans.SetLocation(_OriginPos);
 	NewEnemyCharacter->FinishSpawning(Trans);
+	AEnemyAIController* AICon = Cast<AEnemyAIController>(NewEnemyCharacter->GetController());
 	AllEnemyCharacter.Add(NewEnemyCharacter);
+
 
 	return NewEnemyCharacter;
 }

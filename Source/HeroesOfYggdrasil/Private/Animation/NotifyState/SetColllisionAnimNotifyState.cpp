@@ -3,7 +3,7 @@
 
 #include "Animation/NotifyState/SetColllisionAnimNotifyState.h"
 #include "Core/YggCharacter.h"
-#include "Component/SceneComponent/YggCapsuleComponent.h"
+#include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
 void USetColllisionAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
@@ -11,7 +11,7 @@ void USetColllisionAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp
 	AYggCharacter* YggCharacter = Cast<AYggCharacter>(MeshComp->GetOwner());
 	if (YggCharacter)
 	{
-		UYggCapsuleComponent* CapsuleComponent = YggCharacter->GetAttackCapsuleComponent(CollisionMapKey);
+		UYggAttackCapsuleComponent* CapsuleComponent = YggCharacter->GetAttackCapsuleComponent(CollisionMapKey);
 		if (CapsuleComponent)
 		{
 			CapsuleComponent->CollisionOn();
@@ -31,7 +31,7 @@ void USetColllisionAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, 
 	AYggCharacter* YggCharacter = Cast<AYggCharacter>(MeshComp->GetOwner());
 	if (YggCharacter)
 	{
-		UYggCapsuleComponent* CapsuleComponent = YggCharacter->GetAttackCapsuleComponent(CollisionMapKey);
+		UYggAttackCapsuleComponent* CapsuleComponent = YggCharacter->GetAttackCapsuleComponent(CollisionMapKey);
 		if (CapsuleComponent)
 		{
 			CapsuleComponent->CollisionOff();

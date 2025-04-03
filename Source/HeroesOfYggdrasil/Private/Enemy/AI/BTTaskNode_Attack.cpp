@@ -29,7 +29,7 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
-
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
 	if (SelfController)
 	{
@@ -40,6 +40,11 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 
 	if (AttackTime < PlayAIData.Data.StandardZeroTime)
 	{
+		FString str = EnemyCharacter->GetDataKey();
+		if (FString("Minion_Archer") == EnemyCharacter->GetDataKey())
+		{
+			EnemyCharacter->SpawnAndFireArrow();
+		}
 		ChangeState(_OwnerComp, EEnemyAIState::Await);
 	}
 

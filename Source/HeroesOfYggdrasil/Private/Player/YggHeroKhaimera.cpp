@@ -22,21 +22,36 @@
 
 
 
-#include "Component/SceneComponent/YggCapsuleComponent.h"
+#include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 #include "Component/SceneComponent/YggParticleSystemComponent.h"
 
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
 	{
-		UYggCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggCapsuleComponent>(TEXT("LeftAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh(),TEXT("weapon_l"));
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("LeftAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("weapon_l"));
 		AttackCapsuleComponentMap.Add(TEXT("LeftAttack"), AttackCapsuleComponent);
 	}
 	{
-		UYggCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggCapsuleComponent>(TEXT("RightAttack"));
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("RightAttack"));
 		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("weapon_r"));
 		AttackCapsuleComponentMap.Add(TEXT("RightAttack"), AttackCapsuleComponent);
+	}
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh());
+		AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), AttackCapsuleComponent);
+	}
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh());
+		AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), AttackCapsuleComponent);
+	}
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh());
+		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), AttackCapsuleComponent);
 	}
 }
 
