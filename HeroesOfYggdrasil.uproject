@@ -14,6 +14,17 @@
 				"CoreUObject",
 				"UMG"
 			]
+		},
+		{
+			"Name": "HeroesOfYggdrasilEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"AIModule",
+				"CoreUObject",
+				"UMG"
+			]
 		}
 	],
 	"Plugins": [

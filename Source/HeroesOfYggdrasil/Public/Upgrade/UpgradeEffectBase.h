@@ -15,4 +15,8 @@ class HEROESOFYGGDRASIL_API UUpgradeEffectBase : public UObject
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION(BlueprintNativeEvent,  BlueprintCallable)
+	void Apply();
+
+	virtual void Apply_Implementation();
 };

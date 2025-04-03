@@ -10,6 +10,6 @@ public class HeroesOfYggdrasilEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_5;
-		ExtraModuleNames.Add("HeroesOfYggdrasil");
+		ExtraModuleNames.AddRange(new string[] { "HeroesOfYggdrasil", "HeroesOfYggdrasilEditor" });
 	}
 }

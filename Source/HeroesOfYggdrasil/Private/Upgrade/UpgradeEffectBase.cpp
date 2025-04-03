@@ -3,3 +3,7 @@
 
 #include "Upgrade/UpgradeEffectBase.h"
 
+void UUpgradeEffectBase::Apply_Implementation()
+{
+
+}
