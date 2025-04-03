@@ -31,6 +31,8 @@
 #include "MainGame/UI/YggMHPBarUserWidget.h"
 #include "MainGame/UI/MainGameHUD.h"
 
+#include "Component/SceneComponent/YggAttackCapsuleComponent.h"
+
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -42,6 +44,13 @@ AEnemyCharacter::AEnemyCharacter()
 	WidgetComponent->SetupAttachment(GetMesh());
 	WidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+
+	{
+		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
+		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
+		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
+
+	}
 }
 
 
@@ -168,13 +177,11 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AYggCharacter* HeroCharacter = Cast<AYggCharacter>(OtherActor);
+	/*AYggCharacter* HeroCharacter = Cast<AYggCharacter>(OtherActor);
 	UCharacterAttributeComponent * HeroCharacterAttributeComponent = HeroCharacter->GetComponentByClass<UCharacterAttributeComponent>();
 	float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
 
-
-	CharacterAttributeComponent->Server_TakeDamage(HeroAttackPoints);
-	AIData->PlayData.CurHP -= HeroAttackPoints;
+	AIData->PlayData.CurHP -= HeroAttackPoints;*/
 	//MHPBarUserWidget->UpdateHPBar(HeroAttackPoints);
 }
 
