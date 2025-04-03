@@ -78,16 +78,8 @@ public:
 	void SpawnWarningOutRange(AActor* _Actor);
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnWarningInRange(AActor* _Actor);
-
-	UFUNCTION(BlueprintCallable)
 	void ThrowPoisonedBall(FVector _TargetLocation);
 
-	UFUNCTION(BlueprintCallable)
-	class AEnemyWarningRange* GetWarningIntRangeClass()
-	{
-		return WarningInRangeClass;
-	}
 
 
 protected:
@@ -102,10 +94,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyAOE")
 	TSubclassOf<class AEnemyWarningRange> WarningOutRangeClass;
-
-	UPROPERTY(EditDefaultsOnly, Category = "EnemyAOE")
-	class AEnemyWarningRange* WarningInRangeClass;
-
 
 private:
 	// 몬스터 이름 데이터

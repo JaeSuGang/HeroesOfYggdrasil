@@ -64,10 +64,6 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	// 저주술사
 	if (FString("Minion_Witch") == DataKeyString)
 	{
-		if (EnemyCharacter->GetWarningIntRangeClass() != nullptr)
-		{
-			EnemyCharacter->GetWarningIntRangeClass()->UpdateRange(_DeltaSeconds);
-		}
 	}
 
 	if (SelfController)

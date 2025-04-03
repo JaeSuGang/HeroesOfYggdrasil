@@ -159,7 +159,6 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
 }
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -177,12 +176,14 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	/*AYggCharacter* HeroCharacter = Cast<AYggCharacter>(OtherActor);
-	UCharacterAttributeComponent * HeroCharacterAttributeComponent = HeroCharacter->GetComponentByClass<UCharacterAttributeComponent>();
-	float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
+	AYggCharacter* HeroCharacter = Cast<AYggCharacter>(OtherActor);
 
-	AIData->PlayData.CurHP -= HeroAttackPoints;*/
-	//MHPBarUserWidget->UpdateHPBar(HeroAttackPoints);
+	if (HeroCharacter != nullptr)
+	{
+		UCharacterAttributeComponent * HeroCharacterAttributeComponent = HeroCharacter->GetComponentByClass<UCharacterAttributeComponent>();
+		float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
+		AIData->PlayData.CurHP -= HeroAttackPoints;
+	}
 }
 
 void AEnemyCharacter::AttackStart()
@@ -246,7 +247,6 @@ void AEnemyCharacter::RevealArrow()
 void AEnemyCharacter::SpawnWarningRange(AActor* _Actor)
 {
 	SpawnWarningOutRange(_Actor);
-	SpawnWarningInRange(_Actor);
 }
 
 void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
@@ -272,27 +272,7 @@ void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
 }
 
-void AEnemyCharacter::SpawnWarningInRange(AActor* _Actor)
-{
-	if (!WarningInRangeClass || !_Actor)
-		return;
 
-	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
-	FVector SpawnLocation = _Actor->GetActorLocation();
-
-	if (Capsule)
-	{
-		float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
-		SpawnLocation -= FVector(0, 0, HalfHeight);
-	}
-
-	FRotator SpawnRotation = _Actor->GetActorRotation();
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	
-	WarningInRangeClass = GetWorld()->SpawnActor<AEnemyWarningRange>(AEnemyWarningRange::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
-}
 
 // 공격
 
