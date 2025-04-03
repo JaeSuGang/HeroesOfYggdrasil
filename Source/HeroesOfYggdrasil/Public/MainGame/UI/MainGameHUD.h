@@ -8,6 +8,7 @@
 
 class UYggLobbyUserWidget;
 class UYggMainGameUserWidget;
+class UYggMHPBarUserWidget;
 
 /**
  * 
@@ -48,6 +49,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EnableCrossHair(bool bIsVisible);
 
+	UFUNCTION(BlueprintCallable)
+	UYggMHPBarUserWidget* GetMHPBarWidget()
+	{
+		return MHPBarUserWidget;
+	}
+
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> MainWidgetClass;
@@ -57,6 +64,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> MainGameWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> MHPBarWidgetClass;
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSoftObjectPtr<UWorld> MainGameLevel;
@@ -70,10 +80,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = YGG)
 	UUserWidget* CurrentWidget;
 
-	APlayerController* PC;
+	UPROPERTY()
 	UYggLobbyUserWidget* LobbyUserWidget;
+
+	UPROPERTY()
 	UYggMainGameUserWidget* MainGameUserWidget;
 
+	UPROPERTY()
+	UYggMHPBarUserWidget* MHPBarUserWidget;
+
+	APlayerController* PC;
 
 	//TFunction<void()> StartButtinPlayerFunc;
 	//void BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc);

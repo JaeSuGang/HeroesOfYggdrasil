@@ -27,12 +27,21 @@
 #include "Enemy/EnemyRangeAttack.h"
 #include "Enemy/EnemyWarningRange.h"
 
+#include "Components/WidgetComponent.h"
+#include "MainGame/UI/YggMHPBarUserWidget.h"
+#include "MainGame/UI/MainGameHUD.h"
+
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	CharacterAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("CharacterAttributeComponent"));
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AEnemyAIController::StaticClass();
+	
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(GetMesh());
+	WidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
 
@@ -101,6 +110,7 @@ void AEnemyCharacter::BeginPlay()
 
 
 
+
 	// AttributeComponent 세팅
 	if (CharacterAttributeComponent != nullptr && Con != nullptr)
 	{
@@ -108,10 +118,23 @@ void AEnemyCharacter::BeginPlay()
 		CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
 		CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
 		CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
+		
+		// 위젯
+		MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
+	
+		if (!MHPBarUserWidget)
+			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+		MHPBarUserWidget->SetAttachedCharacter(this);
+		WidgetComponent->SetWidget(MHPBarUserWidget);
 	}
 
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
+	if (CharacterAttributeComponent != nullptr)
+	{
+		CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
+	}
+
 
 	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
@@ -119,6 +142,8 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
 
+	
+	
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
@@ -150,6 +175,7 @@ void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 	CharacterAttributeComponent->Server_TakeDamage(HeroAttackPoints);
 	AIData->PlayData.CurHP -= HeroAttackPoints;
+	//MHPBarUserWidget->UpdateHPBar(HeroAttackPoints);
 }
 
 void AEnemyCharacter::AttackStart()

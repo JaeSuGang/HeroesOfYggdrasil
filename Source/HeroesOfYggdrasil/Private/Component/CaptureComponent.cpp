@@ -12,6 +12,10 @@ UCaptureComponent::UCaptureComponent()
 
 	bCaptureEveryFrame = false;
 	bCaptureOnMovement = true;
+
+	ShowFlags.SetDynamicShadows(false);
+	ShowFlags.SetAmbientOcclusion(false);
+	ShowFlags.SetGlobalIllumination(false);
 }
 
 void UCaptureComponent::BeginPlay()
@@ -24,8 +28,6 @@ void UCaptureComponent::BeginPlay()
 		TextureTarget->InitAutoFormat(128, 128);
 		TextureTarget->UpdateResource();
 	}
-
-	this->TextureTarget = TextureTarget;
 }
 
 void UCaptureComponent::SetupFaceCapture(AActor* TargetActor)

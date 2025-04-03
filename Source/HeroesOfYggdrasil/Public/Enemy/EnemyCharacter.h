@@ -11,6 +11,8 @@
 #include "EnemyCharacter.generated.h"
 
 class AYggMiniMapIconActor;
+class UYggMHPBarUserWidget;
+class UWidgetComponent;
 
 /**
  * 담당 : 장시혁
@@ -122,7 +124,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
 	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "YggMonsterHPBar")
+	TSubclassOf<UYggMHPBarUserWidget> MHPBarUserWidgetClass;
 
+	UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
+	UWidgetComponent* WidgetComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
+	UYggMHPBarUserWidget* MHPBarUserWidget;
 };
 
 
