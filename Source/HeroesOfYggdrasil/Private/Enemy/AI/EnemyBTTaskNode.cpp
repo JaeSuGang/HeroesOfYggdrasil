@@ -44,11 +44,7 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 
 	DeathCheckTime -= _DeltaSeconds;
 
-	if (DeathCheckTime < PlayAIData.Data.StandardZeroTime)
-	{
-		DeathCheck(_OwnerComp);
-		DeathCheckTime = PlayAIData.Data.DeathCheckTime;
-	}
+	DeathCheck(_OwnerComp);
 }
 
 void UEnemyBTTaskNode::ChangeState(UBehaviorTreeComponent& _OwnerComp, EEnemyAIState _State)
@@ -180,7 +176,9 @@ void UEnemyBTTaskNode::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfPawn = PlayAIData.SelfPawn;
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfPawn);
 
-	if (PlayAIData.CurHP < 0.0f)
+	UCharacterAttributeComponent* EnemyAttributeComponent =  EnemyCharacter->GetAttributeComponent();
+	
+	if (EnemyAttributeComponent->HP <= 0.0f)
 	{
 		if (EnemyCharacter != nullptr)
 		{

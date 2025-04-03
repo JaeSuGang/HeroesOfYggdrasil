@@ -54,7 +54,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	double GetCurHp()
 	{
-		return AIData->PlayData.CurHP;
+		return CharacterAttributeComponent->HP;
 	}
 	
 	FString GetDataKey()

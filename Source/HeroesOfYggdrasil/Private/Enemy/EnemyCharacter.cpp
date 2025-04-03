@@ -159,6 +159,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
 }
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -176,14 +177,7 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AYggCharacter* HeroCharacter = Cast<AYggCharacter>(OtherActor);
-
-	if (HeroCharacter != nullptr)
-	{
-		UCharacterAttributeComponent * HeroCharacterAttributeComponent = HeroCharacter->GetComponentByClass<UCharacterAttributeComponent>();
-		float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
-		AIData->PlayData.CurHP -= HeroAttackPoints;
-	}
+	//
 }
 
 void AEnemyCharacter::AttackStart()
@@ -211,7 +205,7 @@ void AEnemyCharacter::SpawnAndFireArrow()
 	{
 		return;
 	}
-
+	
 	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
 	FRotator SpawnRotation = GetActorRotation();
 
