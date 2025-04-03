@@ -26,6 +26,7 @@
 // Enermy
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/EnemyAttributeComponent.h"
+#include "Attribute/CharacterAttributeComponent.h"
 
 void UYggParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
@@ -55,7 +56,7 @@ void UYggParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 	}
 	else if (AEnemyCharacter* Enemy = Cast< AEnemyCharacter>(MeshComp->GetOwner()))
 	{
-		UEnemyAttributeComponent* EAttrComp = Enemy->GetEnemyAttributeComponent();
+		UCharacterAttributeComponent* EAttrComp = Enemy->GetAttributeComponent();
 		if (!IsValid(EAttrComp)) return;
 
 		// Enemy Duration 가져오기.
