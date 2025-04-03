@@ -48,4 +48,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Poison", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class USphereComponent> PoisonCollision;
+
+	UPROPERTY(EditAnywhere)
+	float DestroyTime;
 };

@@ -47,7 +47,10 @@ void AEnemyRangeAttack::BeginPlay()
             PoisonMesh->SetSimulatePhysics(false);
         }
     }
+
     PoisonCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyRangeAttack::OverLap);
+
+    DestroyTime = 3.0f;
 }
 
 // Called every frame
@@ -55,6 +58,11 @@ void AEnemyRangeAttack::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    DestroyTime -= DeltaTime;
+    if (DestroyTime <= 0.0f)
+    {
+        this->Destroy();
+    }
 }
 
 void AEnemyRangeAttack::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

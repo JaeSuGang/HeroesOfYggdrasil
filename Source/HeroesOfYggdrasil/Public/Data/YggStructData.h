@@ -181,8 +181,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double InitialLocationFloat = 100.0f;
-
-	
 };
 
 USTRUCT(BlueprintType)
@@ -274,6 +272,29 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSoftObjectPtr<UStaticMesh> StaticMesh;
+};
+
+
+USTRUCT(BlueprintType)
+struct FWarningAreaDataRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FWarningAreaDataRow() {}
+	~FWarningAreaDataRow() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	UStaticMesh* PlaneMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	UMaterialInterface* WarningMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float Duration = 3.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float TimeElapsed = 0.0f;
 };
 
 
