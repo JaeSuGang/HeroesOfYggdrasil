@@ -9,33 +9,30 @@
 /**
  * 
  */
-UENUM(BlueprintType)
-enum class ECharacterType :uint8
-{
-	Player UMETA(DisplayName = "Player"),
-	Monster UMETA(DisplayName = "Monster"),
-};
 
-UENUM(BlueprintType)
-enum class EDamageType :uint8
-{
-	Normal UMETA(DisplayName = "Normal"),
-	Tick UMETA(DisplayName = "Tick"),
-};
 
+class AYggCharacter;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class HEROESOFYGGDRASIL_API UYggCapsuleComponent : public UCapsuleComponent
 {
 	GENERATED_BODY()
 public:
+	virtual void BeginPlay() override;
+
 	UFUNCTION(BlueprintCallable)
 	virtual void CollisionOn();
 	UFUNCTION(BlueprintCallable)
 	virtual void CollisionOff();
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UYggCapsuleComponent")
-	ECharacterType CharacterType;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UYggCapsuleComponent")
-	EDamageType DamageType;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetOwnerCharacter(AYggCharacter* Owner)
+	{
+		OwnerCharacter = Owner;
+	}
+	
+protected:
+	UPROPERTY()
+	AYggCharacter* OwnerCharacter;
 
 };
