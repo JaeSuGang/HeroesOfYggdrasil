@@ -26,9 +26,14 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
+	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	AActor* TargetActor = PlayAIData.TargetActor;
 	APawn* SelfActor = PlayAIData.SelfPawn;
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	
+	EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
 
 	AwaitTime -= _DeltaSeconds;
 
@@ -36,6 +41,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Attack);
 		AwaitTime = PlayAIData.Data.AwaitTime;
+		return;
 	}
 
 
@@ -49,6 +55,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 		if (Size >= PlayAIData.Data.AttackRange)
 		{
 			ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
+			return;
 		}
 
 		// 추적 범위를 넘어갔을 때
@@ -60,4 +67,9 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	}
 
 
+}
+
+void UBTTaskNode_Await::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
+{
+	Super::RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 }

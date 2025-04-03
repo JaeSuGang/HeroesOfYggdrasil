@@ -46,6 +46,8 @@ void UYggAttackCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedCom
 	{
 		return;
 	}
+
+
 	float AttackPower = AttackCharacterAttributeComponent->GetAttackPoints();
 	float Coefficient = 1.0f;
 	switch (AttackType) 

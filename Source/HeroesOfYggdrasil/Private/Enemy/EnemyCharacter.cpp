@@ -21,43 +21,38 @@
 #include "AIController.h"
 
 #include "Enemy/EnemyGameInstance.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "Attribute/EnemyAttributeComponent.h"
 #include "MainGame/UI/YggMiniMapIconActor.h"
 #include "Enemy/EnemyAIController.h"
 #include "Enemy/EnemyProjectile.h"
+#include "Enemy/EnemyRangeAttack.h"
+#include "Enemy/EnemyWarningRange.h"
+
+#include "Components/WidgetComponent.h"
+#include "MainGame/UI/YggMHPBarUserWidget.h"
+#include "MainGame/UI/MainGameHUD.h"
+
+#include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	CharacterAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("CharacterAttributeComponent"));
-	EnemyAttributeComponent = Cast<UEnemyAttributeComponent>(CharacterAttributeComponent);
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AEnemyAIController::StaticClass();
-}
+	
+	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	WidgetComponent->SetupAttachment(GetMesh());
+	WidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 
-void AEnemyCharacter::SpawnAndFireArrow()
-{
-	if (ProjectileClass == nullptr)
 	{
-		return;
-	}
+		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
+		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
+		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
 
-	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
-	FRotator SpawnRotation = GetActorRotation();
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-
-	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-
-	if (Arrow != nullptr)
-	{
-		FVector LaunchDirection = GetActorForwardVector();
-		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 2000.f;
 	}
 }
+
 
 void AEnemyCharacter::BeginPlay()
 {
@@ -124,17 +119,31 @@ void AEnemyCharacter::BeginPlay()
 
 
 
+
 	// AttributeComponent 세팅
-	if (EnemyAttributeComponent != nullptr && Con != nullptr)
+	if (CharacterAttributeComponent != nullptr && Con != nullptr)
 	{
-		//EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
-		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
-		EnemyAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
-		EnemyAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
+		CharacterAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
+		CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
+		CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
+		CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
+		
+		// 위젯
+		MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
+	
+		if (!MHPBarUserWidget)
+			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+		MHPBarUserWidget->SetAttachedCharacter(this);
+		WidgetComponent->SetWidget(MHPBarUserWidget);
 	}
 
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
+	if (CharacterAttributeComponent != nullptr)
+	{
+		CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
+	}
+
 
 	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
@@ -142,13 +151,14 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
 
+	
+	
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
 }
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -167,12 +177,13 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AYggCharacter* HeroCharacter = Cast<AYggCharacter>(OtherActor);
-	UCharacterAttributeComponent * HeroCharacterAttributeComponent = HeroCharacter->GetComponentByClass<UCharacterAttributeComponent>();
-	float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
 
-
-	EnemyAttributeComponent->Server_TakeDamage(HeroAttackPoints);
-	AIData->PlayData.CurHP -= HeroAttackPoints;
+	if (HeroCharacter != nullptr)
+	{
+		UCharacterAttributeComponent * HeroCharacterAttributeComponent = HeroCharacter->GetComponentByClass<UCharacterAttributeComponent>();
+		float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
+		AIData->PlayData.CurHP -= HeroAttackPoints;
+	}
 }
 
 void AEnemyCharacter::AttackStart()
@@ -190,3 +201,101 @@ void AEnemyCharacter::AttackEnd()
 		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	}
 }
+
+
+// 궁수 화살 발사
+
+void AEnemyCharacter::SpawnAndFireArrow()
+{
+	if (ProjectileClass == nullptr)
+	{
+		return;
+	}
+
+	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (Arrow != nullptr)
+	{
+		FVector LaunchDirection = GetActorForwardVector();
+		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 2000.f;
+	}
+}
+
+void AEnemyCharacter::HideArrow()
+{
+	GetMesh()->HideBoneByName(FName("arrow_nock"), EPhysBodyOp::PBO_None);
+
+}
+
+void AEnemyCharacter::RevealArrow()
+{
+	GetMesh()->UnHideBoneByName(FName("arrow_nock"));
+}
+
+
+
+// 저주술사 
+
+
+// 위험 범위
+void AEnemyCharacter::SpawnWarningRange(AActor* _Actor)
+{
+	SpawnWarningOutRange(_Actor);
+}
+
+void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
+{
+	if (!WarningOutRangeClass || !_Actor)
+		return;
+
+	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
+	FVector SpawnLocation = _Actor->GetActorLocation();
+
+	if (Capsule)
+	{
+		float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+		SpawnLocation -= FVector(0, 0, HalfHeight);
+	}
+
+	FRotator SpawnRotation = _Actor->GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	GetWorld()->SpawnActor<AEnemyWarningRange>(
+		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
+}
+
+
+
+// 공격
+
+void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
+{
+	if (RangeAttackClass == nullptr)
+	{
+		return;
+	}
+
+	FVector SpawnLocation = GetActorLocation() + GetActorRightVector() * -50.0f + GetActorUpVector() * 50.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyRangeAttack* RangeAttack = GetWorld()->SpawnActor<AEnemyRangeAttack>(RangeAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (RangeAttack != nullptr)
+	{
+		const float Speed = 2000.f;
+		FVector Direction = (_TargetLocation - SpawnLocation).GetSafeNormal();
+		RangeAttack->GetProjectileMovement()->Velocity = Direction * Speed;
+	}
+}
+

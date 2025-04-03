@@ -31,7 +31,7 @@ void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNode
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	if (EnemyCharacter != nullptr)
 	{
-		UEnemyAttributeComponent* SelfAttributeComponent = EnemyCharacter->GetEnemyAttributeComponent();
+		UCharacterAttributeComponent* SelfAttributeComponent = EnemyCharacter->GetAttributeComponent();
 		if (SelfAttributeComponent != nullptr)
 		{
 			SelfAttributeComponent->HP;

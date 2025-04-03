@@ -11,6 +11,8 @@
 #include "EnemyCharacter.generated.h"
 
 class AYggMiniMapIconActor;
+class UYggMHPBarUserWidget;
+class UWidgetComponent;
 
 /**
  * 담당 : 장시혁
@@ -49,16 +51,6 @@ public:
 		DataKey = _MonsterDataKey;
 	}
 
-	void SetEnemyAttributeComponent(UEnemyAttributeComponent* _EnemyAttributeComponent)
-	{
-		EnemyAttributeComponent = _EnemyAttributeComponent;
-	}
-
-	UEnemyAttributeComponent* GetEnemyAttributeComponent()
-	{
-		return EnemyAttributeComponent;
-	}
-
 	UFUNCTION(BlueprintCallable)
 	double GetCurHp()
 	{
@@ -73,17 +65,35 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnAndFireArrow();
 
-	
+	UFUNCTION(BlueprintCallable)
+	void HideArrow();
+
+	UFUNCTION(BlueprintCallable)
+	void RevealArrow();
+
+	UFUNCTION(BlueprintCallable)
+	void SpawnWarningRange(AActor* _Actor);
+
+	UFUNCTION(BlueprintCallable)
+	void SpawnWarningOutRange(AActor* _Actor);
+
+	UFUNCTION(BlueprintCallable)
+	void ThrowPoisonedBall(FVector _TargetLocation);
+
+
 
 protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "YggData", meta = (AllowPrivateAccess = "true"))
-	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class AEnemyProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<class AEnemyRangeAttack> RangeAttackClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyAOE")
+	TSubclassOf<class AEnemyWarningRange> WarningOutRangeClass;
 
 private:
 	// 몬스터 이름 데이터
@@ -102,7 +112,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
 	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "YggMonsterHPBar")
+	TSubclassOf<UYggMHPBarUserWidget> MHPBarUserWidgetClass;
 
+	UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
+	UWidgetComponent* WidgetComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
+	UYggMHPBarUserWidget* MHPBarUserWidget;
 };
 
 
