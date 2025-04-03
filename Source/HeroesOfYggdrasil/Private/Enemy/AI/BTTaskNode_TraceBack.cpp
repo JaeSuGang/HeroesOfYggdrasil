@@ -26,8 +26,6 @@ void UBTTaskNode_TraceBack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
-	AActor* TargetActor = PlayAIData.TargetActor;
-	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 	FVector OrigninDir = PlayAIData.OriginPos - SelfActor->GetActorLocation();
 	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
 

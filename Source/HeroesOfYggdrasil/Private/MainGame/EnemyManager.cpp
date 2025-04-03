@@ -10,7 +10,6 @@
 
 AEnemyManager::AEnemyManager()
 {
-	//EnemyAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("EnemyAttributeComponent"));
 }
 
 AEnemyManager* AEnemyManager::Get(UWorld* WorldContext)

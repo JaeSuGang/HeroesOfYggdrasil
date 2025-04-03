@@ -8,7 +8,7 @@
 
 
 class UCharacterAttributeComponent;
-class UYggCapsuleComponent;
+class UYggAttackCapsuleComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggCharacter : public ACharacter
@@ -21,14 +21,14 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UYggCapsuleComponent* GetAttackCapsuleComponent(const FName& Key);
+	UYggAttackCapsuleComponent* GetAttackCapsuleComponent(const FName& Key);
 
 protected:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 	UCharacterAttributeComponent* CharacterAttributeComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<FName, UYggCapsuleComponent*> AttackCapsuleComponentMap;
+	TMap<FName, UYggAttackCapsuleComponent*> AttackCapsuleComponentMap;
 
 	
 };

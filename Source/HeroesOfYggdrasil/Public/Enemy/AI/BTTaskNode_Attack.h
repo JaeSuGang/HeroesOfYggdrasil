@@ -27,4 +27,10 @@ public:
 public:
 	UPROPERTY(EditAnywhere)
 	double AttackTime;
+
+	UPROPERTY(EditAnywhere)
+	double ThrowTime;
+
+	UPROPERTY(EditAnywhere)
+	FVector TargetRangeLocation;
 };

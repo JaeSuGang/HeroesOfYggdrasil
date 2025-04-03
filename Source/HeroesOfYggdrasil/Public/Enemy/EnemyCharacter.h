@@ -51,16 +51,6 @@ public:
 		DataKey = _MonsterDataKey;
 	}
 
-	void SetEnemyAttributeComponent(UEnemyAttributeComponent* _EnemyAttributeComponent)
-	{
-		EnemyAttributeComponent = _EnemyAttributeComponent;
-	}
-
-	UEnemyAttributeComponent* GetEnemyAttributeComponent()
-	{
-		return EnemyAttributeComponent;
-	}
-
 	UFUNCTION(BlueprintCallable)
 	double GetCurHp()
 	{
@@ -75,17 +65,47 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnAndFireArrow();
 
-	
+	UFUNCTION(BlueprintCallable)
+	void HideArrow();
+
+	UFUNCTION(BlueprintCallable)
+	void RevealArrow();
+
+	UFUNCTION(BlueprintCallable)
+	void SpawnWarningRange(AActor* _Actor);
+
+	UFUNCTION(BlueprintCallable)
+	void SpawnWarningOutRange(AActor* _Actor);
+
+	UFUNCTION(BlueprintCallable)
+	void SpawnWarningInRange(AActor* _Actor);
+
+	UFUNCTION(BlueprintCallable)
+	void ThrowPoisonedBall(FVector _TargetLocation);
+
+	UFUNCTION(BlueprintCallable)
+	class AEnemyWarningRange* GetWarningIntRangeClass()
+	{
+		return WarningInRangeClass;
+	}
+
 
 protected:
 	virtual void BeginPlay() override;
 
 public:	
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "YggData", meta = (AllowPrivateAccess = "true"))
-	class UEnemyAttributeComponent* EnemyAttributeComponent = nullptr;
-
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<class AEnemyProjectile> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<class AEnemyRangeAttack> RangeAttackClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyAOE")
+	TSubclassOf<class AEnemyWarningRange> WarningOutRangeClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "EnemyAOE")
+	class AEnemyWarningRange* WarningInRangeClass;
+
 
 private:
 	// 몬스터 이름 데이터

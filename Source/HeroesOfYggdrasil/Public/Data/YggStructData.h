@@ -144,6 +144,9 @@ public:
 	double AttackTime = 1.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double RangeAttackTime = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double AwaitTime = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
@@ -171,12 +174,13 @@ struct FProjectileData
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double InitialSpeed = 2000.0f;
+	double InitialSpeed = 3000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double MaxSpeed = 2000.0f;
+	double MaxSpeed = 3000.0f;
 
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	double InitialLocationFloat = 100.0f;
 };
 
 USTRUCT(BlueprintType)
@@ -268,6 +272,29 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSoftObjectPtr<UStaticMesh> StaticMesh;
+};
+
+
+USTRUCT(BlueprintType)
+struct FWarningAreaDataRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FWarningAreaDataRow() {}
+	~FWarningAreaDataRow() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	UStaticMesh* PlaneMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	UMaterialInterface* WarningMaterial;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float Duration = 3.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float TimeElapsed = 0.0f;
 };
 
 

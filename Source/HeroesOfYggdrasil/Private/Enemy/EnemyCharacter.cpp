@@ -21,12 +21,11 @@
 #include "AIController.h"
 
 #include "Enemy/EnemyGameInstance.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "Attribute/EnemyAttributeComponent.h"
 #include "MainGame/UI/YggMiniMapIconActor.h"
 #include "Enemy/EnemyAIController.h"
 #include "Enemy/EnemyProjectile.h"
+#include "Enemy/EnemyRangeAttack.h"
+#include "Enemy/EnemyWarningRange.h"
 
 #include "Components/WidgetComponent.h"
 #include "MainGame/UI/YggMHPBarUserWidget.h"
@@ -36,7 +35,6 @@ AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	CharacterAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("CharacterAttributeComponent"));
-	EnemyAttributeComponent = Cast<UEnemyAttributeComponent>(CharacterAttributeComponent);
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AEnemyAIController::StaticClass();
 	
@@ -46,27 +44,6 @@ AEnemyCharacter::AEnemyCharacter()
 	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 }
 
-void AEnemyCharacter::SpawnAndFireArrow()
-{
-	if (ProjectileClass == nullptr)
-	{
-		return;
-	}
-
-	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 100.0f;
-	FRotator SpawnRotation = GetActorRotation();
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-
-	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-
-	if (Arrow != nullptr)
-	{
-		FVector LaunchDirection = GetActorForwardVector();
-		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 1500.f;
-	}
-}
 
 void AEnemyCharacter::BeginPlay()
 {
@@ -81,7 +58,6 @@ void AEnemyCharacter::BeginPlay()
 
 	AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
 
-
 	AIData = NewObject<UAIDataObject>(this);
 	if (AIData != nullptr)
 	{
@@ -89,8 +65,6 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.SelfPawn = this;
 		AIData->PlayData.SelfAnimPawn = this;
 		AIData->PlayData.CurHP = FindData.AIData.MaxHP;
-
-		// AIData->PlayData.AttackAnimationCount = FindData.AttackAnimations.Num();
 		AIData->PlayData.OriginPos = GetActorLocation();
 		AIData->PlayData.OriginPos.Z = 0.0f;
 	}
@@ -138,14 +112,12 @@ void AEnemyCharacter::BeginPlay()
 
 
 	// AttributeComponent 세팅
-	if (EnemyAttributeComponent != nullptr && Con != nullptr)
+	if (CharacterAttributeComponent != nullptr && Con != nullptr)
 	{
-		EnemyAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
-		EnemyAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
-		EnemyAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
-		EnemyAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
-
-
+		CharacterAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
+		CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
+		CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
+		CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 	}
 
 	// 충돌 설정
@@ -194,7 +166,7 @@ void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
 
 
-	EnemyAttributeComponent->Server_TakeDamage(HeroAttackPoints);
+	CharacterAttributeComponent->Server_TakeDamage(HeroAttackPoints);
 	AIData->PlayData.CurHP -= HeroAttackPoints;
 }
 
@@ -213,3 +185,122 @@ void AEnemyCharacter::AttackEnd()
 		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	}
 }
+
+
+// 궁수 화살 발사
+
+void AEnemyCharacter::SpawnAndFireArrow()
+{
+	if (ProjectileClass == nullptr)
+	{
+		return;
+	}
+
+	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (Arrow != nullptr)
+	{
+		FVector LaunchDirection = GetActorForwardVector();
+		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 2000.f;
+	}
+}
+
+void AEnemyCharacter::HideArrow()
+{
+	GetMesh()->HideBoneByName(FName("arrow_nock"), EPhysBodyOp::PBO_None);
+
+}
+
+void AEnemyCharacter::RevealArrow()
+{
+	GetMesh()->UnHideBoneByName(FName("arrow_nock"));
+}
+
+
+
+// 저주술사 
+
+
+// 위험 범위
+void AEnemyCharacter::SpawnWarningRange(AActor* _Actor)
+{
+	SpawnWarningOutRange(_Actor);
+	SpawnWarningInRange(_Actor);
+}
+
+void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
+{
+	if (!WarningOutRangeClass || !_Actor)
+		return;
+
+	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
+	FVector SpawnLocation = _Actor->GetActorLocation();
+
+	if (Capsule)
+	{
+		float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+		SpawnLocation -= FVector(0, 0, HalfHeight);
+	}
+
+	FRotator SpawnRotation = _Actor->GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	GetWorld()->SpawnActor<AEnemyWarningRange>(
+		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
+}
+
+void AEnemyCharacter::SpawnWarningInRange(AActor* _Actor)
+{
+	if (!WarningInRangeClass || !_Actor)
+		return;
+
+	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
+	FVector SpawnLocation = _Actor->GetActorLocation();
+
+	if (Capsule)
+	{
+		float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
+		SpawnLocation -= FVector(0, 0, HalfHeight);
+	}
+
+	FRotator SpawnRotation = _Actor->GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	
+	WarningInRangeClass = GetWorld()->SpawnActor<AEnemyWarningRange>(AEnemyWarningRange::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
+}
+
+// 공격
+
+void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
+{
+	if (RangeAttackClass == nullptr)
+	{
+		return;
+	}
+
+	FVector SpawnLocation = GetActorLocation() + GetActorRightVector() * -50.0f + GetActorUpVector() * 50.0f;
+	FRotator SpawnRotation = GetActorRotation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyRangeAttack* RangeAttack = GetWorld()->SpawnActor<AEnemyRangeAttack>(RangeAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
+
+	if (RangeAttack != nullptr)
+	{
+		const float Speed = 2000.f;
+		FVector Direction = (_TargetLocation - SpawnLocation).GetSafeNormal();
+		RangeAttack->GetProjectileMovement()->Velocity = Direction * Speed;
+	}
+}
+
