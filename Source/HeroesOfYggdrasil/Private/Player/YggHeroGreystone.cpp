@@ -5,6 +5,11 @@
 #include "Attribute/HeroAttributeComponent.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
+//  Project Headers : UI
+#include "MainGame/UI/MainGameHUD.h"
+#include "MainGame/UI/YggMainGameUserWidget.h"
+#include "MainGame/UI/YggCastingBarUserWidget.h"
+
 // Unreal Framework Core Components
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -28,10 +33,6 @@
 
 #include "Engine/DataTable.h"
 #include "Data/YggStructData.h"
-
-#include "MainGame/UI/YggCastingBarUserWidget.h"
-#include "MainGame/UI/MainGameHUD.h"
-#include "MainGame/UI/YggMainGameUserWidget.h"
 
 AYggHeroGreystone::AYggHeroGreystone()
 {
@@ -273,21 +274,7 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	}
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-	
-	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PlayerController->GetHUD());
-	if (!MainGameHUD)
-		return;
-
-	UYggMainGameUserWidget* MainGameWidget = MainGameHUD->GetMainGameWidget();
-	if (!MainGameWidget)
-		return;
-
-	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameWidget->GetCastingBarWidget();
-	if (!CastingBarUserWidget)
-		return;
-
-	CastingBarUserWidget->StartCasting(5.0f);
-
+		
 	bIsSkillR = true;
 }
 
@@ -324,6 +311,9 @@ void AYggHeroGreystone::ServerRFall_Implementation()
 void AYggHeroGreystone::MulticastRFall_Implementation()
 {
 	HeroAnimInstance->JumpMontage(TEXT("SkillR"), TEXT("GreystoneRFall"));
+	
+	UAnimMontage* CurrentMontage = HeroAnimInstance->GetCurrentActiveMontage();
+	HeroAnimInstance->Montage_Resume(CurrentMontage);
 }
 
 void AYggHeroGreystone::MagicCircleOn()
@@ -390,13 +380,12 @@ void AYggHeroGreystone::MagicCircleOff()
 		SkillRDecal->DestroyComponent();
 		SkillRDecal = nullptr;
 		
-		// APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 		if (PlayerController)
 		{
 			GetCharacterMovement()->bOrientRotationToMovement = true;
 
 			CameraBoom->bUsePawnControlRotation = true;
-			CameraBoom->TargetArmLength = 450.0f;
+			CameraBoom->TargetArmLength = 700.0f;
 			CameraBoom->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
 
 			PlayerController->bShowMouseCursor = false;

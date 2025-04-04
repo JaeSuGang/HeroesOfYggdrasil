@@ -5,7 +5,6 @@
 #include "Core/YggCharacter.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 #include "Player/YggHero.h"
-#include "Enemy/EnemyCharacter.h"
 #include "Attribute/HeroAttributeComponent.h"
 
 void USetColllisionAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)

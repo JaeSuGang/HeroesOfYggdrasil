@@ -7,9 +7,31 @@
 #include "Attribute/HeroAttributeComponent.h"
 #include "Animation/YggHeroAniminstance.h"
 
+#include "MainGame/UI/MainGameHUD.h"
+#include "MainGame/UI/YggMainGameUserWidget.h"
+#include "MainGame/UI/YggCastingBarUserWidget.h"
+
 void UGreystoneRJump::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
     if (!MeshComp || !MeshComp->GetOwner()) return;
+
+    AYggHeroGreystone* Greystone = Cast<AYggHeroGreystone>(MeshComp->GetOwner());
+    if (!IsValid(Greystone)) return;
+
+    APlayerController* PlayerController = MeshComp->GetOwner()->GetWorld()->GetFirstPlayerController();
+    AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PlayerController->GetHUD());
+    if (!MainGameHUD)
+        return;
+
+    UYggMainGameUserWidget* MainGameWidget = MainGameHUD->GetMainGameWidget();
+    if (!MainGameWidget)
+        return;
+
+    UYggCastingBarUserWidget* CastingBarUserWidget = MainGameWidget->GetCastingBarWidget();
+    if (!CastingBarUserWidget)
+        return;
+
+    CastingBarUserWidget->StartCasting(Greystone->GetHeroAttributeComponent()->SkillRMaxContinueTime);
 
     if (auto* AnimInstance = MeshComp->GetAnimInstance())
     {
@@ -19,23 +41,18 @@ void UGreystoneRJump::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
         {
             AnimInstance->Montage_Pause(CurrentMontage);
 
-            // AnimInstance->Montage_Stop(0.0f, CurrentMontage);
-
-            /*UYggHeroAnimInstance* asdfsdfdsf = Cast< UYggHeroAnimInstance>(AnimInstance);
-            if (!asdfsdfdsf) return;
-            AnimInstance->Montage_Play(*asdfsdfdsf->MontageMap.Find(FName("Idle")));*/
+            float ContinueTime = Greystone->GetHeroAttributeComponent()->SkillRMaxContinueTime;
 
             MeshComp->GetWorld()->GetTimerManager().SetTimer(JumpTimerHandle, [AnimInstance, CurrentMontage]()
             {
                 AnimInstance->Montage_Resume(CurrentMontage);
-            }, 2.0f, false);
+            }, ContinueTime, false);
         }
     }
-
-    AYggHeroGreystone* GreystoneCharacter = Cast<AYggHeroGreystone>(MeshComp->GetOwner());
-    if (GreystoneCharacter && GreystoneCharacter->GetClass()->ImplementsInterface(UYggHeroInterface::StaticClass()))
+   
+    if (Greystone->GetClass()->ImplementsInterface(UYggHeroInterface::StaticClass()))
     {
-        GreystoneCharacter->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
-        GreystoneCharacter->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
+        Greystone->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
+        Greystone->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
     }    
 }
