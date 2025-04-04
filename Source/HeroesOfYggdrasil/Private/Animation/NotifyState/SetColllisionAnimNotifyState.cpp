@@ -47,12 +47,9 @@ void USetColllisionAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, 
 	else
 	{
 		AYggHero* Hero = Cast<AYggHero>(YggCharacter);
-		AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(YggCharacter);
 
 		if (Hero)
 		{
-			float Duration = 0.0f;
-
 			if (CollisionMapKey == "SkillQAttack")
 			{
 				Duration = Hero->GetHeroAttributeComponent()->SkillQMaxContinueTime;
@@ -66,21 +63,17 @@ void USetColllisionAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, 
 			{
 				Duration = Hero->GetHeroAttributeComponent()->SkillRMaxContinueTime;
 			}
-
-			FTimerHandle TimerHandle;
-			MeshComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, MeshComp, YggCharacter]()
-			{
-				UYggAttackCapsuleComponent* CapsuleComponent = YggCharacter->GetAttackCapsuleComponent(CollisionMapKey);
-				if (CapsuleComponent)
-				{
-					CapsuleComponent->CollisionOff();
-				}
-			}, Duration, false);
 		}
-		else if (Enemy)
+		
+		FTimerHandle TimerHandle;
+		MeshComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, MeshComp, YggCharacter]()
 		{
-
-		}
+			UYggAttackCapsuleComponent* CapsuleComponent = YggCharacter->GetAttackCapsuleComponent(CollisionMapKey);
+			if (CapsuleComponent)
+			{
+				CapsuleComponent->CollisionOff();
+			}
+		}, Duration, false);		
 	}
 }
 
