@@ -26,6 +26,8 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
+	DeathCheck(_OwnerComp);
+
 	FPlayAIData& AIData = GetPlayAIData(_OwnerComp);
 
 
@@ -36,4 +38,10 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 		ChangeState(_OwnerComp, EEnemyAIState::Trace);
 		return;
 	}
+}
+
+
+void UBTTaskNode_Idle::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	Super::DeathCheck(_OwnerComp);
 }

@@ -23,6 +23,8 @@ void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNode
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
+	DeathCheck(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
@@ -44,4 +46,10 @@ void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNode
 	/*UAttributeComponent* TargetAttributeComponent = TargetActor->FindComponentByClass<UAttributeComponent>();
 	TargetAttributeComponent->HasTag("Character");*/
 	
+}
+
+
+void UBTTaskNode_Hit::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	Super::DeathCheck(_OwnerComp);
 }

@@ -151,7 +151,7 @@ void AEnemyCharacter::BeginPlay()
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 
-	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
 	MiniMapIcon->SetAttachedCharacter(this);
@@ -197,6 +197,26 @@ void AEnemyCharacter::AttackEnd()
 	{
 		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	}
+}
+
+void AEnemyCharacter::DestroyAllComponents()
+{
+	TArray<UActorComponent*> Components;
+	GetComponents(Components);
+
+	for (UActorComponent* Component : Components)
+	{
+		if (IsValid(Component))
+		{
+			Component->DestroyComponent();  
+		}
+	}
+
+	// 미니맵 아이콘 Destroy
+	MiniMapIcon->Destroy();
+
+	// 그 후 자신을 Destroy
+	Destroy();
 }
 
 

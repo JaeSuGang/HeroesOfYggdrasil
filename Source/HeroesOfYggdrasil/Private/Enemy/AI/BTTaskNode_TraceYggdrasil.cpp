@@ -29,6 +29,8 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 	
+	DeathCheck(_OwnerComp);
+
 	CheckTime -= _DeltaSeconds;
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
@@ -84,3 +86,10 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 		SelfController->MoveToLocation(TargetVector, PlayAIData.Data.YggAttackRange);
 	}
 }
+
+void UBTTaskNode_TraceYggdrasil::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	Super::DeathCheck(_OwnerComp);
+}
+
+

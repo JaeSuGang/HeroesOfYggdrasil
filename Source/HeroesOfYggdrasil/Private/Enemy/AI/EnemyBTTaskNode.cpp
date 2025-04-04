@@ -43,8 +43,6 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	DeathCheckTime -= _DeltaSeconds;
-
-	DeathCheck(_OwnerComp);
 }
 
 void UEnemyBTTaskNode::ChangeState(UBehaviorTreeComponent& _OwnerComp, EEnemyAIState _State)
@@ -183,6 +181,7 @@ void UEnemyBTTaskNode::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
 		if (EnemyCharacter != nullptr)
 		{
 			ChangeState(_OwnerComp, EEnemyAIState::Death);
+			return;
 		}
 	}
 
