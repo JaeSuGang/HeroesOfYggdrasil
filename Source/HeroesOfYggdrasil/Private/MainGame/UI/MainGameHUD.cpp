@@ -196,7 +196,7 @@ void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
 
 	if (IsValid(CAC))
 	{
-		CAC->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
+		CAC->ServerDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
 	}
 }
 

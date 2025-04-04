@@ -53,6 +53,14 @@ AEnemyCharacter::AEnemyCharacter()
 }
 
 
+void AEnemyCharacter::UpdateHPBarWidgetToAll_Implementation(float HP)
+{
+	if (UYggMHPBarUserWidget* MHPBarWidget = Cast<UYggMHPBarUserWidget>(WidgetComponent->GetWidget()))
+	{
+		MHPBarUserWidget->UpdateHPBar(HP);
+	}
+}
+
 void AEnemyCharacter::BeginPlay()
 {
 	if (DataKey == TEXT("") || true == DataKey.IsEmpty())
@@ -120,41 +128,34 @@ void AEnemyCharacter::BeginPlay()
 
 
 	// AttributeComponent 세팅
-	if (CharacterAttributeComponent != nullptr && Con != nullptr)
+	if (CharacterAttributeComponent != nullptr)
 	{
-		CharacterAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
-		CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
-		CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
-		CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
+		if (HasAuthority())
+		{
+			CharacterAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
+			CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
+			CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
+			CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
+
+			CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
+		}
+
+		MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
 		
-		// 위젯
-		//MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
-		//
-		//if (!MHPBarUserWidget)
-		//	UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-		//MHPBarUserWidget->SetAttachedCharacter(this);
-		//WidgetComponent->SetWidget(MHPBarUserWidget);
+		if (!MHPBarUserWidget)
+			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+		MHPBarUserWidget->SetAttachedCharacter(this);
+		WidgetComponent->SetWidget(MHPBarUserWidget);
 	}
 
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
-	//if (CharacterAttributeComponent != nullptr)
-	//{
-	//	CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
-	//}
 
 	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
-
-	//APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PC->GetHUD());
-	MainGameHUD->CreateMHPBar(this);
-
-	
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
