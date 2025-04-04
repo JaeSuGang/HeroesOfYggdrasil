@@ -10,6 +10,8 @@
 class UCharacterAttributeComponent;
 class UYggAttackCapsuleComponent;
 
+class UAttrubuteComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggCharacter : public ACharacter
 {
@@ -17,9 +19,13 @@ class HEROESOFYGGDRASIL_API AYggCharacter : public ACharacter
 
 public:
 	AYggCharacter(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
+
+	UFUNCTION()
 	virtual UCharacterAttributeComponent* GetAttributeComponent() { return CharacterAttributeComponent; }
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
 
 	UYggAttackCapsuleComponent* GetAttackCapsuleComponent(const FName& Key);
 

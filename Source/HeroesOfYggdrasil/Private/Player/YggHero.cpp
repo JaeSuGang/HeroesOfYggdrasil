@@ -63,8 +63,9 @@ AYggHero::AYggHero()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
-	CharacterAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("HeroAttributeComponent"));
-	HeroAttributeComponent = Cast<UHeroAttributeComponent>(CharacterAttributeComponent);
+
+	HeroAttributeComponent = CreateDefaultSubobject<UHeroAttributeComponent>(TEXT("HeroAttributeComponent"));
+	CharacterAttributeComponent = Cast<UCharacterAttributeComponent>(HeroAttributeComponent);
 
 	// 닉네임
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
@@ -96,12 +97,17 @@ AYggHero::AYggHero()
 	ActionMap.Add(TEXT("CameraZoomInOut"), NewObject<UInputAction>());
 }
 
+UCharacterAttributeComponent* AYggHero::GetAttributeComponent()
+{
+	return HeroAttributeComponent;
+}
+
 void AYggHero::BeginPlay()
 {
 	Super::BeginPlay();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	HeroAttributeComponent->AddTag(TEXT("Character"));
-	
+
 	if (AnimInstance != nullptr)
 	{
 		HeroAnimInstance = Cast<UYggHeroAnimInstance>(GetMesh()->GetAnimInstance());
@@ -181,7 +187,7 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	//DOREPLIFETIME(AYggHero, HeroAttributeComponent);
+	DOREPLIFETIME(AYggHero, HeroAttributeComponent);
 }
 
 
