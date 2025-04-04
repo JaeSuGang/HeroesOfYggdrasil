@@ -17,8 +17,8 @@ void USetColllisionAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp
 		UYggAttackCapsuleComponent* CapsuleComponent = YggCharacter->GetAttackCapsuleComponent(CollisionMapKey);
 		if (CapsuleComponent)
 		{
-			CapsuleComponent->CollisionOn();
 			CapsuleComponent->SetOwnerCharacter(YggCharacter);
+			CapsuleComponent->CollisionOn();
 		}
 	}
 }
