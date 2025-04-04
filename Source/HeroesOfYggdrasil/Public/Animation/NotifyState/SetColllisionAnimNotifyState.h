@@ -24,5 +24,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName CollisionMapKey;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bEndWithTimer = false;
 	
 };
