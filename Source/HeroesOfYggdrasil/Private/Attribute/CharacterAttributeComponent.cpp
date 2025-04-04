@@ -16,7 +16,7 @@ void UCharacterAttributeComponent::Server_TakeDamage_Implementation(float fAmoun
 
 UCharacterAttributeComponent::UCharacterAttributeComponent()
 {
-	SetIsReplicatedByDefault(true);
+	
 }
 
 void UCharacterAttributeComponent::BeginPlay()
