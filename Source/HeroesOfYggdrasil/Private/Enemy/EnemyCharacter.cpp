@@ -48,6 +48,7 @@ AEnemyCharacter::AEnemyCharacter()
 	{
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
 		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
+		AttackCapsule->SetOwnerCharacter(this);
 		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
 	}
 }
@@ -288,8 +289,12 @@ void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
-	GetWorld()->SpawnActor<AEnemyWarningRange>(
+	AEnemyWarningRange* EnemyWarningRange = GetWorld()->SpawnActor<AEnemyWarningRange>(
 		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
+	EnemyWarningRange->SetCollisionOwnerEnemy(this);
+
+	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
+	float AttackTime = FindData.AIData.BugTickAttackTime;
 }
 
 
@@ -318,4 +323,5 @@ void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
 		RangeAttack->GetProjectileMovement()->Velocity = Direction * Speed;
 	}
 }
+
 
