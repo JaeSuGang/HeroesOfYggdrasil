@@ -109,7 +109,8 @@ void AMainGameHUD::ShowMainGameWidget()
 {
 	if (MainGameWidgetClass)
 	{
-		CurrentWidget = CreateWidget(GetWorld(), MainGameWidgetClass);
+		MainGameUserWidget = CreateWidget<UYggMainGameUserWidget>(GetWorld(), MainGameWidgetClass);
+		CurrentWidget = MainGameUserWidget;
 		if (!CurrentWidget)
 			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
@@ -196,7 +197,7 @@ void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
 
 	if (IsValid(CAC))
 	{
-		CAC->ServerDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
+		CAC->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
 	}
 }
 

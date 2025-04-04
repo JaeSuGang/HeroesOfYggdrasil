@@ -6,6 +6,7 @@
 #include "MainGame/UI/YggOrderStatusUserWidget.h"
 #include "MainGame/UI/YggAbilityPlusUserWidget.h"
 #include "MainGame/UI/YggAbilityUserWidget.h"
+#include "MainGame/UI/YggCastingBarUserWidget.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -15,12 +16,11 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 	
+	PlayerStatusWidget = CreateWidget<UYggPlayerStatusUserWidget>(GetWorld(), PlayerStatusUserWidgetClass);
 	if (!PlayerStatusUserWidgetClass)
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
-	PlayerStatusWidget = CreateWidget<UYggPlayerStatusUserWidget>(GetWorld(), PlayerStatusUserWidgetClass);
-
-	if (PlayerStatusWidget)
+	if (IsValid(PlayerStatusWidget))
 	{
 		MainGamePanel->AddChild(PlayerStatusWidget);
 
@@ -35,6 +35,21 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 	if (!OrderStatusUserWidgetClass)
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
+	CastingBarWidget = CreateWidget<UYggCastingBarUserWidget>(GetWorld(), CastingBarUserWidgetClass);
+	if (!CastingBarUserWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	if (IsValid(CastingBarWidget))
+	{
+		MainGamePanel->AddChild(CastingBarWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(CastingBarWidget->Slot))
+		{
+			//CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+			//CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f));
+			CanvasSlot->SetPosition(FVector2D(850.0f, 850.0f));
+		}
+	}
 }
 
 void UYggMainGameUserWidget::CreateAbilityPlus()

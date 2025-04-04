@@ -31,6 +31,11 @@ void UYggMHPBarUserWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
+    if (IsValid(CAC))
+    {
+        CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggMHPBarUserWidget::UpdateHPBar);
+    }
+
 }
 
 void UYggMHPBarUserWidget::UpdateHPBar(float HP)
