@@ -3,6 +3,7 @@
 // Project Headers
 #include "Player/YggHeroGreystone.h"
 #include "Attribute/HeroAttributeComponent.h"
+#include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
 // Unreal Framework Core Components
 #include "GameFramework/CharacterMovementComponent.h"
@@ -32,6 +33,12 @@
 
 AYggHeroGreystone::AYggHeroGreystone()
 {
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Attack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("sword_bottom"));
+		AttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("Attack"), AttackCapsuleComponent);
+	}
 }
 
 AYggHeroGreystone::~AYggHeroGreystone()
