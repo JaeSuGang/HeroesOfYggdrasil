@@ -128,40 +128,20 @@ void AEnemyCharacter::BeginPlay()
 		CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
 		CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 		
-		if (IsLocallyControlled())
-		{
-			MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
-			if (!MHPBarUserWidget)
-			{
-				UE_LOG(LogTemp, Error, TEXT("위젯 생성 실패: MHPBarUserWidgetClass가 유효한지 확인하세요."));
-			}
-			else
-			{
-				MHPBarUserWidget->SetAttachedCharacter(this);
-				WidgetComponent->SetWidget(MHPBarUserWidget);
-			}
-
-			if (CharacterAttributeComponent != nullptr)
-			{
-				CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
-			}
-		}
+		// 위젯
+		//MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
+		//
+		//if (!MHPBarUserWidget)
+		//	UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+		//MHPBarUserWidget->SetAttachedCharacter(this);
+		//WidgetComponent->SetWidget(MHPBarUserWidget);
 	}
 
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
-	/*if (CharacterAttributeComponent != nullptr)
-	{
-		CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
-	}*/
-
-	//if (MHPBarUserWidget)
+	//if (CharacterAttributeComponent != nullptr)
 	//{
 	//	CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("MHPBarUserWidget is nullptr!"));
 	//}
 
 	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
@@ -170,7 +150,11 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
 
-	
+	//APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PC->GetHUD());
+	MainGameHUD->CreateMHPBar(this);
+
 	
 }
 

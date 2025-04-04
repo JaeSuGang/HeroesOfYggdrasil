@@ -26,7 +26,7 @@ public:
 	void UpdateHPBar(float HP);
 
 	UFUNCTION(BlueprintCallable)
-	void SetAttachedCharacter(AActor* Character);
+	void SetAttachedCharacter(AEnemyCharacter* Enemy);
 
 	UPROPERTY()
 	AEnemyCharacter* EnemyCharacter;

@@ -20,6 +20,8 @@
 #include "Player/YggHero.h"
 
 #include "MainGame/UI/YggMHPBarUserWidget.h"
+#include "Enemy/EnemyCharacter.h"
+#include "Attribute/CharacterAttributeComponent.h"
 
 void AMainGameHUD::BeginPlay()
 {
@@ -171,6 +173,30 @@ void AMainGameHUD::EnableCrossHair(bool bIsVisible)
 		{
 			AIM->SetVisibility(ESlateVisibility::Hidden);
 		}
+	}
+}
+
+void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
+{
+	if (!Enemy)
+	{
+		return;
+	}
+		
+	UYggMHPBarUserWidget* MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarWidgetClass);
+
+	if (!MHPBarUserWidget)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	MHPBarUserWidget->SetAttachedCharacter(Enemy);
+	UWidgetComponent* WidgetComponet = Enemy->GetWidgetComponent();
+	WidgetComponet->SetWidget(MHPBarUserWidget);
+
+	UCharacterAttributeComponent* CAC = Enemy->GetAttributeComponent();
+
+	if (IsValid(CAC))
+	{
+		CAC->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
 	}
 }
 
