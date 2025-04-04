@@ -131,13 +131,13 @@ void AEnemyCharacter::BeginPlay()
 	// AttributeComponent 세팅
 	if (CharacterAttributeComponent != nullptr)
 	{
-		CharacterAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
-		CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
-		CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
-		CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
-		
 		if (HasAuthority())
 		{
+			CharacterAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
+			CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
+			CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
+			CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
+
 			CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
 		}
 
