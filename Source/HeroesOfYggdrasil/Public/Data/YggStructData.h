@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "YggEnumData.h"
 #include "Attribute/EnemyAttributeComponent.h"
+#include "NiagaraSystem.h"
 #include "YggStructData.generated.h"
 
 /**
@@ -277,6 +278,25 @@ public:
 	TSoftObjectPtr<UStaticMesh> StaticMesh;
 };
 
+
+USTRUCT(BlueprintType)
+struct FStatusTickDataRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FStatusTickDataRow() {}
+	~FStatusTickDataRow() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float TickTime = 5.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSoftObjectPtr<UParticleSystem> Particle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSoftObjectPtr<UNiagaraSystem> NiagaraSystem;
+};
 
 USTRUCT(BlueprintType)
 struct FWarningAreaDataRow : public FTableRowBase

@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Data/YggStructData.h"
 #include "YggTickActor.generated.h"
+
+class UYggAttackCapsuleComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggTickActor : public AActor
@@ -23,4 +26,16 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void OverLapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickDataTable")
+	UDataTable* StatusTickDataTable;
+
+
+	UPROPERTY(EditAnywhere, Category = "TickEffects")
+	UParticleSystem* TickParticle;
+
+	UPROPERTY(EditAnywhere, Category = "TickCollision")
+	UYggAttackCapsuleComponent* StatusTickCollision;
 };
