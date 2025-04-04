@@ -33,6 +33,7 @@ class UYggHeroAnimInstance;
 
 // Attribute
 class UHeroAttributeComponent;
+class UCharacterAttributeComponent;
 
 // UI
 class UWidgetComponent;
@@ -51,6 +52,9 @@ public:
 	{
 		return HeroAttributeComponent;
 	}
+
+	virtual UCharacterAttributeComponent* GetAttributeComponent() override;
+	
 
 	UFUNCTION(BlueprintCallable)
 	UYggHeroAnimInstance* GetHeroAnimInstance()
@@ -134,7 +138,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")
 	UYggHeroAnimInstance* HeroAnimInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggAnimation")
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 	UHeroAttributeComponent* HeroAttributeComponent;
 
 	

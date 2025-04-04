@@ -24,7 +24,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void UpdateRange(float DeltaTime);
+	UFUNCTION()
+	void ChangeArea();
+
 
 	float GetDuration()
 	{

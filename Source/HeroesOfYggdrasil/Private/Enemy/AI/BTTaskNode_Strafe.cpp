@@ -26,6 +26,7 @@ void UBTTaskNode_Strafe::Start(UBehaviorTreeComponent& _OwnerComp)
 void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
+
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 

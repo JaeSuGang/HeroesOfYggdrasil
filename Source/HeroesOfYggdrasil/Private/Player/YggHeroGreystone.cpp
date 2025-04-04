@@ -3,6 +3,7 @@
 // Project Headers
 #include "Player/YggHeroGreystone.h"
 #include "Attribute/HeroAttributeComponent.h"
+#include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
 // Unreal Framework Core Components
 #include "GameFramework/CharacterMovementComponent.h"
@@ -34,6 +35,30 @@
 
 AYggHeroGreystone::AYggHeroGreystone()
 {
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Attack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("sword_bottom"));
+		AttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("Attack"), AttackCapsuleComponent);
+	} 
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh());
+		AttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), AttackCapsuleComponent);
+	}
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh());
+		AttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), AttackCapsuleComponent);
+	}
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh());
+		AttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), AttackCapsuleComponent);
+	}
 }
 
 AYggHeroGreystone::~AYggHeroGreystone()

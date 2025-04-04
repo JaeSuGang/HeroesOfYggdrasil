@@ -2,10 +2,14 @@
 
 
 #include "Enemy/EnemyProjectile.h"
-#include "GameFramework/ProjectileMovementComponent.h"
-#include "Components/StaticMeshComponent.h"
+
 #include "Engine/DataTable.h"
+
+#include "GameFramework/ProjectileMovementComponent.h"
+
+#include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
@@ -19,11 +23,16 @@ AEnemyProjectile::AEnemyProjectile()
     ArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArrowMesh"));
     ArrowMesh->SetupAttachment(DefualtSceneRoot);
 
-    ArrowCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
-    ArrowCollision->SetupAttachment(DefualtSceneRoot);
-    ArrowCollision->SetCollisionProfileName(TEXT("MonsterAttack"));
-    
+    //ArrowCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
+    {
+        ArrowSphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
+        ArrowSphereCollision->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
+        ArrowSphereCollision->SetupAttachment(DefualtSceneRoot);
+        ArrowSphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyProjectile::OverLap);
+       //AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), ArrowCollision);
+    }
     DestroyTime = 5.0f;
+    ArrowAttack = 0.0f;
 }
 
 // Called when the game starts or when spawned
@@ -49,7 +58,6 @@ void AEnemyProjectile::BeginPlay()
             ArrowMesh->SetSimulatePhysics(false);
         }
     }
-    ArrowCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyProjectile::OverLap);
 
 }
 
@@ -73,13 +81,21 @@ void AEnemyProjectile::OverLap(UPrimitiveComponent* OverlappedComponent, AActor*
         
         if (Hero != nullptr)
         {
+
+            Hero->GetAttributeComponent()->Server_TakeDamage(ArrowAttack);
             ArrowMesh->AttachToComponent(Hero->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
             ArrowMesh->SetSimulatePhysics(false);
 
             ProjectileMovement->StopMovementImmediately();
 
-            ArrowCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-            ArrowCollision->Deactivate();
+            ArrowSphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            ArrowSphereCollision->Deactivate();
         }
     }
+}
+
+
+void AEnemyProjectile::SetAttackFloat(float _Attack)
+{
+    ArrowAttack = _Attack;
 }

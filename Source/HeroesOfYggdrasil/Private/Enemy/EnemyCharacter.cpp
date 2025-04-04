@@ -19,7 +19,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 #include "AIController.h"
-
 #include "Enemy/EnemyGameInstance.h"
 #include "MainGame/UI/YggMiniMapIconActor.h"
 #include "Enemy/EnemyAIController.h"
@@ -27,6 +26,7 @@
 #include "Enemy/EnemyRangeAttack.h"
 #include "Enemy/EnemyWarningRange.h"
 
+#include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "MainGame/UI/YggMHPBarUserWidget.h"
 #include "MainGame/UI/MainGameHUD.h"
@@ -49,7 +49,6 @@ AEnemyCharacter::AEnemyCharacter()
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
 		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
 		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
-
 	}
 }
 
@@ -163,7 +162,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	
+	AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
 }
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -181,12 +180,7 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	/*AYggCharacter* HeroCharacter = Cast<AYggCharacter>(OtherActor);
-	UCharacterAttributeComponent * HeroCharacterAttributeComponent = HeroCharacter->GetComponentByClass<UCharacterAttributeComponent>();
-	float HeroAttackPoints = HeroCharacterAttributeComponent->GetAttackPoints();
-
-	AIData->PlayData.CurHP -= HeroAttackPoints;*/
-	//MHPBarUserWidget->UpdateHPBar(HeroAttackPoints);
+	//
 }
 
 void AEnemyCharacter::AttackStart()
@@ -214,7 +208,7 @@ void AEnemyCharacter::SpawnAndFireArrow()
 	{
 		return;
 	}
-
+	
 	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
 	FRotator SpawnRotation = GetActorRotation();
 
@@ -222,7 +216,10 @@ void AEnemyCharacter::SpawnAndFireArrow()
 	SpawnParams.Owner = this;
 
 	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-
+	Arrow->SetAttackFloat(CharacterAttributeComponent->AttackPoints);
+	USphereComponent* ArrowCol = Arrow->GetArrowCollision();
+	
+	
 	if (Arrow != nullptr)
 	{
 		FVector LaunchDirection = GetActorForwardVector();
@@ -250,7 +247,6 @@ void AEnemyCharacter::RevealArrow()
 void AEnemyCharacter::SpawnWarningRange(AActor* _Actor)
 {
 	SpawnWarningOutRange(_Actor);
-	SpawnWarningInRange(_Actor);
 }
 
 void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
@@ -276,27 +272,7 @@ void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
 }
 
-void AEnemyCharacter::SpawnWarningInRange(AActor* _Actor)
-{
-	if (!WarningInRangeClass || !_Actor)
-		return;
 
-	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
-	FVector SpawnLocation = _Actor->GetActorLocation();
-
-	if (Capsule)
-	{
-		float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
-		SpawnLocation -= FVector(0, 0, HalfHeight);
-	}
-
-	FRotator SpawnRotation = _Actor->GetActorRotation();
-
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	
-	WarningInRangeClass = GetWorld()->SpawnActor<AEnemyWarningRange>(AEnemyWarningRange::StaticClass(), SpawnLocation, SpawnRotation, SpawnParams);
-}
 
 // 공격
 

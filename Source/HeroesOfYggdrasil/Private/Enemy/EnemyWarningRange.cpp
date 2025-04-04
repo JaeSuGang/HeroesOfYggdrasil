@@ -42,7 +42,12 @@ void AEnemyWarningRange::BeginPlay()
         }
     }
  
-  
+    if (DynamicMaterial != nullptr)
+    {
+        float Alpha = 0.2f;
+        DynamicMaterial->SetScalarParameterValue("WarningAlpha", Alpha);
+    }
+    SetActorScale3D(FVector(2.0f, 2.0f, 1.0f));
 }
 
 // Called every frame
@@ -51,12 +56,8 @@ void AEnemyWarningRange::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
     TimeElapsed += DeltaTime;
-
-    if (DynamicMaterial != nullptr)
-    {
-        float Alpha = 0.15f;
-        DynamicMaterial->SetScalarParameterValue("WarningAlpha", Alpha);
-    }
+    
+    ChangeArea();
 
     if (TimeElapsed >= Duration)
     {
@@ -64,14 +65,11 @@ void AEnemyWarningRange::Tick(float DeltaTime)
     }
 }
 
-
-void AEnemyWarningRange::UpdateRange(float DeltaTime)
+void AEnemyWarningRange::ChangeArea()
 {
-    float StartFloat = 0.0f;
-    StartFloat += DeltaTime;
-
-    float ScaleFloat = FMath::Clamp(StartFloat / Duration, 0.0f, 1.0f);
-    FVector Scale = FVector{ ScaleFloat, ScaleFloat, 1.0f };
-
-    SetActorScale3D(Scale);
+    float Progress = 1.0f - FMath::Clamp(TimeElapsed / Duration, 0.0f, 1.0f);
+    
+    FVector TargetScale(2.0f, 2.0f, 1.0f);
+ 
+    SetActorScale3D(TargetScale * Progress);
 }

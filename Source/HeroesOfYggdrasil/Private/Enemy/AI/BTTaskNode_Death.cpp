@@ -17,21 +17,23 @@ void UBTTaskNode_Death::Start(UBehaviorTreeComponent& _OwnerComp)
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
-	DeathTime = 5.0f;
+	DeathTime = 3.0f;
 	
 }
 
 void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
-	
+
+	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	APawn* SelfPawn = PlayAIData.SelfPawn;
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfPawn);
+
 	DeathTime -= _DeltaSeconds;
 
 	if (DeathTime < 0.0f)
 	{
-		FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-		APawn* SelfPawn = PlayAIData.SelfPawn;
-		SelfPawn->Destroy();
+		EnemyCharacter->Destroy();
 	}
 
 }
