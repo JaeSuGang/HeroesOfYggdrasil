@@ -81,6 +81,11 @@ public:
 	void ThrowPoisonedBall(FVector _TargetLocation);
 
 
+	UWidgetComponent* GetWidgetComponent()
+	{
+		return WidgetComponent;
+	}
+
 
 protected:
 	virtual void BeginPlay() override;

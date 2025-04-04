@@ -49,11 +49,12 @@ void UYggMHPBarUserWidget::UpdateHPBar(float HP)
     }
 }
 
-void UYggMHPBarUserWidget::SetAttachedCharacter(AActor* Character)
+void UYggMHPBarUserWidget::SetAttachedCharacter(AEnemyCharacter* Enemy)
 {
-    if (Character != nullptr)
+    if (Enemy != nullptr)
     {
-        EnemyCharacter = Cast<AEnemyCharacter>(Character);
+        //EnemyCharacter = Cast<AEnemyCharacter>(Enemy);
+        EnemyCharacter = Enemy;
         CAC = EnemyCharacter->GetAttributeComponent();
     }
 }

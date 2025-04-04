@@ -9,6 +9,7 @@
 class UYggLobbyUserWidget;
 class UYggMainGameUserWidget;
 class UYggMHPBarUserWidget;
+class AEnemyCharacter;
 
 /**
  * 
@@ -50,10 +51,14 @@ public:
 	void EnableCrossHair(bool bIsVisible);
 
 	UFUNCTION(BlueprintCallable)
-	UYggMHPBarUserWidget* GetMHPBarWidget()
-	{
-		return MHPBarUserWidget;
-	}
+	void CreateMHPBar(AEnemyCharacter* Enemy);
+
+
+	//UFUNCTION(BlueprintCallable)
+	//UYggMHPBarUserWidget* GetMHPBarWidget()
+	//{
+	//	return MHPBarUserWidget;
+	//}
 
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
@@ -86,8 +91,8 @@ public:
 	UPROPERTY()
 	UYggMainGameUserWidget* MainGameUserWidget;
 
-	UPROPERTY()
-	UYggMHPBarUserWidget* MHPBarUserWidget;
+	/*UPROPERTY()
+	UYggMHPBarUserWidget* MHPBarUserWidget;*/
 
 	APlayerController* PC;
 

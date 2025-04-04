@@ -5,8 +5,12 @@
 #include "Engine/TextureRenderTarget2D.h"
 #include "Engine/Texture2D.h"
 #include "Components/Image.h"
+#include "Components/VerticalBox.h"
+#include "Components/VerticalBoxSlot.h"
 #include "Component/CaptureComponent.h"
 #include "Player/YggHero.h"
+#include "MainGame/UI/YggHPBarUserWidget.h"
+#include "MainGame/UI/YggNicknameBarUserWidget.h"
 
 
 void UYggPlayerStatusUserWidget::NativeOnInitialized()
@@ -34,6 +38,22 @@ void UYggPlayerStatusUserWidget::NativeOnInitialized()
     UTexture2D* CapturedTexture = ConvertRenderTargetToTexture2D(RenderTarget);
 
     SetFaceCam(CapturedTexture);
+
+
+    HPBarUserWidget = CreateWidget<UYggHPBarUserWidget>(GetWorld(), HPBarWidgetClass);
+    if (!HPBarUserWidget)
+        UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+    if (!VerticalBox)
+        UE_LOG(LogTemp, Warning, TEXT("%S (%u) VerticalBox가 nullptr임"), __FUNCTION__, __LINE__);
+    
+
+    UVerticalBoxSlot* HPBarSlot = VerticalBox->AddChildToVerticalBox(HPBarUserWidget);
+
+    HPBarSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
+    HPBarSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
+    
+
 }
 
 void UYggPlayerStatusUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

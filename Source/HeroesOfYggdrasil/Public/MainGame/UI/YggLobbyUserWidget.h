@@ -40,6 +40,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> SelectUserWidgetClass;
 
+	UPROPERTY()
 	UYggLobbySelectUserWidget* NewPlayerWidget;
 
 	FString PlayerName;

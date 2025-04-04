@@ -58,8 +58,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> AbiltyUserWidgetClass;
 
+	UPROPERTY()
 	UYggPlayerStatusUserWidget* PlayerStatusWidget;
+
+	UPROPERTY()
 	UYggOrderStatusUserWidget* OrderStatusWidget;
+	
+	UPROPERTY()
 	UYggAbilityPlusUserWidget* AbilityPlusWidget;
+
+	UPROPERTY()
 	UYggAbilityUserWidget* AbilityWidget;
 };

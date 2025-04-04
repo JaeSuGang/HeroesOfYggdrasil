@@ -7,6 +7,10 @@
 #include "YggPlayerStatusUserWidget.generated.h"
 
 class UImage;
+class UProgressBar;
+class UVerticalBox;
+class UYggHPBarUserWidget;
+class UYggNicknameBarUserWidget;
 
 /**
  * 
@@ -20,6 +24,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetFaceCam(UTexture2D* Texture);
 
+
+
 	UTexture2D* ConvertRenderTargetToTexture2D(UTextureRenderTarget2D* RenderTarget);
 
 protected:
@@ -29,6 +35,15 @@ protected:
 private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* PlayerFace;
+	
+	UPROPERTY(meta = (BindWidget))
+	UVerticalBox* VerticalBox;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> HPBarWidgetClass;
+
+	UPROPERTY()
+	UYggHPBarUserWidget* HPBarUserWidget;
 
 	UTexture2D* Texture2D;
 };
