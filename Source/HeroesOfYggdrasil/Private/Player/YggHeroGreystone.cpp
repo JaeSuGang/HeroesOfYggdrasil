@@ -38,6 +38,24 @@ AYggHeroGreystone::AYggHeroGreystone()
 		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("sword_bottom"));
 		AttackCapsuleComponent->SetOwnerCharacter(this);
 		AttackCapsuleComponentMap.Add(TEXT("Attack"), AttackCapsuleComponent);
+	} 
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("root"));
+		AttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), AttackCapsuleComponent);
+	}
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("root"));
+		AttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), AttackCapsuleComponent);
+	}
+	{
+		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
+		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("root"));
+		AttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), AttackCapsuleComponent);
 	}
 }
 
