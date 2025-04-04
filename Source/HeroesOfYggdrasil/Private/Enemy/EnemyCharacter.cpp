@@ -151,23 +151,12 @@ void AEnemyCharacter::BeginPlay()
 
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
-	//if (CharacterAttributeComponent != nullptr)
-	//{
-	//	CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
-	//}
 
 	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
-
-	//APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	//APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-	//AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PC->GetHUD());
-	//MainGameHUD->CreateMHPBar(this);
-
-	
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
