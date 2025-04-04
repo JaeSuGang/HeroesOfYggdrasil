@@ -95,6 +95,9 @@ public:
 	}
 
 
+	UFUNCTION(NetMulticast, Reliable)
+	void UpdateHPBarWidgetToAll(float HP);
+
 protected:
 	virtual void BeginPlay() override;
 

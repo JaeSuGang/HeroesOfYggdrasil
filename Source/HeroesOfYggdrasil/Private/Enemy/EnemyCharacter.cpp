@@ -54,6 +54,14 @@ AEnemyCharacter::AEnemyCharacter()
 }
 
 
+void AEnemyCharacter::UpdateHPBarWidgetToAll_Implementation(float HP)
+{
+	if (UYggMHPBarUserWidget* MHPBarWidget = Cast<UYggMHPBarUserWidget>(WidgetComponent->GetWidget()))
+	{
+		MHPBarUserWidget->UpdateHPBar(HP);
+	}
+}
+
 void AEnemyCharacter::BeginPlay()
 {
 	if (DataKey == TEXT("") || true == DataKey.IsEmpty())
@@ -128,13 +136,14 @@ void AEnemyCharacter::BeginPlay()
 		CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
 		CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 		
-		// 위젯
-		//MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
-		//
-		//if (!MHPBarUserWidget)
-		//	UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-		//MHPBarUserWidget->SetAttachedCharacter(this);
-		//WidgetComponent->SetWidget(MHPBarUserWidget);
+
+		CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
+		MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
+		
+		if (!MHPBarUserWidget)
+			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+		MHPBarUserWidget->SetAttachedCharacter(this);
+		WidgetComponent->SetWidget(MHPBarUserWidget);
 	}
 
 	// 충돌 설정
@@ -151,9 +160,9 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->AddToCaptureComponent();
 
 	//APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PC->GetHUD());
-	MainGameHUD->CreateMHPBar(this);
+	//APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+	//AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PC->GetHUD());
+	//MainGameHUD->CreateMHPBar(this);
 
 	
 }
