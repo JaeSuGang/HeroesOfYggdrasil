@@ -14,6 +14,24 @@ class AEnemyCharacter;
 /**
  * 
  */
+
+USTRUCT(BlueprintType)
+struct FSkillIcon : public FTableRowBase
+{
+	GENERATED_BODY()
+	FSkillIcon() {}
+	~FSkillIcon() {}
+public:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UTexture2D* SkillQIcon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* SkillEIcon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* SkillRIcon;
+};
+
+
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AMainGameHUD : public AHUD
 {
@@ -99,6 +117,13 @@ public:
 	UYggMHPBarUserWidget* MHPBarUserWidget;*/
 
 	APlayerController* PC;
+
+	UFUNCTION(BlueprintCallable)
+	void SetSkillIcon(FName CharacterName);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* SkillIcons;
+	FSkillIcon* CharSkillIcon;
 
 	//TFunction<void()> StartButtinPlayerFunc;
 	//void BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc);
