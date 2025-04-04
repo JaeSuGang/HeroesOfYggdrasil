@@ -53,6 +53,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void CreateMHPBar(AEnemyCharacter* Enemy);
 
+	UYggMainGameUserWidget* GetMainGameWidget()
+	{
+		return MainGameUserWidget;
+	}
 
 	//UFUNCTION(BlueprintCallable)
 	//UYggMHPBarUserWidget* GetMHPBarWidget()

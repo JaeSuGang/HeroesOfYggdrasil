@@ -28,7 +28,9 @@
 #include "Engine/DataTable.h"
 #include "Data/YggStructData.h"
 
-
+#include "MainGame/UI/YggCastingBarUserWidget.h"
+#include "MainGame/UI/MainGameHUD.h"
+#include "MainGame/UI/YggMainGameUserWidget.h"
 
 AYggHeroGreystone::AYggHeroGreystone()
 {
@@ -219,7 +221,7 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	{
 		// HeroAttributeComponent->Status.GroundSpeedRate = 4.0f;
 		// GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->Status.GroundSpeedRate;
-
+		
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastSkillR();
@@ -247,6 +249,20 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 	
+	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PlayerController->GetHUD());
+	if (!MainGameHUD)
+		return;
+
+	UYggMainGameUserWidget* MainGameWidget = MainGameHUD->GetMainGameWidget();
+	if (!MainGameWidget)
+		return;
+
+	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameWidget->GetCastingBarWidget();
+	if (!CastingBarUserWidget)
+		return;
+
+	CastingBarUserWidget->StartCasting(5.0f);
+
 	bIsSkillR = true;
 }
 
@@ -326,14 +342,30 @@ void AYggHeroGreystone::MagicCircleOff()
 {
 	bIsSkillR = false;
 
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	
+	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PlayerController->GetHUD());
+	if (!MainGameHUD)
+		return;
+	
+	UYggMainGameUserWidget* MainGameWidget = MainGameHUD->GetMainGameWidget();
+	if (!MainGameWidget)
+		return;
+	
+	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameWidget->GetCastingBarWidget();
+	if (!CastingBarUserWidget)
+		return;
+
+	CastingBarUserWidget->EndCasting();
+
 	if (IsValid(SkillRDecal))
 	{
 		SetActorLocation(SkillRDecal->GetComponentLocation());
 
 		SkillRDecal->DestroyComponent();
 		SkillRDecal = nullptr;
-
-		APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+		
+		// APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 		if (PlayerController)
 		{
 			GetCharacterMovement()->bOrientRotationToMovement = true;

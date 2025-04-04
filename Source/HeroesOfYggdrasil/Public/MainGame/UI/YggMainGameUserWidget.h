@@ -11,6 +11,7 @@ class UYggPlayerStatusUserWidget;
 class UYggOrderStatusUserWidget;
 class UYggAbilityPlusUserWidget;
 class UYggAbilityUserWidget;
+class UYggCastingBarUserWidget;
 
 /**
  * 
@@ -24,6 +25,11 @@ public:
 	UYggPlayerStatusUserWidget* GetPlayerStatusWidget()
 	{
 		return PlayerStatusWidget;
+	}
+
+	UYggCastingBarUserWidget* GetCastingBarWidget()
+	{
+		return CastingBarWidget;
 	}
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
@@ -58,6 +64,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> AbiltyUserWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> CastingBarUserWidgetClass;
+
 	UPROPERTY()
 	UYggPlayerStatusUserWidget* PlayerStatusWidget;
 
@@ -69,4 +78,8 @@ private:
 
 	UPROPERTY()
 	UYggAbilityUserWidget* AbilityWidget;
+
+	UPROPERTY()
+	UYggCastingBarUserWidget* CastingBarWidget;
+
 };
