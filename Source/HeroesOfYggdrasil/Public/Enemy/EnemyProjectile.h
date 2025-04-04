@@ -33,6 +33,13 @@ public:
 	UFUNCTION()
 	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	void SetAttackFloat(float _Attack);
+
+	class USphereComponent* GetArrowCollision()
+	{
+		return 	ArrowSphereCollision;
+	}
+
 public:
 	
 
@@ -43,8 +50,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Arrow", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ArrowMesh;
 
-	UPROPERTY(VisibleAnywhere, Category = "Arrow", meta = (AllowPrivateAccess = "true"))
-	UYggAttackCapsuleComponent* ArrowCollision;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "ArrowComponent")
+	class USphereComponent* ArrowSphereCollision;
 
 	UPROPERTY(EditAnywhere)
 	UDataTable* EnemyProjectileData;
@@ -53,5 +60,10 @@ protected:
 	class UProjectileMovementComponent* ProjectileMovement;
 
 	UPROPERTY(EditAnywhere)
+	float ArrowAttack;
+
+	UPROPERTY(EditAnywhere)
 	float DestroyTime;
+
+
 };

@@ -19,7 +19,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 
 #include "AIController.h"
-
 #include "Enemy/EnemyGameInstance.h"
 #include "MainGame/UI/YggMiniMapIconActor.h"
 #include "Enemy/EnemyAIController.h"
@@ -27,6 +26,7 @@
 #include "Enemy/EnemyRangeAttack.h"
 #include "Enemy/EnemyWarningRange.h"
 
+#include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "MainGame/UI/YggMHPBarUserWidget.h"
 #include "MainGame/UI/MainGameHUD.h"
@@ -212,7 +212,10 @@ void AEnemyCharacter::SpawnAndFireArrow()
 	SpawnParams.Owner = this;
 
 	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-
+	Arrow->SetAttackFloat(CharacterAttributeComponent->AttackPoints);
+	USphereComponent* ArrowCol = Arrow->GetArrowCollision();
+	
+	
 	if (Arrow != nullptr)
 	{
 		FVector LaunchDirection = GetActorForwardVector();

@@ -24,16 +24,15 @@ AEnemyProjectile::AEnemyProjectile()
     ArrowMesh->SetupAttachment(DefualtSceneRoot);
 
     //ArrowCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
-    //ArrowCollision->SetupAttachment(DefualtSceneRoot);
     {
-        ArrowCollision = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("ArrowAttack"));
-        ArrowCollision->SetupAttachment(ArrowMesh, TEXT("head"));
-        ArrowCollision->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
-        //AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), ArrowCollision);
-        ArrowCollision->InitCapsuleSize(5.0f, 5.0f);
-        ArrowMesh->OnComponentBeginOverlap.AddDynamic(this, &AEnemyProjectile::OverLap);
+        ArrowSphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
+        ArrowSphereCollision->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
+        ArrowSphereCollision->SetupAttachment(DefualtSceneRoot);
+        ArrowSphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyProjectile::OverLap);
+       //AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), ArrowCollision);
     }
     DestroyTime = 5.0f;
+    ArrowAttack = 0.0f;
 }
 
 // Called when the game starts or when spawned
@@ -60,8 +59,6 @@ void AEnemyProjectile::BeginPlay()
         }
     }
 
-   
-
 }
 
 // Called every frame
@@ -84,13 +81,21 @@ void AEnemyProjectile::OverLap(UPrimitiveComponent* OverlappedComponent, AActor*
         
         if (Hero != nullptr)
         {
+
+            Hero->GetAttributeComponent()->Server_TakeDamage(ArrowAttack);
             ArrowMesh->AttachToComponent(Hero->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
             ArrowMesh->SetSimulatePhysics(false);
 
             ProjectileMovement->StopMovementImmediately();
 
-            OverlappedComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-            OverlappedComponent->Deactivate();
+            ArrowSphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            ArrowSphereCollision->Deactivate();
         }
     }
+}
+
+
+void AEnemyProjectile::SetAttackFloat(float _Attack)
+{
+    ArrowAttack = _Attack;
 }
