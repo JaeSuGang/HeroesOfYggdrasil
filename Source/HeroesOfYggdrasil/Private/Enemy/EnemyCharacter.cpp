@@ -129,7 +129,7 @@ void AEnemyCharacter::BeginPlay()
 
 
 	// AttributeComponent 세팅
-	if (CharacterAttributeComponent != nullptr && Con != nullptr)
+	if (CharacterAttributeComponent != nullptr)
 	{
 		CharacterAttributeComponent->Server_SetHP(AIData->PlayData.CurHP);
 		CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
