@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Engine/DataAsset.h"
 #include "UpgradeDataAsset.generated.h"
 
 class UTexture2D;
