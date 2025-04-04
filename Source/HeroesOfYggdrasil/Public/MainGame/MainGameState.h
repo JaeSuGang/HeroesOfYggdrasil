@@ -10,6 +10,7 @@
 class AStageManager;
 class APlayerManager;
 class AEnemyManager;
+class AUpgradeManager;
 
 /**
  * 담당 코더 : 김경민
@@ -43,6 +44,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemyManager> EnemyManagerClass;
+
+	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
+	AUpgradeManager* UpgradeManager;
 
 	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	APlayerManager* PlayerManager;

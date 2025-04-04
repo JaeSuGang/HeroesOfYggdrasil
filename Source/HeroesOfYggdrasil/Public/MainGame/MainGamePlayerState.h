@@ -41,8 +41,10 @@ public:
 	UPROPERTY(BlueprintAssignable, BlueprintReadWrite)
 	FOnUpgradePointsChangedDelegate ClientDelegate_OnUpgradePointsChanged;
 
-protected:
+	UPROPERTY(VisibleInstanceOnly, Replicated)
+	TArray<FPrimaryAssetId> AvailableUpgradeIds;
 
+protected:
 	UPROPERTY(Replicated)
 	int UpgradePoints;
 };

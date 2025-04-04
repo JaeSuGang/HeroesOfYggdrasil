@@ -5,22 +5,24 @@
 #include "CoreMinimal.h"
 #include "UpgradeDataAsset.generated.h"
 
-class UTexture;
+class UTexture2D;
 class UUpgradeEffectBase;
 
 /**
  * 담당 코더 : 김경민
  */
-
-/*
-* 
-*/
 UCLASS(BlueprintType)
 class HEROESOFYGGDRASIL_API UUpgradeDataAsset : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
 
 public:
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName Id;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName UpgradeName;
 
@@ -28,19 +30,8 @@ public:
 	FName UpgradeDescription;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture* UpgradeImage;
+	UTexture2D* UpgradeImage;
 
 	UPROPERTY(Instanced, EditAnywhere, BlueprintReadWrite)
 	TArray<UUpgradeEffectBase*> UpgradeEffects;
-};
-
-
-USTRUCT(BlueprintType)
-struct HEROESOFYGGDRASIL_API FUpgradeDataTableRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSoftObjectPtr<UUpgradeDataAsset> UpgradeDataAsset;
 };

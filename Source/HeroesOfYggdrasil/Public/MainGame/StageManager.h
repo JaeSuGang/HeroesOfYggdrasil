@@ -19,16 +19,14 @@ class HEROESOFYGGDRASIL_API AStageManager : public AInfo
 public:
 	AStageManager(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	UFUNCTION(BlueprintCallable)
-	static AStageManager* Get(UWorld* WorldContext);
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
+	static AStageManager* Get(UObject* WorldContextObject);
 
 protected:
 	void BeginPlay() override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	AGameStage* GetPlayingStage() const;
-
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void EnterStage(TSubclassOf<AGameStage> stage);
 
