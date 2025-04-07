@@ -26,6 +26,16 @@ enum class ECharacterType :uint8
 	Enemy UMETA(DisplayName = "Enemy"),
 };
 
+UENUM(BlueprintType)
+enum class EAttackType :uint8
+{
+	None UMETA(DisplayName = "None"),
+	Normal UMETA(DisplayName = "Attack"),
+	SkillQ UMETA(DisplayName = "SkillQ"),
+	SkillE UMETA(DisplayName = "SkillE"),
+	SkillR UMETA(DisplayName = "SkillR"),
+};
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class HEROESOFYGGDRASIL_API UYggAttackCapsuleComponent : public UYggCapsuleComponent
@@ -53,6 +63,9 @@ protected:
 	EDamageType DamageType;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ECharacterType CharacterType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EAttackType AttackType;
 
 	float CurTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

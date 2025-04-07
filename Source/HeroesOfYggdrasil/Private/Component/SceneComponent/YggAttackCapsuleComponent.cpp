@@ -19,7 +19,7 @@ UYggAttackCapsuleComponent::UYggAttackCapsuleComponent()
 void UYggAttackCapsuleComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	OnComponentBeginOverlap.AddDynamic(this, &UYggAttackCapsuleComponent::OverLapBegin);
 	OnComponentEndOverlap.AddDynamic(this, &UYggAttackCapsuleComponent::OverLapEnd);
 	CollisionOff();
@@ -29,7 +29,7 @@ void UYggAttackCapsuleComponent::TickComponent(float DeltaTime, ELevelTick TickT
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	if (!IsValid(OwnerCharacter)) { return; }
-	if(!OwnerCharacter->HasAuthority()) { return; }
+	if (!OwnerCharacter->HasAuthority()) { return; }
 	if (DamageType == EDamageType::Tick)
 	{
 		CurTime += DeltaTime;
@@ -82,6 +82,27 @@ void UYggAttackCapsuleComponent::CollisionOn()
 	Super::CollisionOn();
 	OverlappedActors.Reset();
 	SetComponentTickEnabled(true);
+	if (CharacterType == ECharacterType::Hero)
+	{
+		UHeroAttributeComponent* HeroAttributeComponent = Cast<UHeroAttributeComponent>(OwnerCharacter->GetAttributeComponent());
+		if (!HeroAttributeComponent) return;
+		
+		switch (AttackType)
+		{
+		case EAttackType::Normal:
+			Coefficient = 1.0f;
+			break;
+		case EAttackType::SkillQ:
+			Coefficient = HeroAttributeComponent->SkillQInfo.SkillCoefficient;
+			break;
+		case EAttackType::SkillE:
+			Coefficient = HeroAttributeComponent->SkillEInfo.SkillCoefficient;
+			break;
+		case EAttackType::SkillR:
+			Coefficient = HeroAttributeComponent->SkillRInfo.SkillCoefficient;
+			break;
+		}
+	}
 }
 
 void UYggAttackCapsuleComponent::OverLapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
