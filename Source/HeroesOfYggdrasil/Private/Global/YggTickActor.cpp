@@ -19,6 +19,9 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#include "Particles/ParticleSystemComponent.h"
+
+
 // Sets default values
 AYggTickActor::AYggTickActor()
 {
@@ -68,7 +71,30 @@ void AYggTickActor::Tick(float DeltaTime)
 
 void AYggTickActor::SetTickDamage(AYggCharacter* _Target, float _Interval, float DamageAmount)
 {
-    TickDamageComponent->TargetActor = _Target;
-    TickDamageComponent->TickInterval = _Interval;
-    TickDamageComponent->DamageAmount = DamageAmount;
+	if (!IsValid(_Target)) return;
+
+	// 데미지 설정
+	TickDamageComponent->TargetActor = _Target;
+	TickDamageComponent->TickInterval = _Interval;
+	TickDamageComponent->DamageAmount = DamageAmount;
+
+	if (TickParticle.IsValid())
+	{
+		UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
+		ParticleComp->SetTemplate(TickParticle.Get());
+		ParticleComp->bAutoActivate = true;
+		
+		ParticleComp->SetRelativeScale3D(FVector(10.0f));
+
+		ParticleComp->RegisterComponent();
+
+		ParticleComp->AttachToComponent(
+			_Target->GetRootComponent(),
+			FAttachmentTransformRules::KeepRelativeTransform
+		);
+	}
+	else
+	{
+		TickParticle.LoadSynchronous();
+	}
 }
