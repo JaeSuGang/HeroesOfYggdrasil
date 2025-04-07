@@ -18,6 +18,8 @@
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+#include "Core/YggCharacter.h"
+
 #include "AIController.h"
 #include "Enemy/EnemyGameInstance.h"
 #include "MainGame/UI/YggMiniMapIconActor.h"
@@ -28,6 +30,7 @@
 
 #include "Global/YggTickActor.h"
 
+#include "Component/ActorComponent/TickDamageComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "MainGame/UI/YggMHPBarUserWidget.h"
@@ -168,7 +171,10 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
+	if (IsValid(AIData) && IsValid(CharacterAttributeComponent))
+	{
+		AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
+	}
 }
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -333,24 +339,21 @@ void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
 
 void AEnemyCharacter::HandleHeroEnteredRange(AYggHero* Hero)
 {
-	if (!IsValid(Hero) || !TickActorClass) return;
-
-	const FVector SpawnLocation = Hero->GetActorLocation();
-	const FRotator SpawnRotation = Hero->GetActorRotation();
+	FTransform SpawnTransform = FTransform(Hero->GetActorRotation(), Hero->GetActorLocation());
 
 	AYggTickActor* TickActor = GetWorld()->SpawnActorDeferred<AYggTickActor>(
 		TickActorClass,
-		FTransform(SpawnRotation, SpawnLocation),
+		SpawnTransform,
 		nullptr,
 		nullptr,
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 	);
 
 	if (!IsValid(TickActor)) return;
+	float attackpoint = CharacterAttributeComponent->AttackPoints;
+	attackpoint /= 10.0f;
 
-	TickActor->GetStatusTickCollision()->SetOwnerCharacter(this);
+	TickActor->SetTickDamage(Hero, 0.5f, attackpoint);
 
-	UGameplayStatics::FinishSpawningActor(TickActor, FTransform(SpawnRotation, SpawnLocation));
-
-	UE_LOG(LogTemp, Log, TEXT("TickActor spawned & attached to hero: %s"), *Hero->GetName());
+	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 }

@@ -8,11 +8,12 @@
 #include "NiagaraSystem.h"
 #include "YggTickActor.generated.h"
 
-class UYggAttackCapsuleComponent;
 class UDataTable;
 class USceneComponent;
 class UParticleSystem;
 class UNiagaraSystem;
+class UTickDamageComponent;
+
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggTickActor : public AActor
@@ -32,11 +33,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void OverLapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UYggAttackCapsuleComponent* GetStatusTickCollision()
-	{
-		return StatusTickCollision;
-	}
+	void SetTickDamage(class AYggCharacter* _Target, float _Interval, float DamageAmount);
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickDataTable")
@@ -55,6 +52,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "TickEffects")
 	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 
-	UPROPERTY(EditAnywhere, Category = "TickCollision")
-	UYggAttackCapsuleComponent* StatusTickCollision;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tick")
+	UTickDamageComponent* TickDamageComponent;
+
 };

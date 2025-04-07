@@ -11,7 +11,13 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 
 #include "Components/StaticMeshComponent.h"
+#include "Component/ActorComponent/TickDamageComponent.h"
 
+#include "Core/YggCharacter.h"
+
+#include "GameFramework/Actor.h"
+
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AYggTickActor::AYggTickActor()
@@ -20,15 +26,7 @@ AYggTickActor::AYggTickActor()
 	PrimaryActorTick.bCanEverTick = true;
 
     DefualtSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefualtSceneRoot"));
-
-    {
-        StatusTickCollision = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("TickCollision"));
-        StatusTickCollision->SetupAttachment(DefualtSceneRoot);
-        
-        //StatusTickCollision->OnComponentBeginOverlap.AddDynamic(this, &AYggTickActor::OverLapBegin);
-    }
-
-
+    TickDamageComponent = CreateDefaultSubobject<UTickDamageComponent>(TEXT("TickDamageComp"));
 }
 
 // Called when the game starts or when spawned
@@ -36,7 +34,6 @@ void AYggTickActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-    StatusTickCollision->CollisionOn();
 
       if (IsValid(StatusTickDataTable))
     {
@@ -54,21 +51,24 @@ void AYggTickActor::BeginPlay()
 
         StatusTickTime = Row->TickTime;
     }
-    
-   
 
 }
 
-// Called every frame
 void AYggTickActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    StatusTickTime -= DeltaTime;
+
+    if (StatusTickTime < 0.0f)
+    {
+        Destroy();
+    }
 }
 
-
-
-void AYggTickActor::OverLapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AYggTickActor::SetTickDamage(AYggCharacter* _Target, float _Interval, float DamageAmount)
 {
-    int a = 0;
+    TickDamageComponent->TargetActor = _Target;
+    TickDamageComponent->TickInterval = _Interval;
+    TickDamageComponent->DamageAmount = DamageAmount;
 }
