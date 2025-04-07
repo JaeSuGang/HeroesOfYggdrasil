@@ -40,7 +40,7 @@ void UHeroJumpTraceNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 		}
 		else if (false == bIsHit)
 		{
-			TargetLocation = StartLocation + Hero->GetActorForwardVector() * 1000;
+			TargetLocation = StartLocation + Hero->GetActorForwardVector() * Scope;
 		}
 	}
 }
