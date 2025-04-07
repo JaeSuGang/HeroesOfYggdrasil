@@ -22,6 +22,8 @@ public:
 
 	void RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds) override;
 
+	virtual void DeathCheck(UBehaviorTreeComponent& _OwnerComp) override;
+
 public:
 	UPROPERTY(EditAnywhere)
 	double AwaitTime;

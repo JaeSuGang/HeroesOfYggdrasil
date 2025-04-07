@@ -73,16 +73,18 @@ void AEnemyRangeAttack::OverLap(UPrimitiveComponent* OverlappedComponent, AActor
 
         if (Hero != nullptr)
         {
-            PoisonMesh->AttachToComponent(Hero->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
-            PoisonMesh->SetSimulatePhysics(false);
-            PoisonMesh->DestroyComponent();
+            //AActor* Ptr = GetWorld()->SpawnActor<AActor>(APostion::Staticclass());
 
-            ProjectileMovement->StopMovementImmediately();
+            // PoisonMesh->AttachToComponent(Hero->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
 
-            PoisonMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-            PoisonMesh->Deactivate();
+            //Ptr->AttachToComponent(Hero->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
+            //Ptr->SetSimulatePhysics(false);
+            // Ptr->DestroyComponent();
+            //ProjectileMovement->StopMovementImmediately();
+            //Ptr->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+            // Ptr->Deactivate();
 
-            Destroy();
+            //Destroy();
         }
     }
 }

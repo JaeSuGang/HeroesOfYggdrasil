@@ -35,7 +35,6 @@ void UYggMHPBarUserWidget::NativeConstruct()
     {
         CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggMHPBarUserWidget::UpdateHPBar);
     }
-
 }
 
 void UYggMHPBarUserWidget::UpdateHPBar(float HP)

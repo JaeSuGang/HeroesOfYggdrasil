@@ -382,8 +382,3 @@ void AYggHero::SetUIMode(bool Value)
 		HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
 	}
 }
-
-
-
-
-

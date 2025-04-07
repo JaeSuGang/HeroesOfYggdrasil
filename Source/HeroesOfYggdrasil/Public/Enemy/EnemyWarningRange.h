@@ -27,6 +27,17 @@ public:
 	UFUNCTION()
 	void ChangeArea();
 
+	UFUNCTION()
+	void SpawnBugEffect();
+	
+	UFUNCTION()
+	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
+	UFUNCTION()
+	void SetCollisionOwnerEnemy(AEnemyCharacter* _Enemy);
+
+	UFUNCTION()
+	void HideAllComponents();
 
 	float GetDuration()
 	{
@@ -38,6 +49,11 @@ public:
 		return TimeElapsed;
 	}
 
+	class UYggAttackCapsuleComponent* GetBugTickCollision()
+	{
+		return BugTickCollision;
+	}
+	
 public:
 
 	UPROPERTY(VisibleAnywhere)
@@ -57,4 +73,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyAOE")
 	float TimeElapsed;
+
+	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
+	UParticleSystem* BugBallParticle;  
+
+	UPROPERTY(EditAnywhere, Category = "EnemyCapsuleCollision")
+	class UYggAttackCapsuleComponent* BugTickCollision;
 };

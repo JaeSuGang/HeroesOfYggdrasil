@@ -23,6 +23,8 @@ void UBTTaskNode_TraceBack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* 
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
+	DeathCheck(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
@@ -41,5 +43,10 @@ void UBTTaskNode_TraceBack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* 
 		ChangeState(_OwnerComp, EEnemyAIState::TraceYggdrasil);
 		return;
 	}
+}
+
+void UBTTaskNode_TraceBack::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	Super::DeathCheck(_OwnerComp);
 }
 

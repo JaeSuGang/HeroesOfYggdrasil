@@ -75,7 +75,7 @@ void AYggHeroGreystone::BeginPlay()
 
 	if (!HeroAttributeComponent) return;
 	HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Greystone"));
-	UpdateStatus();
+	UpdateStatus();	
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
@@ -357,21 +357,7 @@ void AYggHeroGreystone::MagicCircleOff()
 {
 	bIsSkillR = false;
 
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	
-	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PlayerController->GetHUD());
-	if (!MainGameHUD)
-		return;
-	
-	UYggMainGameUserWidget* MainGameWidget = MainGameHUD->GetMainGameWidget();
-	if (!MainGameWidget)
-		return;
-	
-	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameWidget->GetCastingBarWidget();
-	if (!CastingBarUserWidget)
-		return;
-
-	CastingBarUserWidget->EndCasting();
+	OnSkillCastEnd.Broadcast();
 
 	if (IsValid(SkillRDecal))
 	{
@@ -380,7 +366,7 @@ void AYggHeroGreystone::MagicCircleOff()
 		SkillRDecal->DestroyComponent();
 		SkillRDecal = nullptr;
 		
-		if (PlayerController)
+		if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 		{
 			GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -395,7 +381,7 @@ void AYggHeroGreystone::MagicCircleOff()
 			PlayerController->SetControlRotation(NewControlRotation);
 		}
 
-		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);		
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
 	}
 
 	if (HasAuthority())

@@ -20,6 +20,7 @@ class HEROESOFYGGDRASIL_API UYggCastingBarUserWidget : public UYggUserWidget
 public:
 	void NativeOnInitialized() override;
 	void NativeConstruct() override;
+	void NativeDestruct() override;
 	
 	UFUNCTION(BlueprintCallable)
 	void StartCasting(float Duration);
@@ -37,4 +38,6 @@ public:
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* CastingBar;
+
+	bool bAreDelegatesBound = false;
 };

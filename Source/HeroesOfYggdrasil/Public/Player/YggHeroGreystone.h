@@ -56,7 +56,7 @@ protected:
 public:
 	AYggHeroGreystone();
 	~AYggHeroGreystone();
-
+	
 	virtual void MagicCircleOn() override;
 	virtual void MagicCircleOff() override;
 

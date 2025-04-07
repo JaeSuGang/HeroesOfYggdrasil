@@ -48,6 +48,7 @@ AEnemyCharacter::AEnemyCharacter()
 	{
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
 		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
+		AttackCapsule->SetOwnerCharacter(this);
 		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
 	}
 }
@@ -151,7 +152,7 @@ void AEnemyCharacter::BeginPlay()
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 
-	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
 	MiniMapIcon->SetAttachedCharacter(this);
@@ -197,6 +198,26 @@ void AEnemyCharacter::AttackEnd()
 	{
 		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	}
+}
+
+void AEnemyCharacter::DestroyAllComponents()
+{
+	TArray<UActorComponent*> Components;
+	GetComponents(Components);
+
+	for (UActorComponent* Component : Components)
+	{
+		if (IsValid(Component))
+		{
+			Component->DestroyComponent();  
+		}
+	}
+
+	// 미니맵 아이콘 Destroy
+	MiniMapIcon->Destroy();
+
+	// 그 후 자신을 Destroy
+	Destroy();
 }
 
 
@@ -268,8 +289,12 @@ void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
-	GetWorld()->SpawnActor<AEnemyWarningRange>(
+	AEnemyWarningRange* EnemyWarningRange = GetWorld()->SpawnActor<AEnemyWarningRange>(
 		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
+	EnemyWarningRange->SetCollisionOwnerEnemy(this);
+
+	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
+	float AttackTime = FindData.AIData.BugTickAttackTime;
 }
 
 
@@ -298,4 +323,5 @@ void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
 		RangeAttack->GetProjectileMovement()->Velocity = Direction * Speed;
 	}
 }
+
 

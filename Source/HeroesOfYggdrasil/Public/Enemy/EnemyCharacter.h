@@ -41,6 +41,9 @@ public:
 
 	void AttackEnd() override;
 
+	UFUNCTION()
+	void DestroyAllComponents();
+
 	const FMonsterDataRow* GetData()
 	{
 		return MonsterData;
@@ -102,6 +105,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyAOE")
 	TSubclassOf<class AEnemyWarningRange> WarningOutRangeClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Minimap")
+	class AYggMiniMapIconActor* MiniMapIcon;
 
 private:
 	// 몬스터 이름 데이터
