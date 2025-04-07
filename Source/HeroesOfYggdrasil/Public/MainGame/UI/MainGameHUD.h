@@ -120,13 +120,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetSkillIcon(FName CharacterName);
-
-	UFUNCTION(BlueprintCallable)
-	void CastingBarOn(float Duration);
-
-	UFUNCTION(BlueprintCallable)
-	void CastingBarOff();
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* SkillIcons;
 	FSkillIcon* CharSkillIcon;

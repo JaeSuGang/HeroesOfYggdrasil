@@ -7,10 +7,6 @@
 #include "Attribute/HeroAttributeComponent.h"
 #include "Animation/YggHeroAniminstance.h"
 
-#include "MainGame/UI/MainGameHUD.h"
-#include "MainGame/UI/YggMainGameUserWidget.h"
-#include "MainGame/UI/YggCastingBarUserWidget.h"
-
 void UGreystoneRJump::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
     if (!MeshComp || !MeshComp->GetOwner()) return;
@@ -18,20 +14,8 @@ void UGreystoneRJump::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
     AYggHeroGreystone* Greystone = Cast<AYggHeroGreystone>(MeshComp->GetOwner());
     if (!IsValid(Greystone)) return;
 
-    APlayerController* PlayerController = MeshComp->GetOwner()->GetWorld()->GetFirstPlayerController();
-    AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PlayerController->GetHUD());
-    if (!MainGameHUD)
-        return;
-
-    UYggMainGameUserWidget* MainGameWidget = MainGameHUD->GetMainGameWidget();
-    if (!MainGameWidget)
-        return;
-
-    UYggCastingBarUserWidget* CastingBarUserWidget = MainGameWidget->GetCastingBarWidget();
-    if (!CastingBarUserWidget)
-        return;
-
-    CastingBarUserWidget->StartCasting(Greystone->GetHeroAttributeComponent()->SkillRMaxContinueTime);
+    float Duration = Greystone->GetHeroAttributeComponent()->SkillRMaxContinueTime;
+    Greystone->OnSkillCast.Broadcast(Duration);
 
     if (auto* AnimInstance = MeshComp->GetAnimInstance())
     {

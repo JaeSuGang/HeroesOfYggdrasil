@@ -113,6 +113,8 @@ void AMainGameHUD::ShowLobbyWidget()
 
 void AMainGameHUD::ShowMainGameWidget()
 {
+	CloseCurrentWidget();
+
 	if (MainGameWidgetClass)
 	{
 		MainGameUserWidget = CreateWidget<UYggMainGameUserWidget>(GetWorld(), MainGameWidgetClass);
@@ -216,23 +218,6 @@ void AMainGameHUD::SetSkillIcon(FName CharacterName)
 
 }
 
-void AMainGameHUD::CastingBarOn(float Duration)
-{
-	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameUserWidget->GetCastingBarWidget();
-	if (!CastingBarUserWidget)
-		return;
-
-	CastingBarUserWidget->StartCasting(Duration);
-}
-
-void AMainGameHUD::CastingBarOff()
-{
-	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameUserWidget->GetCastingBarWidget();
-	if (!CastingBarUserWidget)
-		return;
-
-	CastingBarUserWidget->EndCasting();
-}
 
 //void AMainGameHUD::BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc)
 //{

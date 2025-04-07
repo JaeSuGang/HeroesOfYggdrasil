@@ -12,6 +12,8 @@
  * 히어로 기본 클래스
  */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSkillCast, float, Duration);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSkillCastEnd);
 
  // Unreal Engine Core
 class APlayerController;
@@ -161,7 +163,11 @@ protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bIsUIMode = false;
 
-protected:
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Widget")
+	FOnSkillCast OnSkillCast;
 
+	UPROPERTY(BlueprintAssignable, Category = "Widget")
+	FOnSkillCastEnd OnSkillCastEnd;
 
 };
