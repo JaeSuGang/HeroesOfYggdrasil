@@ -212,6 +212,8 @@ void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
 
 void AMainGameHUD::SetSkillIcon(FName CharacterName)
 {
+	MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
+
 	UYggSkillBarUserWidget* SkillBarWidget = MainGameUserWidget->GetSkillBarWidget();
 
 	if (IsValid(SkillBarWidget))

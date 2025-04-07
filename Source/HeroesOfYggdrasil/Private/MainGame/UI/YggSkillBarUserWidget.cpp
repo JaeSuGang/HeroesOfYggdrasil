@@ -19,7 +19,23 @@ void UYggSkillBarUserWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    //SetSkillIcon(FName("Khaimera"));
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    {
+        if (APawn* Pawn = PC->GetPawn())
+        {
+            FString FullClassName = Pawn->GetClass()->GetName(); // ex: "BP_YggHeroGreystone_C"
+
+            // "_C" 제거
+            FString CleanName;
+            FullClassName.Split(TEXT("_C"), &CleanName, nullptr); // 결과: "BP_YggHeroGreystone"
+
+            // "BP_YggHero" 다음의 이름 추출
+            FString HeroName;
+            CleanName.Split(TEXT("BP_YggHero"), nullptr, &HeroName); // 결과: "Greystone"
+
+            SetSkillIcon(FName(HeroName));
+        }
+    }
 }
 
 void UYggSkillBarUserWidget::SetSkillIcon(FName Character)
@@ -31,6 +47,7 @@ void UYggSkillBarUserWidget::SetSkillIcon(FName Character)
     if (CharSkillIcon)
     {
         SetIcon(CharSkillIcon->SkillQIcon, CharSkillIcon->SkillEIcon, CharSkillIcon->SkillRIcon);
+        //SetTexture(CharSkillIcon->SkillQIcon, CharSkillIcon->SkillEIcon, CharSkillIcon->SkillRIcon);
     }
 }
 
@@ -61,3 +78,10 @@ void UYggSkillBarUserWidget::SetIcon(UTexture2D* Q, UTexture2D* E, UTexture2D* R
     }
 }
 
+void UYggSkillBarUserWidget::SetTexture(UTexture2D* Q, UTexture2D* E, UTexture2D* R)
+{
+    SkillQ = Q;
+    SkillE = E;
+    SkillR = R;
+    //SkillQ = Q;
+}
