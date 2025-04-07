@@ -20,8 +20,10 @@
 #include "Player/YggHero.h"
 
 #include "MainGame/UI/YggMHPBarUserWidget.h"
+#include "MainGame/UI/YggCastingBarUserWidget.h"
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/CharacterAttributeComponent.h"
+
 
 void AMainGameHUD::BeginPlay()
 {
@@ -34,7 +36,7 @@ void AMainGameHUD::BeginPlay()
 	CurrentWidget->AddToViewport();
 
 	Start = Cast<UButton>(CurrentWidget->GetWidgetFromName(TEXT("Start")));
-	
+
 	PC = GetOwningPlayerController();
 	if (PC && !(PC->HasAuthority()))
 	{
@@ -45,7 +47,7 @@ void AMainGameHUD::BeginPlay()
 
 		Start->SetIsEnabled(false);
 	}
-	
+
 	//AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
 	//
 	//PS->SetPlayerName("asdf");
@@ -81,6 +83,10 @@ void AMainGameHUD::StartButton()
 	//StartButtinPlayerFunc();
 }
 
+
+
+
+
 void AMainGameHUD::ReadyButton()
 {
 	LobbyUserWidget->SetPlayerName();
@@ -96,7 +102,7 @@ void AMainGameHUD::ShowLobbyWidget()
 		CurrentWidget = CreateWidget(GetWorld(), LobbyWidgetClass);
 		if (!CurrentWidget)
 			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-		
+
 		CurrentWidget->AddToViewport();
 	}
 
@@ -115,7 +121,7 @@ void AMainGameHUD::ShowMainGameWidget()
 			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
 		AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
-		
+
 		CurrentWidget->AddToViewport();
 	}
 
@@ -138,7 +144,7 @@ void AMainGameHUD::PlusButtonEvent()
 	if (MainGameWidgetClass)
 	{
 		MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
-		
+
 		MainGameUserWidget->CreateAbility();
 		MainGameUserWidget->DelAbilityPlus();
 	}
@@ -183,7 +189,7 @@ void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
 	{
 		return;
 	}
-		
+
 	UYggMHPBarUserWidget* MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarWidgetClass);
 
 	if (!MHPBarUserWidget)
@@ -199,6 +205,33 @@ void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
 	{
 		CAC->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
 	}
+}
+
+void AMainGameHUD::SetSkillIcon(FName CharacterName)
+{
+	if (!SkillIcons) return;
+	CharSkillIcon = SkillIcons->FindRow<FSkillIcon>(CharacterName, nullptr);
+	if (!CharSkillIcon)return;
+	//Widget->SetImage(CharSkillIcon->SkillQIcon);
+
+}
+
+void AMainGameHUD::CastingBarOn(float Duration)
+{
+	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameUserWidget->GetCastingBarWidget();
+	if (!CastingBarUserWidget)
+		return;
+
+	CastingBarUserWidget->StartCasting(Duration);
+}
+
+void AMainGameHUD::CastingBarOff()
+{
+	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameUserWidget->GetCastingBarWidget();
+	if (!CastingBarUserWidget)
+		return;
+
+	CastingBarUserWidget->EndCasting();
 }
 
 //void AMainGameHUD::BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc)
