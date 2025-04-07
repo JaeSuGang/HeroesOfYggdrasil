@@ -20,8 +20,10 @@
 #include "Player/YggHero.h"
 
 #include "MainGame/UI/YggMHPBarUserWidget.h"
+#include "MainGame/UI/YggCastingBarUserWidget.h"
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/CharacterAttributeComponent.h"
+
 
 void AMainGameHUD::BeginPlay()
 {
@@ -212,6 +214,24 @@ void AMainGameHUD::SetSkillIcon(FName CharacterName)
 	if (!CharSkillIcon)return;
 	//Widget->SetImage(CharSkillIcon->SkillQIcon);
 
+}
+
+void AMainGameHUD::CastingBarOn(float Duration)
+{
+	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameUserWidget->GetCastingBarWidget();
+	if (!CastingBarUserWidget)
+		return;
+
+	CastingBarUserWidget->StartCasting(Duration);
+}
+
+void AMainGameHUD::CastingBarOff()
+{
+	UYggCastingBarUserWidget* CastingBarUserWidget = MainGameUserWidget->GetCastingBarWidget();
+	if (!CastingBarUserWidget)
+		return;
+
+	CastingBarUserWidget->EndCasting();
 }
 
 //void AMainGameHUD::BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc)
