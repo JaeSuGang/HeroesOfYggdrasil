@@ -5,9 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Data/YggStructData.h"
+#include "NiagaraSystem.h"
 #include "YggTickActor.generated.h"
 
 class UYggAttackCapsuleComponent;
+class UDataTable;
+class USceneComponent;
+class UParticleSystem;
+class UNiagaraSystem;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggTickActor : public AActor
@@ -28,13 +33,27 @@ public:
 
 	void OverLapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UYggAttackCapsuleComponent* GetStatusTickCollision()
+	{
+		return StatusTickCollision;
+	}
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickDataTable")
 	UDataTable* StatusTickDataTable;
 
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* DefualtSceneRoot;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
+	float StatusTickTime;
 
 	UPROPERTY(EditAnywhere, Category = "TickEffects")
-	UParticleSystem* TickParticle;
+	TSoftObjectPtr<UParticleSystem> TickParticle;
+
+	UPROPERTY(EditAnywhere, Category = "TickEffects")
+	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 
 	UPROPERTY(EditAnywhere, Category = "TickCollision")
 	UYggAttackCapsuleComponent* StatusTickCollision;

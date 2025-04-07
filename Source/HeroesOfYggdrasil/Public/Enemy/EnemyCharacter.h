@@ -10,15 +10,22 @@
 #include "Enemy/Interface/AttackInterface.h"
 #include "EnemyCharacter.generated.h"
 
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroEnteredRangeDelegate, AYggHero*, Hero);
+
 class AYggMiniMapIconActor;
 class UYggMHPBarUserWidget;
 class UWidgetComponent;
+class AYggTickActor;
 
 /**
  * 담당 : 장시혁
  */
 
+
 class UCharacterAttributeComponent;
+
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AEnemyCharacter : public AEnemyAnimCharacter, public IAttackInterface
@@ -89,6 +96,8 @@ public:
 		return WidgetComponent;
 	}
 
+	UFUNCTION()
+	void HandleHeroEnteredRange(class AYggHero* Hero);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void UpdateHPBarWidgetToAll(float HP);
@@ -108,6 +117,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Minimap")
 	class AYggMiniMapIconActor* MiniMapIcon;
+
+	UPROPERTY(EditDefaultsOnly, Category = "StatusTick")
+	TSubclassOf<AYggTickActor> TickActorClass; 
+
+	UPROPERTY(BlueprintAssignable, Category = "EnemyEvent")
+	FOnHeroEnteredRangeDelegate OnHeroEnteredRange;
 
 private:
 	// 몬스터 이름 데이터

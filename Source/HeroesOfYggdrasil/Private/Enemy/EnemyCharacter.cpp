@@ -26,6 +26,8 @@
 #include "Enemy/EnemyRangeAttack.h"
 #include "Enemy/EnemyWarningRange.h"
 
+#include "Global/YggTickActor.h"
+
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "MainGame/UI/YggMHPBarUserWidget.h"
@@ -126,6 +128,7 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 
+	
 
 
 	// AttributeComponent 세팅
@@ -139,6 +142,8 @@ void AEnemyCharacter::BeginPlay()
 			CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 
 			CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
+
+			OnHeroEnteredRange.AddDynamic(this, &AEnemyCharacter::HandleHeroEnteredRange);
 		}
 
 		MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
@@ -325,3 +330,27 @@ void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
 }
 
 
+
+void AEnemyCharacter::HandleHeroEnteredRange(AYggHero* Hero)
+{
+	if (!IsValid(Hero) || !TickActorClass) return;
+
+	const FVector SpawnLocation = Hero->GetActorLocation();
+	const FRotator SpawnRotation = Hero->GetActorRotation();
+
+	AYggTickActor* TickActor = GetWorld()->SpawnActorDeferred<AYggTickActor>(
+		TickActorClass,
+		FTransform(SpawnRotation, SpawnLocation),
+		nullptr,
+		nullptr,
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+	);
+
+	if (!IsValid(TickActor)) return;
+
+	TickActor->GetStatusTickCollision()->SetOwnerCharacter(this);
+
+	UGameplayStatics::FinishSpawningActor(TickActor, FTransform(SpawnRotation, SpawnLocation));
+
+	UE_LOG(LogTemp, Log, TEXT("TickActor spawned & attached to hero: %s"), *Hero->GetName());
+}
