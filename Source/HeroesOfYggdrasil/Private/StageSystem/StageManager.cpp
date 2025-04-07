@@ -1,12 +1,12 @@
 // Coded By AssortRock Unreal Engine Class Project
 
 
-#include "Stage/StageManager.h"
+#include "StageSystem/StageManager.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
-#include "Stage/GameStage.h"
+#include "StageSystem/GameStage.h"
 #include "MainGame/MainGameState.h"
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/PlayerSelectZone.h"

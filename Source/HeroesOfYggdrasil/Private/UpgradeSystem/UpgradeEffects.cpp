@@ -1,7 +1,7 @@
 // Coded By AssortRock Unreal Engine Class Project
 
 
-#include "Upgrade/UpgradeEffects.h"
+#include "UpgradeSystem/UpgradeEffects.h"
 
 #include "Attribute/HeroAttributeComponent.h"
 

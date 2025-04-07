@@ -4,8 +4,8 @@
 
 #include "PropertyEditorModule.h"
 
-#include "Upgrade/UpgradeDataAsset.h"
-#include "Upgrade/UpgradeDataAssetPanel.h"
+#include "UpgradeSystem/UpgradeDataAsset.h"
+#include "UpgradeSystem/UpgradeDataAssetPanel.h"
 
 IMPLEMENT_PRIMARY_GAME_MODULE(FHeroesOfYggdrasilEditorModule, HeroesOfYggdrasilEditor, "HeroesOfYggdrasilEditor" );
 

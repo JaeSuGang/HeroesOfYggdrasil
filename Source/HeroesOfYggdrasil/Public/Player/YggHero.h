@@ -134,7 +134,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")
 	UYggHeroAnimInstance* HeroAnimInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggAnimation")
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = "YggAnimation")
 	UHeroAttributeComponent* HeroAttributeComponent;
 
 	

@@ -11,6 +11,8 @@ class AStageManager;
 class APlayerManager;
 class AEnemyManager;
 class AUpgradeManager;
+class UUpgradeSystem;
+class UStageSystem;
 
 /**
  * 담당 코더 : 김경민
@@ -19,6 +21,9 @@ UCLASS()
 class HEROESOFYGGDRASIL_API AMainGameState : public AYggGameState
 {
 	GENERATED_BODY()
+
+public:
+	AMainGameState();
 
 protected:
 	void BeginPlay() override;
@@ -36,6 +41,16 @@ public:
 	AEnemyManager* GetEnemyManager() const;
 
 public:
+	/* New */
+	UPROPERTY(Replicated, EditAnywhere)
+	TObjectPtr<UStageSystem> StageSystem;
+
+	UPROPERTY(Replicated, EditAnywhere)
+	TObjectPtr<UUpgradeSystem> UpgradeSystem;
+
+
+public:
+	/* Deprecated */
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APlayerManager> PlayerManagerClass;
 

@@ -9,6 +9,8 @@
 
 #include "GameStage.generated.h"
 
+class UStageDataAsset;
+
 
 /*
 * 담당 코더 : 김경민
@@ -49,6 +51,9 @@ public:
 	void OnEnterStage();
 
 public:
+	UPROPERTY(EditAnywhere)
+	UStageDataAsset* StageData;
+
 	UPROPERTY(EditAnywhere, Category = "YGG")
 	TSubclassOf<AGameStage> NextStage;
 

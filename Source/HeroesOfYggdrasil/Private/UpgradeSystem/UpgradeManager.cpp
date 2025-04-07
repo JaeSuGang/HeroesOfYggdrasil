@@ -1,15 +1,15 @@
 // Coded By AssortRock Unreal Engine Class Project
 
 
-#include "Upgrade/UpgradeManager.h"
+#include "UpgradeSystem/UpgradeManager.h"
 
 #include "Engine/AssetManager.h"
 #include "Algo/RandomShuffle.h"
 
 #include "MainGame/MainGameState.h"
-#include "Upgrade/UpgradeDataAsset.h"
-#include "Upgrade/UpgradeEffectBase.h"
-#include "Upgrade/UpgradeEffects.h"
+#include "UpgradeSystem/UpgradeDataAsset.h"
+#include "UpgradeSystem/UpgradeEffectBase.h"
+#include "UpgradeSystem/UpgradeEffects.h"
 #include "Attribute/HeroAttributeComponent.h"
 #include "MainGame/MainGamePlayerState.h"
 
@@ -149,6 +149,7 @@ void AUpgradeManager::GenerateUpgradeChoicesInternal(APlayerController* PC, int 
 			{
 				RandomOrder.Add(i);
 			}
+			Algo::RandomShuffle(RandomOrder);
 
 			/* UpgradeIds에 산출된 랜덤 어레이의 앞에서부터 삽입 */
 			for (int i = 0; i < ChoiceCount; ++i)

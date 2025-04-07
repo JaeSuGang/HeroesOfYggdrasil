@@ -13,8 +13,8 @@
 #include "MainGame/PlayerSelectZone.h"
 #include "MainGame/PlayerManager.h"
 #include "MainGame/EnemyManager.h"
-#include "Stage/StageManager.h"
-#include "Upgrade/UpgradeManager.h"
+#include "StageSystem/StageManager.h"
+#include "UpgradeSystem/UpgradeManager.h"
 
 void AMainGameMode::InitGameState()
 {

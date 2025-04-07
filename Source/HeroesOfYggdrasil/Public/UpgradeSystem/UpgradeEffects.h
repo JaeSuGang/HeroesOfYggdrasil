@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Upgrade/UpgradeEffectBase.h"
+#include "UpgradeSystem/UpgradeEffectBase.h"
 #include "UpgradeEffects.generated.h"
 
 class UHeroAttributeComponent;

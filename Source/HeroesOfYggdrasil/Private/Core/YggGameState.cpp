@@ -7,8 +7,7 @@
 
 #include "Core/YggGameInstance.h"
 
-AYggGameState::AYggGameState(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+AYggGameState::AYggGameState()
 {
 
 }

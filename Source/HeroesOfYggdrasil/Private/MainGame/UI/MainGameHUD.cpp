@@ -16,7 +16,7 @@
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Stage/StageManager.h"
+#include "StageSystem/StageManager.h"
 #include "Player/YggHero.h"
 
 void AMainGameHUD::BeginPlay()

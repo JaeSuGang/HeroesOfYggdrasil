@@ -17,6 +17,7 @@ void AMainGamePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AMainGamePlayerState, UpgradePoints);
+	DOREPLIFETIME(AMainGamePlayerState, AvailableUpgradeIds);
 }
 
 int AMainGamePlayerState::GetUpgradePoints() const

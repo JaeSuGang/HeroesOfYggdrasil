@@ -1,4 +1,4 @@
-#include "Upgrade/UpgradeDataAssetPanel.h"
+#include "UpgradeSystem/UpgradeDataAssetPanel.h"
 
 #include "DetailLayoutBuilder.h"
 #include "DetailCategoryBuilder.h"

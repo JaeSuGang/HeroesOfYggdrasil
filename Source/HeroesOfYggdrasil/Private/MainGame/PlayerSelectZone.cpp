@@ -11,7 +11,7 @@
 
 #include "Core/YggPlayerState.h"
 #include "Data/Playables.h"
-#include "Stage/StageManager.h"
+#include "StageSystem/StageManager.h"
 #include "Core/YggPlayerController.h"
 #include "Player/YggHero.h"
 

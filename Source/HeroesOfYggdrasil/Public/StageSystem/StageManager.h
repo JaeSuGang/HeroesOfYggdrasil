@@ -7,6 +7,7 @@
 #include "StageManager.generated.h"
 
 class AGameStage;
+class UStageManagerDataAsset;
 
 /**
  * 담당 코더 : 김경민
@@ -40,10 +41,9 @@ public:
 	void ForceMainWidgetToClients();
 
 public:
-
 	/* Refactored */
-	UPROPERTY(EditAnywhere)
-	TArray<AGameStage*> StageCycle;
+
+	
 
 	/* Deprecated */
 	UPROPERTY(EditAnywhere)

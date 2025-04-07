@@ -1,9 +1,9 @@
 // Coded By AssortRock Unreal Engine Class Project
 
 
-#include "Stage/StageDataAsset.h"
+#include "StageSystem/StageDataAsset.h"
 
 FPrimaryAssetId UStageDataAsset::GetPrimaryAssetId() const
 {
-    return FPrimaryAssetId(TEXT("Stage"), Id);
+    return FPrimaryAssetId(TEXT("Stage"), GetFName());
 }
