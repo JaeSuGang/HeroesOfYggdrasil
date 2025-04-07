@@ -2,6 +2,8 @@
 
 
 #include "MainGame/UI/YggSkillBarUserWidget.h"
+//#include "Data/YggStructData.h"
+//#include "Engine/Texture2D.h"
 
 #include "Components/Image.h"
 
@@ -9,13 +11,15 @@
 void UYggSkillBarUserWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
+
+    
 }
 
 void UYggSkillBarUserWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-
+    //SetSkillIcon(FName("Khaimera"));
 }
 
 void UYggSkillBarUserWidget::SetSkillIcon(FName Character)
