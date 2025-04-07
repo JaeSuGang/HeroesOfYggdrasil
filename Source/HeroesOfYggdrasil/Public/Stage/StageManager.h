@@ -40,6 +40,12 @@ public:
 	void ForceMainWidgetToClients();
 
 public:
+
+	/* Refactored */
+	UPROPERTY(EditAnywhere)
+	TArray<AGameStage*> StageCycle;
+
+	/* Deprecated */
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AGameStage> FirstStageToStart;
 

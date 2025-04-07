@@ -6,8 +6,8 @@
 #include "Core/YggPlayerState.h"
 #include "Components/TextBlock.h"
 
-#include "MainGame/StageManager.h"
-#include "MainGame/GameStage.h"
+#include "Stage/StageManager.h"
+#include "Stage/GameStage.h"
 
 
 void UYggStageTimerUserWidget::NativeOnInitialized()

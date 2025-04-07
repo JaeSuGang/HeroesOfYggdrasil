@@ -6,9 +6,6 @@
 #include "Core/YggPlayerState.h"
 #include "Components/TextBlock.h"
 
-#include "MainGame/StageManager.h"
-#include "MainGame/GameStage.h"
-
 void UYggNicknameBarUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();

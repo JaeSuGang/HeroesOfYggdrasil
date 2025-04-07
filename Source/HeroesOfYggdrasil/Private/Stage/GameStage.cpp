@@ -1,11 +1,11 @@
 // Coded By AssortRock Unreal Engine Class Project
 
 
-#include "MainGame/GameStage.h"
+#include "Stage/GameStage.h"
 
 #include "Net/UnrealNetwork.h"
 
-#include "MainGame/StageManager.h"
+#include "Stage/StageManager.h"
 #include "MainGame/EnemyManager.h"
 #include "SpawningPool/EnemySpawner.h"
 

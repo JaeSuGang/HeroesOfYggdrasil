@@ -11,9 +11,9 @@
 #include "MainGame/MainGameState.h"
 #include "MainGame/MainGamePlayerState.h"
 #include "MainGame/PlayerSelectZone.h"
-#include "MainGame/StageManager.h"
 #include "MainGame/PlayerManager.h"
 #include "MainGame/EnemyManager.h"
+#include "Stage/StageManager.h"
 #include "Upgrade/UpgradeManager.h"
 
 void AMainGameMode::InitGameState()

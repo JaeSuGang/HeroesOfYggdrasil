@@ -8,7 +8,7 @@
 
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/PlayerManager.h"
-#include "MainGame/StageManager.h"
+#include "Stage/StageManager.h"
 
 
 
