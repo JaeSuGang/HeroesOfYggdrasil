@@ -311,6 +311,23 @@ struct FDataTableRow : public FTableRowBase
 	UDataTable* Resources;
 };
 
+USTRUCT(BlueprintType)
+struct FSkillIcon : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FSkillIcon() {}
+	~FSkillIcon() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* SkillQIcon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* SkillEIcon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* SkillRIcon;
+};
+
 
 /**
  * 

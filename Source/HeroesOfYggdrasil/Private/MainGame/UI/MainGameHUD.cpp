@@ -207,14 +207,14 @@ void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
 	}
 }
 
-void AMainGameHUD::SetSkillIcon(FName CharacterName)
-{
-	if (!SkillIcons) return;
-	CharSkillIcon = SkillIcons->FindRow<FSkillIcon>(CharacterName, nullptr);
-	if (!CharSkillIcon)return;
-	//Widget->SetImage(CharSkillIcon->SkillQIcon);
-
-}
+//void AMainGameHUD::SetSkillIcon(FName CharacterName)
+//{
+//	if (!SkillIcons) return;
+//	CharSkillIcon = SkillIcons->FindRow<FSkillIcon>(CharacterName, nullptr);
+//	if (!CharSkillIcon)return;
+//	//Widget->SetImage(CharSkillIcon->SkillQIcon);
+//
+//}
 
 void AMainGameHUD::CastingBarOn(float Duration)
 {
