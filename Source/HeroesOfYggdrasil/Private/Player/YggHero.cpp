@@ -116,7 +116,7 @@ void AYggHero::BeginPlay()
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::TakeDamageEffect);
-
+		HeroAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::ServerDie);
 	}
 
 	if (FaceCaptureComponent)
@@ -176,20 +176,51 @@ void AYggHero::UpdateStatus()
 	GetCharacterMovement()->JumpZVelocity = HeroAttributeComponent->JumpPower;
 }
 
+void AYggHero::ServerDie_Implementation(float Delegate)
+{
+	if (HeroAttributeComponent->HP <= 0.0f)
+	{
+		MulticastDie();
+	}
+}
+
+void AYggHero::MulticastDie_Implementation()
+{
+	FName MontageName = *FString::Printf(TEXT("Death"));
+	GEngine->AddOnScreenDebugMessage(
+		-1,
+		1.0f,
+		FColor::Green,
+		FString::Printf(TEXT("%s : %.2f"), *MontageName.ToString(), HeroAttributeComponent->HP)
+	);
+
+	if (HeroAttributeComponent->HP <= 0.0f && !bIsDeath)
+	{
+		// FName MontageName = *FString::Printf(TEXT("Death"));
+		HeroAnimInstance->PlayMontage(MontageName);
+
+		GEngine->AddOnScreenDebugMessage(
+			-1,
+			1.0f,
+			FColor::Green,
+			FString::Printf(TEXT("%s : %.2f"), *MontageName.ToString(), HeroAttributeComponent->HP)
+		);
+	
+		bIsDeath = true;
+	}
+}
+
 void AYggHero::TakeDamageEffect_Implementation(float Att)
 {
 	// 피 튀기는 파티클 재생. 등등.
 
 }
 
-
-
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AYggHero, HeroAttributeComponent);
 }
-
 
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

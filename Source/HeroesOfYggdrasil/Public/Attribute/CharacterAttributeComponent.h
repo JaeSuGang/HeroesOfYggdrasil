@@ -105,7 +105,7 @@ public:
 	void OnRep_Status();
 
 	/* Set은 Server_SetHp 함수를 사용해야 함*/
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
 	float HP;
 
 	/* Set은 Server_SetMaxHp 함수를 사용해야 함*/

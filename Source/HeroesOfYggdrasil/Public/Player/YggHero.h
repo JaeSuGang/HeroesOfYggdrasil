@@ -121,6 +121,11 @@ protected:
 
 	void UpdateStatus();
 
+	UFUNCTION(Server, Reliable)
+	void ServerDie(float Delegate);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastDie();
+
 	virtual void CameraZoomInOut(const FInputActionValue& Value);
 	virtual void ToggleUIMode();
 	virtual void SetUIMode(bool Value);
@@ -170,4 +175,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Widget")
 	FOnSkillCastEnd OnSkillCastEnd;
 
+private:
+	bool bIsDeath = false;
 };
