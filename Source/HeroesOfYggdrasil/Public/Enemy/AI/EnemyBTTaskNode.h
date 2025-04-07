@@ -36,7 +36,7 @@ public:
 
 	void YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp);
 
-	void DeathCheck(UBehaviorTreeComponent& _OwnerComp);
+	virtual void DeathCheck(UBehaviorTreeComponent& _OwnerComp);
 
 protected:
 	virtual void RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds);

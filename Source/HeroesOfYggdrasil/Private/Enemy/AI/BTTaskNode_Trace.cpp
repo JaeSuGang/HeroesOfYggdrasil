@@ -24,6 +24,8 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
+	DeathCheck(_OwnerComp);
+
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 	CheckTime -= _DeltaSeconds;
@@ -79,3 +81,10 @@ void UBTTaskNode_Trace::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, 
 {
 	Super::RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 }
+
+
+void UBTTaskNode_Trace::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	Super::DeathCheck(_OwnerComp);
+}
+

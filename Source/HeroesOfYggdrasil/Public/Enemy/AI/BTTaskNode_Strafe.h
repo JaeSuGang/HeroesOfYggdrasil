@@ -25,6 +25,8 @@ public:
 
 	void RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds) override;
 
+	virtual void DeathCheck(UBehaviorTreeComponent& _OwnerComp) override;
+
 private:
 	UPROPERTY(EditAnywhere)
 	FRandomStream Random;

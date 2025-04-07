@@ -21,4 +21,7 @@ public:
 	void Start(UBehaviorTreeComponent& _OwnerComp);
 
 	void TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds);
+
+	virtual void DeathCheck(UBehaviorTreeComponent& _OwnerComp) override;
+
 };

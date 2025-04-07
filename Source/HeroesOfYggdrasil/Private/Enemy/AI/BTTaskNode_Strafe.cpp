@@ -27,6 +27,8 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
+	DeathCheck(_OwnerComp);
+
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 
@@ -80,4 +82,10 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 void UBTTaskNode_Strafe::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
 {
 	Super::RotateToTargetActor(_OwnerComp, _DeltaSeconds);
+}
+
+
+void UBTTaskNode_Strafe::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	Super::DeathCheck(_OwnerComp);
 }

@@ -24,6 +24,8 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 	
+	DeathCheck(_OwnerComp);
+	
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
@@ -84,4 +86,9 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 void UBTTaskNode_ApproachToAttack::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
 {
 	Super::RotateToTargetActor(_OwnerComp, _DeltaSeconds);
+}
+
+void UBTTaskNode_ApproachToAttack::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
+{
+	Super::DeathCheck(_OwnerComp);
 }
