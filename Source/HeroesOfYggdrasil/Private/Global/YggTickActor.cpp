@@ -65,21 +65,7 @@ void AYggTickActor::BeginPlay()
 
 	  if (TimeEventComponent)
 	  {
-		  TimeEventComponent->AddEvent(
-			  0.0f, 
-			  StatusTickTime, 
-			  nullptr, 
-			  false,
-			  [this]()             
-			  {
-				  CheckStatusTag();
-			  },
-			  [this]() 
-			  {
-				  DestroyStatusTag();
-				  Destroy();
-			  }
-		  );
+		 CheckStatusTag();
 	  }
 }
 
@@ -87,13 +73,13 @@ void AYggTickActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-  /*  StatusTickTime -= DeltaTime;
+    StatusTickTime -= DeltaTime;
 
     if (StatusTickTime < 0.0f)
     {
 		DestroyStatusTag();
 		Destroy();
-    }*/
+    }
 }
 
 
@@ -102,7 +88,7 @@ void AYggTickActor::CheckStatusTag()
 
 	if (!IsValid(TickDamageComponent) || !IsValid(StatusTickDataTable)) return;
 
-	AYggHero* HeroTarget = Cast<AYggHero>(TickDamageComponent->TargetActor);
+	AYggCharacter* HeroTarget = Cast<AYggHero>(TickDamageComponent->TargetActor);
 	if (!IsValid(HeroTarget)) return;
 
 	AEnemyCharacter* EnemyTarget = Cast<AEnemyCharacter>(TickDamageComponent->TargetActor);
@@ -112,21 +98,22 @@ void AYggTickActor::CheckStatusTag()
 
 	if (IsValid(HeroTarget))
 	{
-		if (HeroTarget->GetAttributeComponent()->HasTag(TEXT("Character.State.Debuff")))
+		UCharacterAttributeComponent* HeroAttributeComponent = HeroTarget->GetAttributeComponent();
+
+		if (HeroAttributeComponent->HasTag(TEXT("Character.DeBuff.Poision")))
 		{
 			AYggTickActor* AttachedTick = UTickUtilityFunctionLibrary::FindAttachedTickActor(HeroTarget);
 
 			if (IsValid(AttachedTick) && AttachedTick != this)
 			{
 				AttachedTick->StatusTickTime = DataRow->TickTime;
-
-				SetLifeSpan(0.01f);
+				StatusTickTime = 0.0f;
 			}
 
 		}
 		else // 히어로가 태그를 가지고 있지 않다면 태그 추가
 		{
-			HeroTarget->GetAttributeComponent()->AddTag(TEXT("Character.State.Debuff"));
+			HeroTarget->GetAttributeComponent()->AddTag(TEXT("Character.DeBuff.Poision"));
 			return;
 		}
 	}
@@ -141,17 +128,17 @@ void AYggTickActor::DestroyStatusTag()
 	AYggHero* YggHero = Cast<AYggHero>(TickDamageComponent->TargetActor);
 	AEnemyCharacter* YggEnemy= Cast<AEnemyCharacter>(TickDamageComponent->TargetActor);
 	
-	//if (IsValid(YggHero))
-	//{
-	//	if (YggHero->GetAttributeComponent()->HasTag(TEXT("")))
-	//	{
-	//		YggHero->GetAttributeComponent()->RemoveTag(TEXT(""));
-	//	}
-	//}
-	//else if (IsValid(YggEnemy))
-	//{
+	if (IsValid(YggHero))
+	{
+		if (YggHero->GetAttributeComponent()->HasTag(TEXT("Character.DeBuff.Poision")))
+		{
+			YggHero->GetAttributeComponent()->RemoveTag(TEXT("Character.DeBuff.Poision"));
+		}
+	}
+	else if (IsValid(YggEnemy))
+	{
 
-	//}
+	}
 
 }
 
@@ -222,4 +209,35 @@ void AYggTickActor::SetTickDamage(AYggCharacter* _Target, float _Interval, float
 		TickNiagaraSystem.LoadSynchronous();;
 	}
 		
+}
+
+
+void AYggTickActor::DisableAllComponents()
+{
+	TArray<UActorComponent*> Components;
+	GetComponents(Components);
+
+	for (UActorComponent* Comp : Components)
+	{
+		if (!IsValid(Comp)) continue;
+
+		// Tick 끄기
+		Comp->SetComponentTickEnabled(false);
+
+		// 활성 상태 비활성화 (렌더/이펙트 등)
+		if (UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(Comp))
+		{
+			PrimComp->SetVisibility(false);
+			PrimComp->SetActive(false);
+			PrimComp->Deactivate();
+		}
+		else if (UParticleSystemComponent* ParticleComp = Cast<UParticleSystemComponent>(Comp))
+		{
+			ParticleComp->DeactivateSystem();
+		}
+		else
+		{
+			Comp->Deactivate(); // 나머지 일반 컴포넌트
+		}
+	}
 }

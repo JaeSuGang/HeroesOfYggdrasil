@@ -28,11 +28,14 @@ public:
 	// Sets default values for this actor's properties
 	AYggTickActor();
 
+	UFUNCTION(BlueprintCallable, Category = "Tag")
 	void DestroyStatusTag();
 
+	UFUNCTION(BlueprintCallable, Category = "Tag")
 	void CheckStatusTag();
 
-	static AYggTickActor* FindAttachedTickActor(AYggHero* HeroTarget);
+	UFUNCTION(BlueprintCallable, Category = "Component")
+	void DisableAllComponents();
 
 protected:
 	// Called when the game starts or when spawned

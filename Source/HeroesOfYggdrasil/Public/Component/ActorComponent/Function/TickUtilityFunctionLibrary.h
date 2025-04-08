@@ -21,5 +21,5 @@ class HEROESOFYGGDRASIL_API UTickUtilityFunctionLibrary : public UBlueprintFunct
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Tick")
-	static AYggTickActor* FindAttachedTickActor(AYggHero* HeroTarget);
+	static AYggTickActor* FindAttachedTickActor(AYggCharacter* HeroTarget);
 };

@@ -46,19 +46,21 @@ void UTickDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UTickDamageComponent::ApplyDamage()
 {
-	AYggHero* HeroTarget = Cast<AYggHero>(TargetActor);
+	AYggCharacter* HeroTarget = Cast<AYggHero>(TargetActor);
 
 	AEnemyCharacter* EnemyTarget = Cast<AEnemyCharacter>(TargetActor);
 
+	
 	if (IsValid(HeroTarget))
 	{
-		HeroTarget->GetAttributeComponent()->Server_TakeDamage(DamageAmount);
-		
-		// 추후 태그체크로 데미지 함수 이동
-		if (HeroTarget->GetAttributeComponent()->HasTag(TEXT("Character.State")))
+		if (HeroTarget->HasAuthority())
 		{
-			UE_LOG(LogTemp, Log, TEXT("TickDamage: %.1f applied to %s"), DamageAmount, *HeroTarget->GetName());
-			return;
+			// 추후 태그체크로 데미지 함수 이동
+			if (true == HeroTarget->GetAttributeComponent()->HasTag(TEXT("Character.DeBuff.Poision")))
+			{
+				HeroTarget->GetAttributeComponent()->Server_TakeDamage(DamageAmount);
+				return;
+			}
 		}
 	}
 	else if (IsValid(EnemyTarget))
