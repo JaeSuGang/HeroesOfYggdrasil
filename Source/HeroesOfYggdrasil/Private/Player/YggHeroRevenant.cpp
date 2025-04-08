@@ -20,6 +20,8 @@
 // Network
 #include "Net/UnrealNetwork.h"
 
+#include "Global/YggProjectileActor.h"
+
 AYggHeroRevenant::AYggHeroRevenant()
 {
 }
@@ -30,6 +32,14 @@ void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
-		
+		if (ActionMap.Contains(FName("Attack")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::Attack);
+		}
 	}
+}
+
+void AYggHeroRevenant::Attack(const FInputActionValue& Value)
+{
+	Super::Attack(Value);
 }

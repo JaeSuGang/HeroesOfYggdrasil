@@ -94,6 +94,12 @@ public:
 	virtual void Attack(const FInputActionValue& Value);
 	virtual void Jump() override;
 
+	UFUNCTION()
+	void Respawn();
+
+	UFUNCTION()
+	void HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
@@ -138,15 +144,24 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastHeroSkillR(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void Die(float Delegate);
+	UFUNCTION(Server, Reliable)
+	void ServerDie(float Delegate);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastDie(float Delegate);
+
 	virtual void ToggleAimMode();
 	virtual void SetAimMode(bool Value);
 
 	void UpdateStatus();
 
-	UFUNCTION(Server, Reliable)
+	virtual FName GetHeroName() const { return FName(TEXT("Hero")); };
+
+	/*UFUNCTION(Server, Reliable)
 	void ServerDie(float Delegate);
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastDie();
+	void MulticastDie();*/
 
 	virtual void CameraZoomInOut(const FInputActionValue& Value);
 
@@ -201,6 +216,8 @@ public:
 	FOnSkillQ OnSkillE;
 	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
 	FOnSkillQ OnSkillR;
-private:
-	bool bIsDeath = false;
+
+	float RespawnTime = 3.0f;
+
+	FTransform StartTransform;
 };
