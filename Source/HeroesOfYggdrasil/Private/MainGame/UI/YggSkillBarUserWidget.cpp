@@ -8,6 +8,9 @@
 #include "Components/Image.h"
 #include "Components/ProgressBar.h"
 
+#include "Player/YggHero.h"
+#include "Attribute/HeroAttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 void UYggSkillBarUserWidget::NativeOnInitialized()
 {
@@ -35,8 +38,22 @@ void UYggSkillBarUserWidget::NativeConstruct()
             SetSkillIcon(FName(HeroName));
 
             InitSkills();
+
+            AYggHero* Hero = Cast<AYggHero>(Pawn);
+            if (!IsValid(Hero) || !Hero->IsLocallyControlled()) return;
+
+            Hero->OnSkillQ.RemoveDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
+            Hero->OnSkillE.RemoveDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
+            Hero->OnSkillR.RemoveDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
+
+            Hero->OnSkillQ.AddDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
+            Hero->OnSkillE.AddDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
+            Hero->OnSkillR.AddDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
         }
     }
+
+
+   
 
     //StartCoolTime(FName("Q"), 5.0f);
     //StartCoolTime(FName("E"), 3.0f);

@@ -171,8 +171,34 @@ void AYggHero::SetAimMode(bool Value)
 	}
 }
 
+void AYggHero::UpdateStatus()
+{
+	GetCharacterMovement()->MaxWalkSpeed = HeroAttributeComponent->MaxMoveSpeed;
+	GetCharacterMovement()->JumpZVelocity = HeroAttributeComponent->JumpPower;
+}
 
+void AYggHero::ServerDie_Implementation(float Delegate)
+{
+	if (HeroAttributeComponent->HP <= 0.0f)
+	{
+		MulticastDie();
+	}
+}
 
+void AYggHero::MulticastDie_Implementation()
+{
+	if (HeroAttributeComponent->HP <= 0.0f && !bIsDeath)
+	{
+		FName MontageName = *FString::Printf(TEXT("Death"));
+		HeroAnimInstance->PlayMontage(MontageName);
+	
+		bIsDeath = true;
+
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+	}
+}
 
 void AYggHero::TakeDamageEffect_Implementation(float Att)
 {
@@ -373,6 +399,9 @@ void AYggHero::SkillQ(const FInputActionValue& Value)
 	{
 		ServerHeroSkillQ(Value);
 	}
+
+	float CoolTime = HeroAttributeComponent->SkillQMaxCoolTime;
+	OnSkillQ.Broadcast(FName("SkillQ"), CoolTime);
 }
 void AYggHero::ServerHeroSkillQ_Implementation(const FInputActionValue& Value)
 {
@@ -400,6 +429,9 @@ void AYggHero::SkillE(const FInputActionValue& Value)
 	{
 		ServerHeroSkillE(Value);
 	}
+
+	float CoolTime = HeroAttributeComponent->SkillEMaxCoolTime;
+	OnSkillE.Broadcast(FName("SkillE"), CoolTime);
 }
 
 void AYggHero::ServerHeroSkillE_Implementation(const FInputActionValue& Value)
@@ -430,6 +462,8 @@ void AYggHero::SkillR(const FInputActionValue& Value)
 		ServerHeroSkillR(Value);
 	}
 
+	float CoolTime = HeroAttributeComponent->SkillRMaxCoolTime;
+	OnSkillR.Broadcast(FName("SkillR"), CoolTime);
 }
 
 void AYggHero::ServerHeroSkillR_Implementation(const FInputActionValue& Value)
