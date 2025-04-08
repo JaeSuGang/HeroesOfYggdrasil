@@ -21,6 +21,7 @@
 
 #include "MainGame/UI/YggMHPBarUserWidget.h"
 #include "MainGame/UI/YggCastingBarUserWidget.h"
+#include "MainGame/UI/YggSkillBarUserWidget.h"
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/CharacterAttributeComponent.h"
 
@@ -209,14 +210,17 @@ void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
 	}
 }
 
-void AMainGameHUD::SetSkillIcon(FName CharacterName)
-{
-	if (!SkillIcons) return;
-	CharSkillIcon = SkillIcons->FindRow<FSkillIcon>(CharacterName, nullptr);
-	if (!CharSkillIcon)return;
-	//Widget->SetImage(CharSkillIcon->SkillQIcon);
-
-}
+//void AMainGameHUD::SetSkillIcon(FName CharacterName)
+//{
+//	MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
+//
+//	UYggSkillBarUserWidget* SkillBarWidget = MainGameUserWidget->GetSkillBarWidget();
+//
+//	if (IsValid(SkillBarWidget))
+//	{
+//		SkillBarWidget->SetSkillIcon(CharacterName);
+//	}
+//}
 
 
 //void AMainGameHUD::BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc)

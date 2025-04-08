@@ -7,6 +7,7 @@
 #include "MainGame/UI/YggAbilityPlusUserWidget.h"
 #include "MainGame/UI/YggAbilityUserWidget.h"
 #include "MainGame/UI/YggCastingBarUserWidget.h"
+#include "MainGame/UI/YggSkillBarUserWidget.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -50,6 +51,22 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 			CanvasSlot->SetPosition(FVector2D(850.0f, 850.0f));
 		}
 	}
+
+	SkillBarWidget = CreateWidget<UYggSkillBarUserWidget>(GetWorld(), SkillBarUserWidgetClass);
+
+	if (IsValid(SkillBarWidget))
+	{
+		MainGamePanel->AddChild(SkillBarWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(SkillBarWidget->Slot))
+		{
+			//CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+			//CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f));
+			CanvasSlot->SetPosition(FVector2D(704.0f, 952.0f));
+		}
+	}
+
+
 }
 
 void UYggMainGameUserWidget::CreateAbilityPlus()
