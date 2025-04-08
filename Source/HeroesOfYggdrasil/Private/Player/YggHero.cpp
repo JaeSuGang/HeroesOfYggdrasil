@@ -79,6 +79,7 @@ AYggHero::AYggHero()
 	MiniMapCaptureComponent->SetupAttachment(RootComponent);
 	MiniMapCaptureComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
 	MiniMapCaptureComponent->AddRelativeLocation(FVector(0.0f, 0.0f, 1000.0f));
+	MiniMapCaptureComponent->OrthoWidth = 1000.0f;
 
 	// 폰 입력 UEnhancedInputComponent 으로 변경
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
@@ -354,7 +355,8 @@ void AYggHero::EndAttack(const FInputActionValue& Value)
 {
 	HeroAttributeComponent->RemoveTag(TEXT("Character.State.PressedAttack"));
 }
-
+
+
 void AYggHero::SkillQ(const FInputActionValue& Value)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
