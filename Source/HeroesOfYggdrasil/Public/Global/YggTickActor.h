@@ -51,9 +51,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tag")
 	void DestroyStatusTag();
 
-	UFUNCTION(BlueprintCallable, Category = "Tag")
-	void CheckStatusTag();
-
 	UFUNCTION(BlueprintCallable, Category = "Component")
 	void DisableAllComponents();
 
