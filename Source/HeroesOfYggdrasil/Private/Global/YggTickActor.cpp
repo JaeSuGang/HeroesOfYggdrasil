@@ -12,13 +12,16 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Component/ActorComponent/TickDamageComponent.h"
+#include "Component/ActorComponent/TimeEventComponent.h"
+#include "Component/ActorComponent/Function/TickUtilityFunctionLibrary.h"
 
 #include "Core/YggCharacter.h"
+#include "Player/YggHero.h"
+#include "Enemy/EnemyCharacter.h"
 
 #include "GameFramework/Actor.h"
 
 #include "Kismet/GameplayStatics.h"
-
 
 #include "Particles/ParticleSystemComponent.h"
 
@@ -33,6 +36,8 @@ AYggTickActor::AYggTickActor()
 
     DefualtSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefualtSceneRoot"));
     TickDamageComponent = CreateDefaultSubobject<UTickDamageComponent>(TEXT("TickDamageComp"));
+	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
+
 }
 
 // Called when the game starts or when spawned
@@ -42,35 +47,132 @@ void AYggTickActor::BeginPlay()
 
 
       if (IsValid(StatusTickDataTable))
-    {
-        FStatusTickDataRow* Row = StatusTickDataTable->FindRow<FStatusTickDataRow>(FName("Poison"), nullptr);
+	  {
+		  FStatusTickDataRow* DataRow = StatusTickDataTable->FindRow<FStatusTickDataRow>(FName("Poison"), nullptr);
 
-        if (Row != nullptr)
-        {
-            TickNiagaraSystem = Row->NiagaraSystem;
-        }
+	      if (DataRow != nullptr)
+	      {
+	          TickNiagaraSystem = DataRow->NiagaraSystem;
+	      }
 
-        if (Row != nullptr)
-        {
-            TickParticle = Row->Particle;
-        }
+	      if (DataRow != nullptr)
+	      {
+	          TickParticle = DataRow->Particle;
+	      }
 
-        StatusTickTime = Row->TickTime;
-    }
+	      StatusTickTime = DataRow->TickTime;
+	  }
 
+	  if (TimeEventComponent)
+	  {
+		  TimeEventComponent->AddEvent(
+			  0.0f, 
+			  StatusTickTime, 
+			  nullptr, 
+			  false,
+			  [this]()             
+			  {
+				  CheckStatusTag();
+			  },
+			  [this]() 
+			  {
+				  DestroyStatusTag();
+				  Destroy();
+			  }
+		  );
+	  }
 }
 
 void AYggTickActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-    StatusTickTime -= DeltaTime;
+  /*  StatusTickTime -= DeltaTime;
 
     if (StatusTickTime < 0.0f)
     {
-        Destroy();
-    }
+		DestroyStatusTag();
+		Destroy();
+    }*/
 }
+
+
+void AYggTickActor::CheckStatusTag()
+{
+
+	if (!IsValid(TickDamageComponent) || !IsValid(StatusTickDataTable)) return;
+
+	AYggHero* HeroTarget = Cast<AYggHero>(TickDamageComponent->TargetActor);
+	if (!IsValid(HeroTarget)) return;
+
+	AEnemyCharacter* EnemyTarget = Cast<AEnemyCharacter>(TickDamageComponent->TargetActor);
+
+	FStatusTickDataRow* DataRow = StatusTickDataTable->FindRow<FStatusTickDataRow>(FName("Poison"), nullptr);
+	if (!DataRow) return;
+
+	if (IsValid(HeroTarget))
+	{
+		if (HeroTarget->GetAttributeComponent()->HasTag(TEXT("Character.State.Debuff")))
+		{
+			AYggTickActor* AttachedTick = UTickUtilityFunctionLibrary::FindAttachedTickActor(HeroTarget);
+
+			if (IsValid(AttachedTick) && AttachedTick != this)
+			{
+				AttachedTick->StatusTickTime = DataRow->TickTime;
+
+				SetLifeSpan(0.01f);
+			}
+
+		}
+		else // 히어로가 태그를 가지고 있지 않다면 태그 추가
+		{
+			HeroTarget->GetAttributeComponent()->AddTag(TEXT("Character.State.Debuff"));
+			return;
+		}
+	}
+	else if(IsValid(EnemyTarget))
+	{
+
+	}
+}
+
+void AYggTickActor::DestroyStatusTag()
+{
+	AYggHero* YggHero = Cast<AYggHero>(TickDamageComponent->TargetActor);
+	AEnemyCharacter* YggEnemy= Cast<AEnemyCharacter>(TickDamageComponent->TargetActor);
+	
+	//if (IsValid(YggHero))
+	//{
+	//	if (YggHero->GetAttributeComponent()->HasTag(TEXT("")))
+	//	{
+	//		YggHero->GetAttributeComponent()->RemoveTag(TEXT(""));
+	//	}
+	//}
+	//else if (IsValid(YggEnemy))
+	//{
+
+	//}
+
+}
+
+AYggTickActor* FindAttachedTickActor(AYggHero* HeroTarget)
+{
+	if (!IsValid(HeroTarget)) return nullptr;
+
+	TArray<AActor*> AttachedActors;
+	HeroTarget->GetAttachedActors(AttachedActors);
+
+	for (AActor* Actor : AttachedActors)
+	{
+		if (AYggTickActor* TickActor = Cast<AYggTickActor>(Actor))
+		{
+			return TickActor; 
+		}
+	}
+
+	return nullptr; 
+}
+
 
 void AYggTickActor::SetTickDamage(AYggCharacter* _Target, float _Interval, float DamageAmount)
 {
