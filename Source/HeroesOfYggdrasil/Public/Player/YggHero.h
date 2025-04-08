@@ -218,4 +218,6 @@ public:
 	FOnSkillQ OnSkillR;
 
 	float RespawnTime = 3.0f;
+
+	FTransform StartTransform;
 };

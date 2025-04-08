@@ -138,14 +138,14 @@ void AYggHero::BeginPlay()
 
 	FName MontageName = *FString::Printf(TEXT("LevelStart"));
 	HeroAnimInstance->PlayMontage(MontageName);
+
+	StartTransform = GetActorTransform();
 }
 
 void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-
 
 void AYggHero::ToggleAimMode()
 {
@@ -285,6 +285,21 @@ void AYggHero::Jump()
 
 void AYggHero::Respawn()
 {
+	SetActorTransform(StartTransform);
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (!PlayerController) return;
+
+	PlayerController->SetIgnoreLookInput(true);
+
+	CameraBoom->TargetArmLength = 700.0f;
+	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
+
+	CameraBoom->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f));
+
+	FRotator NewControlRotation = GetActorRotation();
+	PlayerController->SetControlRotation(NewControlRotation);
+
 	FName MontageName = TEXT("LevelStart");
 	if (HeroAnimInstance)
 	{
@@ -315,6 +330,10 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 		HeroAnimInstance->OnMontageEnded.RemoveDynamic(this, &AYggHero::HandleMontageEnded);
 	}
+
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (!PlayerController) return;
+	PlayerController->SetIgnoreLookInput(false);
 }
 
 void AYggHero::Roll(const FInputActionValue& Value)
