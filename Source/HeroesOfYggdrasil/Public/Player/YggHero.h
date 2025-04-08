@@ -156,6 +156,8 @@ protected:
 
 	void UpdateStatus();
 
+	virtual FName GetHeroName() const { return FName(TEXT("Hero")); };
+
 	/*UFUNCTION(Server, Reliable)
 	void ServerDie(float Delegate);
 	UFUNCTION(NetMulticast, Reliable)

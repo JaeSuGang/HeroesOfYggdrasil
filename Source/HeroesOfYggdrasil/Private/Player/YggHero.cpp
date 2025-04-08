@@ -307,6 +307,10 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 			HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
 			HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
 			HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotRollable"));
+			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Death"));
+
+			if (!HeroAttributeComponent) return;
+			HeroAttributeComponent->ServerSetBaseData_Implementation(GetHeroName());
 		}
 
 		HeroAnimInstance->OnMontageEnded.RemoveDynamic(this, &AYggHero::HandleMontageEnded);

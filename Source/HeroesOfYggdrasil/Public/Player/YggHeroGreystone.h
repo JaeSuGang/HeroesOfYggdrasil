@@ -53,6 +53,8 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRFall();
 
+	virtual FName GetHeroName() const override { return FName(TEXT("Greystone")); };
+
 public:
 	AYggHeroGreystone();
 	~AYggHeroGreystone();

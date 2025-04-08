@@ -52,6 +52,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSkillR(const FInputActionValue& Value);
 
+
+	virtual FName GetHeroName() const override { return FName(TEXT("Khaimera")); };
+
 protected:
 	
 
