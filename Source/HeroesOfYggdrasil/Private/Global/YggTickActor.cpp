@@ -94,40 +94,6 @@ void AYggTickActor::InitTickActor(EStatusEffectType StatusEffect)
 }
 
 
-void AYggTickActor::CheckStatusTag()
-{
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	if (!IsValid(TickDamageComponent) || !IsValid(StatusTickDataTable)) return;
-
-	AYggCharacter* HeroTarget = Cast<AYggHero>(TickDamageComponent->TargetActor);
-	AEnemyCharacter* EnemyTarget = Cast<AEnemyCharacter>(TickDamageComponent->TargetActor);
-
-	if (IsValid(HeroTarget))
-	{
-		UCharacterAttributeComponent* HeroAttributeComponent = HeroTarget->GetAttributeComponent();
-
-		if (IsValid(HeroAttributeComponent))
-		{
-			FName FullStatusTag = FName(*("Character.DeBuff." + StatusRowName.ToString()));
-			HeroTarget->GetAttributeComponent()->AddTag(FullStatusTag);
-		}
-	}
-	else if(IsValid(EnemyTarget))
-	{
-		UCharacterAttributeComponent* EnemyAttributeComponent = EnemyTarget->GetAttributeComponent();
-
-		if (IsValid(EnemyAttributeComponent))
-		{
-			FName FullStatusTag = FName(*("Enemy.DeBuff." + StatusRowName.ToString()));
-			EnemyTarget->GetAttributeComponent()->AddTag(FullStatusTag);
-		}
-	}
-}
-
 void AYggTickActor::DestroyStatusTag()
 {
 	AYggCharacter* YggHero = Cast<AYggHero>(TickDamageComponent->TargetActor);
@@ -272,15 +238,15 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(
 				return nullptr;
 			}
 			
-		/*	FName StatusTag = FName(*("Character.DeBuff." + RowName.ToString()));
+			FName StatusTag = FName(*("Character.DeBuff." + RowName.ToString()));
 
-			if (HeroAttributeComponent->HasTag(TEXT("Character")))
+			if (HeroAttributeComponent->HasTag(StatusTag))
 			{
 				if (FStatusTickDataRow* ExistingStatusRow = ExistingTickActor->StatusTickDataTable->FindRow<FStatusTickDataRow>(RowName, nullptr))
 				{
 					ExistingTickActor->StatusTickTime = ExistingStatusRow->TickTime;
 				}
-			}*/
+			}
 		}
 		else if (IsValid(EnemyTarget))
 		{
@@ -291,7 +257,7 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(
 				return nullptr;
 			}
 
-	/*		FName StatusTag = FName(*("Enemy.DeBuff." + RowName.ToString()));
+			FName StatusTag = FName(*("Enemy.DeBuff." + RowName.ToString()));
 
 			if (EnemyAttributeComponent->HasTag(StatusTag))
 			{
@@ -299,7 +265,7 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(
 				{
 					ExistingTickActor->StatusTickTime = ExistingStatusRow->TickTime;
 				}
-			}*/
+			}
 
 		}
 
@@ -332,9 +298,9 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(
 	{
 		if (IsValid(Hero))
 		{
-			/*FName Tag = FName(("Character.DeBuff"));
-			Hero->GetAttributeComponent()->AddTag(Tag);
-			UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);*/
+			TickActor->Tag = FName(*("Character.DeBuff." + ConvertStatusEnumToRowName(EffectType).ToString()));
+			Hero->GetAttributeComponent()->AddTag(TickActor->Tag);
+			UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 			
 		}
 	}
@@ -342,9 +308,9 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(
 	{
 		if (IsValid(Enemy))
 		{
-			/*TickActor->Tag = FName(*("Enemy.DeBuff." + ConvertStatusEnumToRowName(EffectType).ToString()));
+			TickActor->Tag = FName(*("Enemy.DeBuff." + ConvertStatusEnumToRowName(EffectType).ToString()));
 			Enemy->GetAttributeComponent()->AddTag(TickActor->Tag);
-			UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);*/
+			UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 		}
 	}
 
