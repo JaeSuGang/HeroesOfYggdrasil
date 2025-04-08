@@ -15,6 +15,10 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSkillCast, float, Duration);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSkillCastEnd);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillQ, FName, SkillName, float, CoolTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillE, FName, SkillName, float, CoolTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillR, FName, SkillName, float, CoolTime);
+
  // Unreal Engine Core
 class APlayerController;
  // Camera
@@ -191,6 +195,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Widget")
 	FOnSkillCastEnd OnSkillCastEnd;
 
+	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
+	FOnSkillQ OnSkillQ;
+	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
+	FOnSkillQ OnSkillE;
+	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
+	FOnSkillQ OnSkillR;
 private:
 	bool bIsDeath = false;
 };
