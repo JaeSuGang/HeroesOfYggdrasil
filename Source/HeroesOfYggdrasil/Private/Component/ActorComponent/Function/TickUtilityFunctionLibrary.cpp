@@ -6,7 +6,7 @@
 #include "Player/YggHero.h"
 
 
-AYggTickActor* UTickUtilityFunctionLibrary::FindAttachedTickActor(AYggHero* HeroTarget)
+AYggTickActor* UTickUtilityFunctionLibrary::FindAttachedTickActor(AYggCharacter* HeroTarget)
 {
 	if (!IsValid(HeroTarget)) return nullptr;
 
