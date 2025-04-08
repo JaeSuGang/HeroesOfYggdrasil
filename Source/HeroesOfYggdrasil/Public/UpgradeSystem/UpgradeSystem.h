@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "CustomSystem/CustomSystem.h"
 #include "UpgradeSystem.generated.h"
 
 class UHeroAttributeComponent;
 class UUpgradeDataAsset;
 
-UCLASS(NotBlueprintable)
-class HEROESOFYGGDRASIL_API UUpgradeSystem : public UActorComponent
+UCLASS()
+class HEROESOFYGGDRASIL_API UUpgradeSystem : public UCustomSystem
 {
 	GENERATED_BODY()
 

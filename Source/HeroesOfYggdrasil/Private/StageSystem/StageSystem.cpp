@@ -4,8 +4,11 @@
 
 #include "Net/UnrealNetwork.h"
 
+#include "StageSystem/StageBase.h"
+
 UStageSystem::UStageSystem()
 {
+	bReplicateUsingRegisteredSubObjectList = true;
 	SetIsReplicatedByDefault(true);
 }
 
@@ -20,7 +23,24 @@ void UStageSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(UStageSystem, StageCycle);
 	DOREPLIFETIME(UStageSystem, CurrentStage);
+}
+
+void UStageSystem::RegisterObjectsToReplicate()
+{
+	for (UStageBase* Stage : StageCycle)
+	{
+		AddReplicatedSubObject(Stage);
+	}
+}
+
+void UStageSystem::UnregisterObjectsToReplicate()
+{
+	for (UStageBase* Stage : StageCycle)
+	{
+		RemoveReplicatedSubObject(Stage);
+	}
 }
 
 

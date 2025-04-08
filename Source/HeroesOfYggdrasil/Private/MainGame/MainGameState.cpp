@@ -15,9 +15,7 @@
 
 AMainGameState::AMainGameState()
 {
-	StageSystem = CreateDefaultSubobject<UStageSystem>(TEXT("StageSystem"));
 
-	UpgradeSystem = CreateDefaultSubobject<UUpgradeSystem>(TEXT("UpgradeSystem"));
 }
 
 void AMainGameState::BeginPlay()
@@ -29,9 +27,6 @@ void AMainGameState::BeginPlay()
 void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AMainGameState, StageSystem);
-	DOREPLIFETIME(AMainGameState, UpgradeSystem);
 
 	DOREPLIFETIME(AMainGameState, PlayerManager);
 	DOREPLIFETIME(AMainGameState, StageManager);

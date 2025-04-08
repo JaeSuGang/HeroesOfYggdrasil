@@ -3,3 +3,20 @@
 
 #include "StageSystem/StageBase.h"
 
+#include "Net/UnrealNetwork.h"
+
+UStageBase::UStageBase()
+{
+	
+}
+
+bool UStageBase::IsSupportedForNetworking() const
+{
+	return true;
+}
+
+void UStageBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+}

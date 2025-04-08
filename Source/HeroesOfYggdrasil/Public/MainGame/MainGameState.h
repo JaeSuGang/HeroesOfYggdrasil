@@ -14,6 +14,14 @@ class AUpgradeManager;
 class UUpgradeSystem;
 class UStageSystem;
 
+
+class UTest
+{
+
+public:
+	int a = 5;
+};
+
 /**
  * 담당 코더 : 김경민
  */
@@ -41,16 +49,6 @@ public:
 	AEnemyManager* GetEnemyManager() const;
 
 public:
-	/* New */
-	UPROPERTY(Replicated, EditAnywhere)
-	TObjectPtr<UStageSystem> StageSystem;
-
-	UPROPERTY(Replicated, EditAnywhere)
-	TObjectPtr<UUpgradeSystem> UpgradeSystem;
-
-
-public:
-	/* Deprecated */
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<APlayerManager> PlayerManagerClass;
 
