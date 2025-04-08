@@ -101,7 +101,7 @@ void AYggHeroKhaimera::BeginPlay()
 	
 	if (HasAuthority())
 	{
-		UpdateStatus();
+		/*UpdateStatus();*/
 	}
 }
 
@@ -109,8 +109,6 @@ void AYggHeroKhaimera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-
 
 
 

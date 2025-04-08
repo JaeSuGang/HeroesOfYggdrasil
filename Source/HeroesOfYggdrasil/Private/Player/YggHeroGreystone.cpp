@@ -75,7 +75,7 @@ void AYggHeroGreystone::BeginPlay()
 
 	if (!HeroAttributeComponent) return;
 	HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Greystone"));
-	UpdateStatus();	
+	//UpdateStatus();	
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)

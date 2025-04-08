@@ -10,6 +10,7 @@
 
 #include "Player/YggHero.h"
 #include "Enemy/EnemyCharacter.h"
+#include "Global/YggTickActor.h"
 
 // Sets default values
 AEnemyWarningRange::AEnemyWarningRange()
@@ -144,17 +145,9 @@ void AEnemyWarningRange::OverLap(UPrimitiveComponent* OverlappedComponent, AActo
 
         if (IsValid(Hero))
         {
-            if (Hero && Hero->GetMesh() && BugTickCollision)
+            if (Hero)
             {
-                FVector Center = Hero->GetMesh()->Bounds.Origin;
-
-               /* BugTickCollision->SetWorldLocation(Center);
-
-                BugTickCollision->AttachToComponent(
-                    Hero->GetMesh(),
-                    FAttachmentTransformRules::KeepWorldTransform
-                );
-                BugTickCollision->SetSimulatePhysics(false);*/
+                YggCharacterEnemy->OnHeroEnteredRange.Broadcast(Hero); 
             }
         }
     }
@@ -165,7 +158,7 @@ void AEnemyWarningRange::SetCollisionOwnerEnemy(AEnemyCharacter* _Enemy)
     if (IsValid(_Enemy))
     {
 
-        AYggCharacter* YggCharacterEnemy = Cast<AYggCharacter>(_Enemy);
+        YggCharacterEnemy = _Enemy;
         BugTickCollision->SetOwnerCharacter(YggCharacterEnemy);
     }
 }

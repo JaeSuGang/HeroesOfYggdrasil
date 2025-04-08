@@ -7,6 +7,9 @@
 #include "Data/YggStructData.h"
 #include "EnemyWarningRange.generated.h"
 
+
+class AYggTickActor;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AEnemyWarningRange : public AActor
 {
@@ -74,8 +77,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyAOE")
 	float TimeElapsed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyAOE")
+	class UCharacterAttributeComponent* EnemyAttributeComponent;
+
 	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
 	UParticleSystem* BugBallParticle;  
+	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
+	class AEnemyCharacter* YggCharacterEnemy;
+
+	UPROPERTY(EditAnywhere, Category = "Tick")
+	TSubclassOf<AYggTickActor> TickActorClass;
 
 	UPROPERTY(EditAnywhere, Category = "EnemyCapsuleCollision")
 	class UYggAttackCapsuleComponent* BugTickCollision;

@@ -30,4 +30,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float JumpHeight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Scope;
+
 };
