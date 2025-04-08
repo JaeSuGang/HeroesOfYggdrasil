@@ -52,7 +52,11 @@ AYggTickActor::AYggTickActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	bReplicates = true;
+	SetReplicateMovement(true);
+
     DefualtSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefualtSceneRoot"));
+	RootComponent = DefualtSceneRoot;
     TickDamageComponent = CreateDefaultSubobject<UTickDamageComponent>(TEXT("TickDamageComp"));
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
 
@@ -61,6 +65,17 @@ AYggTickActor::AYggTickActor()
 // Called when the game starts or when spawned
 void AYggTickActor::BeginPlay()
 {
+
+
+	if (!IsValid(StatusTickDataTable)) return;
+
+	const FStatusTickDataRow* Row = StatusTickDataTable->FindRow<FStatusTickDataRow>(StatusRowName, nullptr);
+	if (!Row) return;
+
+	TickParticle = Row->Particle;
+	TickNiagaraSystem = Row->NiagaraSystem;
+ 	StatusTickTime = Row->TickTime;
+
 	Super::BeginPlay();
 }
 
@@ -73,8 +88,20 @@ void AYggTickActor::Tick(float DeltaTime)
 	if (StatusTickTime < 0.0f)
 	{
 		DestroyStatusTag();
-		Destroy();
+
+		if (HasAuthority()) // 반드시 서버만 호출
+		{
+			MulticastCleanupEffects();
+			Destroy();
+		}
 	}
+}
+
+void AYggTickActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	
+	Super::EndPlay(EndPlayReason);
+	CleanupEffects();
 }
 
 
@@ -130,52 +157,34 @@ void AYggTickActor::SetTickDamage(AYggCharacter* _Target, float _Interval, float
 	TickDamageComponent->TickInterval = _Interval;
 	TickDamageComponent->DamageAmount = DamageAmount;
 
-
-	
-
-	UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
-	if (IsValid(ParticleComp))
+	if (HasAuthority())
 	{
-		ParticleComp->SetTemplate(TickParticle.Get());
-		ParticleComp->bAutoActivate = true;
-		
-		ParticleComp->SetRelativeScale3D(FVector(10.0f));
-
-		ParticleComp->RegisterComponent();
-
-		ParticleComp->AttachToComponent(
-			_Target->GetRootComponent(),
-			FAttachmentTransformRules::KeepRelativeTransform
-		);
+		MulticastSpawnEffects(_Target);
 	}
-	else
-	{
-		TickParticle.LoadSynchronous();
-	}
-
-	UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
-		TickNiagaraSystem.Get(),                         // TSoftObjectPtr or UNiagaraSystem*
-		GetRootComponent(),								 // 부모 컴포넌트
-		NAME_None,                                       // 소켓 이름 (없을 시 NAME_None)
-		FVector::ZeroVector,                             // 위치
-		FRotator::ZeroRotator,                           // 회전
-		EAttachLocation::KeepRelativeOffset,
-		true,                                            // AutoActivate
-		true                                             // AutoDestroy (중요!)
-	);
-
-	if (IsValid(NiagaraComp))
-	{
-		NiagaraComp->AttachToComponent(_Target->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-		NiagaraComp->SetRelativeScale3D(FVector(10.0f));
-	}
-	else
-	{
-		TickNiagaraSystem.LoadSynchronous();;
-	}
-		
 }
 
+
+void AYggTickActor::CleanupEffects()
+{
+	TArray<UActorComponent*> Components;
+	GetComponents(Components);
+
+	for (UActorComponent* Comp : Components)
+	{
+		if (!IsValid(Comp)) continue;
+
+		if (auto* NiagaraComp = Cast<UNiagaraComponent>(Comp))
+		{
+			NiagaraComp->Deactivate();
+			NiagaraComp->DestroyComponent();
+		}
+		else if (auto* ParticleComp = Cast<UParticleSystemComponent>(Comp))
+		{
+			ParticleComp->DeactivateSystem();
+			ParticleComp->DestroyComponent();
+		}
+	}
+}
 
 void AYggTickActor::DisableAllComponents()
 {
@@ -205,6 +214,58 @@ void AYggTickActor::DisableAllComponents()
 			Comp->Deactivate(); // 나머지 일반 컴포넌트
 		}
 	}
+}
+
+void AYggTickActor::MulticastSpawnEffects_Implementation(AYggCharacter* _Target)
+{
+	if (!IsValid(_Target)) return;
+	if (!TickNiagaraSystem.IsValid())
+	{
+		TickNiagaraSystem.LoadSynchronous(); // 강제 로드
+	}
+	if (!TickParticle.IsValid())
+	{
+		TickParticle.LoadSynchronous(); // 강제 로드
+	}
+
+	// ParticleSystemComponent
+	if (TickParticle.IsValid())
+	{
+		UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
+		if (IsValid(ParticleComp))
+		{
+			ParticleComp->SetTemplate(TickParticle.Get());
+			ParticleComp->bAutoActivate = true;
+			ParticleComp->SetRelativeScale3D(FVector(10.0f));
+			ParticleComp->RegisterComponent();
+			ParticleComp->AttachToComponent(_Target->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+		}
+	}
+	
+	// NiagaraComponent
+	if (TickNiagaraSystem.IsValid())
+	{
+		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			TickNiagaraSystem.Get(),
+			GetRootComponent(),
+			NAME_None,
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::KeepRelativeOffset,
+			true, true
+		);
+
+		if (IsValid(NiagaraComp))
+		{
+			NiagaraComp->AttachToComponent(_Target->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+			NiagaraComp->SetRelativeScale3D(FVector(10.0f));
+		}
+	}
+}
+
+void AYggTickActor::MulticastCleanupEffects_Implementation()
+{
+	CleanupEffects();
 }
 
 

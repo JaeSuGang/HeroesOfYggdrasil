@@ -45,8 +45,17 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	void SetTickDamage(class AYggCharacter* _Target, float _Interval, float DamageAmount);
+	
+	void CleanupEffects();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastSpawnEffects(AYggCharacter* _Target);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastCleanupEffects();
 
 	UFUNCTION(BlueprintCallable, Category = "Tag")
 	void DestroyStatusTag();
