@@ -18,4 +18,8 @@ public:
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	virtual void Attack(const FInputActionValue& Value) override;
+
+
+
 };
