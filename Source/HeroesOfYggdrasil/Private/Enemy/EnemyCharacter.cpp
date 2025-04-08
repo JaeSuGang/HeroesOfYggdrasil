@@ -30,6 +30,7 @@
 
 #include "Global/YggTickActor.h"
 
+#include "Component/ActorComponent/Function/TickUtilityFunctionLibrary.h"
 #include "Component/ActorComponent/TickDamageComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
@@ -37,6 +38,11 @@
 #include "MainGame/UI/MainGameHUD.h"
 
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -339,21 +345,16 @@ void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
 
 void AEnemyCharacter::HandleHeroEnteredRange(AYggHero* Hero)
 {
-	FTransform SpawnTransform = FTransform(Hero->GetActorRotation(), Hero->GetActorLocation());
+	if (!HasAuthority()) return;
 
-	AYggTickActor* TickActor = GetWorld()->SpawnActorDeferred<AYggTickActor>(
+	float Damage = CharacterAttributeComponent->AttackPoints / 10.0f;
+
+	AYggTickActor* TickActor = AYggTickActor::SpawnTickEffectIfNotExist(
+		this,
+		Hero,
 		TickActorClass,
-		SpawnTransform,
-		nullptr,
-		nullptr,
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+		EStatusEffectType::Poison,
+		0.5f,
+		Damage
 	);
-
-	if (!IsValid(TickActor)) return;
-	float attackpoint = CharacterAttributeComponent->AttackPoints;
-	attackpoint /= 10.0f;
-
-	TickActor->SetTickDamage(Hero, 0.5f, attackpoint);
-
-	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 }
