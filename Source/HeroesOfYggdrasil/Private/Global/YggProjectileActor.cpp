@@ -40,6 +40,12 @@ void AYggProjectileActor::BeginPlay()
 		break;
 	default:
 		break;
+		
+
+
+
+
+
 	}
 
 }
