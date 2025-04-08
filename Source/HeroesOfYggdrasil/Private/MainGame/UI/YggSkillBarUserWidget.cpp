@@ -52,9 +52,6 @@ void UYggSkillBarUserWidget::NativeConstruct()
         }
     }
 
-
-   
-
     //StartCoolTime(FName("Q"), 5.0f);
     //StartCoolTime(FName("E"), 3.0f);
     //StartCoolTime(FName("R"), 10.0f);
@@ -68,19 +65,19 @@ void UYggSkillBarUserWidget::InitSkills()
     Q.Bar = Skill_Q;
     Q.Icon = QTexture;
     SetupSkillBar(Q.Bar, Q.Icon, IconSize);
-    SkillMap.Add("Q", Q);
+    SkillMap.Add("SkillQ", Q);
 
     FSkillData E;
     E.Bar = Skill_E;
     E.Icon = ETexture;
     SetupSkillBar(E.Bar, E.Icon, IconSize);
-    SkillMap.Add("E", E);
+    SkillMap.Add("SkillE", E);
 
     FSkillData R;
     R.Bar = Skill_R;
     R.Icon = RTexture;
     SetupSkillBar(R.Bar, R.Icon, IconSize);
-    SkillMap.Add("R", R);
+    SkillMap.Add("SkillR", R);
 
 }
 
