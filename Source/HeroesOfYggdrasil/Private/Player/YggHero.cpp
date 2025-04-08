@@ -68,8 +68,8 @@ AYggHero::AYggHero()
 	CharacterAttributeComponent = Cast<UCharacterAttributeComponent>(HeroAttributeComponent);
 
 	// 닉네임
-	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	WidgetComponent->SetupAttachment(GetMesh());
+	NickNameWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	NickNameWidgetComponent->SetupAttachment(GetMesh());
 
 	FaceCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("StatusCamera"));
 	FaceCaptureComponent->SetupAttachment(RootComponent);
@@ -170,11 +170,8 @@ void AYggHero::SetAimMode(bool Value)
 	}
 }
 
-void AYggHero::UpdateStatus()
-{
-	GetCharacterMovement()->MaxWalkSpeed = HeroAttributeComponent->MaxMoveSpeed;
-	GetCharacterMovement()->JumpZVelocity = HeroAttributeComponent->JumpPower;
-}
+
+
 
 void AYggHero::TakeDamageEffect_Implementation(float Att)
 {
@@ -182,14 +179,10 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 
 }
 
-
-
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AYggHero, HeroAttributeComponent);
 }
-
 
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -217,24 +210,33 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Jump")], ETriggerEvent::Triggered, this, &AYggHero::Jump);
 		}
+		if (ActionMap.Contains(FName("Attack")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHero::Attack);
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHero::EndAttack);
+		}
 		if (ActionMap.Contains(FName("Roll")))
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Roll")], ETriggerEvent::Started, this, &AYggHero::Roll);
 		}
-		if (ActionMap.Find(FName("ToggleAimMode")))
+		if (ActionMap.Contains(FName("SkillQ")))
 		{
-			EnhancedInput->BindAction(ActionMap[TEXT("ToggleAimMode")], ETriggerEvent::Started, this, &AYggHero::ToggleAimMode);
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillQ")], ETriggerEvent::Started, this, &AYggHero::SkillQ);
 		}
+		if (ActionMap.Contains(FName("SkillE")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillE")], ETriggerEvent::Started, this, &AYggHero::SkillE);
+		}
+		if (ActionMap.Contains(FName("SkillR")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillR")], ETriggerEvent::Started, this, &AYggHero::SkillR);
+		}
+
 		if (ActionMap.Find(FName("CameraZoomInOut")))
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("CameraZoomInOut")], ETriggerEvent::Triggered, this, &AYggHero::CameraZoomInOut);
 		}
-		if (ActionMap.Find(FName("ToggleUIMode")))
-		{
-			EnhancedInput->BindAction(ActionMap[TEXT("ToggleUIMode")], ETriggerEvent::Started, this, &AYggHero::ToggleUIMode);
-		}
 	}
-
 }
 
 void AYggHero::Look(const FInputActionValue& Value)
@@ -352,6 +354,96 @@ void AYggHero::EndAttack(const FInputActionValue& Value)
 {
 	HeroAttributeComponent->RemoveTag(TEXT("Character.State.PressedAttack"));
 }
+
+void AYggHero::SkillQ(const FInputActionValue& Value)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		MulticastHeroSkillQ(Value);
+	}
+	else
+	{
+		ServerHeroSkillQ(Value);
+	}
+}
+void AYggHero::ServerHeroSkillQ_Implementation(const FInputActionValue& Value)
+{
+	SkillQ(Value);
+}
+void AYggHero::MulticastHeroSkillQ_Implementation(const FInputActionValue& Value)
+{
+	FName MontageName = TEXT("SkillQ");
+	HeroAnimInstance->PlayMontage(MontageName);
+}
+
+void AYggHero::SkillE(const FInputActionValue& Value)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		MulticastHeroSkillE(Value);
+	}
+	else
+	{
+		ServerHeroSkillE(Value);
+	}
+}
+
+void AYggHero::ServerHeroSkillE_Implementation(const FInputActionValue& Value)
+{
+	SkillE(Value);
+}
+
+void AYggHero::MulticastHeroSkillE_Implementation(const FInputActionValue& Value)
+{
+	FName MontageName = TEXT("SkillE");
+	HeroAnimInstance->PlayMontage(MontageName);
+}
+
+void AYggHero::SkillR(const FInputActionValue& Value)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		MulticastHeroSkillR(Value);
+	}
+	else
+	{
+		ServerHeroSkillR(Value);
+	}
+
+}
+
+void AYggHero::ServerHeroSkillR_Implementation(const FInputActionValue& Value)
+{
+	SkillR(Value);
+}
+
+void AYggHero::MulticastHeroSkillR_Implementation(const FInputActionValue& Value)
+{
+	FName MontageName = TEXT("SkillR");
+	HeroAnimInstance->PlayMontage(MontageName);
+}
+
+
+
+
 
 void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
 {
@@ -365,20 +457,3 @@ void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
 	CameraBoom->TargetArmLength = NewLength;
 }
 
-void AYggHero::ToggleUIMode()
-{
-	SetUIMode(!bIsUIMode);
-}
-
-void AYggHero::SetUIMode(bool Value)
-{
-	bIsUIMode = Value;
-	if (bIsUIMode)
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-	}
-	else
-	{
-		HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
-	}
-}

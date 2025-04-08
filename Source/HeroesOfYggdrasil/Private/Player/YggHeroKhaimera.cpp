@@ -101,7 +101,7 @@ void AYggHeroKhaimera::BeginPlay()
 	
 	if (HasAuthority())
 	{
-		UpdateStatus();
+		/*UpdateStatus();*/
 	}
 }
 
