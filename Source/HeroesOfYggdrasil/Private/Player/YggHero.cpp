@@ -117,7 +117,7 @@ void AYggHero::BeginPlay()
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::TakeDamageEffect);
-
+		HeroAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::Die);
 	}
 
 	if (FaceCaptureComponent)
@@ -177,28 +177,28 @@ void AYggHero::UpdateStatus()
 	GetCharacterMovement()->JumpZVelocity = HeroAttributeComponent->JumpPower;
 }
 
-void AYggHero::ServerDie_Implementation(float Delegate)
-{
-	if (HeroAttributeComponent->HP <= 0.0f)
-	{
-		MulticastDie();
-	}
-}
-
-void AYggHero::MulticastDie_Implementation()
-{
-	if (HeroAttributeComponent->HP <= 0.0f && !bIsDeath)
-	{
-		FName MontageName = *FString::Printf(TEXT("Death"));
-		HeroAnimInstance->PlayMontage(MontageName);
-	
-		bIsDeath = true;
-
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
-	}
-}
+//void AYggHero::ServerDie_Implementation(float Delegate)
+//{
+//	if (HeroAttributeComponent->HP <= 0.0f)
+//	{
+//		MulticastDie();
+//	}
+//}
+//
+//void AYggHero::MulticastDie_Implementation()
+//{
+//	if (HeroAttributeComponent->HP <= 0.0f && !bIsDeath)
+//	{
+//		FName MontageName = *FString::Printf(TEXT("Death"));
+//		HeroAnimInstance->PlayMontage(MontageName);
+//	
+//		bIsDeath = true;
+//
+//		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+//		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+//		HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+//	}
+//}
 
 void AYggHero::TakeDamageEffect_Implementation(float Att)
 {
@@ -477,7 +477,35 @@ void AYggHero::MulticastHeroSkillR_Implementation(const FInputActionValue& Value
 	HeroAnimInstance->PlayMontage(MontageName);
 }
 
+void AYggHero::Die(float Delegate)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.Death"))) return;
+	if (HeroAttributeComponent->HP > 0.0f) return;
+		
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+		HeroAttributeComponent->AddTag(TEXT("Character.State.Death"));
+		MulticastDie(Delegate);
+	}
+	else
+	{
+		ServerDie(Delegate);
+	}	
+}
 
+void AYggHero::ServerDie_Implementation(float Delegate)
+{
+	Die(Delegate);
+}
+
+void AYggHero::MulticastDie_Implementation(float Delegate)
+{
+	FName MontageName = TEXT("Death");
+	HeroAnimInstance->PlayMontage(MontageName);
+}
 
 
 

@@ -138,15 +138,22 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastHeroSkillR(const FInputActionValue& Value);
 
+	UFUNCTION()
+	void Die(float Delegate);
+	UFUNCTION(Server, Reliable)
+	void ServerDie(float Delegate);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastDie(float Delegate);
+
 	virtual void ToggleAimMode();
 	virtual void SetAimMode(bool Value);
 
 	void UpdateStatus();
 
-	UFUNCTION(Server, Reliable)
+	/*UFUNCTION(Server, Reliable)
 	void ServerDie(float Delegate);
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastDie();
+	void MulticastDie();*/
 
 	virtual void CameraZoomInOut(const FInputActionValue& Value);
 
