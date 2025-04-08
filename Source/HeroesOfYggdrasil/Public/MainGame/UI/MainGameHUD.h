@@ -101,8 +101,8 @@ public:
 
 	APlayerController* PC;
 
-	UFUNCTION(BlueprintCallable)
-	void SetSkillIcon(FName CharacterName);
+	//UFUNCTION(BlueprintCallable)
+	//void SetSkillIcon(FName CharacterName);
 
 
 

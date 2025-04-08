@@ -26,6 +26,8 @@ struct FSkillData
 
 	/*float RemainingTime = 0.0f;*/
 	FTimerHandle TimerHandle;
+	float CoolTime = 0.0f;
+	float RemainingTime = 0.0f;
 };
 
 class UImage;
@@ -42,14 +44,30 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSkillIcon(FName Character);
 
+	//UFUNCTION(BlueprintCallable)
+	//void SetIcon(UTexture2D* Q, UTexture2D* E, UTexture2D* R);
+	
 	UFUNCTION(BlueprintCallable)
-	void SetIcon(UTexture2D* Q, UTexture2D* E, UTexture2D* R);
+	void SetTexture(UTexture2D* Q, UTexture2D* E, UTexture2D* R);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* SkillIcons;
 	FSkillIcon* CharSkillIcon;
 
-	void SetTexture(UTexture2D* Q, UTexture2D* E, UTexture2D* R);
+	UFUNCTION(BlueprintCallable)
+	void InitSkills();
+
+	UFUNCTION(BlueprintCallable)
+	void SetupSkillBar(UProgressBar* Bar, UTexture2D* Tex, FVector2D Size);
+
+	UFUNCTION(BlueprintCallable)
+	void StartCoolTime(FName Key, float Duration);
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateCoolTime(FName Key);
+
+	UFUNCTION(BlueprintCallable)
+	void EndCoolTime(FName Key);
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -57,19 +75,28 @@ protected:
 
 
 private:
-	UPROPERTY(meta = (BindWidget))
-	UImage* Skill_Q;
-	UPROPERTY(meta = (BindWidget))
-	UImage* Skill_E;
-	UPROPERTY(meta = (BindWidget))
-	UImage* Skill_R;
-	UPROPERTY(meta = (BindWidget))
-	UImage* Skill_Shift;
+	//UPROPERTY(meta = (BindWidget))
+	//UImage* Skill_Q;
+	//UPROPERTY(meta = (BindWidget))
+	//UImage* Skill_E;
+	//UPROPERTY(meta = (BindWidget))
+	//UImage* Skill_R;
+	//UPROPERTY(meta = (BindWidget))
+	//UImage* Skill_Shift;
 
-	UTexture2D* SkillQ;
-	UTexture2D* SkillE;
-	UTexture2D* SkillR;
-	UTexture2D* SkillShift;
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* Skill_Q;
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* Skill_E;
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* Skill_R;
+	UPROPERTY(meta = (BindWidget))
+	UProgressBar* Skill_Shift;
+
+	UTexture2D* QTexture;
+	UTexture2D* ETexture;
+	UTexture2D* RTexture;
+	UTexture2D* ShiftTexture;
 
 
 	TMap<FName, FSkillData> SkillMap;
