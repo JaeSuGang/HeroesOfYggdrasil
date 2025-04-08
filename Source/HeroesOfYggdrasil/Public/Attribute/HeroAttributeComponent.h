@@ -28,11 +28,12 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void ServerSetBaseData(const FName& Name);
+	UFUNCTION()
+	void UpdateStatus();
 
 public:
 	UPROPERTY(EditAnywhere)
 	UDataTable* BaseData;
-
 
 	bool IsAttackCheck();
 	

@@ -6,6 +6,8 @@
 #include "Net/UnrealNetwork.h"
 
 #include "Data/YggStructData.h"
+#include "Player/YggHero.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UHeroAttributeComponent::UHeroAttributeComponent()
 {
@@ -15,7 +17,7 @@ UHeroAttributeComponent::UHeroAttributeComponent()
 void UHeroAttributeComponent::BeginPlay()
 {
     Super::BeginPlay();   
-    
+	ClientDelegate_OnStatusChanged.AddDynamic(this, &UHeroAttributeComponent::UpdateStatus);
 }
 
 void UHeroAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -48,6 +50,16 @@ void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME(UHeroAttributeComponent, JumpPower);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalChance);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalDamageRate);
+}
+
+void UHeroAttributeComponent::UpdateStatus()
+{
+	AYggHero* Hero = Cast<AYggHero>(GetOwner());
+	if (IsValid(Hero))
+	{
+		Hero->GetCharacterMovement()->JumpZVelocity = JumpPower;
+		Hero->GetCharacterMovement()->MaxWalkSpeed = MaxMoveSpeed;
+	}
 }
 
 void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name)
