@@ -504,7 +504,9 @@ void AYggHero::Die(float Delegate)
 	else
 	{
 		ServerDie(Delegate);
-	}	
+	}
+
+	OnRespawn.Broadcast(RespawnTime);
 }
 
 void AYggHero::ServerDie_Implementation(float Delegate)

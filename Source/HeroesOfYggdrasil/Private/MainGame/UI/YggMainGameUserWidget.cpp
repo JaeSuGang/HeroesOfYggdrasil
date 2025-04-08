@@ -8,6 +8,7 @@
 #include "MainGame/UI/YggAbilityUserWidget.h"
 #include "MainGame/UI/YggCastingBarUserWidget.h"
 #include "MainGame/UI/YggSkillBarUserWidget.h"
+#include "MainGame/UI/YggDeathPopupUserWidget.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -53,6 +54,8 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 	}
 
 	SkillBarWidget = CreateWidget<UYggSkillBarUserWidget>(GetWorld(), SkillBarUserWidgetClass);
+	if (!SkillBarUserWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
 	if (IsValid(SkillBarWidget))
 	{
@@ -66,6 +69,21 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 		}
 	}
 
+	DeathPopupWidget = CreateWidget<UYggDeathPopupUserWidget>(GetWorld(), DeathPopupWidgetClass);
+	if (!DeathPopupWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	if (IsValid(DeathPopupWidget))
+	{
+		MainGamePanel->AddChild(DeathPopupWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(DeathPopupWidget->Slot))
+		{
+			CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f, 1.0f, 1.0f));
+			CanvasSlot->SetOffsets(FMargin(0.0f));
+			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+		}
+	}
 
 }
 

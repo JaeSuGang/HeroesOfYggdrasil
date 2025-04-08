@@ -18,7 +18,18 @@ class HEROESOFYGGDRASIL_API UYggDeathPopupUserWidget : public UYggUserWidget
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION(BlueprintCallable)
+	void StartRespawn(float Duration);
 
+	UFUNCTION(BlueprintCallable)
+	void UpdateRespawnBar();
+
+	UFUNCTION(BlueprintCallable)
+	void EndRespawn();
+
+	FTimerHandle RespawnTimerHandle;
+	float RespawnTime;
+	float RemainingTime;
 
 
 protected:
@@ -27,7 +38,10 @@ protected:
 
 
 private:
+	UPROPERTY(meta = (BindWidget))
 	UProgressBar* RespawnBar;
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* CountBlock;
 
 };

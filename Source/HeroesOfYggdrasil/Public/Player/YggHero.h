@@ -12,12 +12,14 @@
  * 히어로 기본 클래스
  */
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSkillCast, float, Duration);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSkillCastEnd);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSkillCast, float, Duration);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillQ, FName, SkillName, float, CoolTime);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillE, FName, SkillName, float, CoolTime);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillR, FName, SkillName, float, CoolTime);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRespawn, float, RespawnTime);
 
  // Unreal Engine Core
 class APlayerController;
@@ -213,9 +215,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
 	FOnSkillQ OnSkillQ;
 	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
-	FOnSkillQ OnSkillE;
+	FOnSkillE OnSkillE;
 	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
-	FOnSkillQ OnSkillR;
+	FOnSkillR OnSkillR;
+
+	UPROPERTY(BlueprintAssignable, Category = "Widget Respawn")
+	FOnRespawn OnRespawn;
 
 	float RespawnTime = 3.0f;
 };
