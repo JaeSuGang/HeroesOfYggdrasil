@@ -112,9 +112,27 @@ protected:
 	void MulticastAttack(const FInputActionValue& Value);
 
 	virtual void EndAttack(const FInputActionValue& Value);
-	virtual void SkillQ(const FInputActionValue& Value) {}
-	virtual void SkillE(const FInputActionValue& Value) {}
-	virtual void SkillR(const FInputActionValue& Value) {}
+
+	UFUNCTION()
+	virtual void SkillQ(const FInputActionValue& Value);
+	UFUNCTION(Server, Reliable)
+	void ServerHeroSkillQ(const FInputActionValue& Value);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHeroSkillQ(const FInputActionValue& Value);
+
+	UFUNCTION()
+	virtual void SkillE(const FInputActionValue& Value);
+	UFUNCTION(Server, Reliable)
+	void ServerHeroSkillE(const FInputActionValue& Value);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHeroSkillE(const FInputActionValue& Value);
+
+	UFUNCTION()
+	virtual void SkillR(const FInputActionValue& Value);
+	UFUNCTION(Server, Reliable)
+	void ServerHeroSkillR(const FInputActionValue& Value);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHeroSkillR(const FInputActionValue& Value);
 
 	virtual void ToggleAimMode();
 	virtual void SetAimMode(bool Value);
@@ -127,8 +145,6 @@ protected:
 	void MulticastDie();
 
 	virtual void CameraZoomInOut(const FInputActionValue& Value);
-	virtual void ToggleUIMode();
-	virtual void SetUIMode(bool Value);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	USpringArmComponent* CameraBoom;
@@ -145,13 +161,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")
 	UYggHeroAnimInstance* HeroAnimInstance;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UHeroAttributeComponent* HeroAttributeComponent;
 
 	
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggTimeEvent")
-	UWidgetComponent* WidgetComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NickName")
+	UWidgetComponent* NickNameWidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	UCaptureComponent* FaceCaptureComponent;

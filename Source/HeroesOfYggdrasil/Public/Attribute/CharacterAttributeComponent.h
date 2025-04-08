@@ -24,8 +24,6 @@ protected:
 	void BeginPlay() override;
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
-	
-
 public:
 	/* 이 유닛에게 데미지를 주는 함수 */
 	UFUNCTION(Server, Reliable, BlueprintCallable)
