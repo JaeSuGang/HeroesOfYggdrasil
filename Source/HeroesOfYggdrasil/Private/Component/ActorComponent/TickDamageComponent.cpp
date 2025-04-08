@@ -6,6 +6,10 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Core/YggCharacter.h"
+
+#include "Player/YggHero.h"
+#include "Enemy/EnemyCharacter.h"
+
 #include "Attribute/CharacterAttributeComponent.h"
 
 
@@ -30,15 +34,6 @@ void UTickDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!IsValid(TargetActor)) return;
-
-	// 이 태그를 이미 가졌다면
-	//if (TargetActor->GetAttributeComponent()->HasTag(TEXT("Character.State")))
-	//{
-	//	//TargetActor->GetAttributeComponent()->AddTag(TEXT("Character.State.Poison"));
-	//}
-
-
 	ElapsedTime += DeltaTime;
 
 	if (ElapsedTime >= TickInterval)
@@ -51,10 +46,32 @@ void UTickDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 
 void UTickDamageComponent::ApplyDamage()
 {
-	if (IsValid(TargetActor))
+	AYggHero* HeroTarget = Cast<AYggHero>(TargetActor);
+
+	AEnemyCharacter* EnemyTarget = Cast<AEnemyCharacter>(TargetActor);
+
+	if (IsValid(HeroTarget))
 	{
-		//TargetActor->GetAttributeComponent()->AddTag(TEXT("Character.State.Poison"));
-		TargetActor->GetAttributeComponent()->Server_TakeDamage(DamageAmount);
-		UE_LOG(LogTemp, Log, TEXT("TickDamage: %.1f applied to %s"), DamageAmount, *TargetActor->GetName());
+		HeroTarget->GetAttributeComponent()->Server_TakeDamage(DamageAmount);
+		
+		// 추후 태그체크로 데미지 함수 이동
+		if (HeroTarget->GetAttributeComponent()->HasTag(TEXT("Character.State")))
+		{
+			UE_LOG(LogTemp, Log, TEXT("TickDamage: %.1f applied to %s"), DamageAmount, *HeroTarget->GetName());
+			return;
+		}
+	}
+	else if (IsValid(EnemyTarget))
+	{
+		/*if (EnemyTarget->GetAttributeComponent()->HasTag(TEXT("Character.State")))
+		{
+			EnemyTarget->GetAttributeComponent()->Server_TakeDamage(DamageAmount);
+			UE_LOG(LogTemp, Log, TEXT("TickDamage: %.1f applied to %s"), DamageAmount, *EnemyTarget->GetName());
+			return;
+		}*/
+	}
+	else
+	{
+		return;
 	}
 }

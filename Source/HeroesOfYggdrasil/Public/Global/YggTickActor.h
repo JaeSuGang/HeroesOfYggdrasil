@@ -13,6 +13,10 @@ class USceneComponent;
 class UParticleSystem;
 class UNiagaraSystem;
 class UTickDamageComponent;
+class UTimeEventComponent;
+class AYggHero;
+struct FStatusTickDataRow;
+
 
 
 UCLASS()
@@ -23,6 +27,12 @@ class HEROESOFYGGDRASIL_API AYggTickActor : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AYggTickActor();
+
+	void DestroyStatusTag();
+
+	void CheckStatusTag();
+
+	static AYggTickActor* FindAttachedTickActor(AYggHero* HeroTarget);
 
 protected:
 	// Called when the game starts or when spawned
@@ -55,4 +65,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tick")
 	UTickDamageComponent* TickDamageComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Tick")
+	UTimeEventComponent* TimeEventComponent;
 };
