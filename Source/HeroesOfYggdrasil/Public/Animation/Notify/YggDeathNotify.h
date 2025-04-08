@@ -16,8 +16,5 @@ class HEROESOFYGGDRASIL_API UYggDeathNotify : public UAnimNotify
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
-	UMaterialInstanceDynamic* DynamicMatInstance;
-	float CurrentLerpValue = 0.0f;
-	float LerpDuration = 2.0f; // 2초 동안 변화
 	FTimerHandle TimerHandle;
 };

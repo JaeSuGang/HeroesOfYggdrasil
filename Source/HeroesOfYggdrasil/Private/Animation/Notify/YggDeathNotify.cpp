@@ -2,6 +2,7 @@
 
 
 #include "Animation/Notify/YggDeathNotify.h"
+#include "Player/YggHero.h"
 
 void UYggDeathNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
@@ -15,5 +16,16 @@ void UYggDeathNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 		{
 			AnimInstance->Montage_Pause(CurrentMontage);
 		}
+	}
+		
+	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
+	if (Hero)
+	{
+		float RespawnTime = Hero->RespawnTime;
+
+		MeshComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Hero]()
+		{
+			Hero->Respawn();
+		}, RespawnTime, false);
 	}
 }

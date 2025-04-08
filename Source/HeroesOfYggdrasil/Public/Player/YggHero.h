@@ -94,6 +94,12 @@ public:
 	virtual void Attack(const FInputActionValue& Value);
 	virtual void Jump() override;
 
+	UFUNCTION()
+	void Respawn();
+
+	UFUNCTION()
+	void HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
@@ -208,6 +214,6 @@ public:
 	FOnSkillQ OnSkillE;
 	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
 	FOnSkillQ OnSkillR;
-private:
-	bool bIsDeath = false;
+
+	float RespawnTime = 3.0f;
 };
