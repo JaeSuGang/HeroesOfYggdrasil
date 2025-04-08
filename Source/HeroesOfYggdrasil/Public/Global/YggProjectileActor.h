@@ -12,14 +12,50 @@ enum class EProjectileType : uint8
 {
 	Line UMETA(DisplayName = "Line"),
 	Parabola UMETA(DisplayName = "Parabola"),
+	TargetParabola UMETA(DisplayName = "TargetParabola"),
+	Homing UMETA(DisplayName = "Homing"),
 };
+
+USTRUCT(BlueprintType)
+struct FSpawnProjectileDataRow : public FTableRowBase
+{
+	GENERATED_BODY()
+	FSpawnProjectileDataRow() {}
+	~FSpawnProjectileDataRow() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
+	EProjectileType ProjectileType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
+	float DestroyTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
+	float Angle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
+	float InitialSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
+	float MaxSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
+	TSoftObjectPtr<UStaticMesh> StaticMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
+	TSoftObjectPtr<class UNiagaraSystem> NiagaraSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
+	TSoftObjectPtr<class UParticleSystem> Particle;
+};
+
+
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggProjectileActor : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AYggProjectileActor();
 
@@ -27,34 +63,31 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
+
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	EProjectileType ProjectileType;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UProjectileMovementComponent> ProjectileMovement;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-	float Speed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-	float DeathTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-	float Height;
 
 	UPROPERTY()
 	TObjectPtr<AActor> OwnerActor;
 
-	UPROPERTY()
-	TObjectPtr<AActor> TargetActor;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
+	UDataTable* ProjectileData;
 
-	FVector TargetLocation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
+	FName RowName;
 
-	FTimerHandle DeathTimerHandle;
+	FSpawnProjectileDataRow ProjectileDataRow;
+
+	void LineMode();
+	void ParabolaMode();
+	void TargetParabolaMode();
+	void HomingMode();
 
 };

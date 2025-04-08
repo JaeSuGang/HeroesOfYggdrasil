@@ -4,6 +4,8 @@
 #include "Global/YggProjectileActor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 AYggProjectileActor::AYggProjectileActor()
 {
@@ -12,30 +14,29 @@ AYggProjectileActor::AYggProjectileActor()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
-	ProjectileMovement->ProjectileGravityScale = 0.f; // 기본값, Parabola 타입에서만 바뀜
-
 }
 
 // Called when the game starts or when spawned
 void AYggProjectileActor::BeginPlay()
 {
 	Super::BeginPlay();
-	if (IsValid(OwnerActor))
-	{
-		SetActorRotation(OwnerActor->GetActorRotation());
-	}
-	const FVector Forward = GetActorForwardVector();
+
+	ProjectileDataRow = *ProjectileData->FindRow<FSpawnProjectileDataRow>(RowName, nullptr);
+	ProjectileType = ProjectileDataRow.ProjectileType;
 
 	switch (ProjectileType)
 	{
 	case EProjectileType::Line:
-		ProjectileMovement->Velocity = Forward * Speed;
-		ProjectileMovement->ProjectileGravityScale = 0.f;
+		LineMode();
 		break;
-
 	case EProjectileType::Parabola:
-		ProjectileMovement->Velocity = Forward * Speed + FVector(0.f, 0.f, Height);
-		ProjectileMovement->ProjectileGravityScale = 1.f; // 중력 적용
+		ParabolaMode();
+		break;
+	case EProjectileType::TargetParabola:
+		TargetParabolaMode();
+		break;
+	case EProjectileType::Homing:
+		HomingMode();
 		break;
 	default:
 		break;
@@ -49,4 +50,33 @@ void AYggProjectileActor::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	DrawDebugSphere(GetWorld(), GetActorLocation(), 10.f, 12, FColor::Red);
 }
+
+void AYggProjectileActor::LineMode()
+{
+	ProjectileMovement->ProjectileGravityScale = 0.f;
+	ProjectileMovement->InitialSpeed = ProjectileDataRow.InitialSpeed;
+	ProjectileMovement->MaxSpeed = ProjectileDataRow.MaxSpeed;
+}
+
+void AYggProjectileActor::ParabolaMode()
+{
+	FRotator Rotation = GetActorRotation();
+	Rotation.Pitch += ProjectileDataRow.Angle;
+	SetActorRotation(Rotation);
+	ProjectileMovement->InitialSpeed = ProjectileDataRow.InitialSpeed;
+	ProjectileMovement->MaxSpeed = ProjectileDataRow.MaxSpeed;
+	ProjectileMovement->ProjectileGravityScale = 1.f;
+	
+}
+
+void AYggProjectileActor::TargetParabolaMode()
+{
+	
+}
+
+void AYggProjectileActor::HomingMode()
+{
+}
+
+
 
