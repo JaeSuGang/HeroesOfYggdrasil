@@ -10,6 +10,7 @@
 
 
 
+
 UTickDamageComponent::UTickDamageComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -32,10 +33,11 @@ void UTickDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	if (!IsValid(TargetActor)) return;
 
 	// 이 태그를 이미 가졌다면
-	/*if (TargetActor->GetAttributeComponent()->HasTagExact(TEXT("Player.Status.Poison")))
-	{
-		return;
-	}*/
+	//if (TargetActor->GetAttributeComponent()->HasTag(TEXT("Character.State")))
+	//{
+	//	//TargetActor->GetAttributeComponent()->AddTag(TEXT("Character.State.Poison"));
+	//}
+
 
 	ElapsedTime += DeltaTime;
 
@@ -51,6 +53,7 @@ void UTickDamageComponent::ApplyDamage()
 {
 	if (IsValid(TargetActor))
 	{
+		//TargetActor->GetAttributeComponent()->AddTag(TEXT("Character.State.Poison"));
 		TargetActor->GetAttributeComponent()->Server_TakeDamage(DamageAmount);
 		UE_LOG(LogTemp, Log, TEXT("TickDamage: %.1f applied to %s"), DamageAmount, *TargetActor->GetName());
 	}

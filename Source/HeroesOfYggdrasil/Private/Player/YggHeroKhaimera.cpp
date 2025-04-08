@@ -112,8 +112,6 @@ void AYggHeroKhaimera::Tick(float DeltaTime)
 
 
 
-
-
 void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))

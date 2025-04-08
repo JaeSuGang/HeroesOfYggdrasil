@@ -19,8 +19,11 @@
 
 #include "Kismet/GameplayStatics.h"
 
+
 #include "Particles/ParticleSystemComponent.h"
 
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 // Sets default values
 AYggTickActor::AYggTickActor()
@@ -42,12 +45,12 @@ void AYggTickActor::BeginPlay()
     {
         FStatusTickDataRow* Row = StatusTickDataTable->FindRow<FStatusTickDataRow>(FName("Poison"), nullptr);
 
-        if (TickNiagaraSystem != nullptr)
+        if (Row != nullptr)
         {
             TickNiagaraSystem = Row->NiagaraSystem;
         }
 
-        if (TickParticle != nullptr)
+        if (Row != nullptr)
         {
             TickParticle = Row->Particle;
         }
@@ -78,9 +81,9 @@ void AYggTickActor::SetTickDamage(AYggCharacter* _Target, float _Interval, float
 	TickDamageComponent->TickInterval = _Interval;
 	TickDamageComponent->DamageAmount = DamageAmount;
 
-	if (TickParticle.IsValid())
+	UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
+	if (IsValid(ParticleComp))
 	{
-		UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
 		ParticleComp->SetTemplate(TickParticle.Get());
 		ParticleComp->bAutoActivate = true;
 		
@@ -97,4 +100,24 @@ void AYggTickActor::SetTickDamage(AYggCharacter* _Target, float _Interval, float
 	{
 		TickParticle.LoadSynchronous();
 	}
+
+	UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+		TickNiagaraSystem.Get(),                         // TSoftObjectPtr or UNiagaraSystem*
+		_Target->GetRootComponent(),                      // 부모 컴포넌트
+		NAME_None,                                       // 소켓 이름 (없을 시 NAME_None)
+		FVector::ZeroVector,                             // 위치
+		FRotator::ZeroRotator,                           // 회전
+		EAttachLocation::KeepRelativeOffset,
+		true,                                            // AutoActivate
+		true                                             // AutoDestroy (중요!)
+	);
+	if (IsValid(NiagaraComp))
+	{
+		NiagaraComp->SetRelativeScale3D(FVector(10.0f));
+	}
+	else
+	{
+		TickNiagaraSystem.LoadSynchronous();;
+	}
+		
 }
