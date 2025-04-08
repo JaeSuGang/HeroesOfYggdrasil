@@ -39,16 +39,17 @@ void UYggAttackCapsuleComponent::TickComponent(float DeltaTime, ELevelTick TickT
 			{
 				if (IsValid(OverlappedActor))
 				{
-					UCharacterAttributeComponent* DamageCharacterAttributeComponent = Cast<AYggCharacter>(OverlappedActor)->GetAttributeComponent();
-					UCharacterAttributeComponent* CharacterAttributeComponent = OwnerCharacter->GetAttributeComponent();
-					if (!DamageCharacterAttributeComponent) { continue; }
-					if (!CharacterAttributeComponent) { continue; }
-					DamageCharacterAttributeComponent->Server_TakeDamage(CharacterAttributeComponent->AttackPoints * Coefficient);
-
-
-					// 지워도됨
-					FString Damage = FString::Printf(TEXT("TickDamage : %f"), CharacterAttributeComponent->AttackPoints * Coefficient);
-					GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Red, Damage);
+					if (nullptr != Cast<AYggCharacter>(OverlappedActor))
+					{
+						UCharacterAttributeComponent* DamageCharacterAttributeComponent = Cast<AYggCharacter>(OverlappedActor)->GetAttributeComponent();
+						UCharacterAttributeComponent* CharacterAttributeComponent = OwnerCharacter->GetAttributeComponent();
+						if (!DamageCharacterAttributeComponent) { continue; }
+						if (!CharacterAttributeComponent) { continue; }
+						DamageCharacterAttributeComponent->Server_TakeDamage(CharacterAttributeComponent->AttackPoints * Coefficient);
+						// 지워도됨
+						FString Damage = FString::Printf(TEXT("TickDamage : %f"), CharacterAttributeComponent->AttackPoints * Coefficient);
+						GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Red, Damage);
+					}
 				}
 			}
 			CurTime = 0.0f;
@@ -64,6 +65,7 @@ void UYggAttackCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedCom
 	OverlappedActors.Add(OtherActor);
 
 	AYggCharacter* DamageCharacter = Cast<AYggCharacter>(OtherActor);
+	if (!DamageCharacter) return;
 	UCharacterAttributeComponent* DamageCharacterAttributeComponent = DamageCharacter->GetAttributeComponent();
 	if (!DamageCharacterAttributeComponent) { return; }
 	UCharacterAttributeComponent* AttackCharacterAttributeComponent = OwnerCharacter->GetAttributeComponent();

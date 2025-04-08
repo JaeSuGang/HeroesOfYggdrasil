@@ -18,6 +18,8 @@
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+#include "Core/YggCharacter.h"
+
 #include "AIController.h"
 #include "Enemy/EnemyGameInstance.h"
 #include "MainGame/UI/YggMiniMapIconActor.h"
@@ -26,6 +28,9 @@
 #include "Enemy/EnemyRangeAttack.h"
 #include "Enemy/EnemyWarningRange.h"
 
+#include "Global/YggTickActor.h"
+
+#include "Component/ActorComponent/TickDamageComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "MainGame/UI/YggMHPBarUserWidget.h"
@@ -126,6 +131,7 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 
+	
 
 
 	// AttributeComponent 세팅
@@ -139,6 +145,8 @@ void AEnemyCharacter::BeginPlay()
 			CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 
 			CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
+
+			OnHeroEnteredRange.AddDynamic(this, &AEnemyCharacter::HandleHeroEnteredRange);
 		}
 
 		MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
@@ -163,7 +171,10 @@ void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
+	if (IsValid(AIData) && IsValid(CharacterAttributeComponent))
+	{
+		AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
+	}
 }
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -325,3 +336,24 @@ void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
 }
 
 
+
+void AEnemyCharacter::HandleHeroEnteredRange(AYggHero* Hero)
+{
+	FTransform SpawnTransform = FTransform(Hero->GetActorRotation(), Hero->GetActorLocation());
+
+	AYggTickActor* TickActor = GetWorld()->SpawnActorDeferred<AYggTickActor>(
+		TickActorClass,
+		SpawnTransform,
+		nullptr,
+		nullptr,
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+	);
+
+	if (!IsValid(TickActor)) return;
+	float attackpoint = CharacterAttributeComponent->AttackPoints;
+	attackpoint /= 10.0f;
+
+	TickActor->SetTickDamage(Hero, 0.5f, attackpoint);
+
+	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
+}
