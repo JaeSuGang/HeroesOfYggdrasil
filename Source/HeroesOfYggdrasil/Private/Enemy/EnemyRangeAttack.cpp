@@ -16,7 +16,7 @@ AEnemyRangeAttack::AEnemyRangeAttack()
 
     ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("EnemyProjectileMovement"));
 
-    PoisonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArrowMesh"));
+    PoisonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PoisonMesh"));
     PoisonMesh->SetupAttachment(DefualtSceneRoot);
 
     PoisonCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
@@ -49,6 +49,7 @@ void AEnemyRangeAttack::BeginPlay()
     }
 
     PoisonCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyRangeAttack::OverLap);
+    PoisonCollision->OnComponentHit.AddDynamic(this, &AEnemyRangeAttack::OnHit);
 
     DestroyTime = 3.0f;
 }
@@ -67,25 +68,10 @@ void AEnemyRangeAttack::Tick(float DeltaTime)
 
 void AEnemyRangeAttack::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    if (IsValid(OtherActor))
-    {
-        AYggHero* Hero = Cast<AYggHero>(OtherActor);
 
-        if (Hero != nullptr)
-        {
-            //AActor* Ptr = GetWorld()->SpawnActor<AActor>(APostion::Staticclass());
-
-            // PoisonMesh->AttachToComponent(Hero->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
-
-            //Ptr->AttachToComponent(Hero->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
-            //Ptr->SetSimulatePhysics(false);
-            // Ptr->DestroyComponent();
-            //ProjectileMovement->StopMovementImmediately();
-            //Ptr->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-            // Ptr->Deactivate();
-
-            //Destroy();
-        }
-    }
 }
 
+void AEnemyRangeAttack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+
+}

@@ -31,7 +31,7 @@ public:
 	void ChangeArea();
 
 	UFUNCTION()
-	void SpawnBugEffect();
+	void SpawnEffect();
 	
 	UFUNCTION()
 	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -82,6 +82,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
 	UParticleSystem* BugBallParticle;  
+
 	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
 	class AEnemyCharacter* YggCharacterEnemy;
 

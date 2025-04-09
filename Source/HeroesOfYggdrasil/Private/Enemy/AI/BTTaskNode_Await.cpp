@@ -21,7 +21,6 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 	}
 
 	AwaitTime = PlayAIData.Data.AwaitTime;
-
 }
 
 void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -29,7 +28,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	DeathCheck(_OwnerComp);
-	//TargetCheck(_OwnerComp);
+	
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
@@ -47,8 +46,8 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 
 	if (AwaitTime < PlayAIData.Data.StandardZeroTime)
 	{
-		ChangeState(_OwnerComp, EEnemyAIState::Attack);
 		AwaitTime = PlayAIData.Data.AwaitTime;
+		ChangeState(_OwnerComp, EEnemyAIState::Attack);
 		return;
 	}
 
@@ -68,6 +67,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 				// 플레이어가 공격범위를 벗어났을 때
 				if (Size >= PlayAIData.Data.AttackRange)
 				{
+					AwaitTime = PlayAIData.Data.AwaitTime;
 					ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
 					return;
 				}
@@ -75,6 +75,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 				// 추적 범위를 넘어갔을 때
 				if (Size >= PlayAIData.Data.StrafeRange)
 				{
+					AwaitTime = PlayAIData.Data.AwaitTime;
 					ChangeState(_OwnerComp, EEnemyAIState::Trace);
 					return;
 				}

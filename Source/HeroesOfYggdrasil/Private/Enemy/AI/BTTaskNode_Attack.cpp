@@ -117,8 +117,8 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 			EnemyCharacter->ThrowPoisonedBall(TargetRangeLocation);
 		}
 
-		ChangeState(_OwnerComp, EEnemyAIState::Await);
 		AttackTime = PlayAIData.Data.AttackTime;
+		ChangeState(_OwnerComp, EEnemyAIState::Await);
 		return;
 	}
 }
