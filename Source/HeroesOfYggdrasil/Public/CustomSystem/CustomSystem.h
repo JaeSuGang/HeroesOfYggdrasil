@@ -8,7 +8,8 @@
 
 
 UCLASS(NotBlueprintable,
-	meta = (RestrictedToClassess = "AGameState", BlueprintSpawnableComponent))
+	meta = (RestrictedToClassess = "AGameState", BlueprintSpawnableComponent),
+	HideCategories = (Variable, Tags, ComponentTick, ComponentReplication, Activation, Cooking, AssetUserData, Replication))
 class HEROESOFYGGDRASIL_API UCustomSystem : public UActorComponent
 {
 	GENERATED_BODY()
