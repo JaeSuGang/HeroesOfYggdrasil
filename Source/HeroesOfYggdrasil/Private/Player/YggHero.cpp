@@ -29,6 +29,7 @@
 // HUD
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/UI/YggMiniMapIconActor.h"
+#include "Component/NicknameBarComponent.h"
 
 // Tag
 #include "Attribute/HeroAttributeComponent.h"
@@ -68,8 +69,9 @@ AYggHero::AYggHero()
 	CharacterAttributeComponent = Cast<UCharacterAttributeComponent>(HeroAttributeComponent);
 
 	// 닉네임
-	NickNameWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
+	NickNameWidgetComponent = CreateDefaultSubobject<UNicknameBarComponent>(TEXT("WidgetComponent"));
 	NickNameWidgetComponent->SetupAttachment(GetMesh());
+	NickNameWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
 
 	FaceCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("StatusCamera"));
 	FaceCaptureComponent->SetupAttachment(RootComponent);
