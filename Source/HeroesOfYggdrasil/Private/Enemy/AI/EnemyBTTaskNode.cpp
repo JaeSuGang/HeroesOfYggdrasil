@@ -74,47 +74,55 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 
-	if (IsValid(TargetActor) && IsValid(SelfActor))
+	const float MaxDistance = PlayAIData.Data.TraceRange;
+
+	// 현재 타겟이 유효한지 확인
+	if (IsValid(TargetActor))
 	{
-		TArray<AActor*> AllActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
-
-		AActor* NearestActor = nullptr;
-		float ClosestDistance = TNumericLimits<float>::Max();
-
-		for (AActor* Actor : AllActors)
+		AYggCharacter* CurrentTarget = Cast<AYggCharacter>(TargetActor);
+		if (IsValid(CurrentTarget))
 		{
-			AYggCharacter* CheckCharacter = Cast<AYggCharacter>(Actor);
-			if (!IsValid(CheckCharacter)) continue;
-
-			UCharacterAttributeComponent* CheckCharacterAttrbuteComponent = CheckCharacter->GetAttributeComponent();
-			if (!IsValid(CheckCharacterAttrbuteComponent)) continue;
-
-			if (!CheckCharacterAttrbuteComponent->HasTag(TEXT("Character"))) continue;
-			if (CheckCharacterAttrbuteComponent->HasTag(TargetHeroDeath)) continue;
-
-			float Distance = (SelfActor->GetActorLocation() - CheckCharacter->GetActorLocation()).Size();
-
-			if (Distance < PlayAIData.Data.TraceRange && Distance < ClosestDistance)
+			UAttributeComponent* Attr = CurrentTarget->GetAttributeComponent();
+			if (IsValid(Attr) && !Attr->HasTag(TargetHeroDeath))
 			{
-				ClosestDistance = Distance;
-				NearestActor = Actor;
-			}
-		}
-
-		if (IsValid(NearestActor))
-		{
-			AYggCharacter* TargetCharacter = Cast<AYggCharacter>(NearestActor);
-			if (IsValid(TargetCharacter))
-			{
-				UAttributeComponent* TargetAttr = TargetCharacter->GetAttributeComponent();
-
-				if (IsValid(TargetAttr) && !TargetAttr->HasTag(TEXT("Character.State.Death")))
+				float Distance = FVector::Dist(SelfActor->GetActorLocation(), CurrentTarget->GetActorLocation());
+				if (Distance < MaxDistance)
 				{
-					PlayAIData.TargetActor = NearestActor;
+					// 현재 타겟이 유효하고 범위 내면 유지
+					return;
 				}
 			}
 		}
+	}
+
+	// 유효하지 않으면 새 타겟 찾기
+	TArray<AActor*> AllActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
+
+	AActor* NearestActor = nullptr;
+	float ClosestDistance = TNumericLimits<float>::Max();
+
+	for (AActor* Actor : AllActors)
+	{
+		AYggCharacter* CheckCharacter = Cast<AYggCharacter>(Actor);
+		if (!IsValid(CheckCharacter)) continue;
+
+		UCharacterAttributeComponent* Attr = CheckCharacter->GetAttributeComponent();
+		if (!IsValid(Attr)) continue;
+		if (!Attr->HasTag(TEXT("Character"))) continue;
+		if (Attr->HasTag(TargetHeroDeath)) continue;
+
+		float Distance = FVector::Dist(SelfActor->GetActorLocation(), CheckCharacter->GetActorLocation());
+		if (Distance < MaxDistance && Distance < ClosestDistance)
+		{
+			ClosestDistance = Distance;
+			NearestActor = Actor;
+		}
+	}
+
+	if (IsValid(NearestActor))
+	{
+		PlayAIData.TargetActor = NearestActor;
 	}
 }
 

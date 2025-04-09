@@ -31,11 +31,17 @@ void UBTTaskNode_TraceBack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* 
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
 	FVector OrigninDir = PlayAIData.OriginPos - SelfActor->GetActorLocation();
-	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
 
 	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.TraceBackSpeed;
 
-	SelfController->MoveToLocation(PlayAIData.OriginPos, 50.0f);
+
+	// 기존 위치로 이동
+	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
+	if (IsValid(SelfController))
+	{
+		SelfController->MoveToLocation(PlayAIData.OriginPos, 50.0f);
+	}
+	
 
 	float OrigninDirSize = OrigninDir.Size();
 

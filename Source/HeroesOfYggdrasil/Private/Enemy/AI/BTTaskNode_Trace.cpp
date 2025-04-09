@@ -44,9 +44,9 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	}
 
 	UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+	// 히어로 사망 체크
 	if (IsValid(TargetAttributeComponent))
 	{
-		// 타겟 null(죽음)
 		if (TargetAttributeComponent->HasTag(TargetHeroDeath))
 		{
 			ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
