@@ -11,6 +11,8 @@ UBTTaskNode_TraceYggdrasil::UBTTaskNode_TraceYggdrasil()
 
 void UBTTaskNode_TraceYggdrasil::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	Super::Start(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	if (nullptr != PlayAIData.SelfAnimPawn)
@@ -36,7 +38,10 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	AActor* TargetActor = PlayAIData.TargetActor;
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
+
 	
+
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 	TargetDir.Z = 0.0f;
@@ -50,7 +55,7 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	// 이동 중 플레이어 타겟 체크
 	TargetCheck(_OwnerComp);
 
-	// 이그드라실 null(죽음)
+	// 이그드라실 null(죽음) -> 추후 수정
 	if (nullptr == TargetActor)
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Idle);
@@ -59,11 +64,21 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	
 
 	// 감지 범위 안에 플레이어 들어오면 플레이어 추적
-	if (FName("BP_YggHero") == PlayAIData.TargetActor->GetName().Left(10))
+
+	if (IsValid(TargetCharacter))
 	{
-		PlayAIData.OriginPos = SelfActor->GetActorLocation();
-		ChangeState(_OwnerComp, EEnemyAIState::Trace);
-		return;
+		UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+		if (IsValid(TargetAttributeComponent))
+		{
+			if (TargetAttributeComponent->HasTag(TEXT("Character")))
+			{
+				PlayAIData.OriginPos = SelfActor->GetActorLocation();
+				ChangeState(_OwnerComp, EEnemyAIState::Trace);
+				return;
+
+			}
+		}
+		
 	}
 
 	
@@ -76,13 +91,15 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	}
 
 	// 이그드라실 추적
-	if (SelfController != nullptr && TargetActor != nullptr)
+	if (IsValid(SelfController) && IsValid(TargetActor))
 	{
 		FVector TargetVector = TargetActor->GetActorLocation();
-		//TargetVector.Z = 0.0f;
 		FVector SelfLocation = SelfActor->GetActorLocation();
+
 		FVector Location = TargetVector - SelfLocation;
+
 		float Size = Location.Size();
+
 		SelfController->MoveToLocation(TargetVector, PlayAIData.Data.YggAttackRange);
 	}
 }

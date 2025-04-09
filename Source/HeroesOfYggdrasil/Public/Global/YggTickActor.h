@@ -19,6 +19,18 @@ struct FStatusTickDataRow;
 
 
 
+UENUM(BlueprintType)
+enum class EStatusEffectType : uint8
+{
+	Poison    UMETA(DisplayName = "Poison"),
+	Burn      UMETA(DisplayName = "Burn"),
+	Slow	  UMETA(DisplayName = "Slow"),
+	Stunned   UMETA(DisplayName = "Stunned")
+};
+
+
+
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggTickActor : public AActor
 {
@@ -28,33 +40,52 @@ public:
 	// Sets default values for this actor's properties
 	AYggTickActor();
 
+	UFUNCTION()
+	void InitTickActor(EStatusEffectType StatusEffect);
+
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	void SetTickDamage(class AYggCharacter* _Target, float _Interval, float DamageAmount);
+	
+	void CleanupEffects();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastSpawnEffects(AYggCharacter* _Target);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastCleanupEffects();
+
 	UFUNCTION(BlueprintCallable, Category = "Tag")
 	void DestroyStatusTag();
 
-	UFUNCTION(BlueprintCallable, Category = "Tag")
-	void CheckStatusTag();
-
 	UFUNCTION(BlueprintCallable, Category = "Component")
 	void DisableAllComponents();
+
+	static AYggTickActor* SpawnTickEffectIfNotExist(
+		UObject* WorldContext,
+		AYggCharacter* Target,
+		TSubclassOf<AYggTickActor> TickActorClass,
+		EStatusEffectType EffectType,
+		float TickInterval,
+		float DamagePerTick
+	);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	void SetTickDamage(class AYggCharacter* _Target, float _Interval, float DamageAmount);
-
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickDataTable")
 	UDataTable* StatusTickDataTable;
 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickDataTable")
+	FName StatusRowName = TEXT("None");
+
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* DefualtSceneRoot;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
 	float StatusTickTime;
@@ -70,4 +101,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Tick")
 	UTimeEventComponent* TimeEventComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Tick")
+	FName Tag;
 };

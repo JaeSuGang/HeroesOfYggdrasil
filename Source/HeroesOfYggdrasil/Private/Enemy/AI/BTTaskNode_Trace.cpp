@@ -12,6 +12,8 @@ UBTTaskNode_Trace::UBTTaskNode_Trace()
 
 void UBTTaskNode_Trace::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	Super::Start(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	if (nullptr != PlayAIData.SelfAnimPawn)
 	{
@@ -30,22 +32,28 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 
 	CheckTime -= _DeltaSeconds;
 
-
-
-
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	AActor* TargetActor = PlayAIData.TargetActor;
-
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 	APawn* SelfActor = PlayAIData.SelfPawn;
-
-
-	// 타겟 null(죽음)
-	if (nullptr == TargetActor)
+	
+	if (!IsValid(TargetCharacter))
 	{
-		ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
 		return;
 	}
+
+	UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+	// 히어로 사망 체크
+	if (IsValid(TargetAttributeComponent))
+	{
+		if (TargetAttributeComponent->HasTag(TargetHeroDeath))
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
+			return;
+		}
+	}
+	
 
 
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();

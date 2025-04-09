@@ -34,12 +34,11 @@ AEnemyWarningRange::AEnemyWarningRange()
 void AEnemyWarningRange::BeginPlay()
 {
 	Super::BeginPlay();
+    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(FName("BugBall"), nullptr);
 
     if (WarningMaterial != nullptr && AOEDataTable != nullptr)
     {
-        FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(FName("BugBall"), nullptr);
-
-        if (Row)
+        if (Row != nullptr)
         {
             if (Row->PlaneMesh)
             {
@@ -62,7 +61,8 @@ void AEnemyWarningRange::BeginPlay()
         float Alpha = 0.2f;
         DynamicMaterial->SetScalarParameterValue("WarningAlpha", Alpha);
     }
-    SetActorScale3D(FVector(2.0f, 2.0f, 1.0f));
+
+    SetActorScale3D(Row->ScaleVector);
 }
 
 // Called every frame
@@ -77,38 +77,37 @@ void AEnemyWarningRange::Tick(float DeltaTime)
     if (TimeElapsed > Duration)
     {
         SpawnBugEffect();
-        BugTickCollision->SetCapsuleSize(200.0f, 100.0f);
+        BugTickCollision->SetCapsuleSize(100.0f, 100.0f);
         BugTickCollision->CollisionOn();
         Destroy();
         return;
     }
-
-    DrawDebugCapsule(
-        GetWorld(),
-        BugTickCollision->GetComponentLocation(),
-        BugTickCollision->GetUnscaledCapsuleHalfHeight(),
-        BugTickCollision->GetUnscaledCapsuleRadius(),
-        BugTickCollision->GetComponentQuat(),
-        FColor::Red,
-        false,          // 지속 시간
-        -1.0f,
-        0,
-        2.0f            // 선 두께
-    );
-
 }
 
 void AEnemyWarningRange::ChangeArea()
 {
-    float Progress = FMath::Clamp(TimeElapsed / Duration, 0.0f, 1.0f);
+    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(FName("BugBall"), nullptr);
     
-    FVector TargetScale(2.0f, 2.0f, 1.0f);
- 
-    SetActorScale3D(TargetScale * Progress);
+    if (Row != nullptr)
+    {
+        float Progress = FMath::Clamp(TimeElapsed / Duration, 0.0f, 1.0f);
+
+        FVector TargetScale = Row->ScaleVector;
+
+        SetActorScale3D(TargetScale * Progress);
+    }
+    
 }
 
 void AEnemyWarningRange::SpawnBugEffect()
 {
+    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(FName("BugBall"), nullptr);
+
+    if (Row == nullptr)
+    {
+        return;
+    }
+
     if (IsValid(BugBallParticle))
     {
         UGameplayStatics::SpawnEmitterAtLocation(
@@ -116,7 +115,7 @@ void AEnemyWarningRange::SpawnBugEffect()
             BugBallParticle,
             GetActorLocation(),
             GetActorRotation(),
-            FVector(10.0f),
+            FVector(Row->EffectScaleFloat),
             true  // 자동 파괴
         );
     }
@@ -131,8 +130,7 @@ void AEnemyWarningRange::HideAllComponents()
     {
         if (UPrimitiveComponent* Prim = Cast<UPrimitiveComponent>(Comp))
         {
-            Prim->SetVisibility(false, true);  // bPropagateToChildren = true
-            //Prim->SetHiddenInGame(true);       // 게임에서도 숨김 처리
+            Prim->SetVisibility(false, true);  
         }
     }
 }
@@ -147,7 +145,11 @@ void AEnemyWarningRange::OverLap(UPrimitiveComponent* OverlappedComponent, AActo
         {
             if (Hero)
             {
-                YggCharacterEnemy->OnHeroEnteredRange.Broadcast(Hero); 
+                if (IsValid(YggCharacterEnemy))
+                {
+                    YggCharacterEnemy->OnHeroEnteredRange.Broadcast(Hero);
+                }
+                
             }
         }
     }

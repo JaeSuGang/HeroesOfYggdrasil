@@ -227,4 +227,6 @@ public:
 	FOnRespawn OnRespawn;
 
 	float RespawnTime = 3.0f;
+
+	FTransform StartTransform;
 };

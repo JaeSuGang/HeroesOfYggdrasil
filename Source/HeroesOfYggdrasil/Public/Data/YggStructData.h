@@ -167,6 +167,10 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceSpeed = 600.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FName HeroDeathTagName = "Character.State.Death";
+
 };
 
 USTRUCT(BlueprintType)
@@ -318,6 +322,14 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float TimeElapsed = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float EffectScaleFloat = 10.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FVector ScaleVector = FVector(2.0f, 2.0f, 1.0f);
+
+	
 };
 
 
