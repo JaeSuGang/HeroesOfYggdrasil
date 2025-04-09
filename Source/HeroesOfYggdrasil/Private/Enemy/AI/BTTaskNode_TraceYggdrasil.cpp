@@ -59,6 +59,7 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	
 
 	// 감지 범위 안에 플레이어 들어오면 플레이어 추적
+
 	if (FName("BP_YggHero") == PlayAIData.TargetActor->GetName().Left(10))
 	{
 		PlayAIData.OriginPos = SelfActor->GetActorLocation();

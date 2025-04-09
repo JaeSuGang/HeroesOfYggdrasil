@@ -45,6 +45,20 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 			EnemyCharacter->SpawnWarningRange(TargetActor);
 		}
 	}
+
+	// 타겟 죽음 체크
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
+	UCharacterAttributeComponent* TargetAttributecomponent = TargetCharacter->GetAttributeComponent();
+	if (IsValid(TargetAttributecomponent))
+	{
+		if (TargetAttributecomponent->HasTag(TEXT("Character.state.Death")))
+		{
+			ChangeState(_OwnerComp,EEnemyAIState::TraceYggdrasil);
+			return;
+		}
+
+	}
+	
 }
 
 void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -63,6 +77,11 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
 
 	FString DataKeyString = EnemyCharacter->GetDataKey();
+
+	// 타겟 죽음 체크
+
+	
+
 
 	// 저주술사
 	if (FString("Minion_Witch") == DataKeyString)

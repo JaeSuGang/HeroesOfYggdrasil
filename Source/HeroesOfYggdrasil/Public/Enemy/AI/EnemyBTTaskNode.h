@@ -3,13 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "GameFramework/CharacterMovementComponent.h"
+
 #include "BehaviorTree/BTTaskNode.h"
+
 #include "Data/YggEnumData.h"
 #include "Data/YggStructData.h"
 #include "Data/YggConst.h"
+
+#include "Attribute/CharacterAttributeComponent.h"
+
 #include "Enemy/EnemyCharacter.h"
 #include "Enemy/EnemyAIController.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "EnemyBTTaskNode.generated.h"
 
 /**

@@ -67,50 +67,50 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 
-	if (nullptr == TargetActor || FName("BP_Yggdrasil") == PlayAIData.TargetActor->GetName().Left(12))
+	if (IsValid(TargetActor) && IsValid(SelfActor))
 	{
-		//UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Character"), OutActors);
-
-		/*
-		float CurTargetDistance = TNumericLimits<float>::Max();
-		for (size_t i = 0; i < OutActors.Num(); i++)
-		{
-			CheckActor = OutActors[i];
-			float TargetDis = (SelfActor->GetActorLocation() - CheckActor->GetActorLocation()).Size();
-			if (TargetDis < PlayAIData.Data.TraceRange && TargetDis < CurTargetDistance)
-			{
-				TargetActor = CheckActor;
-			}
-		}
-		*/
-
-		// 태그 확인되면 수정 에정 
-
 		TArray<AActor*> AllActors;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
 
-	
-		AActor* CheckActor = nullptr;
-		float CurTargetDistance = TNumericLimits<float>::Max();
-		for (size_t i = 0; i < AllActors.Num(); i++)
+		AActor* NearestActor = nullptr;
+		float ClosestDistance = TNumericLimits<float>::Max();
+
+		for (AActor* Actor : AllActors)
 		{
-			if (FName("BP_YggHero") == AllActors[i]->GetName().Left(10))
+			AYggCharacter* CheckCharacter = Cast<AYggCharacter>(Actor);
+			if (!IsValid(CheckCharacter)) continue;
+
+			UCharacterAttributeComponent* CheckCharacterAttrbuteComponent = CheckCharacter->GetAttributeComponent();
+			if (!IsValid(CheckCharacterAttrbuteComponent)) continue;
+
+			if (!CheckCharacterAttrbuteComponent->HasTag(TEXT("Character"))) continue;
+			if (CheckCharacterAttrbuteComponent->HasTag(TEXT("Character.State.Death"))) continue;
+
+			float Distance = (SelfActor->GetActorLocation() - CheckCharacter->GetActorLocation()).Size();
+
+			if (Distance < PlayAIData.Data.TraceRange && Distance < ClosestDistance)
 			{
-				CheckActor = AllActors[i];
-				float TargetDis = (SelfActor->GetActorLocation() - CheckActor->GetActorLocation()).Size();
-				if (TargetDis < PlayAIData.Data.TraceRange && TargetDis < CurTargetDistance)
-				{
-					TargetActor = CheckActor;
-				}
+				ClosestDistance = Distance;
+				NearestActor = Actor;
 			}
 		}
 
-		if (nullptr != TargetActor)
+		if (IsValid(NearestActor))
 		{
-			PlayAIData.TargetActor = TargetActor;
+			AYggCharacter* TargetCharacter = Cast<AYggCharacter>(NearestActor);
+			if (IsValid(TargetCharacter))
+			{
+				UAttributeComponent* TargetAttr = TargetCharacter->GetAttributeComponent();
+
+				if (IsValid(TargetAttr) && !TargetAttr->HasTag(TEXT("Character.State.Death")))
+				{
+					PlayAIData.TargetActor = NearestActor;
+				}
+			}
 		}
 	}
 }
+
 
 
 void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
