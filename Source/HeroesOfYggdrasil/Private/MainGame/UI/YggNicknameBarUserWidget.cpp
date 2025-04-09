@@ -8,32 +8,29 @@
 
 #include "MainGame/StageManager.h"
 #include "MainGame/GameStage.h"
+#include "MainGame/UI/MainGameHUD.h"
+
+#include "Component/NicknameBarComponent.h"
 
 void UYggNicknameBarUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	if (PlayerName)
-	{
-		SetPlayerName();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerName is nullptr! Check BindWidget binding."));
-	}
+	SetVisibility(ESlateVisibility::Hidden);
+
+}
+
+void UYggNicknameBarUserWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
 }
 
 void UYggNicknameBarUserWidget::SetPlayerName()
 {
-	APlayerController* PC = GetOwningPlayer();
+	SetVisibility(ESlateVisibility::Visible);
 
-	if (nullptr == PC)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == PC)"), __FUNCTION__, __LINE__);
-		return;
-	}
-
-	AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
+	AYggPlayerState* PS = Cast<APawn>(NicknameBarComponent->GetOwner())->GetPlayerState<AYggPlayerState>();
 
 	if (nullptr == PS)
 	{

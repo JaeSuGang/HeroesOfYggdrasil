@@ -58,10 +58,12 @@ AEnemyCharacter::AEnemyCharacter()
 	WidgetComponent->SetDrawSize(FVector2D(100.0f, 10.0f));
 	WidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
 
+	
 	{
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
 		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
 		AttackCapsule->SetOwnerCharacter(this);
+		AttackCapsule->SetCollisionProfileName(TEXT("MonsterCollision"));
 		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
 	}
 }

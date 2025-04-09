@@ -30,7 +30,7 @@ struct FSpawnProjectileDataRow : public FTableRowBase
 	float DestroyTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
-	float Angle;
+	float Height;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
 	float InitialSpeed;
