@@ -147,7 +147,11 @@ void AEnemyWarningRange::OverLap(UPrimitiveComponent* OverlappedComponent, AActo
         {
             if (Hero)
             {
-                YggCharacterEnemy->OnHeroEnteredRange.Broadcast(Hero); 
+                if (IsValid(YggCharacterEnemy))
+                {
+                    YggCharacterEnemy->OnHeroEnteredRange.Broadcast(Hero);
+                }
+                
             }
         }
     }
