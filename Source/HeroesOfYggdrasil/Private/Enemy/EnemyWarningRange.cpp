@@ -76,7 +76,7 @@ void AEnemyWarningRange::Tick(float DeltaTime)
 
     if (TimeElapsed > Duration)
     {
-        SpawnBugEffect();
+        SpawnEffect();
         BugTickCollision->SetCapsuleSize(100.0f, 100.0f);
         BugTickCollision->CollisionOn();
         Destroy();
@@ -99,7 +99,7 @@ void AEnemyWarningRange::ChangeArea()
     
 }
 
-void AEnemyWarningRange::SpawnBugEffect()
+void AEnemyWarningRange::SpawnEffect()
 {
     FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(FName("BugBall"), nullptr);
 

@@ -178,6 +178,9 @@ protected:
 	UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "YggInput")
+	TArray<UInputMappingContext*> InputMappingContexts;
+
+	UPROPERTY(EditDefaultsOnly, Category = "YggInput")
 	TMap<FName, UInputAction*> ActionMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")

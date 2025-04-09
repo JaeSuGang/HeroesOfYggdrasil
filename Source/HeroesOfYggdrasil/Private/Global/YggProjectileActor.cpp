@@ -40,11 +40,6 @@ void AYggProjectileActor::BeginPlay()
 		break;
 	default:
 		break;
-		
-
-
-
-
 
 	}
 
@@ -59,6 +54,23 @@ void AYggProjectileActor::Tick(float DeltaTime)
 
 void AYggProjectileActor::LineMode()
 {
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (!PC) return;
+
+	FVector CamLoc;
+	FRotator CamRot;
+	PC->GetPlayerViewPoint(CamLoc, CamRot);
+
+	FVector AimDirection = CamRot.Vector();
+
+	// 내 위치 기준으로 방향 설정
+	FVector ToAim = AimDirection;
+	FRotator AimRot = ToAim.Rotation();
+
+	SetActorRotation(AimRot);
+
+	// 이동 방향으로 Velocity 설정
+	ProjectileMovement->Velocity = AimDirection * ProjectileDataRow.InitialSpeed;
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 	ProjectileMovement->InitialSpeed = ProjectileDataRow.InitialSpeed;
 	ProjectileMovement->MaxSpeed = ProjectileDataRow.MaxSpeed;
@@ -66,13 +78,10 @@ void AYggProjectileActor::LineMode()
 
 void AYggProjectileActor::ParabolaMode()
 {
-	FRotator Rotation = GetActorRotation();
-	Rotation.Pitch += ProjectileDataRow.Angle;
-	SetActorRotation(Rotation);
+	ProjectileMovement->Velocity += FVector(0.f, 0.f, ProjectileDataRow.Height);
 	ProjectileMovement->InitialSpeed = ProjectileDataRow.InitialSpeed;
 	ProjectileMovement->MaxSpeed = ProjectileDataRow.MaxSpeed;
-	ProjectileMovement->ProjectileGravityScale = 1.f;
-	
+	ProjectileMovement->ProjectileGravityScale = 1.f;	
 }
 
 void AYggProjectileActor::TargetParabolaMode()

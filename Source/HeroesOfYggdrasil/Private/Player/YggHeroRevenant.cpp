@@ -21,9 +21,11 @@
 #include "Net/UnrealNetwork.h"
 
 #include "Global/YggProjectileActor.h"
+#include "MainGame/UI/MainGameHUD.h"
 
 AYggHeroRevenant::AYggHeroRevenant()
 {
+
 }
 
 void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -36,7 +38,19 @@ void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::Attack);
 		}
+		if (ActionMap.Contains(FName("ToggleAimMode")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("ToggleAimMode")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::ToggleAimMode);
+		}
 	}
+}
+
+
+
+void AYggHeroRevenant::BeginPlay()
+{
+	Super::BeginPlay();
+
 }
 
 void AYggHeroRevenant::Attack(const FInputActionValue& Value)

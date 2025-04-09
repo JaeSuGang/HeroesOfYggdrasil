@@ -56,10 +56,8 @@ public:
 		return MonsterData;
 	}
 
-	void SetDataKey(const FString& _MonsterDataKey)
-	{
-		DataKey = _MonsterDataKey;
-	}
+	void SetDataKey(const FString& _MonsterDataKey);
+	
 
 	UFUNCTION(BlueprintCallable)
 	double GetCurHp()

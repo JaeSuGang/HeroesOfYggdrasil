@@ -6,6 +6,7 @@
 #include "Player/YggHero.h"
 #include "YggHeroRevenant.generated.h"
 
+
 /**
  * 
  */
@@ -17,8 +18,10 @@ public:
 	AYggHeroRevenant();
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void BeginPlay() override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
+
 
 
 

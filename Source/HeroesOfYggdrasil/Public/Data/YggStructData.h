@@ -112,6 +112,9 @@ public:
 	FName EnemyName = FName("");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FVector Scale = FVector(1.0f, 1.0f, 1.0f);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double MaxHP = 30;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")

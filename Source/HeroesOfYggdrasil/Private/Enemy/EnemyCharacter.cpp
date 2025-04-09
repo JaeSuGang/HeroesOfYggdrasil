@@ -58,10 +58,12 @@ AEnemyCharacter::AEnemyCharacter()
 	WidgetComponent->SetDrawSize(FVector2D(100.0f, 10.0f));
 	WidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
 
+	
 	{
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
 		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
 		AttackCapsule->SetOwnerCharacter(this);
+		AttackCapsule->SetCollisionProfileName(TEXT("MonsterCollision"));
 		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
 	}
 }
@@ -151,9 +153,9 @@ void AEnemyCharacter::BeginPlay()
 			CharacterAttributeComponent->Server_SetMaxHP(MonsterData->AIData.MaxHP);
 			CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
 			CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
-
+			CharacterAttributeComponent->AddTag(TEXT("Enemy"));
 			CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
-
+			SetActorScale3D(MonsterData->AIData.Scale);
 			OnHeroEnteredRange.AddDynamic(this, &AEnemyCharacter::HandleHeroEnteredRange);
 		}
 
@@ -246,6 +248,11 @@ void AEnemyCharacter::DestroyAllComponents()
 
 	// 그 후 자신을 Destroy
 	Destroy();
+}
+
+void AEnemyCharacter::SetDataKey(const FString& _MonsterDataKey)
+{
+	DataKey = _MonsterDataKey;
 }
 
 

@@ -170,8 +170,8 @@ void AYggHero::SetAimMode(bool Value)
 
 	if (bUseControllerRotationYaw)
 	{
-		CameraBoom->TargetArmLength = 150.0f;
-		CameraBoom->SocketOffset = FVector(0.0f, 45.0f, 75.0f);
+		CameraBoom->TargetArmLength = 200.0f;
+		CameraBoom->SocketOffset = FVector(0.0f, 60.0f, 150.0f);
 	}
 	else {
 		CameraBoom->TargetArmLength = 700.0f;
@@ -229,19 +229,19 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		}
 		if (ActionMap.Contains(FName("Roll")))
 		{
-			EnhancedInput->BindAction(ActionMap[TEXT("Roll")], ETriggerEvent::Started, this, &AYggHero::Roll);
+			EnhancedInput->BindAction(ActionMap[TEXT("Roll")], ETriggerEvent::Triggered, this, &AYggHero::Roll);
 		}
 		if (ActionMap.Contains(FName("SkillQ")))
 		{
-			EnhancedInput->BindAction(ActionMap[TEXT("SkillQ")], ETriggerEvent::Started, this, &AYggHero::SkillQ);
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillQ")], ETriggerEvent::Triggered, this, &AYggHero::SkillQ);
 		}
 		if (ActionMap.Contains(FName("SkillE")))
 		{
-			EnhancedInput->BindAction(ActionMap[TEXT("SkillE")], ETriggerEvent::Started, this, &AYggHero::SkillE);
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillE")], ETriggerEvent::Triggered, this, &AYggHero::SkillE);
 		}
 		if (ActionMap.Contains(FName("SkillR")))
 		{
-			EnhancedInput->BindAction(ActionMap[TEXT("SkillR")], ETriggerEvent::Started, this, &AYggHero::SkillR);
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillR")], ETriggerEvent::Triggered, this, &AYggHero::SkillR);
 		}
 
 		if (ActionMap.Find(FName("CameraZoomInOut")))
