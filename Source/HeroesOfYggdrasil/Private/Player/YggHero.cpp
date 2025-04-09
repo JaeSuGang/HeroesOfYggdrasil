@@ -132,6 +132,7 @@ void AYggHero::BeginPlay()
 	MiniMapIcon->SetPaperSprite(FName("Character"));
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapCaptureComponent->SetupMiniMapCapture(MiniMapIcon);
+	MiniMapCaptureComponent->SetWorldRotation(FRotator(-90.f, 0.0f, 0.0f));
 
 	CameraBoom->TargetArmLength = 700.0f;
 	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 200.0f);
@@ -145,6 +146,11 @@ void AYggHero::BeginPlay()
 void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	FVector PlayerLoc = GetActorLocation();
+	FRotator CamRot = GetControlRotation(); // 또는 원하는 카메라 방향
+
+	MiniMapCaptureComponent->SetWorldRotation(FRotator(-90.f, CamRot.Yaw, 0.0f));
 }
 
 void AYggHero::ToggleAimMode()
@@ -523,7 +529,9 @@ void AYggHero::Die(float Delegate)
 	else
 	{
 		ServerDie(Delegate);
-	}	
+	}
+
+	OnRespawn.Broadcast(RespawnTime);
 }
 
 void AYggHero::ServerDie_Implementation(float Delegate)

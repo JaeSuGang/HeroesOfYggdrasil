@@ -20,7 +20,7 @@ AYggMiniMapIconActor::AYggMiniMapIconActor()
 
 	PaperSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("PaperSpriteComponent"));
 	PaperSpriteComponent->SetupAttachment(DefaultScene);
-	PaperSpriteComponent->SetRelativeRotation(FQuat::MakeFromEuler({ -90.0f, 0.0f, 0.0f }));
+	PaperSpriteComponent->SetRelativeRotation(FQuat::MakeFromEuler({ -90.0f, 0.0f, 90.0f }));
 	PaperSpriteComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	PaperSpriteComponent->bVisibleInSceneCaptureOnly = true;
 
@@ -47,7 +47,7 @@ void AYggMiniMapIconActor::Tick(float DeltaTime)
         NewRotation.Pitch;
         NewRotation.Roll;
         NewRotation.Yaw;
-        SetActorRotation(FRotator(NewRotation.Roll, NewRotation.Pitch, 0.0f));
+        SetActorRotation(FRotator(0.0f, NewRotation.Yaw, 0.0f));
     }
 }
 

@@ -54,7 +54,9 @@ AEnemyCharacter::AEnemyCharacter()
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(GetMesh());
 	WidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
-	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
+	WidgetComponent->SetDrawSize(FVector2D(100.0f, 10.0f));
+	WidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
 
 	{
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
@@ -180,6 +182,14 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	if (IsValid(AIData) && IsValid(CharacterAttributeComponent))
 	{
 		AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
+	}
+
+	if (APlayerCameraManager* Cam = UGameplayStatics::GetPlayerCameraManager(this, 0))
+	{
+		FVector CamLoc = Cam->GetCameraLocation();
+		FVector ToCam = CamLoc - WidgetComponent->GetComponentLocation();
+		FRotator LookAtRot = FRotationMatrix::MakeFromX(ToCam).Rotator();
+		WidgetComponent->SetWorldRotation(LookAtRot);
 	}
 }
 

@@ -13,6 +13,7 @@ class UYggAbilityPlusUserWidget;
 class UYggAbilityUserWidget;
 class UYggCastingBarUserWidget;
 class UYggSkillBarUserWidget;
+class UYggDeathPopupUserWidget;
 
 /**
  * 
@@ -76,6 +77,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> SkillBarUserWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> DeathPopupWidgetClass;
+
 	UPROPERTY()
 	UYggPlayerStatusUserWidget* PlayerStatusWidget;
 
@@ -94,4 +98,6 @@ private:
 	UPROPERTY()
 	UYggSkillBarUserWidget* SkillBarWidget;
 
+	UPROPERTY()
+	UYggDeathPopupUserWidget* DeathPopupWidget;
 };
