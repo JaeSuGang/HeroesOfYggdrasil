@@ -7,6 +7,7 @@
 #include "YggNicknameBarUserWidget.generated.h"
 
 class UTextBlock;
+class UNicknameBarComponent;
 
 /**
  * 
@@ -20,8 +21,14 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* PlayerName;
 
+	UFUNCTION()
 	void SetPlayerName();
 
 protected:
-	void NativeOnInitialized() override;
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
+
+public:
+	UPROPERTY()
+	UNicknameBarComponent* NicknameBarComponent;
 };

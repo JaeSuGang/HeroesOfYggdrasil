@@ -94,6 +94,8 @@ void AMainGameHUD::ReadyButton()
 
 	AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
 	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
+
+	OnSetNickname.Broadcast();
 }
 
 void AMainGameHUD::ShowLobbyWidget()
