@@ -6,6 +6,8 @@
 #include "GameFramework/Info.h"
 #include "StageManager.generated.h"
 
+
+
 class AGameStage;
 
 /**
@@ -50,4 +52,6 @@ public:
 
 	UPROPERTY(Replicated, VisibleInstanceOnly, BlueprintReadWrite)
 	int32 Round;
+
+
 };

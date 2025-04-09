@@ -46,6 +46,7 @@ class UCharacterAttributeComponent;
 // UI
 class UWidgetComponent;
 class AYggMiniMapIconActor;
+class UNicknameBarComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
@@ -177,6 +178,9 @@ protected:
 	UInputMappingContext* InputMappingContext;
 
 	UPROPERTY(EditDefaultsOnly, Category = "YggInput")
+	TArray<UInputMappingContext*> InputMappingContexts;
+
+	UPROPERTY(EditDefaultsOnly, Category = "YggInput")
 	TMap<FName, UInputAction*> ActionMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")
@@ -187,8 +191,8 @@ protected:
 
 	
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NickName")
-	UWidgetComponent* NickNameWidgetComponent;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NickName")
+	//UWidgetComponent* NickNameWidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggCamera")
 	UCaptureComponent* FaceCaptureComponent;
@@ -198,6 +202,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
 	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NickName")
+	UNicknameBarComponent* NickNameWidgetComponent;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bAimMode = false;

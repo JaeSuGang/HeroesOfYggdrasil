@@ -73,6 +73,8 @@ void AStageManager::StartGame_Implementation()
 	CurrentStage->EnterNextStage();
 
 	ForceMainWidgetToClients();
+
+
 }
 
 void AStageManager::ForceMainWidgetToClients_Implementation()
