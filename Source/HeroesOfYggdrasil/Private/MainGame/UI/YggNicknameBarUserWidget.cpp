@@ -13,18 +13,22 @@ void UYggNicknameBarUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-	if (PlayerName)
-	{
-		SetPlayerName();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerName is nullptr! Check BindWidget binding."));
-	}
+	SetVisibility(ESlateVisibility::Hidden);
+
+	//if (PlayerName)
+	//{
+	//	SetPlayerName();
+	//}
+	//else
+	//{
+	//	UE_LOG(LogTemp, Error, TEXT("PlayerName is nullptr! Check BindWidget binding."));
+	//}
 }
 
 void UYggNicknameBarUserWidget::SetPlayerName()
 {
+	SetVisibility(ESlateVisibility::Visible);
+
 	APlayerController* PC = GetOwningPlayer();
 
 	if (nullptr == PC)

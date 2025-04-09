@@ -17,12 +17,12 @@ UNicknameBarComponent::UNicknameBarComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
-	NicknameBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("NicknameBarWidget"));
-	NicknameBarWidgetComponent->SetupAttachment(this);
-	//NicknameBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
-	NicknameBarWidgetComponent->SetWidgetSpace(EWidgetSpace::World);
-	NicknameBarWidgetComponent->SetDrawSize(FVector2D(100.0f, 10.0f));
-	NicknameBarWidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
+	//NicknameBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("NicknameBarWidget"));
+	//NicknameBarWidgetComponent->SetupAttachment(this);
+	////NicknameBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
+	//NicknameBarWidgetComponent->SetWidgetSpace(EWidgetSpace::World);
+	//NicknameBarWidgetComponent->SetDrawSize(FVector2D(100.0f, 10.0f));
+	//NicknameBarWidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
 
 
 
@@ -33,6 +33,13 @@ UNicknameBarComponent::UNicknameBarComponent()
 void UNicknameBarComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	NicknameBarWidgetComponent = NewObject<UWidgetComponent>(this, UWidgetComponent::StaticClass());
+	NicknameBarWidgetComponent->RegisterComponent();
+	NicknameBarWidgetComponent->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+	NicknameBarWidgetComponent->SetWidgetSpace(EWidgetSpace::World);
+	NicknameBarWidgetComponent->SetDrawSize(FVector2D(200.0f, 50.0f));
+	NicknameBarWidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
 
 	if (!NicknameBarWidgetClass)
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
@@ -47,13 +54,13 @@ void UNicknameBarComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	//if (APlayerCameraManager* Cam = UGameplayStatics::GetPlayerCameraManager(this, 0))
-	//{
-	//	FVector CamLoc = Cam->GetCameraLocation();
-	//	FVector ToCam = CamLoc - NicknameBarWidgetComponent->GetComponentLocation();
-	//	FRotator LookAtRot = FRotationMatrix::MakeFromX(ToCam).Rotator();
-	//	LookAtRot.Pitch = 0.0f;
-	//	NicknameBarWidgetComponent->SetWorldRotation(LookAtRot);
-	//}
+	if (APlayerCameraManager* Cam = UGameplayStatics::GetPlayerCameraManager(this, 0))
+	{
+		FVector CamLoc = Cam->GetCameraLocation();
+		FVector ToCam = CamLoc - NicknameBarWidgetComponent->GetComponentLocation();
+		FRotator LookAtRot = FRotationMatrix::MakeFromX(ToCam).Rotator();
+		LookAtRot.Pitch = 0.0f;
+		NicknameBarWidgetComponent->SetWorldRotation(LookAtRot);
+	}
 }
 
