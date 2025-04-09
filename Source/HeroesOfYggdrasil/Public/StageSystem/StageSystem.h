@@ -27,10 +27,24 @@ public:
 
 	virtual void UnregisterObjectsToReplicate() override;
 
+public:
+	UFUNCTION()
+	void EnterStage(int NewStageIndex);
+
+	UFUNCTION(Server, Reliable)
+	void RequestEnterStage(int NewStageIndex);
+	void RequestEnterStage_Implementation(int NewStageIndex);
+
+	UFUNCTION()
+	void EnterStageInternal(int NewStageIndex);
+
 public:	
 	UPROPERTY(Replicated, Instanced, EditAnywhere)
 	TArray<UStageBase*> StageCycle;
 
 	UPROPERTY(Replicated)
-	UStageBase* CurrentStage;
+	int CurrentRound;
+
+	UPROPERTY(Replicated)
+	int CurrentStageIndex;
 };

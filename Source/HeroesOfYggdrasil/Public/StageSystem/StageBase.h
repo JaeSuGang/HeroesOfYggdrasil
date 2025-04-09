@@ -8,6 +8,9 @@
 
 class UStageDataAsset;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnterStageInternal);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExitStageInternal);
+
 /**
  * 담당 코더 : 김경민
  */
@@ -25,5 +28,13 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	UPROPERTY(BlueprintAssignable)
+	FOnEnterStageInternal OnEnterStageInternal;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnExitStageInternal OnExitStageInternal;
+
+public:
+	UPROPERTY()
+	int Round;
 };

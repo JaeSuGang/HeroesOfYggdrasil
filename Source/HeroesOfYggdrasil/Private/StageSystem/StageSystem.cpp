@@ -24,7 +24,7 @@ void UStageSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UStageSystem, StageCycle);
-	DOREPLIFETIME(UStageSystem, CurrentStage);
+	DOREPLIFETIME(UStageSystem, CurrentStageIndex);
 }
 
 void UStageSystem::RegisterObjectsToReplicate()
@@ -41,6 +41,39 @@ void UStageSystem::UnregisterObjectsToReplicate()
 	{
 		RemoveReplicatedSubObject(Stage);
 	}
+}
+
+void UStageSystem::EnterStage(int NewStageIndex)
+{
+	if (GetOwner()->HasAuthority())
+	{
+		EnterStageInternal(NewStageIndex);
+	}
+	else
+	{
+		RequestEnterStage(NewStageIndex);
+	}
+}
+
+void UStageSystem::RequestEnterStage_Implementation(int NewStageIndex)
+{
+	EnterStageInternal(NewStageIndex);
+}
+
+void UStageSystem::EnterStageInternal(int NewStageIndex)
+{
+	UStageBase* OldStage = StageCycle[CurrentStageIndex];
+	OldStage->OnExitStageInternal.Broadcast();
+
+	CurrentStageIndex = ++CurrentStageIndex % StageCycle.Num();
+	if (CurrentStageIndex == 0)
+	{
+		CurrentRound++;
+	}
+
+	UStageBase* NewStage = StageCycle[CurrentStageIndex];
+	NewStage->Round = CurrentRound;
+	NewStage->OnEnterStageInternal.Broadcast();
 }
 
 
