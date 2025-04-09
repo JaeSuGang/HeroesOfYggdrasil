@@ -119,18 +119,20 @@ void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
-
-	if (nullptr == TargetActor)
+	AYggCharacter* YggCharacter = Cast<AYggCharacter>(TargetActor);
+	
+	// 시작시점에 TargetActor가 nullptr 인 경우
+	if (!IsValid(TargetActor))
 	{
 		TArray<AActor*> AllActors;
+
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
 
-
 		AActor* CheckActor = nullptr;
-		float CurTargetDistance = TNumericLimits<float>::Max();
+
 		for (size_t i = 0; i < AllActors.Num(); i++)
 		{
-			if (FName("BP_Yggdrasil") == AllActors[i]->GetName().Left(12))
+			if (AllActors[i]->GetName().StartsWith(TEXT("BP_Yggdrasil")))
 			{
 				CheckActor = AllActors[i];
 				TargetActor = CheckActor;
@@ -140,6 +142,34 @@ void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 		if (nullptr != TargetActor)
 		{
 			PlayAIData.TargetActor = TargetActor;
+		}
+	}
+	// TargetCharacter의 태그가 "Character.State.Death" 인 경우
+	else if (IsValid(YggCharacter))
+	{
+		UCharacterAttributeComponent* YggCharacterAttributecomponent = YggCharacter->GetAttributeComponent();
+		
+		if (YggCharacterAttributecomponent->HasTag(TEXT("Character.State.Death")))
+		{
+			TArray<AActor*> AllActors;
+
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
+
+			AActor* CheckActor = nullptr;
+
+			for (size_t i = 0; i < AllActors.Num(); i++)
+			{
+				if (AllActors[i]->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+				{
+					CheckActor = AllActors[i];
+					TargetActor = CheckActor;
+				}
+			}
+
+			if (nullptr != TargetActor)
+			{
+				PlayAIData.TargetActor = TargetActor;
+			}
 		}
 	}
 }
