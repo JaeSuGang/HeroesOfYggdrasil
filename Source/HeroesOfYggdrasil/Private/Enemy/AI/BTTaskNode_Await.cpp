@@ -29,7 +29,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	DeathCheck(_OwnerComp);
-
+	//TargetCheck(_OwnerComp);
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
