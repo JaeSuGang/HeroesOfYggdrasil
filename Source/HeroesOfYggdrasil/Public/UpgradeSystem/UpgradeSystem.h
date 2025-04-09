@@ -37,7 +37,8 @@ public:
 	void Upgrade(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void RequestUpgrade(AActor* AttributeOwner, FPrimaryAssetId AssetId);
+	void RequestUpgrade(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId);
+	void RequestUpgrade_Implementation(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId);
 
 	UFUNCTION(BlueprintCallable)
 	void UpgradeInternal(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData);

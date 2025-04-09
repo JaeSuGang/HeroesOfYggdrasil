@@ -2,6 +2,6 @@
 
 FPrimaryAssetId UUpgradeDataAsset::GetPrimaryAssetId() const
 {
-	return FPrimaryAssetId(TEXT("Upgrade"), Id);
+	return FPrimaryAssetId(TEXT("Upgrade"), GetFName());
 }
 

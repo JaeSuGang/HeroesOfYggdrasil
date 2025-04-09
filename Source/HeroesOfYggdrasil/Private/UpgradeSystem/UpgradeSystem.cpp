@@ -67,21 +67,19 @@ void UUpgradeSystem::Upgrade(UHeroAttributeComponent* AttributeComponent, UUpgra
 	}
 	else
 	{
-		RequestUpgrade(AttributeComponent->GetOwner(), UpgradeData->GetPrimaryAssetId());
+		RequestUpgrade(AttributeComponent, UpgradeData->GetPrimaryAssetId());
 	}
 }
 
-void UUpgradeSystem::RequestUpgrade_Implementation(AActor* AttributeOwner, FPrimaryAssetId AssetId)
+void UUpgradeSystem::RequestUpgrade_Implementation(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId)
 {
-	UHeroAttributeComponent* HAC = AttributeOwner->GetComponentByClass<UHeroAttributeComponent>();
-
-	GEngine->AssetManager->LoadPrimaryAsset(AssetId, TArray<FName>(), FStreamableDelegate::CreateLambda([this, HAC, AssetId]()
+	GEngine->AssetManager->LoadPrimaryAsset(AssetId, TArray<FName>(), FStreamableDelegate::CreateLambda([this, AttributeComponent, AssetId]()
 		{
 			if (UObject* LoadedObject = GEngine->AssetManager->GetPrimaryAssetObject(AssetId))
 			{
 				if (UUpgradeDataAsset* UpgradeDataAsset = Cast<UUpgradeDataAsset>(LoadedObject))
 				{
-					UpgradeInternal(HAC, UpgradeDataAsset);
+					UpgradeInternal(AttributeComponent, UpgradeDataAsset);
 				}
 				else
 				{
@@ -92,8 +90,6 @@ void UUpgradeSystem::RequestUpgrade_Implementation(AActor* AttributeOwner, FPrim
 			{
 				UE_LOG(LogTemp, Warning, TEXT("%S%u : Invalid Asset"), __FUNCTION__, __LINE__);
 			}
-
-
 		}));
 
 }
