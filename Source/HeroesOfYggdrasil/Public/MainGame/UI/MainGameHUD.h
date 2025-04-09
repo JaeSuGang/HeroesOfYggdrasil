@@ -59,12 +59,6 @@ public:
 		return MainGameUserWidget;
 	}
 
-	//UFUNCTION(BlueprintCallable)
-	//UYggMHPBarUserWidget* GetMHPBarWidget()
-	//{
-	//	return MHPBarUserWidget;
-	//}
-
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> MainWidgetClass;
@@ -101,14 +95,4 @@ public:
 
 	APlayerController* PC;
 
-	//UFUNCTION(BlueprintCallable)
-	//void SetSkillIcon(FName CharacterName);
-
-
-
-
-
-
-	//TFunction<void()> StartButtinPlayerFunc;
-	//void BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc);
 };
