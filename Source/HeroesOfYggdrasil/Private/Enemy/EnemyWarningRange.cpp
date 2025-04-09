@@ -23,10 +23,15 @@ AEnemyWarningRange::AEnemyWarningRange()
     RootComponent = PlaneMesh;
 
     {
-        BugTickCollision = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("BugCollision"));
+        BugTickCollision = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("CapsuleCollision"));
         BugTickCollision->SetupAttachment(PlaneMesh);
         BugTickCollision->CollisionOff();
         BugTickCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyWarningRange::OverLap);
+    }
+
+    if (IsValid(YggCharacterEnemy))
+    {
+        DataKeyString = YggCharacterEnemy->GetDataKey();
     }
 }
 
@@ -34,6 +39,7 @@ AEnemyWarningRange::AEnemyWarningRange()
 void AEnemyWarningRange::BeginPlay()
 {
 	Super::BeginPlay();
+
     FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(FName("BugBall"), nullptr);
 
     if (WarningMaterial != nullptr && AOEDataTable != nullptr)
@@ -108,11 +114,11 @@ void AEnemyWarningRange::SpawnEffect()
         return;
     }
 
-    if (IsValid(BugBallParticle))
+    if (IsValid(EffectParticle))
     {
         UGameplayStatics::SpawnEmitterAtLocation(
             GetWorld(),
-            BugBallParticle,
+            EffectParticle,
             GetActorLocation(),
             GetActorRotation(),
             FVector(Row->EffectScaleFloat),
@@ -163,4 +169,21 @@ void AEnemyWarningRange::SetCollisionOwnerEnemy(AEnemyCharacter* _Enemy)
         YggCharacterEnemy = _Enemy;
         BugTickCollision->SetOwnerCharacter(YggCharacterEnemy);
     }
+}
+
+FName AEnemyWarningRange::GetMeshNameByKey(const FString& _DataString)
+{
+   /* static const TMap<FString, FName> SectionMap = {
+        {TEXT("Goblin"), FName("Hit_Goblin")},
+        {TEXT("Slime"), FName("Hit_Slime")},
+        {TEXT("Orc"), FName("Hit_Orc")},
+        {TEXT("GoblinBoss"), FName("Hit_GoblinBoss")}
+    };
+
+    if (const FName* Found = SectionMap.Find(_DataString))
+    {
+        return *Found;
+    }
+
+    return FName("Hit_Default");*/
 }

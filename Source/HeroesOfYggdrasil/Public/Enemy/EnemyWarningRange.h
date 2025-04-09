@@ -9,6 +9,12 @@
 
 
 class AYggTickActor;
+class AEnemyCharacter;
+class UCharacterAttributeComponent;
+class UYggAttackCapsuleComponent;
+class UStaticMeshComponent;
+class UMaterialInterface;
+class UMaterialInstanceDynamic;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AEnemyWarningRange : public AActor
@@ -42,6 +48,9 @@ public:
 	UFUNCTION()
 	void HideAllComponents();
 
+	UFUNCTION()
+	FName GetMeshNameByKey(const FString& _DataString);
+
 	float GetDuration()
 	{
 		return Duration;
@@ -60,13 +69,13 @@ public:
 public:
 
 	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* PlaneMesh;
+	UStaticMeshComponent* PlaneMesh;
 
 	UPROPERTY(EditAnywhere)
-	class UMaterialInterface* WarningMaterial;
+	UMaterialInterface* WarningMaterial;
 
 	UPROPERTY()
-	class UMaterialInstanceDynamic* DynamicMaterial;
+	UMaterialInstanceDynamic* DynamicMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyAOE")
 	UDataTable* AOEDataTable;
@@ -78,17 +87,20 @@ public:
 	float TimeElapsed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "EnemyAOE")
-	class UCharacterAttributeComponent* EnemyAttributeComponent;
+	UCharacterAttributeComponent* EnemyAttributeComponent;
 
 	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
-	UParticleSystem* BugBallParticle;  
+	UParticleSystem* EffectParticle;  
 
 	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
-	class AEnemyCharacter* YggCharacterEnemy;
+	AEnemyCharacter* YggCharacterEnemy;
+
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	FString DataKeyString;
 
 	UPROPERTY(EditAnywhere, Category = "Tick")
 	TSubclassOf<AYggTickActor> TickActorClass;
 
 	UPROPERTY(EditAnywhere, Category = "EnemyCapsuleCollision")
-	class UYggAttackCapsuleComponent* BugTickCollision;
+	UYggAttackCapsuleComponent* BugTickCollision;
 };
