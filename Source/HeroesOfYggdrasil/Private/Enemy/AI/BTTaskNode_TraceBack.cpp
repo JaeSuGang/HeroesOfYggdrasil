@@ -11,6 +11,8 @@ UBTTaskNode_TraceBack::UBTTaskNode_TraceBack()
 
 void UBTTaskNode_TraceBack::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	Super::Start(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	if (nullptr != PlayAIData.SelfAnimPawn)

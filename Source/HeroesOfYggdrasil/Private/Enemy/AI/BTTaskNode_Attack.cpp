@@ -12,6 +12,8 @@ UBTTaskNode_Attack::UBTTaskNode_Attack()
 
 void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	Super::Start(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
@@ -19,7 +21,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 
 
 
-	if (nullptr != PlayAIData.SelfAnimPawn)
+	if (IsValid(SelfActor))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
@@ -29,7 +31,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	
 	// 궁수면 화살 보이게
-	if (EnemyCharacter != nullptr)
+	if (IsValid(EnemyCharacter))
 	{
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
@@ -48,6 +50,14 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	// 타겟 죽음 체크
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
+
+	 // 이그드라실일 경우
+	if (!IsValid(TargetCharacter))
+	{
+		return;
+	}
+
+	// 히어로인 경우
 	UCharacterAttributeComponent* TargetAttributecomponent = TargetCharacter->GetAttributeComponent();
 	if (IsValid(TargetAttributecomponent))
 	{
@@ -77,10 +87,6 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
 
 	FString DataKeyString = EnemyCharacter->GetDataKey();
-
-	// 타겟 죽음 체크
-
-	
 
 
 	// 저주술사

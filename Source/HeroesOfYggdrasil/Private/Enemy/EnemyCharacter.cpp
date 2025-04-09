@@ -189,6 +189,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 		FVector CamLoc = Cam->GetCameraLocation();
 		FVector ToCam = CamLoc - WidgetComponent->GetComponentLocation();
 		FRotator LookAtRot = FRotationMatrix::MakeFromX(ToCam).Rotator();
+		LookAtRot.Pitch = 0.0f;
 		WidgetComponent->SetWorldRotation(LookAtRot);
 	}
 }

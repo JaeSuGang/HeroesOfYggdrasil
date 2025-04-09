@@ -2,10 +2,16 @@
 
 
 #include "Enemy/AI/EnemyBTTaskNode.h"
+
 #include "BehaviorTree/BTTaskNode.h"
-#include <Kismet/GameplayStatics.h>
-#include "BehaviorTree/BlackboardComponent.h"
+
 #include "Kismet/KismetMathLibrary.h"
+#include <Kismet/GameplayStatics.h>
+
+#include "Attribute/CharacterAttributeComponent.h"
+
+#include "BehaviorTree/BlackboardComponent.h"
+
 #include "AIController.h"
 
 
@@ -18,6 +24,7 @@ void UEnemyBTTaskNode::Start(UBehaviorTreeComponent& _OwnerComp)
 {
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	DeathCheckTime = PlayAIData.Data.StandardZeroTime;
+	TargetHeroDeath = PlayAIData.Data.HeroDeathTagName;
 }
 
 EBTNodeResult::Type UEnemyBTTaskNode::ExecuteTask(UBehaviorTreeComponent& _OwnerComp, uint8* NodeMemory)
@@ -84,7 +91,7 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 			if (!IsValid(CheckCharacterAttrbuteComponent)) continue;
 
 			if (!CheckCharacterAttrbuteComponent->HasTag(TEXT("Character"))) continue;
-			if (CheckCharacterAttrbuteComponent->HasTag(TEXT("Character.State.Death"))) continue;
+			if (CheckCharacterAttrbuteComponent->HasTag(TargetHeroDeath)) continue;
 
 			float Distance = (SelfActor->GetActorLocation() - CheckCharacter->GetActorLocation()).Size();
 

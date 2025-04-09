@@ -167,6 +167,10 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TraceSpeed = 600.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	FName HeroDeathTagName = "Character.State.Death";
+
 };
 
 USTRUCT(BlueprintType)

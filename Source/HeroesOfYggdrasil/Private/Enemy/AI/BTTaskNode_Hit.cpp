@@ -11,6 +11,8 @@ UBTTaskNode_Hit::UBTTaskNode_Hit()
 
 void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	Super::Start(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	if (nullptr != PlayAIData.SelfAnimPawn)

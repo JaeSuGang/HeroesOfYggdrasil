@@ -12,7 +12,10 @@
 #include "Data/YggStructData.h"
 #include "Data/YggConst.h"
 
+#include "Core/YggCharacter.h"
+
 #include "Attribute/CharacterAttributeComponent.h"
+
 
 #include "Enemy/EnemyCharacter.h"
 #include "Enemy/EnemyAIController.h"
@@ -56,6 +59,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Target")
 	double DeathCheckTime;
+
+	UPROPERTY(EditAnywhere, Category = "Target")
+	FName TargetHeroDeath;
+
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Target")
