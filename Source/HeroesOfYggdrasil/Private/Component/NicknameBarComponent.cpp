@@ -44,15 +44,9 @@ void UNicknameBarComponent::BeginPlay()
 	NicknameBarWidget = CreateWidget<UYggNicknameBarUserWidget>(GetWorld(), NicknameBarWidgetClass);
 	NicknameBarWidget->NicknameBarComponent = this;
 
-	NicknameBarWidget->SetPlayerName();
+	//NicknameBarWidget->SetPlayerName();
 
-	//AStageManager* SM = AStageManager::Get(GetWorld());
-	//if (IsValid(SM))
-	//{
-	//	SM->OnSetNickname.RemoveDynamic(NicknameBarWidget, &UYggNicknameBarUserWidget::SetPlayerName);
-	//
-	//	SM->OnSetNickname.AddDynamic(NicknameBarWidget, &UYggNicknameBarUserWidget::SetPlayerName);
-	//}
+	//NicknameBarWidgetComponent->SetOwnerPlayer(UGameplayStatics::GetPlayerController(this, 0)->GetLocalPlayer());
 
 	NicknameBarWidgetComponent->SetWidget(NicknameBarWidget);
 }

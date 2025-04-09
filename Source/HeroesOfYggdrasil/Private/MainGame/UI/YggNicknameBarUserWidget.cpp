@@ -18,41 +18,17 @@ void UYggNicknameBarUserWidget::NativeOnInitialized()
 
 	SetVisibility(ESlateVisibility::Hidden);
 
-
-	//if (PlayerName)
-	//{
-	//	SetPlayerName();
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Error, TEXT("PlayerName is nullptr! Check BindWidget binding."));
-	//}
 }
 
 void UYggNicknameBarUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	APlayerController* PC = GetOwningPlayer();
-
-	AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD());
-
-	HUD->OnSetNickname.RemoveDynamic(this, &UYggNicknameBarUserWidget::SetPlayerName);
-
-	HUD->OnSetNickname.AddDynamic(this, &UYggNicknameBarUserWidget::SetPlayerName);
 }
 
 void UYggNicknameBarUserWidget::SetPlayerName()
 {
 	SetVisibility(ESlateVisibility::Visible);
-
-	//APlayerController* PC = GetOwningPlayer();
-	//
-	//if (nullptr == PC)
-	//{
-	//	UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == PC)"), __FUNCTION__, __LINE__);
-	//	return;
-	//}
 
 	AYggPlayerState* PS = Cast<APawn>(NicknameBarComponent->GetOwner())->GetPlayerState<AYggPlayerState>();
 

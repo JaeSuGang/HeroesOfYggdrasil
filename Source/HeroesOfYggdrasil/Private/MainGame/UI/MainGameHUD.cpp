@@ -81,12 +81,7 @@ void AMainGameHUD::StartButton()
 	{
 		SM->StartGame();
 	}
-	//StartButtinPlayerFunc();
 }
-
-
-
-
 
 void AMainGameHUD::ReadyButton()
 {
@@ -94,8 +89,6 @@ void AMainGameHUD::ReadyButton()
 
 	AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
 	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
-
-	OnSetNickname.Broadcast();
 }
 
 void AMainGameHUD::ShowLobbyWidget()
@@ -212,21 +205,4 @@ void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
 	}
 }
 
-//void AMainGameHUD::SetSkillIcon(FName CharacterName)
-//{
-//	MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
-//
-//	UYggSkillBarUserWidget* SkillBarWidget = MainGameUserWidget->GetSkillBarWidget();
-//
-//	if (IsValid(SkillBarWidget))
-//	{
-//		SkillBarWidget->SetSkillIcon(CharacterName);
-//	}
-//}
-
-
-//void AMainGameHUD::BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc)
-//{
-//	StartButtinPlayerFunc = _StartButtinPlayerFunc;
-//}
 

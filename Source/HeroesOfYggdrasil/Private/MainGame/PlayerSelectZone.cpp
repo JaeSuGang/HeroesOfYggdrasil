@@ -124,7 +124,7 @@ void APlayerSelectZone::SpawnSelectable_Implementation(int nSpawnableIndex)
 	SpawnParams.Owner = nullptr;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	SpawnedSelectable = GetWorld()->SpawnActor<APawn>(Rows[CurrentTableIndex]->PlayPawn, GetActorLocation(), GetActorRotation(), SpawnParams);
-
+	SpawnedSelectable->SetPlayerState(GetPlayerState());
 }
 
 void APlayerSelectZone::SelectCharacter_Implementation()

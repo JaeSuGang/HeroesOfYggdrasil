@@ -6,8 +6,6 @@
 #include "GameFramework/HUD.h"
 #include "MainGameHUD.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSetNickname);
-
 class UYggLobbyUserWidget;
 class UYggMainGameUserWidget;
 class UYggMHPBarUserWidget;
@@ -61,12 +59,6 @@ public:
 		return MainGameUserWidget;
 	}
 
-	//UFUNCTION(BlueprintCallable)
-	//UYggMHPBarUserWidget* GetMHPBarWidget()
-	//{
-	//	return MHPBarUserWidget;
-	//}
-
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> MainWidgetClass;
@@ -103,15 +95,4 @@ public:
 
 	APlayerController* PC;
 
-	//UFUNCTION(BlueprintCallable)
-	//void SetSkillIcon(FName CharacterName);
-
-	UPROPERTY(BlueprintAssignable, Category = "Widget")
-	FOnSetNickname OnSetNickname;
-
-
-
-
-	//TFunction<void()> StartButtinPlayerFunc;
-	//void BindStartButtinPlayerFunc(TFunction<void()> _StartButtinPlayerFunc);
 };
