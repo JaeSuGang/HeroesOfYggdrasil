@@ -173,7 +173,7 @@ void AEnemyWarningRange::SetCollisionOwnerEnemy(AEnemyCharacter* _Enemy)
 
 FName AEnemyWarningRange::GetMeshNameByKey(const FString& _DataString)
 {
-   /* static const TMap<FString, FName> SectionMap = {
+    /*static const TMap<FString, FName> SectionMap = {
         {TEXT("Goblin"), FName("Hit_Goblin")},
         {TEXT("Slime"), FName("Hit_Slime")},
         {TEXT("Orc"), FName("Hit_Orc")},
@@ -183,7 +183,7 @@ FName AEnemyWarningRange::GetMeshNameByKey(const FString& _DataString)
     if (const FName* Found = SectionMap.Find(_DataString))
     {
         return *Found;
-    }
+    }*/
 
-    return FName("Hit_Default");*/
+    return FName("None");
 }
