@@ -56,24 +56,30 @@ void UTickDamageComponent::ApplyDamage()
 		if (HeroTarget->HasAuthority())
 		{
 			// 추후 태그체크로 데미지 함수 이동
-			if (true == HeroTarget->GetAttributeComponent()->HasTag(TEXT("Character.DeBuff.Poision")))
+			if (HeroTarget->GetAttributeComponent()->HasTag(TEXT("Character.DeBuff")))
 			{
 				HeroTarget->GetAttributeComponent()->Server_TakeDamage(DamageAmount);
+				return;
+			}
+			else if (HeroTarget->GetAttributeComponent()->HasTag(TEXT("Character.Buff")))
+			{
+				HeroTarget->GetAttributeComponent()->Server_TakeDamage(-DamageAmount);
 				return;
 			}
 		}
 	}
 	else if (IsValid(EnemyTarget))
 	{
-		/*if (EnemyTarget->GetAttributeComponent()->HasTag(TEXT("Character.State")))
+		if (EnemyTarget->GetAttributeComponent()->HasTag(TEXT("Enemy.DeBuff")))
 		{
 			EnemyTarget->GetAttributeComponent()->Server_TakeDamage(DamageAmount);
-			UE_LOG(LogTemp, Log, TEXT("TickDamage: %.1f applied to %s"), DamageAmount, *EnemyTarget->GetName());
 			return;
-		}*/
+		}
+		else if (EnemyTarget->GetAttributeComponent()->HasTag(TEXT("Enemy.Buff")))
+		{
+			EnemyTarget->GetAttributeComponent()->Server_TakeDamage(-DamageAmount);
+			return;
+		}
 	}
-	else
-	{
-		return;
-	}
+
 }

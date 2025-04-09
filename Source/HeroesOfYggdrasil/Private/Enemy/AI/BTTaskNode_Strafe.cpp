@@ -11,6 +11,8 @@ UBTTaskNode_Strafe::UBTTaskNode_Strafe()
 
 void UBTTaskNode_Strafe::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	Super::Start(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	if (nullptr != PlayAIData.SelfAnimPawn)
@@ -35,13 +37,23 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	AActor* TargetActor = PlayAIData.TargetActor;
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 
-	// 타겟 null(죽음)
-	if (nullptr == TargetActor)
+	if (!IsValid(TargetCharacter))
 	{
-		ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
 		return;
 	}
+
+	UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+	if (IsValid(TargetAttributeComponent))
+	{
+		if (TargetAttributeComponent->HasTag(TargetHeroDeath))
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
+			return;
+		}
+	}
+	
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	

@@ -11,6 +11,8 @@ UBTTaskNode_Await::UBTTaskNode_Await()
 
 void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	Super::Start(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	if (nullptr != PlayAIData.SelfAnimPawn)
@@ -27,11 +29,15 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	DeathCheck(_OwnerComp);
-
+	//TargetCheck(_OwnerComp);
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	
 	AActor* TargetActor = PlayAIData.TargetActor;
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
+
+
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	
@@ -51,24 +57,30 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	float Size = TargetDir.Size();
 
 	// 타겟이 플레이어인 경우
-	if (FName("BP_YggHero") == PlayAIData.TargetActor->GetName().Left(10))
-	{	
-		// 플레이어가 공격범위를 벗어났을 때
-		if (Size >= PlayAIData.Data.AttackRange)
-		{
-			ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
-			return;
-		}
 
-		// 추적 범위를 넘어갔을 때
-		if (Size >= PlayAIData.Data.StrafeRange)
+	if (IsValid(TargetCharacter))
+	{
+		UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+		if (IsValid(TargetAttributeComponent))
 		{
-			ChangeState(_OwnerComp, EEnemyAIState::Trace);
-			return;
+			if (TargetAttributeComponent->HasTag(TEXT("Character")))
+			{
+				// 플레이어가 공격범위를 벗어났을 때
+				if (Size >= PlayAIData.Data.AttackRange)
+				{
+					ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
+					return;
+				}
+
+				// 추적 범위를 넘어갔을 때
+				if (Size >= PlayAIData.Data.StrafeRange)
+				{
+					ChangeState(_OwnerComp, EEnemyAIState::Trace);
+					return;
+				}
+			}
 		}
 	}
-
-
 }
 
 void UBTTaskNode_Await::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)

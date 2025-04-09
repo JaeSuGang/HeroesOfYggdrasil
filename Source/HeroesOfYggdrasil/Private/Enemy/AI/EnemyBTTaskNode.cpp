@@ -2,10 +2,16 @@
 
 
 #include "Enemy/AI/EnemyBTTaskNode.h"
+
 #include "BehaviorTree/BTTaskNode.h"
-#include <Kismet/GameplayStatics.h>
-#include "BehaviorTree/BlackboardComponent.h"
+
 #include "Kismet/KismetMathLibrary.h"
+#include <Kismet/GameplayStatics.h>
+
+#include "Attribute/CharacterAttributeComponent.h"
+
+#include "BehaviorTree/BlackboardComponent.h"
+
 #include "AIController.h"
 
 
@@ -18,6 +24,7 @@ void UEnemyBTTaskNode::Start(UBehaviorTreeComponent& _OwnerComp)
 {
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	DeathCheckTime = PlayAIData.Data.StandardZeroTime;
+	TargetHeroDeath = PlayAIData.Data.HeroDeathTagName;
 }
 
 EBTNodeResult::Type UEnemyBTTaskNode::ExecuteTask(UBehaviorTreeComponent& _OwnerComp, uint8* NodeMemory)
@@ -67,50 +74,58 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 
-	if (nullptr == TargetActor || FName("BP_Yggdrasil") == PlayAIData.TargetActor->GetName().Left(12))
+	const float MaxDistance = PlayAIData.Data.TraceRange;
+
+	// 현재 타겟이 유효한지 확인
+	if (IsValid(TargetActor))
 	{
-		//UGameplayStatics::GetAllActorsWithTag(GetWorld(), TEXT("Character"), OutActors);
-
-		/*
-		float CurTargetDistance = TNumericLimits<float>::Max();
-		for (size_t i = 0; i < OutActors.Num(); i++)
+		AYggCharacter* CurrentTarget = Cast<AYggCharacter>(TargetActor);
+		if (IsValid(CurrentTarget))
 		{
-			CheckActor = OutActors[i];
-			float TargetDis = (SelfActor->GetActorLocation() - CheckActor->GetActorLocation()).Size();
-			if (TargetDis < PlayAIData.Data.TraceRange && TargetDis < CurTargetDistance)
+			UAttributeComponent* Attr = CurrentTarget->GetAttributeComponent();
+			if (IsValid(Attr) && !Attr->HasTag(TargetHeroDeath))
 			{
-				TargetActor = CheckActor;
-			}
-		}
-		*/
-
-		// 태그 확인되면 수정 에정 
-
-		TArray<AActor*> AllActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
-
-	
-		AActor* CheckActor = nullptr;
-		float CurTargetDistance = TNumericLimits<float>::Max();
-		for (size_t i = 0; i < AllActors.Num(); i++)
-		{
-			if (FName("BP_YggHero") == AllActors[i]->GetName().Left(10))
-			{
-				CheckActor = AllActors[i];
-				float TargetDis = (SelfActor->GetActorLocation() - CheckActor->GetActorLocation()).Size();
-				if (TargetDis < PlayAIData.Data.TraceRange && TargetDis < CurTargetDistance)
+				float Distance = FVector::Dist(SelfActor->GetActorLocation(), CurrentTarget->GetActorLocation());
+				if (Distance < MaxDistance)
 				{
-					TargetActor = CheckActor;
+					// 현재 타겟이 유효하고 범위 내면 유지
+					return;
 				}
 			}
 		}
+	}
 
-		if (nullptr != TargetActor)
+	// 유효하지 않으면 새 타겟 찾기
+	TArray<AActor*> AllActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
+
+	AActor* NearestActor = nullptr;
+	float ClosestDistance = TNumericLimits<float>::Max();
+
+	for (AActor* Actor : AllActors)
+	{
+		AYggCharacter* CheckCharacter = Cast<AYggCharacter>(Actor);
+		if (!IsValid(CheckCharacter)) continue;
+
+		UCharacterAttributeComponent* Attr = CheckCharacter->GetAttributeComponent();
+		if (!IsValid(Attr)) continue;
+		if (!Attr->HasTag(TEXT("Character"))) continue;
+		if (Attr->HasTag(TargetHeroDeath)) continue;
+
+		float Distance = FVector::Dist(SelfActor->GetActorLocation(), CheckCharacter->GetActorLocation());
+		if (Distance < MaxDistance && Distance < ClosestDistance)
 		{
-			PlayAIData.TargetActor = TargetActor;
+			ClosestDistance = Distance;
+			NearestActor = Actor;
 		}
 	}
+
+	if (IsValid(NearestActor))
+	{
+		PlayAIData.TargetActor = NearestActor;
+	}
 }
+
 
 
 void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
@@ -119,18 +134,20 @@ void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
-
-	if (nullptr == TargetActor)
+	AYggCharacter* YggCharacter = Cast<AYggCharacter>(TargetActor);
+	
+	// 시작시점에 TargetActor가 nullptr 인 경우
+	if (!IsValid(TargetActor))
 	{
 		TArray<AActor*> AllActors;
+
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
 
-
 		AActor* CheckActor = nullptr;
-		float CurTargetDistance = TNumericLimits<float>::Max();
+
 		for (size_t i = 0; i < AllActors.Num(); i++)
 		{
-			if (FName("BP_Yggdrasil") == AllActors[i]->GetName().Left(12))
+			if (AllActors[i]->GetName().StartsWith(TEXT("BP_Yggdrasil")))
 			{
 				CheckActor = AllActors[i];
 				TargetActor = CheckActor;
@@ -140,6 +157,34 @@ void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 		if (nullptr != TargetActor)
 		{
 			PlayAIData.TargetActor = TargetActor;
+		}
+	}
+	// TargetCharacter의 태그가 "Character.State.Death" 인 경우
+	else if (IsValid(YggCharacter))
+	{
+		UCharacterAttributeComponent* YggCharacterAttributecomponent = YggCharacter->GetAttributeComponent();
+		
+		if (YggCharacterAttributecomponent->HasTag(TEXT("Character.State.Death")))
+		{
+			TArray<AActor*> AllActors;
+
+			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
+
+			AActor* CheckActor = nullptr;
+
+			for (size_t i = 0; i < AllActors.Num(); i++)
+			{
+				if (AllActors[i]->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+				{
+					CheckActor = AllActors[i];
+					TargetActor = CheckActor;
+				}
+			}
+
+			if (nullptr != TargetActor)
+			{
+				PlayAIData.TargetActor = TargetActor;
+			}
 		}
 	}
 }

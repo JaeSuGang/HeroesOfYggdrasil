@@ -10,6 +10,8 @@ UBTTaskNode_DeathFallen::UBTTaskNode_DeathFallen()
 
 void UBTTaskNode_DeathFallen::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	Super::Start(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	if (nullptr != PlayAIData.SelfAnimPawn)

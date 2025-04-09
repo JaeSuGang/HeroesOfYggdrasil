@@ -30,6 +30,7 @@
 
 #include "Global/YggTickActor.h"
 
+#include "Component/ActorComponent/Function/TickUtilityFunctionLibrary.h"
 #include "Component/ActorComponent/TickDamageComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
@@ -37,6 +38,11 @@
 #include "MainGame/UI/MainGameHUD.h"
 
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -48,7 +54,9 @@ AEnemyCharacter::AEnemyCharacter()
 	WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
 	WidgetComponent->SetupAttachment(GetMesh());
 	WidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
-	WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
+	WidgetComponent->SetDrawSize(FVector2D(100.0f, 10.0f));
+	WidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
 
 	{
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
@@ -174,6 +182,15 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	if (IsValid(AIData) && IsValid(CharacterAttributeComponent))
 	{
 		AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
+	}
+
+	if (APlayerCameraManager* Cam = UGameplayStatics::GetPlayerCameraManager(this, 0))
+	{
+		FVector CamLoc = Cam->GetCameraLocation();
+		FVector ToCam = CamLoc - WidgetComponent->GetComponentLocation();
+		FRotator LookAtRot = FRotationMatrix::MakeFromX(ToCam).Rotator();
+		LookAtRot.Pitch = 0.0f;
+		WidgetComponent->SetWorldRotation(LookAtRot);
 	}
 }
 
@@ -339,21 +356,16 @@ void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
 
 void AEnemyCharacter::HandleHeroEnteredRange(AYggHero* Hero)
 {
-	FTransform SpawnTransform = FTransform(Hero->GetActorRotation(), Hero->GetActorLocation());
+	if (!HasAuthority()) return;
 
-	AYggTickActor* TickActor = GetWorld()->SpawnActorDeferred<AYggTickActor>(
+	float Damage = CharacterAttributeComponent->AttackPoints / 10.0f;
+
+	AYggTickActor* TickActor = AYggTickActor::SpawnTickEffectIfNotExist(
+		this,
+		Hero,
 		TickActorClass,
-		SpawnTransform,
-		nullptr,
-		nullptr,
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+		EStatusEffectType::Poison,
+		0.5f,
+		Damage
 	);
-
-	if (!IsValid(TickActor)) return;
-	float attackpoint = CharacterAttributeComponent->AttackPoints;
-	attackpoint /= 10.0f;
-
-	TickActor->SetTickDamage(Hero, 0.5f, attackpoint);
-
-	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 }

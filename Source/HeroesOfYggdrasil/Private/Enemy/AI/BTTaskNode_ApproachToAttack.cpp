@@ -12,6 +12,8 @@ UBTTaskNode_ApproachToAttack::UBTTaskNode_ApproachToAttack()
 
 void UBTTaskNode_ApproachToAttack::Start(UBehaviorTreeComponent& _OwnerComp)
 {
+	Super::Start(_OwnerComp);
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	if (nullptr != PlayAIData.SelfAnimPawn)
@@ -29,17 +31,33 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	
 	APawn* SelfActor = PlayAIData.SelfPawn;
+
 	AActor* TargetActor = PlayAIData.TargetActor;
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
+
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
 
-	// 타겟 null(죽음)
-	if (nullptr == TargetActor)
+	// 타겟 히어로 null(죽음)
+	if (!IsValid(TargetCharacter))
 	{
-		ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
 		return;
 	}
+
+	UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+
+	if (IsValid(TargetAttributeComponent))
+	{
+		if (TargetAttributeComponent->HasTag(TargetHeroDeath))
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::TraceBack);
+			return;
+		}
+	}
+	
 
 
 	// SelfActor->AddMovementInput(TargetDir);
@@ -47,10 +65,8 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	
 	EnemyCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.ApproachSpeed;
 	
-	
-	
 
-	if (TargetDir.Size() <= PlayAIData.Data.AttackRange || FName("BP_Yggdrasil") == PlayAIData.TargetActor->GetName().Left(12))
+	if (TargetDir.Size() <= PlayAIData.Data.AttackRange)
 	{
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
@@ -70,6 +86,7 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	}
 
 	float Size = TargetDir.Size();
+
 	if (Size >= PlayAIData.Data.TraceRange)
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::TraceBack);

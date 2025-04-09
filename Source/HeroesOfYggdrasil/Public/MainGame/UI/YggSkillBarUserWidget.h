@@ -9,6 +9,7 @@
 
 class UProgressBar;
 class UTexture2D;
+class UTextBlock;
 
 USTRUCT()
 struct FSkillData
@@ -21,10 +22,9 @@ struct FSkillData
 	UPROPERTY()
 	UTexture2D* Icon = nullptr;
 
-	/*UPROPERTY()
-	float CooldownDuration = 0.0f;*/
+	UPROPERTY()
+	UTextBlock* Text = nullptr;
 
-	/*float RemainingTime = 0.0f;*/
 	FTimerHandle TimerHandle;
 	float CoolTime = 0.0f;
 	float RemainingTime = 0.0f;
@@ -75,15 +75,6 @@ protected:
 
 
 private:
-	//UPROPERTY(meta = (BindWidget))
-	//UImage* Skill_Q;
-	//UPROPERTY(meta = (BindWidget))
-	//UImage* Skill_E;
-	//UPROPERTY(meta = (BindWidget))
-	//UImage* Skill_R;
-	//UPROPERTY(meta = (BindWidget))
-	//UImage* Skill_Shift;
-
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* Skill_Q;
 	UPROPERTY(meta = (BindWidget))
@@ -92,6 +83,15 @@ private:
 	UProgressBar* Skill_R;
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* Skill_Shift;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* CoolTimeQ;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* CoolTimeE;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* CoolTimeR;
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* CoolTimeShift;
 
 	UTexture2D* QTexture;
 	UTexture2D* ETexture;

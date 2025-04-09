@@ -2,11 +2,9 @@
 
 
 #include "MainGame/UI/YggSkillBarUserWidget.h"
-//#include "Data/YggStructData.h"
-//#include "Engine/Texture2D.h"
 
-#include "Components/Image.h"
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 
 #include "Player/YggHero.h"
 #include "Attribute/HeroAttributeComponent.h"
@@ -52,6 +50,7 @@ void UYggSkillBarUserWidget::NativeConstruct()
         }
     }
 
+
     //StartCoolTime(FName("Q"), 5.0f);
     //StartCoolTime(FName("E"), 3.0f);
     //StartCoolTime(FName("R"), 10.0f);
@@ -64,18 +63,24 @@ void UYggSkillBarUserWidget::InitSkills()
     FSkillData Q;
     Q.Bar = Skill_Q;
     Q.Icon = QTexture;
+    Q.Text = CoolTimeQ;
+    Q.Text->SetVisibility(ESlateVisibility::Hidden);
     SetupSkillBar(Q.Bar, Q.Icon, IconSize);
     SkillMap.Add("SkillQ", Q);
 
     FSkillData E;
     E.Bar = Skill_E;
     E.Icon = ETexture;
+    E.Text = CoolTimeE;
+    E.Text->SetVisibility(ESlateVisibility::Hidden);
     SetupSkillBar(E.Bar, E.Icon, IconSize);
     SkillMap.Add("SkillE", E);
 
     FSkillData R;
     R.Bar = Skill_R;
     R.Icon = RTexture;
+    R.Text = CoolTimeR;
+    R.Text->SetVisibility(ESlateVisibility::Hidden);
     SetupSkillBar(R.Bar, R.Icon, IconSize);
     SkillMap.Add("SkillR", R);
 
@@ -112,37 +117,9 @@ void UYggSkillBarUserWidget::SetSkillIcon(FName Character)
 
     if (CharSkillIcon)
     {
-        //SetIcon(CharSkillIcon->SkillQIcon, CharSkillIcon->SkillEIcon, CharSkillIcon->SkillRIcon);
         SetTexture(CharSkillIcon->SkillQIcon, CharSkillIcon->SkillEIcon, CharSkillIcon->SkillRIcon);
     }
 }
-
-//void UYggSkillBarUserWidget::SetIcon(UTexture2D* Q, UTexture2D* E, UTexture2D* R)
-//{
-//    if (Skill_Q && Q)
-//    {
-//        FSlateBrush Brush;
-//        Brush.SetResourceObject(Q);
-//        Brush.ImageSize = FVector2D(128.0f, 128.0f);
-//        Skill_Q->SetBrush(Brush);
-//    }
-//
-//    if (Skill_E && E)
-//    {
-//        FSlateBrush Brush;
-//        Brush.SetResourceObject(E);
-//        Brush.ImageSize = FVector2D(128.0f, 128.0f);
-//        Skill_E->SetBrush(Brush);
-//    }
-//
-//    if (Skill_R && R)
-//    {
-//        FSlateBrush Brush;
-//        Brush.SetResourceObject(R);
-//        Brush.ImageSize = FVector2D(128.0f, 128.0f);
-//        Skill_R->SetBrush(Brush);
-//    }
-//}
 
 void UYggSkillBarUserWidget::SetTexture(UTexture2D* Q, UTexture2D* E, UTexture2D* R)
 {
@@ -158,6 +135,8 @@ void UYggSkillBarUserWidget::StartCoolTime(FName Key, float Duration)
     FSkillData& Skill = SkillMap[Key];
     Skill.CoolTime = Duration;
     Skill.RemainingTime = Duration;
+    Skill.Text->SetText(FText::AsNumber(FMath::FloorToInt(Skill.RemainingTime)));
+    Skill.Text->SetVisibility(ESlateVisibility::Visible);
 
     if (Skill.Bar)
     {
@@ -173,6 +152,7 @@ void UYggSkillBarUserWidget::UpdateCoolTime(FName Key)
 
     FSkillData& Skill = SkillMap[Key];
     Skill.RemainingTime -= 0.05f;
+    Skill.Text->SetText(FText::AsNumber(FMath::FloorToInt(Skill.RemainingTime)));
 
     if (Skill.RemainingTime <= 0.0f)
     {
@@ -193,6 +173,7 @@ void UYggSkillBarUserWidget::EndCoolTime(FName Key)
     if (!SkillMap.Contains(Key)) return;
 
     FSkillData& Skill = SkillMap[Key];
+    Skill.Text->SetVisibility(ESlateVisibility::Hidden);
     GetWorld()->GetTimerManager().ClearTimer(Skill.TimerHandle);
 
     if (IsValid(Skill.Bar))
