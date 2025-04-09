@@ -9,6 +9,7 @@
 class UYggMHPBarUserWidget;
 class UWidgetComponent;
 class AEnemyCharacter;
+class UCharacterAttributeComponent;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class HEROESOFYGGDRASIL_API UMHPBarComponent : public USceneComponent
@@ -18,6 +19,12 @@ class HEROESOFYGGDRASIL_API UMHPBarComponent : public USceneComponent
 public:	
 	// Sets default values for this component's properties
 	UMHPBarComponent();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void UpdateHPBarWidgetToAll(float HP);
+
+	UFUNCTION(BlueprintCallable)
+	void Init(AEnemyCharacter* Enemy);
 
 protected:
 	// Called when the game starts
@@ -38,4 +45,7 @@ public:
 
 	UPROPERTY()
 	AEnemyCharacter* EnemyCharacter;
+
+	//UPROPERTY()
+	//UCharacterAttributeComponent* CAC;
 };

@@ -6,6 +6,11 @@
 #include "MainGame/UI/YggMHPBarUserWidget.h"
 #include "Components/WidgetComponent.h"
 
+#include "Attribute/CharacterAttributeComponent.h"
+#include "Enemy/EnemyCharacter.h"
+
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values for this component's properties
 UMHPBarComponent::UMHPBarComponent()
 {
@@ -15,7 +20,6 @@ UMHPBarComponent::UMHPBarComponent()
 
 	// ...
 }
-
 
 // Called when the game starts
 void UMHPBarComponent::BeginPlay()
@@ -31,25 +35,50 @@ void UMHPBarComponent::BeginPlay()
 	MHPBarWidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
 
 	MHPBarWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarWidgetClass);
-	MHPBarWidget->SetAttachedCharacter(EnemyCharacter);
+	
 
 	MHPBarWidgetComponent->SetWidget(MHPBarWidget);
-}
 
+
+}
 
 // Called every frame
 void UMHPBarComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
-	//if (APlayerCameraManager* Cam = UGameplayStatics::GetPlayerCameraManager(this, 0))
-	//{
-	//	FVector CamLoc = Cam->GetCameraLocation();
-	//	FVector ToCam = CamLoc - WidgetComponent->GetComponentLocation();
-	//	FRotator LookAtRot = FRotationMatrix::MakeFromX(ToCam).Rotator();
-	//	LookAtRot.Pitch = 0.0f;
-	//	WidgetComponent->SetWorldRotation(LookAtRot);
-	//}
+	if (APlayerCameraManager* Cam = UGameplayStatics::GetPlayerCameraManager(this, 0))
+	{
+		FVector CamLoc = Cam->GetCameraLocation();
+		FVector ToCam = CamLoc - MHPBarWidgetComponent->GetComponentLocation();
+		FRotator LookAtRot = FRotationMatrix::MakeFromX(ToCam).Rotator();
+		LookAtRot.Pitch = 0.0f;
+		MHPBarWidgetComponent->SetWorldRotation(LookAtRot);
+	}
 }
 
+void UMHPBarComponent::UpdateHPBarWidgetToAll_Implementation(float HP)
+{
+
+		MHPBarWidget->UpdateHPBar(HP);
+
+}
+
+
+void UMHPBarComponent::Init(AEnemyCharacter* Enemy)
+{
+	if (IsValid(Enemy))
+	{
+		EnemyCharacter = Enemy;
+		MHPBarWidget->SetAttachedCharacter(EnemyCharacter);
+		UCharacterAttributeComponent* CAC = EnemyCharacter->GetAttributeComponent();
+
+		if (IsValid(CAC))
+		{
+			if (GetOwner()->HasAuthority())
+			{
+				CAC->ServerDelegate_OnTakeDamage.AddDynamic(this, &UMHPBarComponent::UpdateHPBarWidgetToAll);
+			}
+		}
+	}
+}
