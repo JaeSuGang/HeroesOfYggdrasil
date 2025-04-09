@@ -69,9 +69,9 @@ AYggHero::AYggHero()
 	CharacterAttributeComponent = Cast<UCharacterAttributeComponent>(HeroAttributeComponent);
 
 	// 닉네임
-	NickNameWidgetComponent = CreateDefaultSubobject<UNicknameBarComponent>(TEXT("WidgetComponent"));
-	NickNameWidgetComponent->SetupAttachment(GetMesh());
-	NickNameWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 250.0f));
+	NickNameWidget = CreateDefaultSubobject<UNicknameBarComponent>(TEXT("WidgetComponent"));
+	NickNameWidget->SetupAttachment(GetMesh());
+	NickNameWidget->SetRelativeLocation(FVector(0.0f, 0.0f, 250.0f));
 
 	FaceCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("StatusCamera"));
 	FaceCaptureComponent->SetupAttachment(RootComponent);

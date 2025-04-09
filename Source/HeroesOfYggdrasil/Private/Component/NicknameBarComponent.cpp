@@ -17,13 +17,6 @@ UNicknameBarComponent::UNicknameBarComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
-	//NicknameBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("NicknameBarWidget"));
-	//NicknameBarWidgetComponent->SetupAttachment(this);
-	////NicknameBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
-	//NicknameBarWidgetComponent->SetWidgetSpace(EWidgetSpace::World);
-	//NicknameBarWidgetComponent->SetDrawSize(FVector2D(100.0f, 10.0f));
-	//NicknameBarWidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
 }
 
 
