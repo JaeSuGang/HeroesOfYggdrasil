@@ -15,6 +15,7 @@ class UYggAttackCapsuleComponent;
 class UStaticMeshComponent;
 class UMaterialInterface;
 class UMaterialInstanceDynamic;
+class UNiagaraSystem;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AEnemyWarningRange : public AActor
@@ -94,6 +95,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
 	UParticleSystem* EffectParticle;  
+
+	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
+	UNiagaraSystem* EnemyNiagaraSystem;
 
 	UPROPERTY(EditAnywhere, Category = "EnemyEffects")
 	AEnemyCharacter* YggCharacterEnemy;

@@ -8,9 +8,13 @@
 
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
+#include "Global/YggTickActor.h"
+
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 #include "Player/YggHero.h"
 #include "Enemy/EnemyCharacter.h"
-#include "Global/YggTickActor.h"
 
 // Sets default values
 AEnemyWarningRange::AEnemyWarningRange()
@@ -65,6 +69,7 @@ void AEnemyWarningRange::InitializeWarningRange()
         TimeElapsed = Row->TimeElapsed;
         SetActorScale3D(Row->ScaleVector);
         EffectParticle = Row->RangeEffectParticle;
+        EnemyNiagaraSystem = Row->NiagaraEffectSystem;
 
         if (DynamicMaterial) DynamicMaterial->SetScalarParameterValue("WarningAlpha", 0.2f);
     }
@@ -139,6 +144,18 @@ void AEnemyWarningRange::SpawnEffect()
             GetActorRotation(),
             FVector(Row->EffectScaleFloat),
             true  // 자동 파괴
+        );
+    }
+
+    if (IsValid(EnemyNiagaraSystem))
+    {
+        UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+            GetWorld(),
+            EnemyNiagaraSystem,
+            GetActorLocation(),
+            GetActorRotation(),
+            FVector(Row->EffectScaleFloat),
+            true  // bAutoDestroy
         );
     }
 }

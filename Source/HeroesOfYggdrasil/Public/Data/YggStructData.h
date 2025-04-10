@@ -324,6 +324,9 @@ public:
 	UParticleSystem* RangeEffectParticle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	UNiagaraSystem* NiagaraEffectSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float Duration = 3.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
