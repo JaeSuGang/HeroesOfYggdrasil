@@ -274,7 +274,8 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 	}
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
-		
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel5, ECR_Ignore);
+
 	bIsSkillR = true;
 }
 
@@ -382,6 +383,7 @@ void AYggHeroGreystone::MagicCircleOff()
 		}
 
 		GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
+		GetCapsuleComponent()->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel5, ECR_Block);
 	}
 
 	if (HasAuthority())
