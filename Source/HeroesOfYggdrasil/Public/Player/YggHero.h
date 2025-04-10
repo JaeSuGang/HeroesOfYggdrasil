@@ -203,8 +203,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
 	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NickName")
-	UNicknameBarComponent* NickNameWidgetComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "NickName")
+	UNicknameBarComponent* NickNameWidget;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bAimMode = false;

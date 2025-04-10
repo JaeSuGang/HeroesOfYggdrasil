@@ -26,13 +26,18 @@ public:
 	void UpdateHPBar(float HP);
 
 	UFUNCTION(BlueprintCallable)
-	void SetAttachedCharacter(AEnemyCharacter* Enemy);
+	void Init(float HP);
 
+	UFUNCTION(BlueprintCallable)
+	void SetAttachedCharacter(AEnemyCharacter* Enemy);
+	
 	UPROPERTY()
 	AEnemyCharacter* EnemyCharacter;
 	
 	UPROPERTY()
 	UCharacterAttributeComponent* CAC;
+
+
 	
 
 protected:

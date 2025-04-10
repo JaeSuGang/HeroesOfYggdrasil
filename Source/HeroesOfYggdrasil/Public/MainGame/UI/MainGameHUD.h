@@ -51,8 +51,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EnableCrossHair(bool bIsVisible);
 
-	UFUNCTION(BlueprintCallable)
-	void CreateMHPBar(AEnemyCharacter* Enemy);
+	//UFUNCTION(BlueprintCallable)
+	//void CreateMHPBar(AEnemyCharacter* Enemy);
 
 	UYggMainGameUserWidget* GetMainGameWidget()
 	{

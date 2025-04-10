@@ -15,7 +15,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroEnteredRangeDelegate, AYggHero*, Hero);
 
 class AYggMiniMapIconActor;
-class UYggMHPBarUserWidget;
+class UMHPBarComponent;
 class UWidgetComponent;
 class AYggTickActor;
 
@@ -89,16 +89,16 @@ public:
 	void SpawnEnemySkillAttack(FVector _TargetLocation);
 
 
-	UWidgetComponent* GetWidgetComponent()
-	{
-		return WidgetComponent;
-	}
+	//UWidgetComponent* GetWidgetComponent()
+	//{
+	//	return WidgetComponent;
+	//}
 
 	UFUNCTION()
 	void HandleHeroEnteredRange(class AYggHero* Hero);
 
-	UFUNCTION(NetMulticast, Reliable)
-	void UpdateHPBarWidgetToAll(float HP);
+	//UFUNCTION(NetMulticast, Reliable)
+	//void UpdateHPBarWidgetToAll(float HP);
 
 protected:
 	virtual void BeginPlay() override;
@@ -139,14 +139,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
 	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = "YggMonsterHPBar")
-	TSubclassOf<UYggMHPBarUserWidget> MHPBarUserWidgetClass;
+	//UPROPERTY(EditDefaultsOnly, Category = "YggMonsterHPBar")
+	//TSubclassOf<UYggMHPBarUserWidget> MHPBarUserWidgetClass;
 
 	UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
-	UWidgetComponent* WidgetComponent;
+	UMHPBarComponent* MHPBarWidgetComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
-	UYggMHPBarUserWidget* MHPBarUserWidget;
+	//UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
+	//UYggMHPBarUserWidget* MHPBarUserWidget;
 };
 
 

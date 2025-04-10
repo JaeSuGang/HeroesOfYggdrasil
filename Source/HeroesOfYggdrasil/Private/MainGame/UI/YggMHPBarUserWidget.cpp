@@ -11,10 +11,6 @@
 // Attribute
 #include "Attribute/CharacterAttributeComponent.h"
 
-// Data
-#include "Engine/DataTable.h"
-#include "Data/YggStructData.h"
-
 #include "Enemy/EnemyCharacter.h"
 #include "Components/WidgetComponent.h"
 
@@ -33,7 +29,7 @@ void UYggMHPBarUserWidget::NativeConstruct()
 
     if (IsValid(CAC))
     {
-        CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggMHPBarUserWidget::UpdateHPBar);
+        CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggMHPBarUserWidget::Init);
     }
 }
 
@@ -50,6 +46,17 @@ void UYggMHPBarUserWidget::UpdateHPBar(float HP)
     if (GetVisibility() == ESlateVisibility::Hidden)
     {
         SetVisibility(ESlateVisibility::Visible);
+    }
+}
+
+void UYggMHPBarUserWidget::Init(float HP)
+{
+    if (IsValid(CAC))
+    {
+        if (IsValid(HPBar))
+        {
+            HPBar->SetPercent(CAC->HP / CAC->MaxHP);
+        }
     }
 }
 
