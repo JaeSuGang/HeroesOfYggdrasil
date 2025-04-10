@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Init(AEnemyCharacter* Enemy);
 
+	UFUNCTION(BlueprintCallable)
+	void OnStatusChanged();
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
