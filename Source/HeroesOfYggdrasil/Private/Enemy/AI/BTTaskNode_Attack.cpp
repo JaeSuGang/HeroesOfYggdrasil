@@ -36,13 +36,13 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
 		// 미니언 궁수
-		if (FString("Minion_Archer") == DataKeyStr)
+		if (DataKeyStr.StartsWith(FString("Minion_Archer")))
 		{
 			EnemyCharacter->RevealArrow();
 		}
 
 		// 저주술사
-		if (FString("Minion_Witch") == DataKeyStr)
+		if (DataKeyStr.StartsWith(FString("Minion_Witch")))
 		{
 			EnemyCharacter->SpawnWarningRange(TargetActor);
 		}
@@ -61,7 +61,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	UCharacterAttributeComponent* TargetAttributecomponent = TargetCharacter->GetAttributeComponent();
 	if (IsValid(TargetAttributecomponent))
 	{
-		if (TargetAttributecomponent->HasTag(TEXT("Character.state.Death")))
+		if (TargetAttributecomponent->HasTag(TargetHeroDeath))
 		{
 			ChangeState(_OwnerComp,EEnemyAIState::TraceYggdrasil);
 			return;
@@ -86,13 +86,7 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
 
-	FString DataKeyString = EnemyCharacter->GetDataKey();
-
-
-	// 저주술사
-	if (FString("Minion_Witch") == DataKeyString)
-	{
-	}
+	FString DataKeyStr = EnemyCharacter->GetDataKey();
 
 	if (SelfController)
 	{
@@ -104,17 +98,17 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	if (AttackTime < PlayAIData.Data.StandardZeroTime)
 	{
 		
-		
 		// 미니언 궁수
-		if (FString("Minion_Archer") == DataKeyString)
+		if (DataKeyStr.StartsWith(FString("Minion_Archer")))
 		{
 			EnemyCharacter->SpawnAndFireArrow();
 			EnemyCharacter->HideArrow();
 		}
+
 		// 저주술사
-		if (FString("Minion_Witch") == DataKeyString)
+		if (DataKeyStr.StartsWith(FString("Minion_Witch")))
 		{
-			EnemyCharacter->ThrowPoisonedBall(TargetRangeLocation);
+			EnemyCharacter->SpawnEnemySkillAttack(TargetRangeLocation);
 		}
 
 		AttackTime = PlayAIData.Data.AttackTime;

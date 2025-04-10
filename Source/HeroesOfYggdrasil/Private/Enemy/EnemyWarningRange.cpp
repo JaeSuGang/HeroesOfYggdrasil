@@ -21,54 +21,61 @@ AEnemyWarningRange::AEnemyWarningRange()
 
     PlaneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlaneMesh"));
     RootComponent = PlaneMesh;
+    
+    
+    {
+        bReplicates = true;
+        SetReplicateMovement(true);
+    }
 
     {
-        BugTickCollision = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("BugCollision"));
-        BugTickCollision->SetupAttachment(PlaneMesh);
-        BugTickCollision->CollisionOff();
-        BugTickCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyWarningRange::OverLap);
+        RangeAttackCollision = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("CapsuleCollision"));
+        RangeAttackCollision->SetupAttachment(PlaneMesh);
+        RangeAttackCollision->CollisionOff();
+        RangeAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyWarningRange::OverLap);
     }
+
+
 }
 
 // Called when the game starts or when spawned
 void AEnemyWarningRange::BeginPlay()
 {
-	Super::BeginPlay();
-    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(FName("BugBall"), nullptr);
+    Super::BeginPlay();
+}
 
-    if (WarningMaterial != nullptr && AOEDataTable != nullptr)
+void AEnemyWarningRange::InitializeWarningRange()
+{
+    if (!IsValid(YggCharacterEnemy)) return;
+
+    DataKeyString = YggCharacterEnemy->GetDataKey();
+    FName DataName = GetMeshNameByKey(DataKeyString);
+    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(DataName, nullptr);
+
+    if (WarningMaterial && AOEDataTable && Row)
     {
-        if (Row != nullptr)
+        if (Row->PlaneMesh) PlaneMesh->SetStaticMesh(Row->PlaneMesh);
+        if (Row->WarningMaterial)
         {
-            if (Row->PlaneMesh)
-            {
-                PlaneMesh->SetStaticMesh(Row->PlaneMesh);
-            }
-
-            if (Row->WarningMaterial)
-            {
-                DynamicMaterial = UMaterialInstanceDynamic::Create(Row->WarningMaterial, this);
-                PlaneMesh->SetMaterial(0, DynamicMaterial);
-            }
-
-            Duration = Row->Duration;
-            TimeElapsed = Row->TimeElapsed;
+            DynamicMaterial = UMaterialInstanceDynamic::Create(Row->WarningMaterial, this);
+            PlaneMesh->SetMaterial(0, DynamicMaterial);
         }
-    }
- 
-    if (DynamicMaterial != nullptr)
-    {
-        float Alpha = 0.2f;
-        DynamicMaterial->SetScalarParameterValue("WarningAlpha", Alpha);
-    }
 
-    SetActorScale3D(Row->ScaleVector);
+        Duration = Row->Duration;
+        TimeElapsed = Row->TimeElapsed;
+        SetActorScale3D(Row->ScaleVector);
+        EffectParticle = Row->RangeEffectParticle;
+
+        if (DynamicMaterial) DynamicMaterial->SetScalarParameterValue("WarningAlpha", 0.2f);
+    }
 }
 
 // Called every frame
 void AEnemyWarningRange::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+    
+    if (!IsValid(YggCharacterEnemy)) return;
 
     TimeElapsed += DeltaTime;
 
@@ -77,8 +84,8 @@ void AEnemyWarningRange::Tick(float DeltaTime)
     if (TimeElapsed > Duration)
     {
         SpawnEffect();
-        BugTickCollision->SetCapsuleSize(100.0f, 100.0f);
-        BugTickCollision->CollisionOn();
+        RangeAttackCollision->SetCapsuleSize(100.0f, 100.0f);
+        RangeAttackCollision->CollisionOn();
         Destroy();
         return;
     }
@@ -86,14 +93,21 @@ void AEnemyWarningRange::Tick(float DeltaTime)
 
 void AEnemyWarningRange::ChangeArea()
 {
-    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(FName("BugBall"), nullptr);
+    if (IsValid(YggCharacterEnemy))
+    {
+        DataKeyString = YggCharacterEnemy->GetDataKey();
+    }
+
+    FName DataName = GetMeshNameByKey(DataKeyString);
+
+    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(DataName, nullptr);
     
     if (Row != nullptr)
     {
         float Progress = FMath::Clamp(TimeElapsed / Duration, 0.0f, 1.0f);
 
         FVector TargetScale = Row->ScaleVector;
-
+        
         SetActorScale3D(TargetScale * Progress);
     }
     
@@ -101,18 +115,26 @@ void AEnemyWarningRange::ChangeArea()
 
 void AEnemyWarningRange::SpawnEffect()
 {
-    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(FName("BugBall"), nullptr);
+    if (IsValid(YggCharacterEnemy))
+    {
+        DataKeyString = YggCharacterEnemy->GetDataKey();
+    }
+
+    FName DataName = GetMeshNameByKey(DataKeyString);
+
+    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(DataName, nullptr);
 
     if (Row == nullptr)
     {
         return;
     }
 
-    if (IsValid(BugBallParticle))
+    
+    if (IsValid(EffectParticle))
     {
         UGameplayStatics::SpawnEmitterAtLocation(
             GetWorld(),
-            BugBallParticle,
+            EffectParticle,
             GetActorLocation(),
             GetActorRotation(),
             FVector(Row->EffectScaleFloat),
@@ -159,8 +181,24 @@ void AEnemyWarningRange::SetCollisionOwnerEnemy(AEnemyCharacter* _Enemy)
 {
     if (IsValid(_Enemy))
     {
-
         YggCharacterEnemy = _Enemy;
-        BugTickCollision->SetOwnerCharacter(YggCharacterEnemy);
+        RangeAttackCollision->SetOwnerCharacter(YggCharacterEnemy);
     }
+}
+
+FName AEnemyWarningRange::GetMeshNameByKey(const FString& _DataString)
+{
+    static const TMap<FString, FName> SectionMap = {
+        {TEXT("Minion_Witch_0"), FName("Poison")},
+        {TEXT("Minion_Witch_1"), FName("Poison")},
+        {TEXT("Minion_Witch_2"), FName("Poison")},
+        {TEXT("Minion_Witch_3"), FName("Poison")}
+    };
+
+    if (const FName* Found = SectionMap.Find(_DataString))
+    {
+        return *Found;
+    }
+
+    return FName("Poison");
 }
