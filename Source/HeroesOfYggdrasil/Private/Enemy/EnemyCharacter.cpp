@@ -55,6 +55,8 @@ AEnemyCharacter::AEnemyCharacter()
 	MHPBarWidgetComponent->SetupAttachment(GetMesh());
 	MHPBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
 	
+	TickActorClass = AYggTickActor::StaticClass();
+
 	{
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
 		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
@@ -365,7 +367,7 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggHero* Hero)
 		this,
 		Hero,
 		TickActorClass,
-		EStatusEffectType::Poison,
+		EStatusEffectType::Burn,
 		0.5f,
 		Damage
 	);
