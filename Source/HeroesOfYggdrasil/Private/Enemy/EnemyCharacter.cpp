@@ -327,16 +327,17 @@ void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 	AEnemyWarningRange* EnemyWarningRange = GetWorld()->SpawnActor<AEnemyWarningRange>(
 		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
 	EnemyWarningRange->SetCollisionOwnerEnemy(this);
+	EnemyWarningRange->InitializeWarningRange();
 
 	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
-	float AttackTime = FindData.AIData.BugTickAttackTime;
+	float AttackTime = FindData.AIData.TickAttackTime;
 }
 
 
 
 // 공격
 
-void AEnemyCharacter::ThrowPoisonedBall(FVector _TargetLocation)
+void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
 {
 	if (RangeAttackClass == nullptr)
 	{

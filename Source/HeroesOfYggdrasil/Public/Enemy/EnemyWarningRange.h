@@ -32,6 +32,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	UFUNCTION()
+	void InitializeWarningRange();
 
 	UFUNCTION()
 	void ChangeArea();
@@ -61,9 +64,9 @@ public:
 		return TimeElapsed;
 	}
 
-	class UYggAttackCapsuleComponent* GetBugTickCollision()
+	class UYggAttackCapsuleComponent* GetRangeAttackCollision()
 	{
-		return BugTickCollision;
+		return RangeAttackCollision;
 	}
 	
 public:
@@ -102,5 +105,5 @@ public:
 	TSubclassOf<AYggTickActor> TickActorClass;
 
 	UPROPERTY(EditAnywhere, Category = "EnemyCapsuleCollision")
-	UYggAttackCapsuleComponent* BugTickCollision;
+	UYggAttackCapsuleComponent* RangeAttackCollision;
 };

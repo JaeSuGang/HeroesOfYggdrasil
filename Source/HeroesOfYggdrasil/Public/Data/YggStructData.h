@@ -154,7 +154,7 @@ public:
 	double AwaitTime = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
-	double BugTickAttackTime = 5.0f;
+	double TickAttackTime = 5.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	double TargetCheckTime = 0.3f;
@@ -319,6 +319,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	UMaterialInterface* WarningMaterial;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	UParticleSystem* RangeEffectParticle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float Duration = 3.0f;

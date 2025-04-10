@@ -98,7 +98,6 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	if (AttackTime < PlayAIData.Data.StandardZeroTime)
 	{
 		
-		
 		// 미니언 궁수
 		if (DataKeyStr.StartsWith(FString("Minion_Archer")))
 		{
@@ -109,7 +108,7 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 		// 저주술사
 		if (DataKeyStr.StartsWith(FString("Minion_Witch")))
 		{
-			EnemyCharacter->ThrowPoisonedBall(TargetRangeLocation);
+			EnemyCharacter->SpawnEnemySkillAttack(TargetRangeLocation);
 		}
 
 		AttackTime = PlayAIData.Data.AttackTime;

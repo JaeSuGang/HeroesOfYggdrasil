@@ -86,7 +86,7 @@ public:
 	void SpawnWarningOutRange(AActor* _Actor);
 
 	UFUNCTION(BlueprintCallable)
-	void ThrowPoisonedBall(FVector _TargetLocation);
+	void SpawnEnemySkillAttack(FVector _TargetLocation);
 
 
 	UWidgetComponent* GetWidgetComponent()
