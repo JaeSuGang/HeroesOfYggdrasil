@@ -190,9 +190,9 @@ FName AEnemyWarningRange::GetMeshNameByKey(const FString& _DataString)
 {
     static const TMap<FString, FName> SectionMap = {
         {TEXT("Minion_Witch_0"), FName("Poison")},
-        {TEXT("Minion_Witch_1"), FName("Poison")},
-        {TEXT("Minion_Witch_2"), FName("Poison")},
-        {TEXT("Minion_Witch_3"), FName("Poison")}
+        {TEXT("Minion_Witch_1"), FName("Snow")},
+        {TEXT("Minion_Witch_2"), FName("Lightning")},
+        {TEXT("Minion_Witch_3"), FName("Fire")}
     };
 
     if (const FName* Found = SectionMap.Find(_DataString))

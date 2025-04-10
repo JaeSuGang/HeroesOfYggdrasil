@@ -71,7 +71,7 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
 		// 저주술사인 경우
-		if (FString("Minion_Witch") == DataKeyStr)
+		if (DataKeyStr.StartsWith(FString("Minion_Witch")))
 		{
 			ChangeState(_OwnerComp, EEnemyAIState::Await);
 			return;

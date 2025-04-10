@@ -30,16 +30,25 @@ public:
 	{
 		return ProjectileMovement;
 	}
+
+	UFUNCTION()
+	void InitializeRangeAttack();
+
+	UFUNCTION()
+	FName GetMeshNameByKey(const FString& _DataString);
+
 	UFUNCTION()
 	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* DefualtSceneRoot;
 
 	UPROPERTY(VisibleAnywhere, Category = "Poison", meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* PoisonMesh;
+	UStaticMeshComponent* ObjectMesh;
 
 	UPROPERTY(EditAnywhere)
 	UDataTable* EnemyProjectileData;

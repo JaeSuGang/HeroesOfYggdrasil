@@ -342,9 +342,11 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
 	SpawnParams.Owner = this;
 
 	AEnemyRangeAttack* RangeAttack = GetWorld()->SpawnActor<AEnemyRangeAttack>(RangeAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
+	RangeAttack->InitializeRangeAttack();
 
 	if (RangeAttack != nullptr)
 	{
+		RangeAttack->SetOwner(this);
 		const float Speed = 2000.f;
 		FVector Direction = (_TargetLocation - SpawnLocation).GetSafeNormal();
 		RangeAttack->GetProjectileMovement()->Velocity = Direction * Speed;
