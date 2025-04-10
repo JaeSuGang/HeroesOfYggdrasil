@@ -66,6 +66,13 @@ void UMHPBarComponent::UpdateHPBarWidgetToAll_Implementation(float HP)
 	}
 }
 
+void UMHPBarComponent::OnStatusChanged()
+{
+	if (IsValid(MHPBarWidget))
+	{
+		MHPBarWidget->UpdateHPBar(0.0f);
+	}
+}
 
 void UMHPBarComponent::Init(AEnemyCharacter* Enemy)
 {
@@ -78,6 +85,7 @@ void UMHPBarComponent::Init(AEnemyCharacter* Enemy)
 		if (IsValid(MHPBarWidget))
 		{
 			MHPBarWidget->CAC->ServerDelegate_OnTakeDamage.AddDynamic(this, &UMHPBarComponent::UpdateHPBarWidgetToAll);
+			MHPBarWidget->CAC->ClientDelegate_OnStatusChanged.AddDynamic(this, &UMHPBarComponent::OnStatusChanged);
 		}
 	}
 }
