@@ -85,10 +85,31 @@ void UYggPlayerStatusUserWidget::NativeTick(const FGeometry& MyGeometry, float I
 
 void UYggPlayerStatusUserWidget::SetFaceCam(UTexture2D* Texture)
 {
-    if (PlayerFace && Texture)
+    if (!PlayerFace || !MaskedMaterial || !Texture || !DiamondMaskTexture)
     {
-        PlayerFace->SetBrushFromTexture(Texture);
+        UE_LOG(LogTemp, Warning, TEXT("SetFaceCam: 필요한 리소스가 없습니다."));
+        return;
     }
+
+    if (!FaceMatInst)
+    {
+        FaceMatInst = UMaterialInstanceDynamic::Create(MaskedMaterial, this);
+    }
+
+    FaceMatInst->SetTextureParameterValue("RenderTarget", Texture);
+    FaceMatInst->SetTextureParameterValue("DiamondMaskTexture", DiamondMaskTexture);
+    
+    FaceMatInst->SetTextureParameterValue("RenderTarget", Texture); // 머티리얼 파라미터 이름 일치해야 함
+
+    FSlateBrush Brush;
+    Brush.SetResourceObject(FaceMatInst);
+    Brush.ImageSize = FVector2D(128.f, 128.f); // 원하는 사이즈
+    PlayerFace->SetBrush(Brush);
+    
+    //if (PlayerFace && Texture)
+    //{
+    //    PlayerFace->SetBrushFromTexture(Texture);
+    //}
 }
 
 UTexture2D* UYggPlayerStatusUserWidget::ConvertRenderTargetToTexture2D(UTextureRenderTarget2D* RenderTarget)

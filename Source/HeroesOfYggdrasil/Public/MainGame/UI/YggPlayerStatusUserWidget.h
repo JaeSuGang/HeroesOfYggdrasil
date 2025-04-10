@@ -46,4 +46,14 @@ private:
 	UYggHPBarUserWidget* HPBarUserWidget;
 
 	UTexture2D* Texture2D;
+
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	UMaterialInterface* MaskedMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	UTexture2D* DiamondMaskTexture;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* FaceMatInst;
+
 };
