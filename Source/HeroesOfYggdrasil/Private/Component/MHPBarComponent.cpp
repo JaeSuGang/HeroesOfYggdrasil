@@ -33,6 +33,7 @@ void UMHPBarComponent::BeginPlay()
 	MHPBarWidgetComponent->SetWidgetSpace(EWidgetSpace::World);
 	MHPBarWidgetComponent->SetDrawSize(FVector2D(100.0f, 10.0f));
 	MHPBarWidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
+	MHPBarWidgetComponent->SetIsReplicated(true);
 
 	MHPBarWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarWidgetClass);
 	
@@ -59,9 +60,10 @@ void UMHPBarComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 void UMHPBarComponent::UpdateHPBarWidgetToAll_Implementation(float HP)
 {
-
+	if (MHPBarWidget)
+	{
 		MHPBarWidget->UpdateHPBar(HP);
-
+	}
 }
 
 
@@ -70,15 +72,12 @@ void UMHPBarComponent::Init(AEnemyCharacter* Enemy)
 	if (IsValid(Enemy))
 	{
 		EnemyCharacter = Enemy;
-		MHPBarWidget->SetAttachedCharacter(EnemyCharacter);
-		UCharacterAttributeComponent* CAC = EnemyCharacter->GetAttributeComponent();
 
-		if (IsValid(CAC))
+		MHPBarWidget->SetAttachedCharacter(EnemyCharacter);
+		
+		if (IsValid(MHPBarWidget))
 		{
-			if (GetOwner()->HasAuthority())
-			{
-				CAC->ServerDelegate_OnTakeDamage.AddDynamic(this, &UMHPBarComponent::UpdateHPBarWidgetToAll);
-			}
+			MHPBarWidget->CAC->ServerDelegate_OnTakeDamage.AddDynamic(this, &UMHPBarComponent::UpdateHPBarWidgetToAll);
 		}
 	}
 }

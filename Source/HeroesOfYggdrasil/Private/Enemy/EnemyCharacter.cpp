@@ -50,19 +50,10 @@ AEnemyCharacter::AEnemyCharacter()
 	CharacterAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("CharacterAttributeComponent"));
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AEnemyAIController::StaticClass();
-	
-	//WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComponent"));
-	//WidgetComponent->SetupAttachment(GetMesh());
-	//WidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
-	//WidgetComponent->SetWidgetSpace(EWidgetSpace::World);
-	//WidgetComponent->SetDrawSize(FVector2D(100.0f, 10.0f));
-	//WidgetComponent->SetPivot(FVector2D(0.5f, 0.0f));
 
 	MHPBarWidgetComponent = CreateDefaultSubobject<UMHPBarComponent>(TEXT("MHPWidgetComponent"));
 	MHPBarWidgetComponent->SetupAttachment(GetMesh());
 	MHPBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
-	
-	
 	
 	{
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
@@ -72,15 +63,6 @@ AEnemyCharacter::AEnemyCharacter()
 		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
 	}
 }
-
-
-//void AEnemyCharacter::UpdateHPBarWidgetToAll_Implementation(float HP)
-//{
-//	if (UYggMHPBarUserWidget* MHPBarWidget = Cast<UYggMHPBarUserWidget>(WidgetComponent->GetWidget()))
-//	{
-//		MHPBarUserWidget->UpdateHPBar(HP);
-//	}
-//}
 
 void AEnemyCharacter::BeginPlay()
 {
@@ -159,12 +141,12 @@ void AEnemyCharacter::BeginPlay()
 			CharacterAttributeComponent->Server_SetAttackPoints(MonsterData->AIData.EnemyAttackPoints);
 			CharacterAttributeComponent->Server_SetDefensePoints(MonsterData->AIData.EnemyDefensePoints);
 			CharacterAttributeComponent->AddTag(TEXT("Enemy"));
-			//CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
 			SetActorScale3D(MonsterData->AIData.Scale);
 			OnHeroEnteredRange.AddDynamic(this, &AEnemyCharacter::HandleHeroEnteredRange);
 		}
+			
 
-		MHPBarWidgetComponent->Init(this);
+		//CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
 		//MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
 		//
 		//if (!MHPBarUserWidget)
@@ -172,6 +154,9 @@ void AEnemyCharacter::BeginPlay()
 		//MHPBarUserWidget->SetAttachedCharacter(this);
 		//WidgetComponent->SetWidget(MHPBarUserWidget);
 	}
+
+	
+	MHPBarWidgetComponent->Init(this);
 
 	// 충돌 설정
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
