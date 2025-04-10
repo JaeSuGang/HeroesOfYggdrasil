@@ -29,7 +29,7 @@ void UYggMHPBarUserWidget::NativeConstruct()
 
     if (IsValid(CAC))
     {
-        CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggMHPBarUserWidget::Init);
+        //CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggMHPBarUserWidget::Init);
     }
 }
 

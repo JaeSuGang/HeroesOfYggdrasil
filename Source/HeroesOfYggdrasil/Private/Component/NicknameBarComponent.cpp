@@ -35,6 +35,7 @@ void UNicknameBarComponent::BeginPlay()
 	if (!NicknameBarWidgetClass)
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 	NicknameBarWidget = CreateWidget<UYggNicknameBarUserWidget>(GetWorld(), NicknameBarWidgetClass);
+	if (!NicknameBarWidget) return;
 	NicknameBarWidget->NicknameBarComponent = this;
 
 	//NicknameBarWidget->SetPlayerName();
