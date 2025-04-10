@@ -21,6 +21,12 @@ AEnemyWarningRange::AEnemyWarningRange()
 
     PlaneMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlaneMesh"));
     RootComponent = PlaneMesh;
+    
+    
+    {
+        bReplicates = true;
+        SetReplicateMovement(true);
+    }
 
     {
         BugTickCollision = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("CapsuleCollision"));
@@ -173,17 +179,17 @@ void AEnemyWarningRange::SetCollisionOwnerEnemy(AEnemyCharacter* _Enemy)
 
 FName AEnemyWarningRange::GetMeshNameByKey(const FString& _DataString)
 {
-    /*static const TMap<FString, FName> SectionMap = {
-        {TEXT("Goblin"), FName("Hit_Goblin")},
-        {TEXT("Slime"), FName("Hit_Slime")},
-        {TEXT("Orc"), FName("Hit_Orc")},
-        {TEXT("GoblinBoss"), FName("Hit_GoblinBoss")}
+    static const TMap<FString, FName> SectionMap = {
+        {TEXT("Minion_Witch_0"), FName("Poison")},
+        {TEXT("Minion_Witch_1"), FName("Poison")},
+        {TEXT("Minion_Witch_2"), FName("Poison")},
+        {TEXT("Minion_Witch_3"), FName("Poison")}
     };
 
     if (const FName* Found = SectionMap.Find(_DataString))
     {
         return *Found;
-    }*/
+    }
 
-    return FName("None");
+    return FName("Poison");
 }
