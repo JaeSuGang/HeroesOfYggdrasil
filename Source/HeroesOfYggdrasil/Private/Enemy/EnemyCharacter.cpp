@@ -341,7 +341,7 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
 	SpawnParams.Owner = this;
 
 	AEnemyRangeAttack* RangeAttack = GetWorld()->SpawnActor<AEnemyRangeAttack>(RangeAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
-	RangeAttack->InitializeRangeAttack();
+	
 
 	if (RangeAttack != nullptr)
 	{

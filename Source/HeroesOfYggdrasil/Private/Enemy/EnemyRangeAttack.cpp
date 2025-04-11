@@ -26,9 +26,9 @@ AEnemyRangeAttack::AEnemyRangeAttack()
     ObjectMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PoisonMesh"));
     ObjectMesh->SetupAttachment(DefualtSceneRoot);
 
-    PoisonCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
-    PoisonCollision->SetupAttachment(DefualtSceneRoot);
-    PoisonCollision->SetCollisionProfileName(TEXT("MonsterAttack"));
+    SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
+    SphereCollision->SetupAttachment(DefualtSceneRoot);
+    SphereCollision->SetCollisionProfileName(TEXT("MonsterAttack"));
 }
 
 // Called when the game starts or when spawned
@@ -36,16 +36,23 @@ void AEnemyRangeAttack::BeginPlay()
 {
 	Super::BeginPlay();
 
-    PoisonCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyRangeAttack::OverLap);
-    PoisonCollision->OnComponentHit.AddDynamic(this, &AEnemyRangeAttack::OnHit);
+    SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyRangeAttack::OverLap);
+    SphereCollision->OnComponentHit.AddDynamic(this, &AEnemyRangeAttack::OnHit);
 
     DestroyTime = 3.0f;
+
+    InitializeRangeAttack();
 }
 
 void AEnemyRangeAttack::InitializeRangeAttack()
 {
     AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOwner());
     
+    if (!IsValid(EnemyCharacter))
+    {
+        return;
+    }
+
     FString DataKeyString = EnemyCharacter->GetDataKey();
     FName DataName = GetMeshNameByKey(DataKeyString);
 
