@@ -1,0 +1,17 @@
+// Coded By AssortRock Unreal Engine Class Project
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Player/YggHero.h"
+#include "YggHeroAurora.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class HEROESOFYGGDRASIL_API AYggHeroAurora : public AYggHero
+{
+	GENERATED_BODY()
+	
+};
