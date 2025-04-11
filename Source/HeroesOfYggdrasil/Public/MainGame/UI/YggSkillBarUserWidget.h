@@ -98,6 +98,17 @@ private:
 	UTexture2D* RTexture;
 	UTexture2D* ShiftTexture;
 
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	UMaterialInterface* DiamondMaskMaterial;
 
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	UTexture2D* DiamondMaskTexture;
+
+	//UPROPERTY()
+	//UMaterialInstanceDynamic* SkillMatInst;
+	UPROPERTY()
 	TMap<FName, FSkillData> SkillMap;
+
+	UPROPERTY()
+	TMap<UProgressBar*, UMaterialInstanceDynamic*> MaterialMap;
 };

@@ -49,16 +49,11 @@ void UYggSkillBarUserWidget::NativeConstruct()
             Hero->OnSkillR.AddDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
         }
     }
-
-
-    //StartCoolTime(FName("Q"), 5.0f);
-    //StartCoolTime(FName("E"), 3.0f);
-    //StartCoolTime(FName("R"), 10.0f);
 }
 
 void UYggSkillBarUserWidget::InitSkills()
 {
-    FVector2D IconSize(128.0f, 128.0f);
+    FVector2D IconSize(64.0f, 64.0f);
 
     FSkillData Q;
     Q.Bar = Skill_Q;
@@ -86,10 +81,10 @@ void UYggSkillBarUserWidget::InitSkills()
 
 }
 
-FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f)
+FSlateBrush MakeBrush(UMaterialInterface* Mat, FVector2D Size, float Brightness = 1.0f)
 {
     FSlateBrush Brush;
-    Brush.SetResourceObject(Tex);
+    Brush.SetResourceObject(Mat);
     Brush.ImageSize = Size;
     Brush.TintColor = FLinearColor(Brightness, Brightness, Brightness, 1.0f);
     Brush.DrawAs = ESlateBrushDrawType::Image;
@@ -100,12 +95,21 @@ void UYggSkillBarUserWidget::SetupSkillBar(UProgressBar* Bar, UTexture2D* Tex, F
 {
     if (!Bar || !Tex) return;
 
+    UMaterialInstanceDynamic* DynMat = UMaterialInstanceDynamic::Create(DiamondMaskMaterial, this);
+    DynMat->SetTextureParameterValue("RenderTarget", Tex);
+    DynMat->SetTextureParameterValue("DiamondMaskTexture", DiamondMaskTexture);
+
+    DynMat->SetScalarParameterValue("Progress", 1.0f);
+
     FProgressBarStyle Style;
-    Style.BackgroundImage = MakeBrush(Tex, Size, 1.0f);
-    Style.FillImage = MakeBrush(Tex, Size, 0.3f);
+    Style.BackgroundImage = MakeBrush(DynMat, Size, 1.0f);
+    Style.FillImage = MakeBrush(DynMat, Size, 1.0f);
     Bar->SetWidgetStyle(Style);
 
-    Bar->SetPercent(0.0f);
+    Bar->SetPercent(1.0f);
+
+    Bar->WidgetStyle.FillImage.TintColor = FLinearColor::White;
+    MaterialMap.Add(Bar, DynMat);
 }
 
 
@@ -164,7 +168,11 @@ void UYggSkillBarUserWidget::UpdateCoolTime(FName Key)
 
     if (IsValid(Skill.Bar))
     {
-        Skill.Bar->SetPercent(Ratio);
+        Skill.Bar->SetPercent(1.0f);
+        if (UMaterialInstanceDynamic** MatPtr = MaterialMap.Find(Skill.Bar))
+        {
+            (*MatPtr)->SetScalarParameterValue("Progress", 1.0f - Ratio);
+        }
     }
 }
 
@@ -178,7 +186,11 @@ void UYggSkillBarUserWidget::EndCoolTime(FName Key)
 
     if (IsValid(Skill.Bar))
     {
-        Skill.Bar->SetPercent(0.0f);
+        Skill.Bar->SetPercent(1.0f);
+        if (UMaterialInstanceDynamic** MatPtr = MaterialMap.Find(Skill.Bar))
+        {
+            (*MatPtr)->SetScalarParameterValue("Progress", 1.0f);
+        }
     }
 }
 
