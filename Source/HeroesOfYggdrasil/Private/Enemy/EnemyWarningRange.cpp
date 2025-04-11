@@ -46,6 +46,9 @@ AEnemyWarningRange::AEnemyWarningRange()
 void AEnemyWarningRange::BeginPlay()
 {
     Super::BeginPlay();
+
+    YggCharacterEnemy = Cast<AEnemyCharacter>(GetOwner());
+    InitializeWarningRange();
 }
 
 void AEnemyWarningRange::InitializeWarningRange()
