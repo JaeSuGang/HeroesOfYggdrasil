@@ -60,6 +60,14 @@ AYggHeroGreystone::AYggHeroGreystone()
 		AttackCapsuleComponent->SetOwnerCharacter(this);
 		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), AttackCapsuleComponent);
 	}
+
+	SkillRBuffCapsule = CreateDefaultSubobject<UYggCapsuleComponent>(TEXT("SkillRRecover"));
+	SkillRBuffCapsule->SetupAttachment(GetMesh());
+	SkillRBuffCapsule->SetOwnerCharacter(this);
+	
+	SkillRBuffCapsule->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SkillRBuffCapsule->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SkillRBuffCapsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECR_Overlap);
 }
 
 AYggHeroGreystone::~AYggHeroGreystone()
