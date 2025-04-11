@@ -6,6 +6,7 @@
 // 캡슐 컴포넌트
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
+#include "Net/UnrealNetwork.h"
 #include "Engine/DataTable.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -95,6 +96,14 @@ void AYggTickActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	
 	Super::EndPlay(EndPlayReason);
 	CleanupEffects();
+}
+
+void AYggTickActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AYggTickActor, TickNiagaraSystem);
+	DOREPLIFETIME(AYggTickActor, TickParticle);
 }
 
 void AYggTickActor::DestroyStatusTag()

@@ -35,7 +35,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void SpawnEffect(AYggCharacter* _Target);
@@ -66,10 +66,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
 	float StatusTickTime;
 
-	UPROPERTY(EditAnywhere, Category = "TickEffects")
+	UPROPERTY(EditAnywhere, Replicated, Category = "TickEffects")
 	TSoftObjectPtr<UParticleSystem> TickParticle;
 
-	UPROPERTY(EditAnywhere, Category = "TickEffects")
+	UPROPERTY(EditAnywhere, Replicated, Category = "TickEffects")
 	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tick")

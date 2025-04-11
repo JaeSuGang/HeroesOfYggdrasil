@@ -123,10 +123,10 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "EnemyEvent")
 	FOnHeroEnteredRangeDelegate OnHeroEnteredRange;
 
-	UPROPERTY(EditAnywhere, Category = "TickEffects")
+	UPROPERTY(EditAnywhere, Replicated, Category = "TickEffects")
 	TSoftObjectPtr<UParticleSystem> TickParticle;
 
-	UPROPERTY(EditAnywhere, Category = "TickEffects")
+	UPROPERTY(EditAnywhere, Replicated, Category = "TickEffects")
 	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 
 private:
