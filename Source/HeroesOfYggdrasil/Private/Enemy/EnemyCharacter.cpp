@@ -88,6 +88,7 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.CurHP = FindData.AIData.MaxHP;
 		AIData->PlayData.OriginPos = GetActorLocation();
 		AIData->PlayData.OriginPos.Z = 0.0f;
+
 	}
 		
 	// 몬스터 데이터 세팅
@@ -130,7 +131,8 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 
-	
+	TickParticle = FindData.TickParticle;
+	TickNiagaraSystem = FindData.TickNiagaraSystem;
 
 
 	// AttributeComponent 세팅
@@ -146,15 +148,6 @@ void AEnemyCharacter::BeginPlay()
 			SetActorScale3D(MonsterData->AIData.Scale);
 			OnHeroEnteredRange.AddDynamic(this, &AEnemyCharacter::HandleHeroEnteredRange);
 		}
-			
-
-		//CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
-		//MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
-		//
-		//if (!MHPBarUserWidget)
-		//	UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-		//MHPBarUserWidget->SetAttachedCharacter(this);
-		//WidgetComponent->SetWidget(MHPBarUserWidget);
 	}
 
 	
@@ -354,18 +347,19 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
 
 
 
-void AEnemyCharacter::HandleHeroEnteredRange(AYggHero* Hero)
+void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 {
 	if (!HasAuthority()) return;
+	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(_Target);
+	AYggHero* Hero = Cast<AYggHero>(_Target);
+
+	if (!IsValid(Hero) && !IsValid(Enemy))
+	{
+		return;
+	}
+
 
 	float Damage = CharacterAttributeComponent->AttackPoints / 10.0f;
-
-	AYggTickActor* TickActor = AYggTickActor::SpawnTickEffectIfNotExist(
-		this,
-		Hero,
-		TickActorClass,
-		EStatusEffectType::Burn,
-		0.5f,
-		Damage
-	);
+	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target);
+	
 }

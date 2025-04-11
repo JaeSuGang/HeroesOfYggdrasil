@@ -266,6 +266,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<class AEnemyCharacter> SpawnClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSoftObjectPtr<UParticleSystem> TickParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 };
 
 
@@ -297,6 +303,12 @@ struct FStatusTickDataRow : public FTableRowBase
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float TickTime = 5.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float Interval = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float DamageAmount = 0.1f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSoftObjectPtr<UParticleSystem> Particle;
