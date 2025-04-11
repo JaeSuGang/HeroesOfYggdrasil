@@ -40,8 +40,9 @@ public:
 	UFUNCTION()
 	void ChangeArea();
 
-	UFUNCTION()
+	UFUNCTION(NetMulticast, Reliable)
 	void SpawnEffect();
+	void SpawnEffect_Implementation();
 	
 	UFUNCTION()
 	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

@@ -99,6 +99,43 @@ void AEnemyWarningRange::Tick(float DeltaTime)
     }
 }
 
+void AEnemyWarningRange::SpawnEffect_Implementation()
+{
+    if (IsValid(YggCharacterEnemy))
+    {
+        DataKeyString = YggCharacterEnemy->GetDataKey();
+    }
+
+    FName DataName = GetMeshNameByKey(DataKeyString);
+    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(DataName, nullptr);
+
+    if (!Row) return;
+
+    if (IsValid(EffectParticle))
+    {
+        UGameplayStatics::SpawnEmitterAtLocation(
+            GetWorld(),
+            EffectParticle,
+            GetActorLocation(),
+            GetActorRotation(),
+            FVector(Row->EffectScaleFloat),
+            true
+        );
+    }
+
+    if (IsValid(EnemyNiagaraSystem))
+    {
+        UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+            GetWorld(),
+            EnemyNiagaraSystem,
+            GetActorLocation(),
+            GetActorRotation(),
+            FVector(Row->EffectScaleFloat),
+            true
+        );
+    }
+}
+
 void AEnemyWarningRange::ChangeArea()
 {
     if (IsValid(YggCharacterEnemy))
@@ -121,47 +158,6 @@ void AEnemyWarningRange::ChangeArea()
     
 }
 
-void AEnemyWarningRange::SpawnEffect()
-{
-    if (IsValid(YggCharacterEnemy))
-    {
-        DataKeyString = YggCharacterEnemy->GetDataKey();
-    }
-
-    FName DataName = GetMeshNameByKey(DataKeyString);
-
-    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(DataName, nullptr);
-
-    if (Row == nullptr)
-    {
-        return;
-    }
-
-    
-    if (IsValid(EffectParticle))
-    {
-        UGameplayStatics::SpawnEmitterAtLocation(
-            GetWorld(),
-            EffectParticle,
-            GetActorLocation(),
-            GetActorRotation(),
-            FVector(Row->EffectScaleFloat),
-            true  // 자동 파괴
-        );
-    }
-
-    if (IsValid(EnemyNiagaraSystem))
-    {
-        UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-            GetWorld(),
-            EnemyNiagaraSystem,
-            GetActorLocation(),
-            GetActorRotation(),
-            FVector(Row->EffectScaleFloat),
-            true  // bAutoDestroy
-        );
-    }
-}
 
 void AEnemyWarningRange::HideAllComponents()
 {
