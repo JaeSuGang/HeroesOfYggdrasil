@@ -15,7 +15,7 @@ struct HEROESOFYGGDRASIL_API FMonsterSpawnInfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere)
-	FMonsterDataRow MonsterData;
+	FDataTableRowHandle MonsterData;
 
 	UPROPERTY(EditAnywhere)
 	FVector SpawnLocation;
@@ -31,7 +31,7 @@ USTRUCT()
 struct HEROESOFYGGDRASIL_API FWaveTableRow : public FTableRowBase
 {
 	GENERATED_BODY()
-
+		
 	UPROPERTY(EditAnywhere)
 	TArray<FMonsterSpawnInfo> SpawnInfos;
 };

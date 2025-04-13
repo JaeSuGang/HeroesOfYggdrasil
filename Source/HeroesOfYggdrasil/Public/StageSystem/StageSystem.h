@@ -42,9 +42,9 @@ public:
 	UPROPERTY(Replicated, Instanced, EditAnywhere)
 	TArray<UStageBase*> StageCycle;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, VisibleAnywhere)
 	int CurrentRound;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, VisibleAnywhere)
 	int CurrentStageIndex;
 };
