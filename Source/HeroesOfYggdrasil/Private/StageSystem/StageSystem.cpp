@@ -57,6 +57,7 @@ void UStageSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 	DOREPLIFETIME(UStageSystem, StageCycle);
 	DOREPLIFETIME(UStageSystem, CurrentStageIndex);
+	DOREPLIFETIME(UStageSystem, Timer);
 }
 
 void UStageSystem::RegisterObjectsToReplicate()

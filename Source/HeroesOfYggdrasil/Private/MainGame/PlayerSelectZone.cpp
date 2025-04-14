@@ -169,8 +169,6 @@ void APlayerSelectZone::SelectCharacter_Implementation()
 	}
 }
 
-
-
 void APlayerSelectZone::SpawnNextSelectable(int nHowMuchNext)
 {
 	CurrentTableIndex += nHowMuchNext;
