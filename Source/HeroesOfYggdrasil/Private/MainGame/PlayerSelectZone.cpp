@@ -15,6 +15,7 @@
 #include "StageSystem/StageManager.h"
 #include "Core/YggPlayerController.h"
 #include "Player/YggHero.h"
+#include "MainGame/UI/MainGameHUD.h"
 
 APlayerSelectZone::APlayerSelectZone()
 {
@@ -104,6 +105,15 @@ APawn* APlayerSelectZone::GetSpawnedSelectable() const
 	return SpawnedSelectable;
 }
 
+void APlayerSelectZone::ForceMainWidget_Implementation()
+{
+	if (AMainGameHUD* MGH = GetWorld()->GetFirstPlayerController()->GetHUD<AMainGameHUD>())
+	{
+		MGH->CloseCurrentWidget();
+		MGH->ShowMainGameWidget();
+	}
+}
+
 void APlayerSelectZone::SetToPosition_Implementation(int nIndex)
 {
 	TActorIterator<APlayerStart> Iter(GetWorld());
@@ -173,5 +183,6 @@ void APlayerSelectZone::OnStartGame(FOnGameStartParams OnGameStartParams)
 	if (HasAuthority())
 	{
 		SelectCharacter();
+		ForceMainWidget();
 	}
 }
