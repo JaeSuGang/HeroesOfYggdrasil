@@ -6,6 +6,8 @@
 #include "GameFramework/HUD.h"
 #include "MainGameHUD.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSetPlayerName);
+
 class UYggLobbyUserWidget;
 class UYggMainGameUserWidget;
 class UYggMHPBarUserWidget;
@@ -60,6 +62,9 @@ public:
 	}
 
 public:
+	UPROPERTY(BlueprintAssignable, Category = YGG)
+	FOnSetPlayerName OnSetPlayerName;
+
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> MainWidgetClass;
 
@@ -94,5 +99,6 @@ public:
 	UYggMHPBarUserWidget* MHPBarUserWidget;*/
 
 	APlayerController* PC;
+
 
 };

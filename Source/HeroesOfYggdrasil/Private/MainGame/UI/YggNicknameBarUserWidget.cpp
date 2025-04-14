@@ -22,6 +22,11 @@ void UYggNicknameBarUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD());
+	
+	HUD->OnSetPlayerName.AddDynamic(this, &UYggNicknameBarUserWidget::SetPlayerName);
+
 }
 
 void UYggNicknameBarUserWidget::SetPlayerName()

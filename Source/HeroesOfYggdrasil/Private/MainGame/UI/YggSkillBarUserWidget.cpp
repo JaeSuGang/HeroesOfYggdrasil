@@ -102,7 +102,7 @@ FSlateBrush MakeBrush(UMaterialInterface* Mat, FVector2D Size, float Brightness 
     FSlateBrush Brush;
     Brush.SetResourceObject(Mat);
     Brush.ImageSize = Size;
-    Brush.TintColor = FLinearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    Brush.TintColor = FLinearColor(Brightness, Brightness, Brightness, 1.0f);
     Brush.DrawAs = ESlateBrushDrawType::Image;
     return Brush;
 }
@@ -115,10 +115,10 @@ void UYggSkillBarUserWidget::SetupSkillBar(UProgressBar* Bar, UImage* Image, UTe
     ProgressDynMat->SetTextureParameterValue("RenderTarget", BackTex);
     ProgressDynMat->SetTextureParameterValue("DiamondMaskTexture", DiamondMaskTexture);
     ProgressDynMat->SetScalarParameterValue("Progress", 1.0f);
-    //ProgressDynMat->SetVectorParameterValue("TintColor", FLinearColor::White);
+    ProgressDynMat->SetVectorParameterValue("TintColor", FLinearColor::White);
 
     FProgressBarStyle PStyle;
-    PStyle.BackgroundImage = MakeBrush(ProgressDynMat, Size, 1.0f);
+    PStyle.BackgroundImage = MakeBrush(ProgressDynMat, Size, 0.5f);
     PStyle.FillImage = MakeBrush(ProgressDynMat, Size, 1.0f);
     Bar->SetWidgetStyle(PStyle);
     Bar->SetPercent(1.0f);
@@ -164,6 +164,8 @@ void UYggSkillBarUserWidget::StartCoolTime(FName Key, float Duration)
     Skill.RemainingTime = Duration;
     Skill.Text->SetText(FText::AsNumber(FMath::FloorToInt(Skill.RemainingTime)));
     Skill.Text->SetVisibility(ESlateVisibility::Visible);
+
+    Skill.Image->SetColorAndOpacity(FLinearColor(0.4f, 0.4f, 0.4f, 1.0f));
 
     if (Skill.Bar)
     {
@@ -214,6 +216,11 @@ void UYggSkillBarUserWidget::EndCoolTime(FName Key)
         {
             (*MatPtr)->SetScalarParameterValue("Progress", 1.0f);
         }
+    }
+
+    if (IsValid(Skill.Image))
+    {
+        Skill.Image->SetColorAndOpacity(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
     }
 }
 

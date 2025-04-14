@@ -63,9 +63,10 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 
 		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(SkillBarWidget->Slot))
 		{
-			//CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
-			//CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f));
-			CanvasSlot->SetPosition(FVector2D(704.0f, 952.0f));
+			CanvasSlot->SetAnchors(FAnchors(0.5f, 1.0f));
+			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+			CanvasSlot->SetPosition(FVector2D(-296.0f, -183.0f));
+			
 		}
 	}
 
