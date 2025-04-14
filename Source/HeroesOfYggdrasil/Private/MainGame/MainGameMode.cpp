@@ -11,9 +11,10 @@
 #include "MainGame/MainGameState.h"
 #include "MainGame/MainGamePlayerState.h"
 #include "MainGame/PlayerSelectZone.h"
-#include "MainGame/StageManager.h"
 #include "MainGame/PlayerManager.h"
 #include "MainGame/EnemyManager.h"
+#include "StageSystem/StageManager.h"
+#include "UpgradeSystem/UpgradeManager.h"
 
 void AMainGameMode::InitGameState()
 {
@@ -35,6 +36,7 @@ void AMainGameMode::InitGameState()
 	MGS->PlayerManager = GetWorld()->SpawnActor<APlayerManager>(MGS->PlayerManagerClass);
 	MGS->StageManager = GetWorld()->SpawnActor<AStageManager>(MGS->StageManagerClass);
 	MGS->EnemyManager = GetWorld()->SpawnActor<AEnemyManager>(MGS->EnemyManagerClass);
+	MGS->UpgradeManager = GetWorld()->SpawnActor<AUpgradeManager>(AUpgradeManager::StaticClass());
 }
 
 void AMainGameMode::BeginPlay()

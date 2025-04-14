@@ -16,7 +16,7 @@
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "MainGame/StageManager.h"
+#include "StageSystem/StageManager.h"
 #include "Player/YggHero.h"
 
 #include "MainGame/UI/YggMHPBarUserWidget.h"

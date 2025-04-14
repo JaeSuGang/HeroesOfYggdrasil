@@ -8,9 +8,15 @@
 
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/PlayerManager.h"
-#include "MainGame/StageManager.h"
+#include "StageSystem/StageManager.h"
+#include "StageSystem/StageSystem.h"
+#include "UpgradeSystem/UpgradeSystem.h"
 
 
+AMainGameState::AMainGameState()
+{
+
+}
 
 void AMainGameState::BeginPlay()
 {
@@ -25,6 +31,7 @@ void AMainGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(AMainGameState, PlayerManager);
 	DOREPLIFETIME(AMainGameState, StageManager);
 	DOREPLIFETIME(AMainGameState, EnemyManager);
+	DOREPLIFETIME(AMainGameState, UpgradeManager);
 }
 
 APlayerManager* AMainGameState::GetPlayerManager() const
