@@ -382,6 +382,10 @@ public:
 	UTexture2D* SkillEIcon;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* SkillRIcon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* SkillShifteIcon;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* SkillBackGroundIcon;
 };
 
 

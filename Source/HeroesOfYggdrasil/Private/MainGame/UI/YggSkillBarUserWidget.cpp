@@ -5,6 +5,7 @@
 
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 #include "Player/YggHero.h"
 #include "Attribute/HeroAttributeComponent.h"
@@ -57,26 +58,32 @@ void UYggSkillBarUserWidget::InitSkills()
 
     FSkillData Q;
     Q.Bar = Skill_Q;
+    Q.Image = Skill_Q_Image;
     Q.Icon = QTexture;
+    Q.BackGround = BackGroundTexture;
     Q.Text = CoolTimeQ;
     Q.Text->SetVisibility(ESlateVisibility::Hidden);
-    SetupSkillBar(Q.Bar, Q.Icon, IconSize);
+    SetupSkillBar(Q.Bar, Q.Image, Q.Icon, Q.BackGround, IconSize);
     SkillMap.Add("SkillQ", Q);
 
     FSkillData E;
     E.Bar = Skill_E;
+    E.Image = Skill_E_Image;
     E.Icon = ETexture;
+    E.BackGround = BackGroundTexture;
     E.Text = CoolTimeE;
     E.Text->SetVisibility(ESlateVisibility::Hidden);
-    SetupSkillBar(E.Bar, E.Icon, IconSize);
+    SetupSkillBar(E.Bar, E.Image, E.Icon, E.BackGround, IconSize);
     SkillMap.Add("SkillE", E);
 
     FSkillData R;
     R.Bar = Skill_R;
+    R.Image = Skill_R_Image;
     R.Icon = RTexture;
+    R.BackGround = BackGroundTexture;
     R.Text = CoolTimeR;
     R.Text->SetVisibility(ESlateVisibility::Hidden);
-    SetupSkillBar(R.Bar, R.Icon, IconSize);
+    SetupSkillBar(R.Bar, R.Image, R.Icon, R.BackGround, IconSize);
     SkillMap.Add("SkillR", R);
 
 }
@@ -91,25 +98,29 @@ FSlateBrush MakeBrush(UMaterialInterface* Mat, FVector2D Size, float Brightness 
     return Brush;
 }
 
-void UYggSkillBarUserWidget::SetupSkillBar(UProgressBar* Bar, UTexture2D* Tex, FVector2D Size)
+void UYggSkillBarUserWidget::SetupSkillBar(UProgressBar* Bar, UImage* Image, UTexture2D* Tex, UTexture2D* BackTex, FVector2D Size)
 {
-    if (!Bar || !Tex) return;
+    if (!Bar || !Image || !Tex || !BackTex) return;
 
-    UMaterialInstanceDynamic* DynMat = UMaterialInstanceDynamic::Create(DiamondMaskMaterial, this);
-    DynMat->SetTextureParameterValue("RenderTarget", Tex);
-    DynMat->SetTextureParameterValue("DiamondMaskTexture", DiamondMaskTexture);
+    UMaterialInstanceDynamic* ProgressDynMat = UMaterialInstanceDynamic::Create(DiamondMaskMaterial, this);
+    ProgressDynMat->SetTextureParameterValue("RenderTarget", BackTex);
+    ProgressDynMat->SetTextureParameterValue("DiamondMaskTexture", DiamondMaskTexture);
+    ProgressDynMat->SetScalarParameterValue("Progress", 1.0f);
 
-    DynMat->SetScalarParameterValue("Progress", 1.0f);
-
-    FProgressBarStyle Style;
-    Style.BackgroundImage = MakeBrush(DynMat, Size, 1.0f);
-    Style.FillImage = MakeBrush(DynMat, Size, 1.0f);
-    Bar->SetWidgetStyle(Style);
-
+    FProgressBarStyle PStyle;
+    PStyle.BackgroundImage = MakeBrush(ProgressDynMat, Size, 1.0f);
+    PStyle.FillImage = MakeBrush(ProgressDynMat, Size, 1.0f);
+    Bar->SetWidgetStyle(PStyle);
     Bar->SetPercent(1.0f);
 
     Bar->WidgetStyle.FillImage.TintColor = FLinearColor::White;
-    MaterialMap.Add(Bar, DynMat);
+    MaterialMap.Add(Bar, ProgressDynMat);
+
+    UMaterialInstanceDynamic* ImageDynMat = UMaterialInstanceDynamic::Create(MaskedMaterial, this);
+    ImageDynMat->SetTextureParameterValue("RenderTarget", Tex);
+    ImageDynMat->SetTextureParameterValue("DiamondmaskTexture", DiamondMaskTexture);
+
+    Image->SetBrush(MakeBrush(ImageDynMat, Size, 1.0f));
 }
 
 
@@ -121,15 +132,17 @@ void UYggSkillBarUserWidget::SetSkillIcon(FName Character)
 
     if (CharSkillIcon)
     {
-        SetTexture(CharSkillIcon->SkillQIcon, CharSkillIcon->SkillEIcon, CharSkillIcon->SkillRIcon);
+        SetTexture(CharSkillIcon->SkillQIcon, CharSkillIcon->SkillEIcon, CharSkillIcon->SkillRIcon, CharSkillIcon->SkillShifteIcon, CharSkillIcon->SkillBackGroundIcon);
     }
 }
 
-void UYggSkillBarUserWidget::SetTexture(UTexture2D* Q, UTexture2D* E, UTexture2D* R)
+void UYggSkillBarUserWidget::SetTexture(UTexture2D* Q, UTexture2D* E, UTexture2D* R, UTexture2D* Shift, UTexture2D* BackGround)
 {
     QTexture = Q;
     ETexture = E;
     RTexture = R;
+    ShiftTexture = Shift;
+    BackGroundTexture = BackGround;
 }
 
 void UYggSkillBarUserWidget::StartCoolTime(FName Key, float Duration)

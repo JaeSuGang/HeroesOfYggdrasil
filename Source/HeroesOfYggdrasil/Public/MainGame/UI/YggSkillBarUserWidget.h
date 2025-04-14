@@ -10,6 +10,7 @@
 class UProgressBar;
 class UTexture2D;
 class UTextBlock;
+class UImage;
 
 USTRUCT()
 struct FSkillData
@@ -20,7 +21,13 @@ struct FSkillData
 	UProgressBar* Bar = nullptr;
 
 	UPROPERTY()
+	UImage* Image = nullptr;
+
+	UPROPERTY()
 	UTexture2D* Icon = nullptr;
+
+	UPROPERTY()
+	UTexture2D* BackGround = nullptr;
 
 	UPROPERTY()
 	UTextBlock* Text = nullptr;
@@ -30,7 +37,6 @@ struct FSkillData
 	float RemainingTime = 0.0f;
 };
 
-class UImage;
 
 /**
  * 
@@ -48,7 +54,7 @@ public:
 	//void SetIcon(UTexture2D* Q, UTexture2D* E, UTexture2D* R);
 	
 	UFUNCTION(BlueprintCallable)
-	void SetTexture(UTexture2D* Q, UTexture2D* E, UTexture2D* R);
+	void SetTexture(UTexture2D* Q, UTexture2D* E, UTexture2D* R, UTexture2D* Shift, UTexture2D* BackGround);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* SkillIcons;
@@ -58,7 +64,7 @@ public:
 	void InitSkills();
 
 	UFUNCTION(BlueprintCallable)
-	void SetupSkillBar(UProgressBar* Bar, UTexture2D* Tex, FVector2D Size);
+	void SetupSkillBar(UProgressBar* Bar, UImage* Image, UTexture2D* Tex, UTexture2D* BackTex, FVector2D Size);
 
 	UFUNCTION(BlueprintCallable)
 	void StartCoolTime(FName Key, float Duration);
@@ -93,13 +99,27 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* CoolTimeShift;
 
+	UPROPERTY(meta = (BindWidget))
+	UImage* Skill_Q_Image;
+	UPROPERTY(meta = (BindWidget))
+	UImage* Skill_E_Image;
+	UPROPERTY(meta = (BindWidget))
+	UImage* Skill_R_Image;
+	UPROPERTY(meta = (BindWidget))
+	UImage* Skill_Shift_Image;
+
+
 	UTexture2D* QTexture;
 	UTexture2D* ETexture;
 	UTexture2D* RTexture;
 	UTexture2D* ShiftTexture;
+	UTexture2D* BackGroundTexture;
 
 	UPROPERTY(EditAnywhere, Category = "YGG")
 	UMaterialInterface* DiamondMaskMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	UMaterialInterface* MaskedMaterial;
 
 	UPROPERTY(EditAnywhere, Category = "YGG")
 	UTexture2D* DiamondMaskTexture;
