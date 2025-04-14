@@ -77,9 +77,9 @@ void UStageSystem::UnregisterObjectsToReplicate()
 
 void UStageSystem::StartGame()
 {
-	BroadcastGameStart(FOnGameStartParams{});
-
 	EnterStage(0);
+
+	BroadcastGameStart(FOnGameStartParams{});
 }
 
 void UStageSystem::BroadcastGameStart_Implementation(FOnGameStartParams OnGameStartParams)

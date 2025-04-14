@@ -34,6 +34,10 @@ public:
 	APawn* GetSpawnedSelectable() const;
 
 public:
+	UFUNCTION(NetMulticast, Reliable)
+	void ForceMainWidget();
+	void ForceMainWidget_Implementation();
+
 	UFUNCTION(Server, Reliable)
 	void SetToPosition(int nIndex);
 
