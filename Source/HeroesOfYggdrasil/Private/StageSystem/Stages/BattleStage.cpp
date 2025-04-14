@@ -4,6 +4,11 @@
 #include "MainGame/EnemyManager.h"
 
 
+UBattleStage::UBattleStage()
+{
+	bIsUsingTimer = false;
+}
+
 void UBattleStage::BeginPlay(UStageSystem* NewStageSystem)
 {
 	Super::BeginPlay(NewStageSystem);
@@ -14,6 +19,13 @@ void UBattleStage::BeginPlay(UStageSystem* NewStageSystem)
 	}
 }
 
+void UBattleStage::TickLogic(float DeltaTime)
+{
+	Super::TickLogic(DeltaTime);
+
+
+}
+
 void UBattleStage::SpawnWave(FOnEnterStageParams OnEnterStageParams)
 {
 	LoadTables();
@@ -21,7 +33,7 @@ void UBattleStage::SpawnWave(FOnEnterStageParams OnEnterStageParams)
 	if (OnEnterStageParams.NewRound < WaveTableAsArray.Num())
 	{
 		TArray<FMonsterSpawnInfo>& SpawnInfos = WaveTableAsArray[OnEnterStageParams.NewRound]->SpawnInfos;
-		if (AEnemyManager* EnemyManager = AEnemyManager::Get(GameState->GetWorld()))
+		if (AEnemyManager* EnemyManager = AEnemyManager::Get(StageSystem->GetOwner()->GetWorld()))
 		{
 			for (FMonsterSpawnInfo& SpawnInfo : SpawnInfos)
 			{

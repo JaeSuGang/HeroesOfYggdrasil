@@ -6,6 +6,8 @@
 #include "Net/UnrealNetwork.h"
 
 #include "StageSystem/StageBase.h"
+#include "StageSystem/Stages/BattleStage.h"
+#include "StageSystem/Stages/ReinforceStage.h"
 
 UStageSystem::UStageSystem()
 {
@@ -13,6 +15,20 @@ UStageSystem::UStageSystem()
 	SetIsReplicatedByDefault(true);
 }
 
+
+void UStageSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (CurrentRound > 0)
+	{
+		StageCycle[CurrentStageIndex]->TickLogic(DeltaTime);
+	}
+
+	Timer -= DeltaTime;
+	if (Timer < 0.0f)
+		Timer = 0.0f;
+}
 
 void UStageSystem::BeginPlay()
 {
@@ -46,6 +62,11 @@ void UStageSystem::UnregisterObjectsToReplicate()
 	{
 		RemoveReplicatedSubObject(Stage);
 	}
+}
+
+void UStageSystem::EnterNextStage()
+{
+	EnterStage(CurrentStageIndex + 1);
 }
 
 void UStageSystem::EnterStage(int NewStageIndex)
@@ -89,6 +110,30 @@ void UStageSystem::EnterStageInternal(int NewStageIndex)
 	UStageBase* NewStage = StageCycle[CurrentStageIndex];
 	NewStage->Round = CurrentRound;
 	NewStage->OnEnterStageInternal.Broadcast(OnEnterStageParams);
+}
+
+UBattleStage* UStageSystem::GetBattleStage() const
+{
+	for (UStageBase* Stage : StageCycle)
+	{
+		if (UBattleStage* CastedStage = Cast<UBattleStage>(Stage))
+		{
+			return CastedStage;
+		}
+	}
+	return nullptr;
+}
+
+UReinforceStage* UStageSystem::GetReinforceStage() const
+{
+	for (UStageBase* Stage : StageCycle)
+	{
+		if (UReinforceStage* CastedStage = Cast<UReinforceStage>(Stage))
+		{
+			return CastedStage;
+		}
+	}
+	return nullptr;
 }
 
 

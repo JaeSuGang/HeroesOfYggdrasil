@@ -8,6 +8,8 @@
 #include "StageSystem.generated.h"
 
 class UStageBase;
+class UBattleStage;
+class UReinforceStage;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API UStageSystem : public UCustomSystem
@@ -18,6 +20,8 @@ public:
 	UStageSystem();
 
 protected:
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 	virtual void BeginPlay() override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -29,6 +33,9 @@ public:
 
 public:
 	UFUNCTION()
+	void EnterNextStage();
+
+	UFUNCTION()
 	void EnterStage(int NewStageIndex);
 
 	UFUNCTION(Server, Reliable)
@@ -37,6 +44,12 @@ public:
 
 	UFUNCTION()
 	void EnterStageInternal(int NewStageIndex);
+
+	UFUNCTION()
+	UBattleStage* GetBattleStage() const;
+
+	UFUNCTION()
+	UReinforceStage* GetReinforceStage() const;
 
 public:	
 	UPROPERTY(Replicated, Instanced, EditAnywhere)
@@ -47,4 +60,7 @@ public:
 
 	UPROPERTY(Replicated, VisibleAnywhere)
 	int CurrentStageIndex;
+
+	UPROPERTY(Replicated, VisibleAnywhere)
+	float Timer;
 };

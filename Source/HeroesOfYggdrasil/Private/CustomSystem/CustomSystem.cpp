@@ -8,6 +8,8 @@ UCustomSystem::UCustomSystem()
 {
 	bReplicateUsingRegisteredSubObjectList = true;
 	SetIsReplicatedByDefault(true);
+
+	PrimaryComponentTick.bCanEverTick = true;
 }
 
 

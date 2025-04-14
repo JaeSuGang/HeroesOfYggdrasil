@@ -5,6 +5,8 @@
 
 #include "Net/UnrealNetwork.h"
 
+#include "StageSystem/StageSystem.h"
+
 UStageBase::UStageBase()
 {
 	
@@ -24,5 +26,25 @@ void UStageBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 void UStageBase::BeginPlay(UStageSystem* NewStageSystem)
 {
 	StageSystem = NewStageSystem;
+}
+
+void UStageBase::TickLogic(float fDeltaTime)
+{
+
+}
+
+void UStageBase::EnterNextStage()
+{
+	StageSystem->EnterNextStage();
+}
+
+void UStageBase::SetTimer(float fTime)
+{
+	StageSystem->Timer = fTime;
+}
+
+float UStageBase::GetTimer() const
+{
+	return StageSystem->Timer;
 }
 

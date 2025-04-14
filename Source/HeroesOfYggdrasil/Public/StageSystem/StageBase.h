@@ -56,6 +56,19 @@ public:
 	UFUNCTION()
 	virtual void BeginPlay(UStageSystem* NewStageSystem);
 
+	UFUNCTION()
+	virtual void TickLogic(float fDeltaTime);
+
+public:
+	UFUNCTION()
+	void EnterNextStage();
+
+	UFUNCTION()
+	void SetTimer(float fTime);
+
+	UFUNCTION()
+	float GetTimer() const;
+
 public:
 	/* Replicated 되지 않음.
 	* 서버가 Bind할 시 서버 로직에 영향
@@ -71,7 +84,9 @@ public:
 	UPROPERTY(VisibleInstanceOnly)
 	UStageSystem* StageSystem;
 
-
 	UPROPERTY()
 	int Round;
+
+	UPROPERTY()
+	bool bIsUsingTimer;
 };

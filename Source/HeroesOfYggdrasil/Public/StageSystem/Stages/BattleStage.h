@@ -45,7 +45,12 @@ class HEROESOFYGGDRASIL_API UBattleStage : public UStageBase
 	GENERATED_BODY()
 	
 public:
+	UBattleStage();
+
+public:
 	virtual void BeginPlay(UStageSystem* NewStageSystem) override;
+
+	virtual void TickLogic(float DeltaTime) override;
 
 public:
 	UFUNCTION()
