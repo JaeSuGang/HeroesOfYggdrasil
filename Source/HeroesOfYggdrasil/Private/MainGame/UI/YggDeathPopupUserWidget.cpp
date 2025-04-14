@@ -14,7 +14,7 @@ void UYggDeathPopupUserWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
-
+	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UYggDeathPopupUserWidget::NativeConstruct()
@@ -25,13 +25,17 @@ void UYggDeathPopupUserWidget::NativeConstruct()
 	if (!Pawn) return;
 
 	AYggHero* Hero = Cast<AYggHero>(Pawn);
+
+	//auto a = IsValid(Hero);
+	//auto b = Hero->IsLocallyControlled();
+
 	if (!IsValid(Hero) || !Hero->IsLocallyControlled()) return;
 
 	Hero->OnRespawn.RemoveDynamic(this, &UYggDeathPopupUserWidget::StartRespawn);
 
 	Hero->OnRespawn.AddDynamic(this, &UYggDeathPopupUserWidget::StartRespawn);
 
-	SetVisibility(ESlateVisibility::Hidden);
+	
 }
 
 void UYggDeathPopupUserWidget::StartRespawn(float Duration)
