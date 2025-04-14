@@ -23,5 +23,6 @@ public:
 	virtual void TickLogic(float fDeltaTime) override;
 
 public:
+	UFUNCTION()
 	void SetReinforceStageSetting(FOnEnterStageParams OnEnterStageParams);
 };
