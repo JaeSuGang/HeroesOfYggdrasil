@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Core/YggPawn.h"
+#include "StageSystem/StageSystem.h"
 #include "PlayerSelectZone.generated.h"
 
 class UCameraComponent;
@@ -38,12 +39,16 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void SelectCharacter();
+	void SelectCharacter_Implementation();
 
 	UFUNCTION(Server, Reliable)
 	void SpawnSelectable(int nSpawnableIndex);
 
 	UFUNCTION()
 	void SpawnNextSelectable(int nHowMuchNext);
+
+	UFUNCTION()
+	void OnStartGame(FOnGameStartParams OnGameStartParams);
 
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)

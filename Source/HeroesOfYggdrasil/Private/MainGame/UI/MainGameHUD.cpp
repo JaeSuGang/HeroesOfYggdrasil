@@ -61,6 +61,14 @@ void AMainGameHUD::BeginPlay()
 	this->PlayerOwner->SetInputMode(FInputModeUIOnly{});
 
 	this->PlayerOwner->bShowMouseCursor = true;
+
+	UStageSystem::Get(this)->OnGameStarted.AddDynamic(this, &AMainGameHUD::OnStartGame);
+}
+
+void AMainGameHUD::OnStartGame(FOnGameStartParams OnGameStarted)
+{
+	CloseCurrentWidget();
+	ShowMainGameWidget();
 }
 
 void AMainGameHUD::ExitRoomButton()

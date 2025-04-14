@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "StageSystem/StageSystem.h"
 #include "Core/YggPlayerState.h"
 #include "Data/Playables.h"
 #include "StageSystem/StageManager.h"
@@ -84,6 +85,11 @@ void APlayerSelectZone::BeginPlay()
 
 	TActorIterator<APlayerStart> Iter(GetWorld());
 	PlayerStart = *Iter;
+
+	if (UStageSystem* StageSystem = UStageSystem::Get(this))
+	{
+		StageSystem->OnGameStarted.AddDynamic(this, &APlayerSelectZone::OnStartGame);
+	}
 }
 
 void APlayerSelectZone::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -160,4 +166,12 @@ void APlayerSelectZone::SpawnNextSelectable(int nHowMuchNext)
 	CurrentTableIndex += nHowMuchNext;
 
 	SpawnSelectable(CurrentTableIndex);
+}
+
+void APlayerSelectZone::OnStartGame(FOnGameStartParams OnGameStartParams)
+{
+	if (HasAuthority())
+	{
+		SelectCharacter();
+	}
 }

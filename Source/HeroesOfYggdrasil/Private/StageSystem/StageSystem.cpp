@@ -8,7 +8,6 @@
 #include "StageSystem/StageBase.h"
 #include "StageSystem/Stages/BattleStage.h"
 #include "StageSystem/Stages/ReinforceStage.h"
-#include "MainGame/PlayerSelectZone.h"
 #include "MainGame/UI/MainGameHUD.h"
 
 UStageSystem::UStageSystem()
@@ -76,33 +75,16 @@ void UStageSystem::UnregisterObjectsToReplicate()
 	}
 }
 
-void UStageSystem::ForceMainWidgetsToClient_Implementation()
-{
-	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-	{
-		if (AMainGameHUD* MGH = Cast<AMainGameHUD>(PC->GetHUD()))
-		{
-			MGH->CloseCurrentWidget();
-			MGH->ShowMainGameWidget();
-		}
-	}
-}
-
 void UStageSystem::StartGame()
 {
-	auto ControllerIter = GetWorld()->GetPlayerControllerIterator();
-	while (ControllerIter)
-	{
-		APlayerController* PC = ControllerIter->Get();
-		if (APlayerSelectZone* PSZ = Cast<APlayerSelectZone>(PC->GetPawn()))
-		{
-			PSZ->SelectCharacter();
-		}
-		++ControllerIter;
-	}
+	BroadcastGameStart(FOnGameStartParams{});
 
 	EnterStage(0);
-	ForceMainWidgetsToClient();
+}
+
+void UStageSystem::BroadcastGameStart_Implementation(FOnGameStartParams OnGameStartParams)
+{
+	OnGameStarted.Broadcast(OnGameStartParams);
 }
 
 void UStageSystem::EnterNextStage()
@@ -142,11 +124,7 @@ void UStageSystem::EnterStageInternal(int NewStageIndex)
 	UStageBase* OldStage = StageCycle[CurrentStageIndex];
 	OldStage->OnExitStageInternal.Broadcast(OnExitStageParams);
 
-	CurrentStageIndex = ++CurrentStageIndex % StageCycle.Num();
-	if (CurrentStageIndex == 0)
-	{
-		CurrentRound++;
-	}
+	CurrentStageIndex = NewStageIndex % StageCycle.Num();
 
 	UStageBase* NewStage = StageCycle[CurrentStageIndex];
 	NewStage->Round = CurrentRound;

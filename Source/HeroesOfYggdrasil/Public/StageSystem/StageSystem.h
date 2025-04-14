@@ -11,6 +11,16 @@ class UStageBase;
 class UBattleStage;
 class UReinforceStage;
 
+USTRUCT()
+struct FOnGameStartParams
+{
+	GENERATED_BODY()
+
+
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameStarted, FOnGameStartParams, OnGameStartParams);
+
 UCLASS()
 class HEROESOFYGGDRASIL_API UStageSystem : public UCustomSystem
 {
@@ -35,12 +45,12 @@ public:
 	virtual void UnregisterObjectsToReplicate() override;
 
 public:
-	UFUNCTION(NetMulticast, Reliable)
-	void ForceMainWidgetsToClient();
-	void ForceMainWidgetsToClient_Implementation();
-
 	UFUNCTION()
 	void StartGame();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void BroadcastGameStart(FOnGameStartParams OnGameStartParams);
+	void BroadcastGameStart_Implementation(FOnGameStartParams OnGameStartParams);
 
 	UFUNCTION()
 	void EnterNextStage();
@@ -60,6 +70,9 @@ public:
 
 	UFUNCTION()
 	UReinforceStage* GetReinforceStage() const;
+
+public:
+	FOnGameStarted OnGameStarted;
 
 public:	
 	UPROPERTY(Replicated, Instanced, EditAnywhere)

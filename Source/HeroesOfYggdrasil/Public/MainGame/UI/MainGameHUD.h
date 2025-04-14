@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+#include "StageSystem/StageSystem.h"
 #include "MainGameHUD.generated.h"
 
 class UYggLobbyUserWidget;
@@ -22,6 +23,10 @@ class HEROESOFYGGDRASIL_API AMainGameHUD : public AHUD
 
 protected:
 	void BeginPlay() override;
+
+public:
+	UFUNCTION()
+	void OnStartGame(FOnGameStartParams OnGameStarted);
 
 public:
 	UFUNCTION(BlueprintCallable)
