@@ -86,6 +86,15 @@ void UYggSkillBarUserWidget::InitSkills()
     SetupSkillBar(R.Bar, R.Image, R.Icon, R.BackGround, IconSize);
     SkillMap.Add("SkillR", R);
 
+    FSkillData Shift;
+    Shift.Bar = Skill_Shift;
+    Shift.Image = Skill_Shift_Image;
+    Shift.Icon = ShiftTexture;
+    Shift.BackGround = BackGroundTexture;
+    Shift.Text = CoolTimeShift;
+    Shift.Text->SetVisibility(ESlateVisibility::Hidden);
+    SetupSkillBar(Shift.Bar, Shift.Image, Shift.Icon, Shift.BackGround, IconSize);
+    SkillMap.Add("SkillShift", Shift);
 }
 
 FSlateBrush MakeBrush(UMaterialInterface* Mat, FVector2D Size, float Brightness = 1.0f)
@@ -93,7 +102,7 @@ FSlateBrush MakeBrush(UMaterialInterface* Mat, FVector2D Size, float Brightness 
     FSlateBrush Brush;
     Brush.SetResourceObject(Mat);
     Brush.ImageSize = Size;
-    Brush.TintColor = FLinearColor(Brightness, Brightness, Brightness, 1.0f);
+    Brush.TintColor = FLinearColor(1.0f, 1.0f, 1.0f, 1.0f);
     Brush.DrawAs = ESlateBrushDrawType::Image;
     return Brush;
 }
@@ -106,6 +115,7 @@ void UYggSkillBarUserWidget::SetupSkillBar(UProgressBar* Bar, UImage* Image, UTe
     ProgressDynMat->SetTextureParameterValue("RenderTarget", BackTex);
     ProgressDynMat->SetTextureParameterValue("DiamondMaskTexture", DiamondMaskTexture);
     ProgressDynMat->SetScalarParameterValue("Progress", 1.0f);
+    //ProgressDynMat->SetVectorParameterValue("TintColor", FLinearColor::White);
 
     FProgressBarStyle PStyle;
     PStyle.BackgroundImage = MakeBrush(ProgressDynMat, Size, 1.0f);
