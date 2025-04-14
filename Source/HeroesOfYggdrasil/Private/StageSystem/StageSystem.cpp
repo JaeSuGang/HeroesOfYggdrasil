@@ -2,6 +2,7 @@
 
 #include "StageSystem/StageSystem.h"
 
+#include "GameFramework/GameState.h"
 #include "Net/UnrealNetwork.h"
 
 #include "StageSystem/StageBase.h"
@@ -17,6 +18,10 @@ void UStageSystem::BeginPlay()
 {
 	Super::BeginPlay();
 
+	for (UStageBase* Stage : StageCycle)
+	{
+		Stage->BeginPlay(this);
+	}
 }
 
 void UStageSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -62,8 +67,18 @@ void UStageSystem::RequestEnterStage_Implementation(int NewStageIndex)
 
 void UStageSystem::EnterStageInternal(int NewStageIndex)
 {
+	/* Delegate 인자 설정 */
+	FOnExitStageParams OnExitStageParams{};
+	OnExitStageParams.PrevRound = CurrentRound;
+	OnExitStageParams.NewRound = CurrentRound + 1;
+
+	FOnEnterStageParams OnEnterStageParams{};
+	OnEnterStageParams.PrevRound = CurrentRound;
+	OnEnterStageParams.NewRound = CurrentRound + 1;
+
+	/* 스테이지 진입과 Delegate 호출 */
 	UStageBase* OldStage = StageCycle[CurrentStageIndex];
-	OldStage->OnExitStageInternal.Broadcast();
+	OldStage->OnExitStageInternal.Broadcast(OnExitStageParams);
 
 	CurrentStageIndex = ++CurrentStageIndex % StageCycle.Num();
 	if (CurrentStageIndex == 0)
@@ -73,7 +88,7 @@ void UStageSystem::EnterStageInternal(int NewStageIndex)
 
 	UStageBase* NewStage = StageCycle[CurrentStageIndex];
 	NewStage->Round = CurrentRound;
-	NewStage->OnEnterStageInternal.Broadcast();
+	NewStage->OnEnterStageInternal.Broadcast(OnEnterStageParams);
 }
 
 

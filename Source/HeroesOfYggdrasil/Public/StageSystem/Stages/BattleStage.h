@@ -45,12 +45,14 @@ class HEROESOFYGGDRASIL_API UBattleStage : public UStageBase
 	GENERATED_BODY()
 	
 public:
+	virtual void BeginPlay(UStageSystem* NewStageSystem) override;
+
+public:
 	UFUNCTION()
-	void SpawnWave(int nRound);
+	void SpawnWave(FOnEnterStageParams OnEnterStageParams);
 
 	UFUNCTION()
 	void LoadTables();
-
 
 public:
 	UPROPERTY(EditAnywhere)

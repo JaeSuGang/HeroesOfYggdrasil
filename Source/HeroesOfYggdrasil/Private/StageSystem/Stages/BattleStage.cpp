@@ -1,18 +1,39 @@
-// Coded By AssortRock Unreal Engine Class Project
-
-
 #include "StageSystem/Stages/BattleStage.h"
 
-void UBattleStage::SpawnWave(int nRound)
+#include "StageSystem/StageSystem.h"
+#include "MainGame/EnemyManager.h"
+
+
+void UBattleStage::BeginPlay(UStageSystem* NewStageSystem)
+{
+	Super::BeginPlay(NewStageSystem);
+
+	if (StageSystem->GetOwner()->HasAuthority())
+	{
+		OnEnterStageInternal.AddDynamic(this, &UBattleStage::SpawnWave);
+	}
+}
+
+void UBattleStage::SpawnWave(FOnEnterStageParams OnEnterStageParams)
 {
 	LoadTables();
 
-	if (nRound < WaveTableAsArray.Num())
+	if (OnEnterStageParams.NewRound < WaveTableAsArray.Num())
 	{
-		TArray<FMonsterSpawnInfo>& SpawnInfos = WaveTableAsArray[nRound]->SpawnInfos;
-		for (FMonsterSpawnInfo& SpawnInfo : SpawnInfos)
+		TArray<FMonsterSpawnInfo>& SpawnInfos = WaveTableAsArray[OnEnterStageParams.NewRound]->SpawnInfos;
+		if (AEnemyManager* EnemyManager = AEnemyManager::Get(GameState->GetWorld()))
 		{
-			// SpawnInfo.MonsterData.AIData.EnemyName
+			for (FMonsterSpawnInfo& SpawnInfo : SpawnInfos)
+			{
+				for (int i = 0; i < SpawnInfo.Count; ++i)
+				{
+					EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation);
+				}
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%S%u : Failed To Get EnemyManager"), __FUNCTION__, __LINE__);
 		}
 	}
 	else

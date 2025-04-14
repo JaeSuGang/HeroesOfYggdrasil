@@ -21,3 +21,8 @@ void UStageBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifeti
 
 }
 
+void UStageBase::BeginPlay(UStageSystem* NewStageSystem)
+{
+	StageSystem = NewStageSystem;
+}
+
