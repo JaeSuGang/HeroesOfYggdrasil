@@ -6,8 +6,6 @@
 #include "Core/YggPlayerState.h"
 #include "Components/TextBlock.h"
 
-#include "MainGame/StageManager.h"
-#include "MainGame/GameStage.h"
 #include "MainGame/UI/MainGameHUD.h"
 
 #include "Component/NicknameBarComponent.h"

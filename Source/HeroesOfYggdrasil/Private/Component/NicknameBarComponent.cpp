@@ -4,7 +4,6 @@
 #include "Component/NicknameBarComponent.h"
 
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
-#include "MainGame/StageManager.h"
 
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"

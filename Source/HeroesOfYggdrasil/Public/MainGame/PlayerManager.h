@@ -9,39 +9,8 @@
 
 class UWorld;
 class UDataTable;
-class UHeroUpgradeBase;
 class AMainGamePlayerState;
 class APlayerController;
-
-
-#define CHARACTER_UPGRADE_INFO_ROW_ATTACK TEXT("Attack")
-#define CHARACTER_UPGRADE_INFO_ROW_DEFENSE TEXT("Defense")
-#define CHARACTER_UPGRADE_INFO_ROW_HEALTH TEXT("HP")
-#define CHARACTER_UPGRADE_INFO_ROW_MOVE_SPEED TEXT("MaxMoveSpeed")
-#define CHARACTER_UPGRADE_INFO_ROW_ATTACK_SPEED TEXT("AttackSpeedRate")
-
-
-
-USTRUCT(BlueprintType)
-struct HEROESOFYGGDRASIL_API FCharacterUpgradeInfoRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ValueIncrementPerUpgrade;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int MaxUpgrade;
-};
-
-USTRUCT(BlueprintType)
-struct HEROESOFYGGDRASIL_API FHeroUpgradeRow : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UHeroUpgradeBase> HeroUpgradeClass;
-};
 
 /**
  * 담당 코더 : 김경민
@@ -64,12 +33,6 @@ protected:
 	void BeginPlay() override;
 
 public:
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_SelectUpgrade(APlayerController* PC, int nChoiceIndex);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_GenerateAvailableUpgradesForPlayer(APlayerController* PC, int nChoices);
-
 	UFUNCTION(BlueprintCallable)
 	int GetUpgradePoints(APlayerController* Player) const;
 
@@ -80,14 +43,5 @@ public:
 	void Server_SetUpgradePoints(APlayerController* Player, int PointsToSet);
 
 protected:
-	void SetHeroUpgradesFromTable();
-
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (RowType = "FHeroUpgradeRow"))
-	UDataTable* HeroUpgradesTable;
-
-protected:
-	UPROPERTY()
-	TArray<TSubclassOf<UHeroUpgradeBase>> HeroUpgrades;
 
 };

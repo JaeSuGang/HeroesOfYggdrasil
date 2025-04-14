@@ -15,7 +15,7 @@ class HEROESOFYGGDRASIL_API AYggGameState : public AGameState
 	GENERATED_BODY()
 	
 public:
-	AYggGameState(const FObjectInitializer& ObjectInitializer);
+	AYggGameState();
 
 protected:
 	void BeginPlay() override;

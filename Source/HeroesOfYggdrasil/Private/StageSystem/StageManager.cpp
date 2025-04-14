@@ -1,19 +1,19 @@
 // Coded By AssortRock Unreal Engine Class Project
 
 
-#include "MainGame/StageManager.h"
+#include "StageSystem/StageManager.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
-#include "MainGame/GameStage.h"
+#include "StageSystem/GameStage.h"
 #include "MainGame/MainGameState.h"
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/PlayerSelectZone.h"
 
-AStageManager* AStageManager::Get(UWorld* WorldContext)
+AStageManager* AStageManager::Get(UObject* WorldContextObject)
 {
-	AMainGameState* MGS = WorldContext->GetGameState<AMainGameState>();
+	AMainGameState* MGS = WorldContextObject->GetWorld()->GetGameState<AMainGameState>();
 	if (MGS)
 	{
 		return MGS->GetStageManager();
@@ -37,11 +37,6 @@ void AStageManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AStageManager, Round);
-}
-
-AGameStage* AStageManager::GetPlayingStage() const
-{
-	return CurrentStage;
 }
 
 void AStageManager::EnterStage_Implementation(TSubclassOf<AGameStage> stage)

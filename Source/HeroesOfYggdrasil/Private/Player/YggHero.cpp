@@ -412,8 +412,8 @@ void AYggHero::ServerAttack_Implementation(const FInputActionValue& Value)
 void AYggHero::MulticastAttack_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = *FString::Printf(TEXT("Attack"));
-
-	HeroAnimInstance->PlayMontage(MontageName);
+	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
+	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);
 }
 void AYggHero::EndAttack(const FInputActionValue& Value)
 {
