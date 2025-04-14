@@ -15,6 +15,16 @@ UStageSystem::UStageSystem()
 	SetIsReplicatedByDefault(true);
 }
 
+UStageSystem* UStageSystem::Get(UObject* WorldContextObject)
+{
+	if (AGameState* GameState = WorldContextObject->GetWorld()->GetGameState<AGameState>())
+	{
+		UStageSystem* StageSystem = GameState->GetComponentByClass<UStageSystem>();
+		return StageSystem;
+	}
+
+	return nullptr;
+}
 
 void UStageSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {

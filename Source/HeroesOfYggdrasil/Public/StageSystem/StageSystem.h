@@ -18,6 +18,9 @@ class HEROESOFYGGDRASIL_API UStageSystem : public UCustomSystem
 
 public:	
 	UStageSystem();
+	
+	UFUNCTION(BlueprintCallable, meta = (WorldContext = "WorldContextObject"))
+	static UStageSystem* Get(UObject* WorldContextObject);
 
 protected:
 	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
