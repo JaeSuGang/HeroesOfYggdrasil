@@ -22,11 +22,8 @@ class HEROESOFYGGDRASIL_API UYggPlayerStatusUserWidget : public UYggUserWidget
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetFaceCam(UTexture2D* Texture);
+	void SetFaceCam();
 
-
-
-	UTexture2D* ConvertRenderTargetToTexture2D(UTextureRenderTarget2D* RenderTarget);
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -46,4 +43,14 @@ private:
 	UYggHPBarUserWidget* HPBarUserWidget;
 
 	UTexture2D* Texture2D;
+
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	UMaterialInterface* MaskedMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	UTexture2D* DiamondMaskTexture;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* FaceMatInst;
+
 };
