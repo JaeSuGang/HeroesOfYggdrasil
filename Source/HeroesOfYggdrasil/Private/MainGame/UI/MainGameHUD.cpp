@@ -85,8 +85,6 @@ void AMainGameHUD::StartButton()
 	AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
 	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
 
-	OnSetPlayerName.Broadcast();
-
 	if (StageSystem)
 	{
 		StageSystem->StartGame();

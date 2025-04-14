@@ -10,6 +10,8 @@
 
 #include "Component/NicknameBarComponent.h"
 
+#include "StageSystem/StageSystem.h"
+
 void UYggNicknameBarUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -25,8 +27,12 @@ void UYggNicknameBarUserWidget::NativeConstruct()
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD());
 	
-	HUD->OnSetPlayerName.AddDynamic(this, &UYggNicknameBarUserWidget::SetPlayerName);
+	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
 
+	if (IsValid(StageSystem))
+	{
+		StageSystem->OnGameStarted.AddDynamic(this, &UYggNicknameBarUserWidget::OnGameStart);
+	}
 }
 
 void UYggNicknameBarUserWidget::SetPlayerName()
@@ -44,4 +50,9 @@ void UYggNicknameBarUserWidget::SetPlayerName()
 	FString Name = PS->GetPlayerName();
 
 	PlayerName->SetText(FText::FromString(Name));
+}
+
+void UYggNicknameBarUserWidget::OnGameStart(FOnGameStartParams OnGameStartParams)
+{
+	SetPlayerName();
 }
