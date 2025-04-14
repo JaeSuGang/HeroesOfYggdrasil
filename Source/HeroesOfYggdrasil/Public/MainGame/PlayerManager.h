@@ -33,14 +33,6 @@ protected:
 	void BeginPlay() override;
 
 public:
-	UFUNCTION(BlueprintCallable)
-	int GetUpgradePoints(APlayerController* Player) const;
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_AddUpgradePoints(APlayerController* Player, int PointsToAdd);
-
-	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void Server_SetUpgradePoints(APlayerController* Player, int PointsToSet);
 
 protected:
 

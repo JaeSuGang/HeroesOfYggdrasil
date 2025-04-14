@@ -58,6 +58,14 @@ bool UUpgradeSystem::GetPlayerUpgradeChoicesAsDataAsset(APlayerController* PC, T
 	return false;
 }
 
+void UUpgradeSystem::SetUpgradePointInternal(APlayerState* PlayerState, int PointToSet)
+{
+	if (AMainGamePlayerState* MPS = Cast<AMainGamePlayerState>(PlayerState))
+	{
+		MPS->UpgradePoints = PointToSet;
+	}
+}
+
 void UUpgradeSystem::Upgrade(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData)
 {
 	
@@ -101,14 +109,7 @@ void UUpgradeSystem::UpgradeInternal(UHeroAttributeComponent* AttributeComponent
 
 	for (UUpgradeEffectBase* EffectBase : UpgradeData->UpgradeEffects)
 	{
-		if (UUpgradeEffect_Stats* Effect = Cast<UUpgradeEffect_Stats>(EffectBase))
-		{
-			Effect->Apply(AttributeComponent);
-		}
-		if (UUpgradeEffect_TeamStats* Effect = Cast<UUpgradeEffect_TeamStats>(EffectBase))
-		{
-			Effect->Apply();
-		}
+		EffectBase->ApplyInternal(AttributeComponent);
 	}
 }
 

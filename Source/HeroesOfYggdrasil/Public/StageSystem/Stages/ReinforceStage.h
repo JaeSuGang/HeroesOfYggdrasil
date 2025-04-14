@@ -24,5 +24,5 @@ public:
 
 public:
 	UFUNCTION()
-	void SetReinforceStageSetting(FOnEnterStageParams OnEnterStageParams);
+	void OnReinforceStageEnter(FOnEnterStageParams OnEnterStageParams);
 };

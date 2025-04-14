@@ -19,20 +19,3 @@ void AMainGamePlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME(AMainGamePlayerState, UpgradePoints);
 	DOREPLIFETIME(AMainGamePlayerState, AvailableUpgradeIds);
 }
-
-int AMainGamePlayerState::GetUpgradePoints() const
-{
-	return UpgradePoints;
-}
-
-void AMainGamePlayerState::SetUpgradePoints_Implementation(int NewPoints)
-{
-	UpgradePoints = NewPoints;
-	ClientDelegate_OnUpgradePointsChanged.Broadcast(UpgradePoints);
-}
-
-void AMainGamePlayerState::AddUpgradePoints_Implementation(int PointsToAdd)
-{
-	UpgradePoints += PointsToAdd;
-	ClientDelegate_OnUpgradePointsChanged.Broadcast(UpgradePoints);
-}

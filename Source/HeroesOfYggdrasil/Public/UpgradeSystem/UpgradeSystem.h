@@ -32,6 +32,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool GetPlayerUpgradeChoicesAsDataAsset(APlayerController* PC, /* Out */ TArray<UUpgradeDataAsset*>& UpgradeChoices) const;
 
+	/* 업그레이드 포인트 */
+	UFUNCTION()
+	void SetUpgradePointInternal(APlayerState* PlayerState, int PointToSet);
+
 	/* 업그레이드 */
 	UFUNCTION(BlueprintCallable)
 	void Upgrade(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData);
