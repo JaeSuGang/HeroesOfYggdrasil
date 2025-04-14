@@ -35,6 +35,13 @@ public:
 	virtual void UnregisterObjectsToReplicate() override;
 
 public:
+	UFUNCTION(NetMulticast, Reliable)
+	void ForceMainWidgetsToClient();
+	void ForceMainWidgetsToClient_Implementation();
+
+	UFUNCTION()
+	void StartGame();
+
 	UFUNCTION()
 	void EnterNextStage();
 

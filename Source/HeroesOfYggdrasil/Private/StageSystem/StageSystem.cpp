@@ -8,6 +8,8 @@
 #include "StageSystem/StageBase.h"
 #include "StageSystem/Stages/BattleStage.h"
 #include "StageSystem/Stages/ReinforceStage.h"
+#include "MainGame/PlayerSelectZone.h"
+#include "MainGame/UI/MainGameHUD.h"
 
 UStageSystem::UStageSystem()
 {
@@ -72,6 +74,35 @@ void UStageSystem::UnregisterObjectsToReplicate()
 	{
 		RemoveReplicatedSubObject(Stage);
 	}
+}
+
+void UStageSystem::ForceMainWidgetsToClient_Implementation()
+{
+	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+	{
+		if (AMainGameHUD* MGH = Cast<AMainGameHUD>(PC->GetHUD()))
+		{
+			MGH->CloseCurrentWidget();
+			MGH->ShowMainGameWidget();
+		}
+	}
+}
+
+void UStageSystem::StartGame()
+{
+	auto ControllerIter = GetWorld()->GetPlayerControllerIterator();
+	while (ControllerIter)
+	{
+		APlayerController* PC = ControllerIter->Get();
+		if (APlayerSelectZone* PSZ = Cast<APlayerSelectZone>(PC->GetPawn()))
+		{
+			PSZ->SelectCharacter();
+		}
+		++ControllerIter;
+	}
+
+	EnterStage(0);
+	ForceMainWidgetsToClient();
 }
 
 void UStageSystem::EnterNextStage()

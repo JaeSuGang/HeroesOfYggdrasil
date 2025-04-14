@@ -79,7 +79,7 @@ void AMainGameHUD::StartButton()
 
 	if (StageSystem)
 	{
-		StageSystem->EnterStage(0);
+		StageSystem->StartGame();
 	}
 }
 
