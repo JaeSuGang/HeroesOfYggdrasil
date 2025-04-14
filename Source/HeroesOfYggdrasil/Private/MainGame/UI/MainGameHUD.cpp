@@ -16,7 +16,6 @@
 #include "Components/WidgetComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "StageSystem/StageManager.h"
 #include "Player/YggHero.h"
 
 #include "MainGame/UI/YggMHPBarUserWidget.h"
@@ -25,6 +24,7 @@
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/CharacterAttributeComponent.h"
 
+#include "StageSystem/StageSystem.h"
 
 void AMainGameHUD::BeginPlay()
 {
@@ -70,16 +70,16 @@ void AMainGameHUD::ExitRoomButton()
 
 void AMainGameHUD::StartButton()
 {
-	AStageManager* SM = AStageManager::Get(GetWorld());
-
+	UStageSystem* StageSystem =	UStageSystem::Get(GetWorld());
+	
 	LobbyUserWidget->SetPlayerName();
 
 	AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
 	PS->ServerSetPlayerName(LobbyUserWidget->GetPlayerName());
 
-	if (SM)
+	if (StageSystem)
 	{
-		SM->StartGame();
+		StageSystem->EnterStage(0);
 	}
 }
 

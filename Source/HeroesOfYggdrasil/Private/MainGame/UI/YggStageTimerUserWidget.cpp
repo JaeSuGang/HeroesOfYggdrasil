@@ -6,8 +6,8 @@
 #include "Core/YggPlayerState.h"
 #include "Components/TextBlock.h"
 
-#include "StageSystem/StageManager.h"
-#include "StageSystem/GameStage.h"
+#include "StageSystem/StageSystem.h"
+#include "StageSystem/StageBase.h"
 
 
 void UYggStageTimerUserWidget::NativeOnInitialized()
@@ -29,23 +29,15 @@ void UYggStageTimerUserWidget::NativeOnInitialized()
 
 void UYggStageTimerUserWidget::UpdateTimer()
 {
-	AStageManager* StageManager = AStageManager::Get(GetWorld());
-
-	if (nullptr == StageManager)
+	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
+	
+	if (nullptr == StageSystem)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == StageManager)"), __FUNCTION__, __LINE__);
 		return;
 	}
-
-	AGameStage* Stage = StageManager->CurrentStage;
 	
-	if (nullptr == Stage)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == Stage)"), __FUNCTION__, __LINE__);
-		return;
-	}
-
-	if (Stage->bIsTimerEnabled)
+	if (StageSystem->StageCycle[StageSystem->CurrentStageIndex]->bIsUsingTimer)
 	{
 		SetVisibility(ESlateVisibility::Visible);
 	}
@@ -59,24 +51,13 @@ void UYggStageTimerUserWidget::UpdateTimer()
 
 void UYggStageTimerUserWidget::GetStageTimer()
 {
-	AStageManager* StageManager = AStageManager::Get(GetWorld());
+	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
 
-	if (nullptr == StageManager)
+	if (nullptr == StageSystem)
 	{
 		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == StageManager)"), __FUNCTION__, __LINE__);
 		return;
 	}
 
-	AGameStage* Stage = StageManager->CurrentStage;
-
-	if (nullptr == Stage)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == Stage)"), __FUNCTION__, __LINE__);
-		return;
-	}
-
-	if (Stage)
-	{
-		StageTimer->SetText(FText::AsNumber(Stage->Timer));
-	}
+	StageTimer->SetText(FText::AsNumber(StageSystem->Timer));
 }
