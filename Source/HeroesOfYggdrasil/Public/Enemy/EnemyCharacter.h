@@ -12,11 +12,12 @@
 
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroEnteredRangeDelegate, AYggHero*, Hero);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHeroEnteredRangeDelegate, AYggCharacter*, _Target);
 
 class AYggMiniMapIconActor;
 class UMHPBarComponent;
 class UWidgetComponent;
+class AYggCharacter;
 class AYggTickActor;
 
 /**
@@ -95,7 +96,7 @@ public:
 	//}
 
 	UFUNCTION()
-	void HandleHeroEnteredRange(class AYggHero* Hero);
+	void HandleHeroEnteredRange(AYggCharacter* _Target);
 
 	//UFUNCTION(NetMulticast, Reliable)
 	//void UpdateHPBarWidgetToAll(float HP);
@@ -121,6 +122,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "EnemyEvent")
 	FOnHeroEnteredRangeDelegate OnHeroEnteredRange;
+
+	UPROPERTY(EditAnywhere, Replicated, Category = "TickEffects")
+	TSoftObjectPtr<UParticleSystem> TickParticle;
+
+	UPROPERTY(EditAnywhere, Replicated, Category = "TickEffects")
+	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 
 private:
 	// 몬스터 이름 데이터

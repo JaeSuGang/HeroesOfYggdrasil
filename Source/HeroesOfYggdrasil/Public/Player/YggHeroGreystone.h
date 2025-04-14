@@ -65,6 +65,14 @@ public:
 	UPROPERTY()
 	bool bIsSkillR = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UYggCapsuleComponent* SkillRBuffCapsule;
+
+	UYggCapsuleComponent* GetSkillRBuffCapsule()
+	{
+		return SkillRBuffCapsule;
+	}
+
 private:
 	UPROPERTY(EditAnywhere)
 	UMaterialInterface* SkillRDecalMaterial;

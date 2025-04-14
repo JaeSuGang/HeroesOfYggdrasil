@@ -6,6 +6,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Engine/DataTable.h"
 #include "Components/SphereComponent.h"
+#include "Enemy/EnemyCharacter.h"
 
 // Sets default values
 AEnemyRangeAttack::AEnemyRangeAttack()
@@ -22,12 +23,12 @@ AEnemyRangeAttack::AEnemyRangeAttack()
 
     ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("EnemyProjectileMovement"));
 
-    PoisonMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PoisonMesh"));
-    PoisonMesh->SetupAttachment(DefualtSceneRoot);
+    ObjectMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PoisonMesh"));
+    ObjectMesh->SetupAttachment(DefualtSceneRoot);
 
-    PoisonCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
-    PoisonCollision->SetupAttachment(DefualtSceneRoot);
-    PoisonCollision->SetCollisionProfileName(TEXT("MonsterAttack"));
+    SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
+    SphereCollision->SetupAttachment(DefualtSceneRoot);
+    SphereCollision->SetCollisionProfileName(TEXT("MonsterAttack"));
 }
 
 // Called when the game starts or when spawned
@@ -35,7 +36,27 @@ void AEnemyRangeAttack::BeginPlay()
 {
 	Super::BeginPlay();
 
-    FProjectileDataRow* ProjectileDataRow = EnemyProjectileData->FindRow<FProjectileDataRow>(FName("Poison"), nullptr);
+    SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyRangeAttack::OverLap);
+    SphereCollision->OnComponentHit.AddDynamic(this, &AEnemyRangeAttack::OnHit);
+
+    DestroyTime = 3.0f;
+
+    InitializeRangeAttack();
+}
+
+void AEnemyRangeAttack::InitializeRangeAttack()
+{
+    AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOwner());
+    
+    if (!IsValid(EnemyCharacter))
+    {
+        return;
+    }
+
+    FString DataKeyString = EnemyCharacter->GetDataKey();
+    FName DataName = GetMeshNameByKey(DataKeyString);
+
+    FProjectileDataRow* ProjectileDataRow = EnemyProjectileData->FindRow<FProjectileDataRow>(DataName, nullptr);
 
     ProjectileMovement->InitialSpeed = ProjectileDataRow->ProjectileData.InitialSpeed;
     ProjectileMovement->MaxSpeed = ProjectileDataRow->ProjectileData.MaxSpeed;
@@ -48,17 +69,13 @@ void AEnemyRangeAttack::BeginPlay()
         UStaticMesh* StaticMesh = ProjectileDataRow->StaticMesh.LoadSynchronous();
         if (StaticMesh != nullptr)
         {
-            PoisonMesh->SetStaticMesh(StaticMesh);
-            PoisonMesh->SetMobility(EComponentMobility::Movable);
-            PoisonMesh->SetSimulatePhysics(false);
+            ObjectMesh->SetStaticMesh(StaticMesh);
+            ObjectMesh->SetMobility(EComponentMobility::Movable);
+            ObjectMesh->SetSimulatePhysics(false);
         }
     }
-
-    PoisonCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyRangeAttack::OverLap);
-    PoisonCollision->OnComponentHit.AddDynamic(this, &AEnemyRangeAttack::OnHit);
-
-    DestroyTime = 3.0f;
 }
+
 
 // Called every frame
 void AEnemyRangeAttack::Tick(float DeltaTime)
@@ -80,4 +97,22 @@ void AEnemyRangeAttack::OverLap(UPrimitiveComponent* OverlappedComponent, AActor
 void AEnemyRangeAttack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 
+}
+
+
+FName AEnemyRangeAttack::GetMeshNameByKey(const FString& _DataString)
+{
+    static const TMap<FString, FName> SectionMap = {
+        {TEXT("Minion_Witch_0"), FName("BugBall")},
+        {TEXT("Minion_Witch_1"), FName("SnowBall")},
+        {TEXT("Minion_Witch_2"), FName("LightningBall")},
+        {TEXT("Minion_Witch_3"), FName("FireBall")}
+    };
+
+    if (const FName* Found = SectionMap.Find(_DataString))
+    {
+        return *Found;
+    }
+
+    return FName("BugBall");
 }

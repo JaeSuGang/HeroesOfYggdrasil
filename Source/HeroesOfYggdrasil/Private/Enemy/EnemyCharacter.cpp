@@ -55,6 +55,8 @@ AEnemyCharacter::AEnemyCharacter()
 	MHPBarWidgetComponent->SetupAttachment(GetMesh());
 	MHPBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
 	
+	TickActorClass = AYggTickActor::StaticClass();
+
 	{
 		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
 		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
@@ -86,6 +88,7 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.CurHP = FindData.AIData.MaxHP;
 		AIData->PlayData.OriginPos = GetActorLocation();
 		AIData->PlayData.OriginPos.Z = 0.0f;
+
 	}
 		
 	// 몬스터 데이터 세팅
@@ -128,7 +131,8 @@ void AEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 
-	
+	TickParticle = FindData.TickParticle;
+	TickNiagaraSystem = FindData.TickNiagaraSystem;
 
 
 	// AttributeComponent 세팅
@@ -144,15 +148,6 @@ void AEnemyCharacter::BeginPlay()
 			SetActorScale3D(MonsterData->AIData.Scale);
 			OnHeroEnteredRange.AddDynamic(this, &AEnemyCharacter::HandleHeroEnteredRange);
 		}
-			
-
-		//CharacterAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AEnemyCharacter::UpdateHPBarWidgetToAll);
-		//MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarUserWidgetClass);
-		//
-		//if (!MHPBarUserWidget)
-		//	UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-		//MHPBarUserWidget->SetAttachedCharacter(this);
-		//WidgetComponent->SetWidget(MHPBarUserWidget);
 	}
 
 	
@@ -317,11 +312,8 @@ void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 
 	AEnemyWarningRange* EnemyWarningRange = GetWorld()->SpawnActor<AEnemyWarningRange>(
 		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
-	EnemyWarningRange->SetCollisionOwnerEnemy(this);
-	EnemyWarningRange->InitializeWarningRange();
-
+	
 	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
-	float AttackTime = FindData.AIData.TickAttackTime;
 }
 
 
@@ -342,9 +334,11 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
 	SpawnParams.Owner = this;
 
 	AEnemyRangeAttack* RangeAttack = GetWorld()->SpawnActor<AEnemyRangeAttack>(RangeAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
+	
 
 	if (RangeAttack != nullptr)
 	{
+		RangeAttack->SetOwner(this);
 		const float Speed = 2000.f;
 		FVector Direction = (_TargetLocation - SpawnLocation).GetSafeNormal();
 		RangeAttack->GetProjectileMovement()->Velocity = Direction * Speed;
@@ -353,18 +347,19 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
 
 
 
-void AEnemyCharacter::HandleHeroEnteredRange(AYggHero* Hero)
+void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 {
 	if (!HasAuthority()) return;
+	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(_Target);
+	AYggHero* Hero = Cast<AYggHero>(_Target);
+
+	if (!IsValid(Hero) && !IsValid(Enemy))
+	{
+		return;
+	}
+
 
 	float Damage = CharacterAttributeComponent->AttackPoints / 10.0f;
-
-	AYggTickActor* TickActor = AYggTickActor::SpawnTickEffectIfNotExist(
-		this,
-		Hero,
-		TickActorClass,
-		EStatusEffectType::Poison,
-		0.5f,
-		Damage
-	);
+	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target);
+	
 }

@@ -84,6 +84,11 @@ void UYggAttackCapsuleComponent::CollisionOn()
 	Super::CollisionOn();
 	OverlappedActors.Reset();
 	SetComponentTickEnabled(true);
+	if (OwnerCharacter == nullptr)
+	{
+		return;
+	}
+
 	if (CharacterType == ECharacterType::Hero)
 	{
 		UHeroAttributeComponent* HeroAttributeComponent = Cast<UHeroAttributeComponent>(OwnerCharacter->GetAttributeComponent());

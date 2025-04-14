@@ -8,9 +8,13 @@
 
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
+#include "Global/YggTickActor.h"
+
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
+
 #include "Player/YggHero.h"
 #include "Enemy/EnemyCharacter.h"
-#include "Global/YggTickActor.h"
 
 // Sets default values
 AEnemyWarningRange::AEnemyWarningRange()
@@ -42,6 +46,9 @@ AEnemyWarningRange::AEnemyWarningRange()
 void AEnemyWarningRange::BeginPlay()
 {
     Super::BeginPlay();
+
+    YggCharacterEnemy = Cast<AEnemyCharacter>(GetOwner());
+    InitializeWarningRange();
 }
 
 void AEnemyWarningRange::InitializeWarningRange()
@@ -65,6 +72,7 @@ void AEnemyWarningRange::InitializeWarningRange()
         TimeElapsed = Row->TimeElapsed;
         SetActorScale3D(Row->ScaleVector);
         EffectParticle = Row->RangeEffectParticle;
+        EnemyNiagaraSystem = Row->NiagaraEffectSystem;
 
         if (DynamicMaterial) DynamicMaterial->SetScalarParameterValue("WarningAlpha", 0.2f);
     }
@@ -91,6 +99,43 @@ void AEnemyWarningRange::Tick(float DeltaTime)
     }
 }
 
+void AEnemyWarningRange::SpawnEffect_Implementation()
+{
+    if (IsValid(YggCharacterEnemy))
+    {
+        DataKeyString = YggCharacterEnemy->GetDataKey();
+    }
+
+    FName DataName = GetMeshNameByKey(DataKeyString);
+    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(DataName, nullptr);
+
+    if (!Row) return;
+
+    if (IsValid(EffectParticle))
+    {
+        UGameplayStatics::SpawnEmitterAtLocation(
+            GetWorld(),
+            EffectParticle,
+            GetActorLocation(),
+            GetActorRotation(),
+            FVector(Row->EffectScaleFloat),
+            true
+        );
+    }
+
+    if (IsValid(EnemyNiagaraSystem))
+    {
+        UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+            GetWorld(),
+            EnemyNiagaraSystem,
+            GetActorLocation(),
+            GetActorRotation(),
+            FVector(Row->EffectScaleFloat),
+            true
+        );
+    }
+}
+
 void AEnemyWarningRange::ChangeArea()
 {
     if (IsValid(YggCharacterEnemy))
@@ -113,35 +158,6 @@ void AEnemyWarningRange::ChangeArea()
     
 }
 
-void AEnemyWarningRange::SpawnEffect()
-{
-    if (IsValid(YggCharacterEnemy))
-    {
-        DataKeyString = YggCharacterEnemy->GetDataKey();
-    }
-
-    FName DataName = GetMeshNameByKey(DataKeyString);
-
-    FWarningAreaDataRow* Row = AOEDataTable->FindRow<FWarningAreaDataRow>(DataName, nullptr);
-
-    if (Row == nullptr)
-    {
-        return;
-    }
-
-    
-    if (IsValid(EffectParticle))
-    {
-        UGameplayStatics::SpawnEmitterAtLocation(
-            GetWorld(),
-            EffectParticle,
-            GetActorLocation(),
-            GetActorRotation(),
-            FVector(Row->EffectScaleFloat),
-            true  // 자동 파괴
-        );
-    }
-}
 
 void AEnemyWarningRange::HideAllComponents()
 {
@@ -169,7 +185,9 @@ void AEnemyWarningRange::OverLap(UPrimitiveComponent* OverlappedComponent, AActo
             {
                 if (IsValid(YggCharacterEnemy))
                 {
-                    YggCharacterEnemy->OnHeroEnteredRange.Broadcast(Hero);
+
+                    AYggCharacter* YggCharacter = Cast<AYggCharacter>(Hero);
+                    YggCharacterEnemy->OnHeroEnteredRange.Broadcast(YggCharacter);
                 }
                 
             }
@@ -190,9 +208,9 @@ FName AEnemyWarningRange::GetMeshNameByKey(const FString& _DataString)
 {
     static const TMap<FString, FName> SectionMap = {
         {TEXT("Minion_Witch_0"), FName("Poison")},
-        {TEXT("Minion_Witch_1"), FName("Poison")},
-        {TEXT("Minion_Witch_2"), FName("Poison")},
-        {TEXT("Minion_Witch_3"), FName("Poison")}
+        {TEXT("Minion_Witch_1"), FName("Snow")},
+        {TEXT("Minion_Witch_2"), FName("Lightning")},
+        {TEXT("Minion_Witch_3"), FName("Fire")}
     };
 
     if (const FName* Found = SectionMap.Find(_DataString))

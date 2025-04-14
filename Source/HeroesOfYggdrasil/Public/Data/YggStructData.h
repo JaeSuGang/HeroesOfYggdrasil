@@ -266,6 +266,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSubclassOf<class AEnemyCharacter> SpawnClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSoftObjectPtr<UParticleSystem> TickParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 };
 
 
@@ -299,6 +305,12 @@ public:
 	float TickTime = 5.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float Interval = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	float DamageAmount = 0.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSoftObjectPtr<UParticleSystem> Particle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
@@ -322,6 +334,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	UParticleSystem* RangeEffectParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	UNiagaraSystem* NiagaraEffectSystem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	float Duration = 3.0f;

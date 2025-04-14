@@ -41,3 +41,11 @@ enum class EEnemyAIState : uint8
 	MAX UMETA(DisplayName = "MAX"),
 };
 
+UENUM(BlueprintType)
+enum class EStatusEffectType : uint8
+{
+	Poison    UMETA(DisplayName = "Poison"),
+	Burn      UMETA(DisplayName = "Burn"),
+	Slow	  UMETA(DisplayName = "Slow"),
+	Stunned   UMETA(DisplayName = "Stunned")
+};

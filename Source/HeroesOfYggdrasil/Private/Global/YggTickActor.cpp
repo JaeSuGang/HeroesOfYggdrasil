@@ -6,6 +6,7 @@
 // 캡슐 컴포넌트
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
+#include "Net/UnrealNetwork.h"
 #include "Engine/DataTable.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -15,6 +16,8 @@
 #include "Component/ActorComponent/TimeEventComponent.h"
 #include "Component/ActorComponent/Function/TickUtilityFunctionLibrary.h"
 #include "Components/SceneComponent.h"
+
+#include "Data/YggEnumData.h"
 
 #include "Core/YggCharacter.h"
 #include "Player/YggHero.h"
@@ -65,18 +68,9 @@ AYggTickActor::AYggTickActor()
 // Called when the game starts or when spawned
 void AYggTickActor::BeginPlay()
 {
-
-
-	if (!IsValid(StatusTickDataTable)) return;
-
-	const FStatusTickDataRow* Row = StatusTickDataTable->FindRow<FStatusTickDataRow>(StatusRowName, nullptr);
-	if (!Row) return;
-
-	TickParticle = Row->Particle;
-	TickNiagaraSystem = Row->NiagaraSystem;
- 	StatusTickTime = Row->TickTime;
-
 	Super::BeginPlay();
+	
+	SpawnEffect(TickDamageComponent->TargetActor);
 }
 
 void AYggTickActor::Tick(float DeltaTime)
@@ -91,7 +85,7 @@ void AYggTickActor::Tick(float DeltaTime)
 
 		if (HasAuthority()) // 반드시 서버만 호출
 		{
-			MulticastCleanupEffects();
+			CleanupEffects();
 			Destroy();
 		}
 	}
@@ -104,22 +98,13 @@ void AYggTickActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	CleanupEffects();
 }
 
-
-void AYggTickActor::InitTickActor(EStatusEffectType StatusEffect)
+void AYggTickActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	FName RowName = ConvertStatusEnumToRowName(StatusEffect);
-	StatusRowName = RowName;
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	if (!IsValid(StatusTickDataTable)) return;
-
-	const FStatusTickDataRow* Row = StatusTickDataTable->FindRow<FStatusTickDataRow>(RowName, nullptr);
-	if (!Row) return;
-
-	TickParticle = Row->Particle;
-	TickNiagaraSystem = Row->NiagaraSystem;
-	StatusTickTime = Row->TickTime;
+	DOREPLIFETIME(AYggTickActor, TickNiagaraSystem);
+	DOREPLIFETIME(AYggTickActor, TickParticle);
 }
-
 
 void AYggTickActor::DestroyStatusTag()
 {
@@ -139,32 +124,16 @@ void AYggTickActor::DestroyStatusTag()
 	{
 		FName StatusTag = FName(*("Enemy.DeBuff." + StatusRowName.ToString()));
 
-		if (YggHero->GetAttributeComponent()->HasTag(StatusTag))
+		if (YggEnemy->GetAttributeComponent()->HasTag(StatusTag))
 		{
-			YggHero->GetAttributeComponent()->RemoveTag(StatusTag);
+			YggEnemy->GetAttributeComponent()->RemoveTag(StatusTag);
 		}
 	}
 
 }
 
 
-void AYggTickActor::SetTickDamage(AYggCharacter* _Target, float _Interval, float DamageAmount)
-{
-	if (!IsValid(_Target)) return;
-
-	// 데미지 설정
-	TickDamageComponent->TargetActor = _Target;
-	TickDamageComponent->TickInterval = _Interval;
-	TickDamageComponent->DamageAmount = DamageAmount;
-
-	if (HasAuthority())
-	{
-		MulticastSpawnEffects(_Target);
-	}
-}
-
-
-void AYggTickActor::CleanupEffects()
+void AYggTickActor::CleanupEffects_Implementation()
 {
 	TArray<UActorComponent*> Components;
 	GetComponents(Components);
@@ -186,39 +155,12 @@ void AYggTickActor::CleanupEffects()
 	}
 }
 
-void AYggTickActor::DisableAllComponents()
-{
-	TArray<UActorComponent*> Components;
-	GetComponents(Components);
 
-	for (UActorComponent* Comp : Components)
-	{
-		if (!IsValid(Comp)) continue;
 
-		// Tick 끄기
-		Comp->SetComponentTickEnabled(false);
-
-		// 활성 상태 비활성화 (렌더/이펙트 등)
-		if (UPrimitiveComponent* PrimComp = Cast<UPrimitiveComponent>(Comp))
-		{
-			PrimComp->SetVisibility(false);
-			PrimComp->SetActive(false);
-			PrimComp->Deactivate();
-		}
-		else if (UParticleSystemComponent* ParticleComp = Cast<UParticleSystemComponent>(Comp))
-		{
-			ParticleComp->DeactivateSystem();
-		}
-		else
-		{
-			Comp->Deactivate(); // 나머지 일반 컴포넌트
-		}
-	}
-}
-
-void AYggTickActor::MulticastSpawnEffects_Implementation(AYggCharacter* _Target)
+void AYggTickActor::SpawnEffect_Implementation(AYggCharacter* _Target)
 {
 	if (!IsValid(_Target)) return;
+
 	if (!TickNiagaraSystem.IsValid())
 	{
 		TickNiagaraSystem.LoadSynchronous(); // 강제 로드
@@ -228,57 +170,96 @@ void AYggTickActor::MulticastSpawnEffects_Implementation(AYggCharacter* _Target)
 		TickParticle.LoadSynchronous(); // 강제 로드
 	}
 
-	// ParticleSystemComponent
-	if (TickParticle.IsValid())
+	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(_Target);
+	AYggHero* Hero = Cast<AYggHero>(_Target);
+
+	if (!IsValid(Hero) && !IsValid(Enemy))
 	{
-		UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
-		if (IsValid(ParticleComp))
+		return;
+	}
+
+	if (IsValid(Hero))
+	{
+
+		// ParticleSystemComponent
+		if (TickParticle.IsValid())
 		{
-			ParticleComp->SetTemplate(TickParticle.Get());
-			ParticleComp->bAutoActivate = true;
-			ParticleComp->SetRelativeScale3D(FVector(10.0f));
-			ParticleComp->RegisterComponent();
-			ParticleComp->AttachToComponent(_Target->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+			UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
+			if (IsValid(ParticleComp))
+			{
+				ParticleComp->SetTemplate(TickParticle.Get());
+				ParticleComp->bAutoActivate = true;
+				ParticleComp->SetRelativeScale3D(FVector(1.0f));
+				ParticleComp->RegisterComponent();
+				ParticleComp->AttachToComponent(Hero->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+			}
+		}
+
+		// NiagaraComponent
+		if (TickNiagaraSystem.IsValid())
+		{
+			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+				TickNiagaraSystem.Get(),
+				Hero->GetRootComponent(),           // 또는 CapsuleComponent 등 중심 컴포넌트
+				TEXT("butt_cloth_l_01"),
+				FVector::ZeroVector,                   // 타겟 중심
+				FRotator::ZeroRotator,
+				EAttachLocation::SnapToTarget,         // 정확히 중심에 부착
+				true, true
+			);
+
+			if (IsValid(NiagaraComp))
+			{
+				NiagaraComp->SetRelativeScale3D(FVector(1.0f));  // 시각적 조정
+			}
 		}
 	}
-	
-	// NiagaraComponent
-	if (TickNiagaraSystem.IsValid())
+	else
 	{
-		UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
-			TickNiagaraSystem.Get(),
-			GetRootComponent(),
-			NAME_None,
-			FVector::ZeroVector,
-			FRotator::ZeroRotator,
-			EAttachLocation::KeepRelativeOffset,
-			true, true
-		);
-
-		if (IsValid(NiagaraComp))
+		if (IsValid(Enemy))
 		{
-			NiagaraComp->AttachToComponent(_Target->GetCapsuleComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-			NiagaraComp->SetRelativeScale3D(FVector(10.0f));
+
+			// ParticleSystemComponent
+			if (TickParticle.IsValid())
+			{
+				UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
+				if (IsValid(ParticleComp))
+				{
+					ParticleComp->SetTemplate(TickParticle.Get());
+					ParticleComp->bAutoActivate = true;
+					ParticleComp->SetRelativeScale3D(FVector(1.0f));
+					ParticleComp->RegisterComponent();
+					ParticleComp->AttachToComponent(Enemy->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+				}
+			}
+
+			// NiagaraComponent
+			if (TickNiagaraSystem.IsValid())
+			{
+				UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
+					TickNiagaraSystem.Get(),
+					Enemy->GetRootComponent(),           // 또는 CapsuleComponent 등 중심 컴포넌트
+					NAME_None,
+					FVector::ZeroVector,                   // 타겟 중심
+					FRotator::ZeroRotator,
+					EAttachLocation::SnapToTarget,         // 정확히 중심에 부착
+					true, true
+				);
+
+				if (IsValid(NiagaraComp))
+				{
+					NiagaraComp->SetRelativeScale3D(FVector(1.0f));  // 시각적 조정
+				}
+			}
 		}
 	}
 }
 
-void AYggTickActor::MulticastCleanupEffects_Implementation()
-{
-	CleanupEffects();
-}
 
 
-AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(
-	UObject* WorldContext,
-	AYggCharacter* Target,
-	TSubclassOf<AYggTickActor> TickActorClass,
-	EStatusEffectType EffectType,
-	float TickInterval,
-	float DamagePerTick
-)
+AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AYggCharacter* Target)
 {
-	if (!WorldContext || !IsValid(Target) || !TickActorClass) return nullptr;
+	if (!IsValid(Target)) return nullptr;
 
 	
 
@@ -288,7 +269,7 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(
 	{	
 		AYggCharacter* HeroTarget = Cast<AYggHero>(ExistingTickActor->TickDamageComponent->TargetActor);
 		AEnemyCharacter* EnemyTarget = Cast<AEnemyCharacter>(ExistingTickActor->TickDamageComponent->TargetActor);
-		FName RowName = ConvertStatusEnumToRowName(EffectType);
+		FName RowName = ExistingTickActor->StatusRowName;
 
 		if (IsValid(HeroTarget))
 		{
@@ -338,40 +319,48 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(
 
 
 	// Spawn
-	UWorld* World = GEngine->GetWorldFromContextObjectChecked(WorldContext);
 	FTransform SpawnTransform(Target->GetActorRotation(), Target->GetActorLocation());
 
-	AYggTickActor* TickActor = World->SpawnActorDeferred<AYggTickActor>(
-		TickActorClass,
-		SpawnTransform,
-		nullptr,
-		nullptr,
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
-	);
-
-	if (!IsValid(TickActor)) return nullptr;
-
-	// 데미지 및 상태 설정
-	TickActor->SetTickDamage(Target, TickInterval, DamagePerTick);
-	TickActor->InitTickActor(EffectType);
+	AYggTickActor* TickActor = Owner->GetWorld()->SpawnActorDeferred<AYggTickActor>(AYggTickActor::StaticClass(), SpawnTransform, Target);
 	
+	TickActor->TickDamageComponent->TargetActor = Target;
+	TickActor->TickDamageComponent->TickInterval = 0.5f;
+	TickActor->TickDamageComponent->DamageAmount = 0.1f;
+
+	AEnemyCharacter* OwnerEnemy = Cast<AEnemyCharacter>(Owner);
+	AYggHero* OwnerHero = Cast<AYggHero>(Owner);
+
+	if (IsValid(OwnerEnemy))
+	{
+		TickActor->TickNiagaraSystem = OwnerEnemy->TickNiagaraSystem;
+		TickActor->TickParticle = OwnerEnemy->TickParticle;
+		TickActor->StatusTickTime = 5.0f;
+	}
+
+	if (IsValid(OwnerHero))
+	{
+		//TickActor->TickNiagaraSystem = OwnerHero->TickNiagaraSystem;
+		//TickActor->TickParticle = OwnerHero->TickParticle;
+		//TickActor->StatusTickTime = 5.0f;
+	}
+	
+
+	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
+
 	if (AYggCharacter* Hero = Cast<AYggHero>(TickActor->TickDamageComponent->TargetActor))
 	{
 		if (IsValid(Hero))
 		{
-			TickActor->Tag = FName(*("Character.DeBuff." + ConvertStatusEnumToRowName(EffectType).ToString()));
+			TickActor->Tag = FName(*("Character.DeBuff." + TickActor->StatusRowName.ToString()));
 			Hero->GetAttributeComponent()->AddTag(TickActor->Tag);
-			UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
-			
 		}
 	}
 	else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(TickActor->TickDamageComponent->TargetActor))
 	{
 		if (IsValid(Enemy))
 		{
-			TickActor->Tag = FName(*("Enemy.DeBuff." + ConvertStatusEnumToRowName(EffectType).ToString()));
+			TickActor->Tag = FName(*("Enemy.DeBuff." + TickActor->StatusRowName.ToString()));
 			Enemy->GetAttributeComponent()->AddTag(TickActor->Tag);
-			UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 		}
 	}
 

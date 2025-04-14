@@ -30,12 +30,12 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	
-	// 궁수면 화살 보이게
+	
 	if (IsValid(EnemyCharacter))
 	{
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
-		// 미니언 궁수
+		// 미니언 궁수 
 		if (DataKeyStr.StartsWith(FString("Minion_Archer")))
 		{
 			EnemyCharacter->RevealArrow();

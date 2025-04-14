@@ -60,6 +60,14 @@ AYggHeroGreystone::AYggHeroGreystone()
 		AttackCapsuleComponent->SetOwnerCharacter(this);
 		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), AttackCapsuleComponent);
 	}
+
+	SkillRBuffCapsule = CreateDefaultSubobject<UYggCapsuleComponent>(TEXT("SkillRRecover"));
+	SkillRBuffCapsule->SetupAttachment(GetMesh());
+	SkillRBuffCapsule->SetOwnerCharacter(this);
+	
+	SkillRBuffCapsule->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SkillRBuffCapsule->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SkillRBuffCapsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel2, ECR_Overlap);
 }
 
 AYggHeroGreystone::~AYggHeroGreystone()
@@ -76,6 +84,8 @@ void AYggHeroGreystone::BeginPlay()
 	if (!HeroAttributeComponent) return;
 	HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Greystone"));
 	//UpdateStatus();	
+
+	GetCharacterMovement()->AirControl = 0.5f;
 }
 
 void AYggHeroGreystone::Tick(float DeltaTime)
@@ -177,6 +187,8 @@ void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 
 	Super::SkillQ(Value);
 
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
+
 	if (HasAuthority())
 	{
 		MulticastSkillQ();
@@ -184,6 +196,42 @@ void AYggHeroGreystone::SkillQ(const FInputActionValue& Value)
 	else
 	{
 		ServerSkillQ();
+	}
+
+	// 1. 도약 물리 파라미터 설정
+	const float LeapPower = GetHeroAttributeComponent()->MaxMoveSpeed * 1.5f;
+	const float VerticalBoost = 100.f; // 수직 도약 힘
+	FVector LeapDirection = GetActorForwardVector() + FVector(0, 0, 0.5f); // 45도 각도
+
+	// 2. 캐릭터 회전 보정
+	FRotator NewRotation = LeapDirection.Rotation();
+	NewRotation.Pitch = 0; // 수직 회전 제거
+	SetActorRotation(NewRotation);
+
+	// 3. 물리 기반 도약 실행
+	if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+	{
+		// 현재 속도 초기화
+		MoveComp->Velocity = FVector::ZeroVector;
+
+		// LaunchCharacter를 사용한 물리 도약
+		LaunchCharacter(
+			LeapDirection * LeapPower + FVector(0, 0, VerticalBoost),
+			false, // 수평 속도 유지
+			false  // 수직 속도 유지
+		);
+
+		// 도약 중 회전 고정
+		MoveComp->bOrientRotationToMovement = false;
+
+		FTimerHandle RotationResetHandle;
+		// 0.5초 후 회전 기능 복구
+		GetWorld()->GetTimerManager().SetTimer(
+			RotationResetHandle,
+			[MoveComp]() { MoveComp->bOrientRotationToMovement = true; },
+			0.5f,
+			false
+		);
 	}
 }
 
