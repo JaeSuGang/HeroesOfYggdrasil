@@ -28,8 +28,7 @@ public:
 	virtual void DeathCheck(UBehaviorTreeComponent& _OwnerComp) override;
 
 public:
-	UPROPERTY(EditAnywhere)
-	double AttackTime;
+	
 
 	UPROPERTY(EditAnywhere)
 	double ThrowTime;
