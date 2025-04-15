@@ -9,6 +9,7 @@
 class UImage;
 class UTextBlock;
 class UButton;
+class UUpgradeDataAsset;
 
 
 /**
@@ -21,6 +22,7 @@ class HEROESOFYGGDRASIL_API UYggAbilityUserWidget : public UYggUserWidget
 	
 public:
 
+	void AbilityInit();
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -37,4 +39,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* SelectButton;
+
+	UPROPERTY(EditAnywhere)
+	UUpgradeDataAsset* UpgradeDataAsset;
 };

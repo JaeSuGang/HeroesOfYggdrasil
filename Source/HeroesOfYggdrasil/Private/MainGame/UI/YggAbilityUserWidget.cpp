@@ -5,6 +5,11 @@
 #include "MainGame/UI/MainGameHUD.h"
 
 #include "Components/Button.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
+
+#include "UpgradeSystem/UpgradeDataAsset.h"
+
 
 void UYggAbilityUserWidget::NativeOnInitialized()
 {
@@ -20,4 +25,22 @@ void UYggAbilityUserWidget::NativeOnInitialized()
 	{
 		SelectButton->OnClicked.AddDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
 	}
+}
+
+FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size)
+{
+	FSlateBrush Brush;
+	Brush.SetResourceObject(Tex);
+	Brush.ImageSize = Size;
+	Brush.DrawAs = ESlateBrushDrawType::Image;
+	return Brush;
+}
+
+void UYggAbilityUserWidget::AbilityInit()
+{
+	FVector2D Size(80.0f, 80.0f);
+
+
+
+	//AbilityImage->SetBrush(MakeBrush(, Size));
 }
