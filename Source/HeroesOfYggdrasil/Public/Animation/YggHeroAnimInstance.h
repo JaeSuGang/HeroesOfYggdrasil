@@ -69,6 +69,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsRoll = false;
 
+	UPROPERTY(BlueprintReadWrite)
+	float RoolSpeed = 1.0f;
+
 private:
 	
 };
