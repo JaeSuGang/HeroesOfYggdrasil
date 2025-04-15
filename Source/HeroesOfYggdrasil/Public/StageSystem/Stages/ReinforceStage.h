@@ -25,4 +25,8 @@ public:
 public:
 	UFUNCTION()
 	void OnReinforceStageEnter(FOnEnterStageParams OnEnterStageParams);
+
+public:
+	UPROPERTY(EditAnywhere)
+	float TimerToSet;
 };

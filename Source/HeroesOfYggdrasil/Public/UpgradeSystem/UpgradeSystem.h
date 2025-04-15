@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "CustomSystem/CustomSystem.h"
+#include "MainGame/MainGamePlayerState.h"
 #include "UpgradeSystem.generated.h"
 
 class UHeroAttributeComponent;
@@ -33,6 +34,9 @@ public:
 	bool GetPlayerUpgradeChoicesAsDataAsset(APlayerController* PC, /* Out */ TArray<UUpgradeDataAsset*>& UpgradeChoices) const;
 
 	/* 업그레이드 포인트 */
+	UFUNCTION()
+	void AddUpgradePointInternal(APlayerState* PlayerState, int PointToAdd = 1);
+
 	UFUNCTION()
 	void SetUpgradePointInternal(APlayerState* PlayerState, int PointToSet);
 

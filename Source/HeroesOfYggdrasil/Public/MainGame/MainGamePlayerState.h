@@ -9,6 +9,17 @@
 class APlayerSelectZone;
 class UHeroUpgradeBase;
 
+USTRUCT()
+struct FOnUpgradePointsChangedParams
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	int NewUpgradePoints;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpgradePointsChanged, FOnUpgradePointsChangedParams, OnUpgradePointsChangedParams);
+
 /**
  * 담당 코더 : 김경민
  */
@@ -24,10 +35,17 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerSetPlayerName(const FString& name);
 
+	UFUNCTION()
+	void OnRep_UpgradePoints();
+
+public:
+	UPROPERTY()
+	FOnUpgradePointsChanged OnUpgradePointsChanged;
+
 public:
 	UPROPERTY(Replicated, VisibleInstanceOnly)
 	TArray<FPrimaryAssetId> AvailableUpgradeIds;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_UpgradePoints)
 	int UpgradePoints;
 };

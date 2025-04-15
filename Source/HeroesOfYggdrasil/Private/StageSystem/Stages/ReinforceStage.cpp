@@ -3,13 +3,16 @@
 
 #include "StageSystem/Stages/ReinforceStage.h"
 
+#include "UpgradeSystem/UpgradeSystem.h"
 #include "StageSystem/StageSystem.h"
 #include "MainGame/MainGamePlayerState.h"
+
 
 
 UReinforceStage::UReinforceStage()
 {
 	bIsUsingTimer = true;
+	TimerToSet = 5.0f;
 }
 
 void UReinforceStage::BeginPlay(UStageSystem* NewStageSystem)
@@ -17,6 +20,7 @@ void UReinforceStage::BeginPlay(UStageSystem* NewStageSystem)
 	Super::BeginPlay(NewStageSystem);
 
 	OnEnterStageInternal.AddDynamic(this, &UReinforceStage::OnReinforceStageEnter);
+	// OnEnterStageInternal.AddDynamic(UUpgradeSystem::Get(NewStageSystem->GetWorld()), &UUpgradeSystem::OnReinforceStageEnter);
 }
 
 void UReinforceStage::TickLogic(float fDeltaTime)
@@ -36,7 +40,7 @@ void UReinforceStage::OnReinforceStageEnter(FOnEnterStageParams OnEnterStagePara
 {
 	if (StageSystem->GetOwner()->HasAuthority())
 	{
-		SetTimer(20.0f);
+		SetTimer(TimerToSet);
 	}
 
 	if (AMainGamePlayerState* MPS = StageSystem->GetWorld()->GetFirstPlayerController()->GetPlayerState<AMainGamePlayerState>())

@@ -58,11 +58,23 @@ bool UUpgradeSystem::GetPlayerUpgradeChoicesAsDataAsset(APlayerController* PC, T
 	return false;
 }
 
+void UUpgradeSystem::AddUpgradePointInternal(APlayerState* PlayerState, int PointToAdd)
+{
+	if (AMainGamePlayerState* MPS = Cast<AMainGamePlayerState>(PlayerState))
+	{
+		SetUpgradePointInternal(PlayerState, MPS->UpgradePoints + PointToAdd);
+	}
+}
+
 void UUpgradeSystem::SetUpgradePointInternal(APlayerState* PlayerState, int PointToSet)
 {
 	if (AMainGamePlayerState* MPS = Cast<AMainGamePlayerState>(PlayerState))
 	{
 		MPS->UpgradePoints = PointToSet;
+		if (MPS->HasAuthority())
+		{
+			MPS->OnRep_UpgradePoints();
+		}
 	}
 }
 
