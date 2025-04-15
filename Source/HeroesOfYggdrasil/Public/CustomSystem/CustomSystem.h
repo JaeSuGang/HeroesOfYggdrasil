@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/AssetManager.h"
+#include "UpgradeSystem/UpgradeDataAsset.h"
 #include "CustomSystem.generated.h"
 
 
