@@ -39,6 +39,8 @@ void UBattleStage::SpawnWave(FOnEnterStageParams OnEnterStageParams)
 			{
 				for (int i = 0; i < SpawnInfo.Count; ++i)
 				{
+					// EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation);
+
 					FTimerHandle TH{};
 					StageSystem->GetWorld()->GetTimerManager().SetTimer(TH, [EnemyManager, SpawnInfo]() {EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation); }, (float)i + SpawnInfo.SpawnDelay, false);
 				}
