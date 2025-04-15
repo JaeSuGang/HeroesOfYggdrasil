@@ -34,7 +34,8 @@ public:
 	virtual void UnregisterObjectsToReplicate();
 	
 public:
-	template <typename T>
+	typedef UUpgradeDataAsset T;
+	// template <typename T>
 	T* GetDataAssetFromPrimaryAssetId(FPrimaryAssetId PrimaryDataAssetId)
 	{
 		TSharedPtr<FStreamableHandle> Handle = GEngine->AssetManager->LoadPrimaryAsset(PrimaryDataAssetId);
