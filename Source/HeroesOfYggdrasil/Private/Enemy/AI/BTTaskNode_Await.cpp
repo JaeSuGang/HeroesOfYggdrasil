@@ -1,12 +1,11 @@
 // Coded By AssortRock Unreal Engine Class Project
 
-
 #include "Enemy/AI/BTTaskNode_Await.h"
+#include "TimerManager.h"
 
 UBTTaskNode_Await::UBTTaskNode_Await()
 {
 	EnemyAIStateValue = EEnemyAIState::Await;
-
 }
 
 void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
@@ -15,12 +14,26 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
-	if (nullptr != PlayAIData.SelfAnimPawn)
+	if (IsValid(PlayAIData.SelfAnimPawn))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
-	AwaitTime = PlayAIData.Data.AwaitTime;
+	// 상태 전이 예약
+	float Duration = FMath::Max(PlayAIData.Data.AwaitTime, 0.1f);
+	FTimerDelegate TimerDel;
+	FTimerHandle TimerHandle;
+
+	TimerDel.BindLambda([this, &_OwnerComp]() {
+		ChangeState(_OwnerComp, EEnemyAIState::Attack);
+		});
+
+	PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
+		TimerHandle,
+		TimerDel,
+		Duration,
+		false
+	);
 }
 
 void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -28,57 +41,37 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	DeathCheck(_OwnerComp);
-	
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-	
+	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 
-
-	APawn* SelfActor = PlayAIData.SelfPawn;
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
-	
-	EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
-
-	AwaitTime -= _DeltaSeconds;
-
-	if (AwaitTime < PlayAIData.Data.StandardZeroTime)
+	if (IsValid(EnemyCharacter))
 	{
-		AwaitTime = PlayAIData.Data.AwaitTime;
-		ChangeState(_OwnerComp, EEnemyAIState::Attack);
-		return;
+		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
 	}
 
-
-	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
-	float Size = TargetDir.Size();
-
-	// 타겟이 플레이어인 경우
-
+	// 거리 기반 상태 분기
 	if (IsValid(TargetCharacter))
 	{
 		UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
-		if (IsValid(TargetAttributeComponent))
+		if (IsValid(TargetAttributeComponent) && TargetAttributeComponent->HasTag(TEXT("Character")))
 		{
-			if (TargetAttributeComponent->HasTag(TEXT("Character")))
-			{
-				// 플레이어가 공격범위를 벗어났을 때
-				if (Size >= PlayAIData.Data.AttackRange)
-				{
-					AwaitTime = PlayAIData.Data.AwaitTime;
-					ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
-					return;
-				}
+			FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+			float Distance = TargetDir.Size();
 
-				// 추적 범위를 넘어갔을 때
-				if (Size >= PlayAIData.Data.StrafeRange)
-				{
-					AwaitTime = PlayAIData.Data.AwaitTime;
-					ChangeState(_OwnerComp, EEnemyAIState::Trace);
-					return;
-				}
+			if (Distance >= PlayAIData.Data.StrafeRange)
+			{
+				ChangeState(_OwnerComp, EEnemyAIState::Trace);
+				return;
+			}
+			if (Distance >= PlayAIData.Data.AttackRange)
+			{
+				ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
+				return;
 			}
 		}
 	}
@@ -88,7 +81,6 @@ void UBTTaskNode_Await::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, 
 {
 	Super::RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 }
-
 
 void UBTTaskNode_Await::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
 {
