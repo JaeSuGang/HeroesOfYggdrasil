@@ -83,6 +83,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	FName RowName;
 
+
+
 	FSpawnProjectileDataRow ProjectileDataRow;
 
 	void LineMode();

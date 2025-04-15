@@ -30,7 +30,7 @@ void UBattleStage::SpawnWave(FOnEnterStageParams OnEnterStageParams)
 {
 	LoadTables();
 
-	if (OnEnterStageParams.NewRound < WaveTableAsArray.Num() && OnEnterStageParams.NewRound > 0)
+	if (OnEnterStageParams.NewRound < WaveTableAsArray.Num() + 1 && OnEnterStageParams.NewRound > 0)
 	{
 		TArray<FMonsterSpawnInfo>& SpawnInfos = WaveTableAsArray[OnEnterStageParams.NewRound - 1]->SpawnInfos;
 		if (AEnemyManager* EnemyManager = AEnemyManager::Get(StageSystem->GetOwner()->GetWorld()))
@@ -39,8 +39,10 @@ void UBattleStage::SpawnWave(FOnEnterStageParams OnEnterStageParams)
 			{
 				for (int i = 0; i < SpawnInfo.Count; ++i)
 				{
+					// EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation);
+					int ab = i;
 					FTimerHandle TH{};
-					StageSystem->GetWorld()->GetTimerManager().SetTimer(TH, [EnemyManager, SpawnInfo]() {EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation); }, (float)i + SpawnInfo.SpawnDelay, false);
+					StageSystem->GetWorld()->GetTimerManager().SetTimer(TH, [EnemyManager, SpawnInfo, ab]() {EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation); }, (float)i + SpawnInfo.SpawnDelay, false);
 				}
 			}
 		}

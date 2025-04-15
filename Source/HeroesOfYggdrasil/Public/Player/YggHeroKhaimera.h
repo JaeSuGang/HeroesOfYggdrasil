@@ -31,28 +31,6 @@ protected:
 	virtual void BeginPlay()override;
 	virtual void Tick(float DeltaTime)override;
 
-	
-	
-	virtual void SkillQ(const FInputActionValue& Value) override;
-	UFUNCTION(Server, Reliable)
-	void ServerSkillQ(const FInputActionValue& Value);
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastSkillQ(const FInputActionValue& Value);
-
-	virtual void SkillE(const FInputActionValue& Value) override;
-	UFUNCTION(Server, Reliable)
-	void ServerSkillE(const FInputActionValue& Value);
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastSkillE(const FInputActionValue& Value);
-
-
-	virtual void SkillR(const FInputActionValue& Value) override;
-	UFUNCTION(Server, Reliable)
-	void ServerSkillR(const FInputActionValue& Value);
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastSkillR(const FInputActionValue& Value);
-
-
 	virtual FName GetHeroName() const override { return FName(TEXT("Khaimera")); };
 
 protected:

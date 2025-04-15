@@ -17,12 +17,8 @@ class HEROESOFYGGDRASIL_API UUpgradeEffect_Stats : public UUpgradeEffectBase
 {
 	GENERATED_BODY()
 	
-
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void Apply(UHeroAttributeComponent* TargetAttribute);
-
-	virtual void Apply_Implementation(UHeroAttributeComponent* TargetAttribute);
+	virtual void ApplyInternal_Implementation(UAttributeComponent* TargetAttribute) override;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -47,10 +43,7 @@ class HEROESOFYGGDRASIL_API UUpgradeEffect_TeamStats : public UUpgradeEffectBase
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void Apply();
-
-	virtual void Apply_Implementation();
+	virtual void ApplyInternal_Implementation(UAttributeComponent* TargetAttribute) override;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

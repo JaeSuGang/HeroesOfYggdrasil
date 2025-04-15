@@ -20,9 +20,9 @@ AYggProjectileActor::AYggProjectileActor()
 void AYggProjectileActor::BeginPlay()
 {
 	Super::BeginPlay();
-
 	ProjectileDataRow = *ProjectileData->FindRow<FSpawnProjectileDataRow>(RowName, nullptr);
 	ProjectileType = ProjectileDataRow.ProjectileType;
+
 
 	switch (ProjectileType)
 	{
@@ -40,9 +40,7 @@ void AYggProjectileActor::BeginPlay()
 		break;
 	default:
 		break;
-
 	}
-
 }
 
 // Called every frame
