@@ -11,4 +11,5 @@ AYggdrasil::AYggdrasil()
 	CharacterAttributeComponent->MaxHP = 100.f;
 	CharacterAttributeComponent->HP = 100.f;
 
+
 }
