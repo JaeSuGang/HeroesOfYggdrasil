@@ -27,12 +27,29 @@ void UHeroJumpTraceNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 		MoveDuration = EventReference.GetNotify()->GetDuration();
 		bool bIsAimMode = Hero->IsAimMode();
 
+		FVector ForwardVector = Hero->GetActorForwardVector();
+		FVector EndLocation = StartLocation + ForwardVector * Scope;
+
 		FHitResult HitResult;
 		FCollisionQueryParams QueryParams;
 		QueryParams.AddIgnoredActor(Hero);
+
 		FCollisionObjectQueryParams ObjectQueryParams;
 		ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel1);
-		bool bIsHit = Hero->GetWorld()->SweepSingleByObjectType(HitResult, StartLocation, StartLocation, FQuat::Identity, ObjectQueryParams, FCollisionShape::MakeSphere(1000), QueryParams);
+
+		FVector BoxHalfSize(50.f, 50.f, 50.f); 
+		FRotator Orientation = ForwardVector.Rotation();
+		bool bIsHit = Hero->GetWorld()->SweepSingleByObjectType(
+			HitResult,
+			StartLocation,
+			EndLocation,
+			FQuat(Orientation),
+			ObjectQueryParams,
+			FCollisionShape::MakeBox(BoxHalfSize),
+			QueryParams
+		);
+
+		/*bool bIsHit = Hero->GetWorld()->SweepSingleByObjectType(HitResult, StartLocation, StartLocation, FQuat::Identity, ObjectQueryParams, FCollisionShape::MakeSphere(1000), QueryParams);*/
 		if (true == bIsHit)
 		{
 			AActor* HitActor = HitResult.GetActor();
@@ -40,7 +57,7 @@ void UHeroJumpTraceNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 		}
 		else if (false == bIsHit)
 		{
-			TargetLocation = StartLocation + Hero->GetActorForwardVector() * Scope;
+			TargetLocation = EndLocation;
 		}
 	}
 }
@@ -56,7 +73,7 @@ void UHeroJumpTraceNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAn
 		float Alpha = FMath::Clamp(ElapsedTime / MoveDuration, 0.0f, 1.0f);
 		FVector TargetPos = FMath::Lerp(StartLocation, TargetLocation, Alpha);
 
-		// ★ 포물선 곡선
+		// 포물선 곡선
 		float JumpCurve = 4 * Alpha * (1 - Alpha);
 		TargetPos.Z += JumpHeight * JumpCurve;
 
