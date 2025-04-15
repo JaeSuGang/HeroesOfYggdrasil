@@ -46,6 +46,12 @@ public:
 
 public:
 	UFUNCTION()
+	void VictoryInternal();
+
+	UFUNCTION()
+	void DefeatInternal();
+
+	UFUNCTION()
 	void StartGame();
 
 	UFUNCTION(NetMulticast, Reliable)
