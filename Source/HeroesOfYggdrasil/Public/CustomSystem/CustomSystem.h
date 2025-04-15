@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Engine/AssetManager.h"
+#include "UpgradeSystem/UpgradeDataAsset.h"
 #include "CustomSystem.generated.h"
 
 
@@ -32,7 +34,8 @@ public:
 	virtual void UnregisterObjectsToReplicate();
 	
 public:
-	template <typename T>
+	typedef UUpgradeDataAsset T;
+	// template <typename T>
 	T* GetDataAssetFromPrimaryAssetId(FPrimaryAssetId PrimaryDataAssetId)
 	{
 		TSharedPtr<FStreamableHandle> Handle = GEngine->AssetManager->LoadPrimaryAsset(PrimaryDataAssetId);
