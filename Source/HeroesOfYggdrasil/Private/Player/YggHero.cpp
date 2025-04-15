@@ -170,7 +170,7 @@ void AYggHero::SetAimMode(bool Value)
 
 	if (bUseControllerRotationYaw)
 	{
-		CameraBoom->TargetArmLength = 200.0f;
+		CameraBoom->TargetArmLength = 400.0f;
 		CameraBoom->SocketOffset = FVector(0.0f, 60.0f, 150.0f);
 	}
 	else {
@@ -247,6 +247,10 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		if (ActionMap.Find(FName("CameraZoomInOut")))
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("CameraZoomInOut")], ETriggerEvent::Triggered, this, &AYggHero::CameraZoomInOut);
+		}
+		if (ActionMap.Contains(FName("ToggleAimMode")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("ToggleAimMode")], ETriggerEvent::Triggered, this, &AYggHero::ToggleAimMode);
 		}
 	}
 }
