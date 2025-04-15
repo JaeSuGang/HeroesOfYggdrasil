@@ -17,6 +17,9 @@ class HEROESOFYGGDRASIL_API AYggdrasil : public AYggNPC
 public:
 	AYggdrasil();
 
-	virtual void Tick(float DeltaTime) override;
+	virtual void BeginPlay() override;
+	// virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void CheckHP(float _NULL);
 };
