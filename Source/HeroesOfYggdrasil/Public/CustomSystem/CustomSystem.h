@@ -30,5 +30,19 @@ public:
 
 	UFUNCTION()
 	virtual void UnregisterObjectsToReplicate();
-		
+	
+public:
+	template <typename T>
+	T* GetDataAssetFromPrimaryAssetId(FPrimaryAssetId PrimaryDataAssetId)
+	{
+		TSharedPtr<FStreamableHandle> Handle = GEngine->AssetManager->LoadPrimaryAsset(PrimaryDataAssetId);
+		if (Handle.IsValid())
+		{
+			Handle->WaitUntilComplete();
+
+			T* LoadedDataAsset = GEngine->AssetManager->GetPrimaryAssetObject<T>(PrimaryDataAssetId);
+			return LoadedDataAsset;
+		}
+		return nullptr;
+	}
 };

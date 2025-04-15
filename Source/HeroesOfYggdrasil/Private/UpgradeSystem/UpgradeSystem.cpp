@@ -30,34 +30,6 @@ void UUpgradeSystem::BeginPlay()
 	// GEngine->AssetManager
 }
 
-bool UUpgradeSystem::GetPlayerUpgradeChoicesAsDataAsset(APlayerState* PS, TArray<UUpgradeDataAsset*>& UpgradeChoices) const
-{
-	if (AMainGamePlayerState* MPS = Cast<AMainGamePlayerState>(PS))
-	{
-		TSharedPtr<FStreamableHandle> Handle = GEngine->AssetManager->LoadPrimaryAssets(MPS->AvailableUpgradeIds);
-		if (Handle.IsValid())
-		{
-			Handle->WaitUntilComplete();
-
-			for (FPrimaryAssetId& AssetId : MPS->AvailableUpgradeIds)
-			{
-				if (UUpgradeDataAsset* UpgradeDataAsset = GEngine->AssetManager->GetPrimaryAssetObject<UUpgradeDataAsset>(AssetId))
-				{
-					UpgradeChoices.Add(UpgradeDataAsset);
-				}
-			}
-		}
-		else
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
 void UUpgradeSystem::AddUpgradePointInternal(APlayerState* PlayerState, int PointToAdd)
 {
 	if (AMainGamePlayerState* MPS = Cast<AMainGamePlayerState>(PlayerState))
