@@ -46,6 +46,6 @@ public:
 	UPROPERTY(Replicated, VisibleInstanceOnly)
 	TArray<FPrimaryAssetId> AvailableUpgradeIds;
 
-	UPROPERTY(ReplicatedUsing=OnRep_UpgradePoints)
+	UPROPERTY(ReplicatedUsing=OnRep_UpgradePoints, VisibleInstanceOnly)
 	int UpgradePoints;
 };

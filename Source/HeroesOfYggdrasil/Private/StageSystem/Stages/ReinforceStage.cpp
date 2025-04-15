@@ -6,6 +6,7 @@
 #include "UpgradeSystem/UpgradeSystem.h"
 #include "StageSystem/StageSystem.h"
 #include "MainGame/MainGamePlayerState.h"
+#include "MainGame/MainGameState.h"
 
 
 
@@ -41,10 +42,16 @@ void UReinforceStage::OnReinforceStageEnter(FOnEnterStageParams OnEnterStagePara
 	if (StageSystem->GetOwner()->HasAuthority())
 	{
 		SetTimer(TimerToSet);
-	}
 
-	if (AMainGamePlayerState* MPS = StageSystem->GetWorld()->GetFirstPlayerController()->GetPlayerState<AMainGamePlayerState>())
-	{
-		// MPS->AddUpgradePoints(1);
+		if (AMainGameState* MGS = StageSystem->GetWorld()->GetGameState<AMainGameState>())
+		{
+			if (UUpgradeSystem* US = UUpgradeSystem::Get(StageSystem->GetWorld()))
+			{
+				for (APlayerState* PS : MGS->PlayerArray)
+				{
+					US->AddUpgradePointInternal(PS);
+				}
+			}
+		}
 	}
 }
