@@ -30,10 +30,8 @@ public:
 	* 플레이어의 선택지를 데이터 에셋으로 얻어냄
 	* 오류 발생시 false 리턴
 	*/
-	UFUNCTION(BlueprintCallable)
-	bool GetPlayerUpgradeChoicesAsDataAsset(APlayerState* PS, /* Out */ TArray<UUpgradeDataAsset*>& UpgradeChoices) const;
-
 	/* 업그레이드 포인트 */
+
 	UFUNCTION()
 	void AddUpgradePointInternal(APlayerState* PlayerState, int PointToAdd = 1);
 

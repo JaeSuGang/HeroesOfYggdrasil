@@ -14,4 +14,8 @@ class HEROESOFYGGDRASIL_API AYggHeroAurora : public AYggHero
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
 };

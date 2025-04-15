@@ -77,6 +77,16 @@ void UStageSystem::UnregisterObjectsToReplicate()
 	}
 }
 
+void UStageSystem::VictoryInternal()
+{
+	UE_LOG(LogTemp, Error, TEXT("%S%u : Victory!"), __FUNCTION__, __LINE__);
+}
+
+void UStageSystem::DefeatInternal()
+{
+	UE_LOG(LogTemp, Error, TEXT("%S%u : Defeated!"), __FUNCTION__, __LINE__);
+}
+
 void UStageSystem::StartGame()
 {
 	EnterStage(0);
