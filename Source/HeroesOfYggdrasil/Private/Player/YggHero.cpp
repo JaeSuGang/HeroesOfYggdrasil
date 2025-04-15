@@ -170,7 +170,7 @@ void AYggHero::SetAimMode(bool Value)
 
 	if (bUseControllerRotationYaw)
 	{
-		CameraBoom->TargetArmLength = 200.0f;
+		CameraBoom->TargetArmLength = 400.0f;
 		CameraBoom->SocketOffset = FVector(0.0f, 60.0f, 150.0f);
 	}
 	else {
@@ -247,6 +247,10 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		if (ActionMap.Find(FName("CameraZoomInOut")))
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("CameraZoomInOut")], ETriggerEvent::Triggered, this, &AYggHero::CameraZoomInOut);
+		}
+		if (ActionMap.Contains(FName("ToggleAimMode")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("ToggleAimMode")], ETriggerEvent::Triggered, this, &AYggHero::ToggleAimMode);
 		}
 	}
 }
@@ -427,6 +431,7 @@ void AYggHero::SkillQ(const FInputActionValue& Value)
 	{
 		return;
 	}
+	if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -449,6 +454,7 @@ void AYggHero::MulticastHeroSkillQ_Implementation(const FInputActionValue& Value
 {
 	FName MontageName = TEXT("SkillQ");
 	HeroAnimInstance->PlayMontage(MontageName);
+	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime;
 }
 
 void AYggHero::SkillE(const FInputActionValue& Value)
@@ -457,6 +463,7 @@ void AYggHero::SkillE(const FInputActionValue& Value)
 	{
 		return;
 	}
+	if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -481,6 +488,7 @@ void AYggHero::MulticastHeroSkillE_Implementation(const FInputActionValue& Value
 {
 	FName MontageName = TEXT("SkillE");
 	HeroAnimInstance->PlayMontage(MontageName);
+	HeroAttributeComponent->SkillECurCoolTime = HeroAttributeComponent->SkillEMaxCoolTime;
 }
 
 void AYggHero::SkillR(const FInputActionValue& Value)
@@ -489,6 +497,7 @@ void AYggHero::SkillR(const FInputActionValue& Value)
 	{
 		return;
 	}
+	if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -513,6 +522,7 @@ void AYggHero::MulticastHeroSkillR_Implementation(const FInputActionValue& Value
 {
 	FName MontageName = TEXT("SkillR");
 	HeroAnimInstance->PlayMontage(MontageName);
+	HeroAttributeComponent->SkillRCurCoolTime = HeroAttributeComponent->SkillRMaxCoolTime;
 }
 
 void AYggHero::Die(float Delegate)

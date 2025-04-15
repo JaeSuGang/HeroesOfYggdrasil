@@ -6,33 +6,33 @@
 #include "Attribute/HeroAttributeComponent.h"
 
 
-void UUpgradeEffect_Stats::Apply_Implementation(UHeroAttributeComponent* TargetAttribute)
+void UUpgradeEffect_Stats::ApplyInternal_Implementation(UAttributeComponent* TargetAttribute)
 {
-	if (TargetAttribute)
+	if (UHeroAttributeComponent* CastedTargetAttribute = Cast<UHeroAttributeComponent>(TargetAttribute))
 	{
 		if (AttackIncrement != 0.0f)
 		{
-			TargetAttribute->Server_SetAttackPoints(TargetAttribute->AttackPoints + AttackIncrement);
+			CastedTargetAttribute->Server_SetAttackPoints(CastedTargetAttribute->AttackPoints + AttackIncrement);
 		}
 
 		if (DefenseIncrement != 0.0f)
 		{
-			TargetAttribute->Server_SetDefensePoints(TargetAttribute->DefensePoints + DefenseIncrement);
+			CastedTargetAttribute->Server_SetDefensePoints(CastedTargetAttribute->DefensePoints + DefenseIncrement);
 		}
 
 		if (HPIncrement != 0.0f)
 		{
-			TargetAttribute->Server_SetMaxHP(TargetAttribute->MaxHP + HPIncrement);
+			CastedTargetAttribute->Server_SetMaxHP(CastedTargetAttribute->MaxHP + HPIncrement);
 		}
 
 		if (MoveSpeedIncrement != 0.0f)
 		{
-			TargetAttribute->Server_SetMaxMoveSpeed(TargetAttribute->MaxMoveSpeed + MoveSpeedIncrement);
+			CastedTargetAttribute->Server_SetMaxMoveSpeed(CastedTargetAttribute->MaxMoveSpeed + MoveSpeedIncrement);
 		}
 
 		if (AttackSpeedIncrement != 0.0f)
 		{
-			TargetAttribute->Server_SetAttackSpeedRate(TargetAttribute->AttackSpeedRate + AttackSpeedIncrement);
+			CastedTargetAttribute->Server_SetAttackSpeedRate(CastedTargetAttribute->AttackSpeedRate + AttackSpeedIncrement);
 		}
 	}
 	else
@@ -41,7 +41,7 @@ void UUpgradeEffect_Stats::Apply_Implementation(UHeroAttributeComponent* TargetA
 	}
 }
 
-void UUpgradeEffect_TeamStats::Apply_Implementation()
+void UUpgradeEffect_TeamStats::ApplyInternal_Implementation(UAttributeComponent* TargetAttribute)
 {
 	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
 	{

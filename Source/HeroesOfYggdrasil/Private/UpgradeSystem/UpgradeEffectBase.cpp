@@ -3,3 +3,7 @@
 
 #include "UpgradeSystem/UpgradeEffectBase.h"
 
+void UUpgradeEffectBase::ApplyInternal_Implementation(UAttributeComponent* TargetAttribute)
+{
+
+}

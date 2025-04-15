@@ -57,6 +57,8 @@ void UStageSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 	DOREPLIFETIME(UStageSystem, StageCycle);
 	DOREPLIFETIME(UStageSystem, CurrentStageIndex);
+	DOREPLIFETIME(UStageSystem, CurrentRound);
+	DOREPLIFETIME(UStageSystem, Timer);
 }
 
 void UStageSystem::RegisterObjectsToReplicate()
@@ -111,23 +113,26 @@ void UStageSystem::RequestEnterStage_Implementation(int NewStageIndex)
 
 void UStageSystem::EnterStageInternal(int NewStageIndex)
 {
-	/* Delegate 인자 설정 */
-	FOnExitStageParams OnExitStageParams{};
-	OnExitStageParams.PrevRound = CurrentRound;
-	OnExitStageParams.NewRound = CurrentRound + 1;
-
-	FOnEnterStageParams OnEnterStageParams{};
-	OnEnterStageParams.PrevRound = CurrentRound;
-	OnEnterStageParams.NewRound = CurrentRound + 1;
-
-	/* 스테이지 진입과 Delegate 호출 */
-	UStageBase* OldStage = StageCycle[CurrentStageIndex];
-	OldStage->OnExitStageInternal.Broadcast(OnExitStageParams);
+	int OldStageIndex = CurrentStageIndex;
 
 	CurrentStageIndex = NewStageIndex % StageCycle.Num();
+	if (CurrentStageIndex == 0)
+	{
+		CurrentRound++;
+	}
+
+	/* Delegate 인자 설정 */
+	FOnExitStageParams OnExitStageParams{};
+	OnExitStageParams.NewRound = CurrentRound;
+
+	FOnEnterStageParams OnEnterStageParams{};
+	OnEnterStageParams.NewRound = CurrentRound;
+
+	/* 스테이지 진입과 Delegate 호출 */
+	UStageBase* OldStage = StageCycle[OldStageIndex];
+	OldStage->OnExitStageInternal.Broadcast(OnExitStageParams);
 
 	UStageBase* NewStage = StageCycle[CurrentStageIndex];
-	NewStage->Round = CurrentRound;
 	NewStage->OnEnterStageInternal.Broadcast(OnEnterStageParams);
 }
 

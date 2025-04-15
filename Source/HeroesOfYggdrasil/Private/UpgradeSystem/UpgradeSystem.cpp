@@ -30,9 +30,9 @@ void UUpgradeSystem::BeginPlay()
 	// GEngine->AssetManager
 }
 
-bool UUpgradeSystem::GetPlayerUpgradeChoicesAsDataAsset(APlayerController* PC, TArray<UUpgradeDataAsset*>& UpgradeChoices) const
+bool UUpgradeSystem::GetPlayerUpgradeChoicesAsDataAsset(APlayerState* PS, TArray<UUpgradeDataAsset*>& UpgradeChoices) const
 {
-	if (AMainGamePlayerState* MPS = PC->GetPlayerState<AMainGamePlayerState>())
+	if (AMainGamePlayerState* MPS = Cast<AMainGamePlayerState>(PS))
 	{
 		TSharedPtr<FStreamableHandle> Handle = GEngine->AssetManager->LoadPrimaryAssets(MPS->AvailableUpgradeIds);
 		if (Handle.IsValid())
@@ -58,9 +58,58 @@ bool UUpgradeSystem::GetPlayerUpgradeChoicesAsDataAsset(APlayerController* PC, T
 	return false;
 }
 
+void UUpgradeSystem::AddUpgradePointInternal(APlayerState* PlayerState, int PointToAdd)
+{
+	if (AMainGamePlayerState* MPS = Cast<AMainGamePlayerState>(PlayerState))
+	{
+		SetUpgradePointInternal(PlayerState, MPS->UpgradePoints + PointToAdd);
+	}
+}
+
+void UUpgradeSystem::SetUpgradePointInternal(APlayerState* PlayerState, int PointToSet)
+{
+	if (AMainGamePlayerState* MPS = Cast<AMainGamePlayerState>(PlayerState))
+	{
+		MPS->UpgradePoints = PointToSet;
+		MPS->OnRep_UpgradePoints();
+		if (MPS->AvailableUpgradeIds.Num() <= 0)
+		{
+			GenerateUpgradeChoicesInternal(MPS, 3);
+		}
+	}
+}
+
+void UUpgradeSystem::UpgradeByUpgradeId(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId UpgradeDataAssetId)
+{
+	if (GetOwner()->HasAuthority())
+	{
+		GEngine->AssetManager->LoadPrimaryAsset(UpgradeDataAssetId, TArray<FName>(), FStreamableDelegate::CreateLambda([this, AttributeComponent, UpgradeDataAssetId]()
+			{
+				if (UObject* LoadedObject = GEngine->AssetManager->GetPrimaryAssetObject(UpgradeDataAssetId))
+				{
+					if (UUpgradeDataAsset* UpgradeDataAsset = Cast<UUpgradeDataAsset>(LoadedObject))
+					{
+						UpgradeInternal(AttributeComponent, UpgradeDataAsset);
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("%S%u : Cast Failed"), __FUNCTION__, __LINE__);
+					}
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("%S%u : Invalid Asset"), __FUNCTION__, __LINE__);
+				}
+			}));
+	}
+	else
+	{
+		RequestUpgrade(AttributeComponent, UpgradeDataAssetId);
+	}
+}
+
 void UUpgradeSystem::Upgrade(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData)
 {
-	
 	if (GetOwner()->HasAuthority())
 	{
 		UpgradeInternal(AttributeComponent, UpgradeData);
@@ -101,37 +150,39 @@ void UUpgradeSystem::UpgradeInternal(UHeroAttributeComponent* AttributeComponent
 
 	for (UUpgradeEffectBase* EffectBase : UpgradeData->UpgradeEffects)
 	{
-		if (UUpgradeEffect_Stats* Effect = Cast<UUpgradeEffect_Stats>(EffectBase))
+		EffectBase->ApplyInternal(AttributeComponent);
+	}
+
+	if (APawn* OwnerPawn = Cast<APawn>(AttributeComponent->GetOwner()))
+	{
+		if (AMainGamePlayerState* MPS = OwnerPawn->GetPlayerState<AMainGamePlayerState>())
 		{
-			Effect->Apply(AttributeComponent);
-		}
-		if (UUpgradeEffect_TeamStats* Effect = Cast<UUpgradeEffect_TeamStats>(EffectBase))
-		{
-			Effect->Apply();
+			AddUpgradePointInternal(MPS, -1);
+			GenerateUpgradeChoicesInternal(MPS, 3);
 		}
 	}
 }
 
-void UUpgradeSystem::GenerateUpgradeChoices(APlayerController* PC, int ChoiceCount)
+void UUpgradeSystem::GenerateUpgradeChoices(APlayerState* PS, int ChoiceCount)
 {
 	if (GetOwner()->HasAuthority())
 	{
-		GenerateUpgradeChoicesInternal(PC, ChoiceCount);
+		GenerateUpgradeChoicesInternal(PS, ChoiceCount);
 	}
 	else
 	{
-		RequestGenerateUpgradeChoices(PC, ChoiceCount);
+		RequestGenerateUpgradeChoices(PS, ChoiceCount);
 	}
 }
 
-void UUpgradeSystem::RequestGenerateUpgradeChoices_Implementation(APlayerController* PC, int ChoiceCount)
+void UUpgradeSystem::RequestGenerateUpgradeChoices_Implementation(APlayerState* PS, int ChoiceCount)
 {
-	GenerateUpgradeChoicesInternal(PC, ChoiceCount);
+	GenerateUpgradeChoicesInternal(PS, ChoiceCount);
 }
 
-void UUpgradeSystem::GenerateUpgradeChoicesInternal(APlayerController* PC, int ChoiceCount)
+void UUpgradeSystem::GenerateUpgradeChoicesInternal(APlayerState* PS, int ChoiceCount)
 {
-	if (AMainGamePlayerState* MPS = PC->GetPlayerState<AMainGamePlayerState>())
+	if (AMainGamePlayerState* MPS = Cast<AMainGamePlayerState>(PS))
 	{
 		MPS->AvailableUpgradeIds.Empty();
 

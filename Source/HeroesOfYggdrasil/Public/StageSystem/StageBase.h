@@ -15,9 +15,6 @@ struct FOnEnterStageParams
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int PrevRound;
-
-	UPROPERTY()
 	int NewRound;
 };
 
@@ -25,9 +22,6 @@ USTRUCT()
 struct FOnExitStageParams
 {
 	GENERATED_BODY()
-
-	UPROPERTY()
-	int PrevRound;
 
 	UPROPERTY()
 	int NewRound;
@@ -83,9 +77,6 @@ public:
 public:
 	UPROPERTY(VisibleInstanceOnly)
 	UStageSystem* StageSystem;
-
-	UPROPERTY()
-	int Round;
 
 	UPROPERTY()
 	bool bIsUsingTimer;

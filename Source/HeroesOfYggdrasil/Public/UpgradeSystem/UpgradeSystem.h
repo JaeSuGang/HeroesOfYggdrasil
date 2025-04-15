@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "CustomSystem/CustomSystem.h"
+#include "MainGame/MainGamePlayerState.h"
 #include "UpgradeSystem.generated.h"
 
 class UHeroAttributeComponent;
@@ -30,9 +31,19 @@ public:
 	* 오류 발생시 false 리턴
 	*/
 	UFUNCTION(BlueprintCallable)
-	bool GetPlayerUpgradeChoicesAsDataAsset(APlayerController* PC, /* Out */ TArray<UUpgradeDataAsset*>& UpgradeChoices) const;
+	bool GetPlayerUpgradeChoicesAsDataAsset(APlayerState* PS, /* Out */ TArray<UUpgradeDataAsset*>& UpgradeChoices) const;
+
+	/* 업그레이드 포인트 */
+	UFUNCTION()
+	void AddUpgradePointInternal(APlayerState* PlayerState, int PointToAdd = 1);
+
+	UFUNCTION()
+	void SetUpgradePointInternal(APlayerState* PlayerState, int PointToSet);
 
 	/* 업그레이드 */
+	UFUNCTION(BlueprintCallable)
+	void UpgradeByUpgradeId(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId UpgradeDataAssetId);
+
 	UFUNCTION(BlueprintCallable)
 	void Upgrade(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData);
 
@@ -46,11 +57,11 @@ public:
 
 	/* 업그레이드 선택지 생성 */
 	UFUNCTION(BlueprintCallable)
-	void GenerateUpgradeChoices(APlayerController* PC, int ChoiceCount);
+	void GenerateUpgradeChoices(APlayerState* PS, int ChoiceCount);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void RequestGenerateUpgradeChoices(APlayerController* PC, int ChoiceCount);
+	void RequestGenerateUpgradeChoices(APlayerState* PS, int ChoiceCount);
 
 	UFUNCTION(BlueprintCallable)
-	void GenerateUpgradeChoicesInternal(APlayerController* PC, int ChoiceCount);
+	void GenerateUpgradeChoicesInternal(APlayerState* PS, int ChoiceCount);
 };
