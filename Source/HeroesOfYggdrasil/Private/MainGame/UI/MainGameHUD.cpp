@@ -126,12 +126,18 @@ void AMainGameHUD::ShowMainGameWidget()
 
 		AIM = Cast<UImage>(CurrentWidget->GetWidgetFromName(TEXT("AIM")));
 
+		PC = GetWorld()->GetFirstPlayerController();
+		AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
+	
+		PS->OnUpgradePointsChanged.AddDynamic(this, &AMainGameHUD::OnUpgradePointChange);
+
 		CurrentWidget->AddToViewport();
 	}
 
 	this->PlayerOwner->SetInputMode(FInputModeGameOnly{});
 
 	this->PlayerOwner->bShowMouseCursor = false;
+
 }
 
 void AMainGameHUD::CloseCurrentWidget()
@@ -187,28 +193,14 @@ void AMainGameHUD::EnableCrossHair(bool bIsVisible)
 	}
 }
 
-//void AMainGameHUD::CreateMHPBar(AEnemyCharacter* Enemy)
-//{
-//	if (!Enemy)
-//	{
-//		return;
-//	}
-//
-//	UYggMHPBarUserWidget* MHPBarUserWidget = CreateWidget<UYggMHPBarUserWidget>(GetWorld(), MHPBarWidgetClass);
-//
-//	if (!MHPBarUserWidget)
-//		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-//
-//	MHPBarUserWidget->SetAttachedCharacter(Enemy);
-//	UWidgetComponent* WidgetComponet = Enemy->GetWidgetComponent();
-//	WidgetComponet->SetWidget(MHPBarUserWidget);
-//
-//	UCharacterAttributeComponent* CAC = Enemy->GetAttributeComponent();
-//
-//	if (IsValid(CAC))
-//	{
-//		CAC->ClientDelegate_OnTakeDamage.AddDynamic(MHPBarUserWidget, &UYggMHPBarUserWidget::UpdateHPBar);
-//	}
-//}
-
-
+void AMainGameHUD::OnUpgradePointChange(FOnUpgradePointsChangedParams OnUpgradePointsChangedParams)
+{
+	if (0 < OnUpgradePointsChangedParams.NewUpgradePoints)
+	{
+		MainGameUserWidget->StartAbilityPlus();
+	}
+	else
+	{
+		MainGameUserWidget->EndAbilityPlus();
+	}
+}

@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "StageSystem/StageSystem.h"
+
+#include "MainGame/MainGamePlayerState.h"
+
 #include "MainGameHUD.generated.h"
 
 class UYggLobbyUserWidget;
@@ -56,8 +59,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void EnableCrossHair(bool bIsVisible);
 
-	//UFUNCTION(BlueprintCallable)
-	//void CreateMHPBar(AEnemyCharacter* Enemy);
+	UFUNCTION()
+	void OnUpgradePointChange(FOnUpgradePointsChangedParams OnUpgradePointsChangedParams);
 
 	UYggMainGameUserWidget* GetMainGameWidget()
 	{
@@ -98,6 +101,8 @@ public:
 	/*UPROPERTY()
 	UYggMHPBarUserWidget* MHPBarUserWidget;*/
 
+	UPROPERTY()
 	APlayerController* PC;
+
 
 };

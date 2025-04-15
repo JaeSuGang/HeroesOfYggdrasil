@@ -4,7 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+
+#include "MainGame/MainGamePlayerState.h"
+
 #include "YggMainGameUserWidget.generated.h"
+
 
 class UCanvasPanel;
 class UYggPlayerStatusUserWidget;
@@ -39,8 +43,17 @@ public:
 		return SkillBarWidget;
 	}
 
+	//UFUNCTION(BlueprintCallable, Category = YGG)
+	//void CreateAbilityPlus();
+
 	UFUNCTION(BlueprintCallable, Category = YGG)
-	void CreateAbilityPlus();
+	void StartAbilityPlus();
+
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void EndAbilityPlus();
+
+	//UFUNCTION()
+	//void OnUpgradePointChange(FOnUpgradePointsChangedParams OnUpgradePointsChangedParams);
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void CreateAbility();
@@ -100,4 +113,6 @@ private:
 
 	UPROPERTY()
 	UYggDeathPopupUserWidget* DeathPopupWidget;
+
+	
 };

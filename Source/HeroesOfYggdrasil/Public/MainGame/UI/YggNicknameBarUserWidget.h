@@ -24,6 +24,9 @@ public:
 	UFUNCTION()
 	void SetPlayerName();
 
+	UFUNCTION()
+	void OnGameStart(FOnGameStartParams OnGameStartParams);
+
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
