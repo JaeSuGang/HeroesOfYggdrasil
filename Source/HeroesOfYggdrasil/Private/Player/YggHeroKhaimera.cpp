@@ -67,26 +67,6 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
-		if (ActionMap.Contains(FName("Attack")))
-		{
-			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroKhaimera::Attack);
-			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHeroKhaimera::EndAttack);
-		}
-
-		if (ActionMap.Contains(FName("SkillQ")))
-		{
-			EnhancedInput->BindAction(ActionMap[TEXT("SkillQ")], ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillQ);
-		}
-
-		if (ActionMap.Contains(FName("SkillE")))
-		{
-			EnhancedInput->BindAction(ActionMap[TEXT("SkillE")], ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillE);
-		}
-
-		if (ActionMap.Contains(FName("SkillR")))
-		{
-			EnhancedInput->BindAction(ActionMap[TEXT("SkillR")], ETriggerEvent::Started, this, &AYggHeroKhaimera::SkillR);
-		}
 	}
 }
 
@@ -112,94 +92,7 @@ void AYggHeroKhaimera::Tick(float DeltaTime)
 
 
 
-void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
-{
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
-	{
-		return;
-	}
-	if (HasAuthority())
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
-		MulticastSkillQ(Value);
-	}
-	else
-	{
-		ServerSkillQ(Value);
-	}
-}
 
-void AYggHeroKhaimera::ServerSkillQ_Implementation(const FInputActionValue& Value)
-{
-	SkillQ(Value);
-}
-
-void AYggHeroKhaimera::MulticastSkillQ_Implementation(const FInputActionValue& Value)
-{
-	FName MontageName = TEXT("SkillQ");
-	HeroAnimInstance->PlayMontage(MontageName);
-}
-
-void AYggHeroKhaimera::SkillE(const FInputActionValue& Value)
-{
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
-	{
-		return;
-	}
-	if (HasAuthority())
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
-		MulticastSkillE(Value);
-	}
-	else
-	{
-		ServerSkillE(Value);
-	}
-}
-
-void AYggHeroKhaimera::ServerSkillE_Implementation(const FInputActionValue& Value)
-{
-	SkillE(Value);
-}
-
-
-
-void AYggHeroKhaimera::MulticastSkillE_Implementation(const FInputActionValue& Value)
-{
-	FName MontageName = TEXT("SkillE");
-	HeroAnimInstance->PlayMontage(MontageName);
-}
-
-void AYggHeroKhaimera::SkillR(const FInputActionValue& Value)
-{
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
-	{
-		return;
-	}
-	if (HasAuthority())
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
-		MulticastSkillR(Value);
-	}
-	else
-	{
-		ServerSkillR(Value);
-	}
-}
-
-void AYggHeroKhaimera::ServerSkillR_Implementation(const FInputActionValue& Value)
-{
-	SkillR(Value);
-}
-
-void AYggHeroKhaimera::MulticastSkillR_Implementation(const FInputActionValue& Value)
-{
-	FName MontageName = TEXT("SkillR");
-	HeroAnimInstance->PlayMontage(MontageName);
-}
 
 
 void AYggHeroKhaimera::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

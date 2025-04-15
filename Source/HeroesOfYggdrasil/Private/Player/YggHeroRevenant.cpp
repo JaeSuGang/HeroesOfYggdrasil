@@ -34,14 +34,7 @@ void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
-		if (ActionMap.Contains(FName("Attack")))
-		{
-			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::Attack);
-		}
-		if (ActionMap.Contains(FName("ToggleAimMode")))
-		{
-			EnhancedInput->BindAction(ActionMap[TEXT("ToggleAimMode")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::ToggleAimMode);
-		}
+		
 	}
 }
 
