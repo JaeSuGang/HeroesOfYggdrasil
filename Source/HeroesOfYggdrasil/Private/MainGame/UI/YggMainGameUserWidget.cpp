@@ -86,10 +86,6 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 		}
 	}
 
-}
-
-void UYggMainGameUserWidget::CreateAbilityPlus()
-{
 	if (!AbilityPlusUserWidgetClass)
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
@@ -106,7 +102,55 @@ void UYggMainGameUserWidget::CreateAbilityPlus()
 			CanvasSlot->SetPosition(FVector2D(500.0f, 500.0f));
 		}
 	}
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
+
+	//PS->OnUpgradePointsChanged.AddDynamic(this, &UYggMainGameUserWidget::OnUpgradePointChange);
 }
+
+//void UYggMainGameUserWidget::CreateAbilityPlus()
+//{
+//	if (!AbilityPlusUserWidgetClass)
+//		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+//
+//	AbilityPlusWidget = CreateWidget<UYggAbilityPlusUserWidget>(GetWorld(), AbilityPlusUserWidgetClass);
+//
+//	if (AbilityPlusWidget)
+//	{
+//		MainGamePanel->AddChild(AbilityPlusWidget);
+//
+//		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(AbilityPlusWidget->Slot))
+//		{
+//			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+//			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+//			CanvasSlot->SetPosition(FVector2D(500.0f, 500.0f));
+//		}
+//	}
+//}
+
+void UYggMainGameUserWidget::StartAbilityPlus()
+{
+	AbilityPlusWidget->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UYggMainGameUserWidget::EndAbilityPlus()
+{
+	AbilityPlusWidget->SetVisibility(ESlateVisibility::Hidden);
+}
+
+//void UYggMainGameUserWidget::OnUpgradePointChange(FOnUpgradePointsChangedParams OnUpgradePointsChangedParams)
+//{
+//	if (0 < OnUpgradePointsChangedParams.NewUpgradePoints)
+//	{
+//		CreateAbilityPlus();
+//	}
+//	else
+//	{
+//
+//	}
+//	
+//}
 
 void UYggMainGameUserWidget::CreateAbility()
 {
