@@ -162,6 +162,28 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
+
+
+	// 콜리전 디버깅
+	for (auto& Pair : AttackCapsuleComponentMap)
+	{
+		if (UYggAttackCapsuleComponent* Capsule = Pair.Value)
+		{
+			DrawDebugCapsule(
+				GetWorld(),
+				Capsule->GetComponentLocation(),
+				Capsule->GetScaledCapsuleHalfHeight(),
+				Capsule->GetScaledCapsuleRadius(),
+				Capsule->GetComponentQuat(),
+				FColor::Red,
+				true,   // persistent
+				10.0f,  // duration
+				0,
+				2.0f    // thickness
+			);
+		}
+	}
+
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
@@ -305,6 +327,5 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 	AYggHero* Hero = Cast<AYggHero>(_Target);
 	if (!IsValid(Hero) && !IsValid(Enemy)) return;
 
-	float Damage = CharacterAttributeComponent->AttackPoints / 10.0f;
 	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target);
 }
