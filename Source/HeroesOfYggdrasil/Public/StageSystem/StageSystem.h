@@ -19,7 +19,25 @@ struct FOnGameStartParams
 
 };
 
+USTRUCT()
+struct FOnVictoryParams
+{
+	GENERATED_BODY()
+
+
+};
+
+USTRUCT()
+struct FOnDefeatedParams
+{
+	GENERATED_BODY()
+
+
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameStarted, FOnGameStartParams, OnGameStartParams);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnVictory, FOnVictoryParams, OnVictoryParams);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDefeated, FOnDefeatedParams, OnDefeatedParams);
 
 UCLASS()
 class HEROESOFYGGDRASIL_API UStageSystem : public UCustomSystem
@@ -51,6 +69,14 @@ public:
 	UFUNCTION()
 	void DefeatInternal();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastDefeated(FOnDefeatedParams OnDefeatedParams);
+	void MulticastDefeated_Implementation(FOnDefeatedParams OnDefeatedParams);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastVictory(FOnVictoryParams OnVictoryParams);
+	void MulticastVictory_Implementation(FOnVictoryParams OnVictoryParams);
+
 	UFUNCTION()
 	void StartGame();
 
@@ -78,7 +104,14 @@ public:
 	UReinforceStage* GetReinforceStage() const;
 
 public:
+	UPROPERTY(BlueprintAssignable)
 	FOnGameStarted OnGameStarted;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnVictory OnVictory;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnDefeated OnDefeated;
 
 public:	
 	UPROPERTY(Replicated, Instanced, EditAnywhere)
