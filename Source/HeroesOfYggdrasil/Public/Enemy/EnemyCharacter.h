@@ -98,8 +98,8 @@ public:
 	UFUNCTION()
 	void HandleHeroEnteredRange(AYggCharacter* _Target);
 
-	//UFUNCTION(NetMulticast, Reliable)
-	//void UpdateHPBarWidgetToAll(float HP);
+	UFUNCTION()
+	void AttackCollisionInit();
 
 protected:
 	virtual void BeginPlay() override;
@@ -146,14 +146,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
 	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
 
-	//UPROPERTY(EditDefaultsOnly, Category = "YggMonsterHPBar")
-	//TSubclassOf<UYggMHPBarUserWidget> MHPBarUserWidgetClass;
-
 	UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
 	UMHPBarComponent* MHPBarWidgetComponent;
 
-	//UPROPERTY(VisibleAnywhere, Category = "YggMonsterHPBar")
-	//UYggMHPBarUserWidget* MHPBarUserWidget;
+	UPROPERTY(EditAnywhere, Replicated, Category = "AttackCapsule")
+	UYggAttackCapsuleComponent* RightAttackCapsule;
+
+	UPROPERTY(EditAnywhere, Replicated, Category = "AttackCapsule")
+	UYggAttackCapsuleComponent* LeftAttackCapsule;
 };
 
 
