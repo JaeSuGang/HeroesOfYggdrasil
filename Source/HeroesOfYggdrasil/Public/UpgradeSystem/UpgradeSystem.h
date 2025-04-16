@@ -8,6 +8,7 @@
 #include "MainGame/MainGamePlayerState.h"
 #include "UpgradeSystem.generated.h"
 
+class UAttributeComponent;
 class UHeroAttributeComponent;
 class UUpgradeDataAsset;
 
@@ -40,17 +41,17 @@ public:
 
 	/* 업그레이드 */
 	UFUNCTION(BlueprintCallable)
-	void UpgradeByUpgradeId(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId UpgradeDataAssetId);
+	void UpgradeByUpgradeId(UAttributeComponent* AttributeComponent, FPrimaryAssetId UpgradeDataAssetId);
 
 	UFUNCTION(BlueprintCallable)
-	void Upgrade(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData);
+	void Upgrade(UAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData);
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
-	void RequestUpgrade(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId);
-	void RequestUpgrade_Implementation(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId);
+	void RequestUpgrade(UAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId);
+	void RequestUpgrade_Implementation(UAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId);
 
 	UFUNCTION(BlueprintCallable)
-	void UpgradeInternal(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData);
+	void UpgradeInternal(UAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData);
 
 
 	/* 업그레이드 선택지 생성 */

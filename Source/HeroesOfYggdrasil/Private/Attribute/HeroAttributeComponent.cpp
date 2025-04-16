@@ -46,7 +46,6 @@ void UHeroAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType
 void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UHeroAttributeComponent, HPRegen);
 	DOREPLIFETIME(UHeroAttributeComponent, JumpPower);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalChance);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalDamageRate);
@@ -69,9 +68,9 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 		FHeroBaseStatusInfoRow* Data = BaseData->FindRow<FHeroBaseStatusInfoRow>(Name, nullptr);
 		if (Data)
 		{
+
 			MaxHP = Data->MaxHP;
 			HP = MaxHP;
-			HPRegen = Data->HPRegen;
 			MaxMoveSpeed = Data->MaxMoveSpeed;
 			JumpPower = Data->JumpRate;
 			AttackPoints = Data->AttPower;

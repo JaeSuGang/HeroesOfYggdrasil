@@ -51,9 +51,6 @@ public:
 	void CloseCurrentWidget();
 
 	UFUNCTION(BlueprintCallable)
-	void PlusButtonEvent();
-
-	UFUNCTION(BlueprintCallable)
 	void AbilitySelectEvent();
 
 	UFUNCTION(BlueprintCallable)
@@ -97,9 +94,6 @@ public:
 
 	UPROPERTY()
 	UYggMainGameUserWidget* MainGameUserWidget;
-
-	/*UPROPERTY()
-	UYggMHPBarUserWidget* MHPBarUserWidget;*/
 
 	UPROPERTY()
 	APlayerController* PC;

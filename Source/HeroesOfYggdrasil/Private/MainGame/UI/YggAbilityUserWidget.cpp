@@ -12,8 +12,8 @@
 
 #include "UpgradeSystem/UpgradeSystem.h"
 #include "UpgradeSystem/UpgradeDataAsset.h"
+#include "Attribute/HeroAttributeComponent.h"
 
-#include "UpgradeSystem/UpgradeDataAsset.h"
 
 
 void UYggAbilityUserWidget::NativeOnInitialized()
@@ -28,7 +28,26 @@ void UYggAbilityUserWidget::NativeOnInitialized()
 
 	if (SelectButton)
 	{
+		SelectButton->OnClicked.AddDynamic(this, &UYggAbilityUserWidget::AbilitySelectEvent);
 		SelectButton->OnClicked.AddDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
+	}
+}
+
+void UYggAbilityUserWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	APlayerController* PC = GetOwningPlayer();
+
+	if (IsValid(PC))
+	{
+		AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PC->GetHUD());
+
+		if (SelectButton)
+		{
+			SelectButton->OnClicked.RemoveDynamic(this, &UYggAbilityUserWidget::AbilitySelectEvent);
+			SelectButton->OnClicked.RemoveDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
+		}
 	}
 }
 
@@ -41,7 +60,7 @@ FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size)
 	return Brush;
 }
 
-void UYggAbilityUserWidget::AbilityInit()
+void UYggAbilityUserWidget::AbilityInit(FPrimaryAssetId& AssetId)
 {
 	FVector2D Size(80.0f, 80.0f);
 
@@ -50,22 +69,38 @@ void UYggAbilityUserWidget::AbilityInit()
 
 	UUpgradeSystem* UpgradeSystem = UUpgradeSystem::Get(GetWorld());
 
-	//UpgradeSystem->Upgrade();
+	//PS->AvailableUpgradeIds[0];
+
+	//UpgradeSystem->Upgrade(nullptr, UpgradeDataAsset);
 
 	//PS->AvailableUpgradeIds.Num() > 2;
-	for (FPrimaryAssetId& AssetId : PS->AvailableUpgradeIds)
+			
+	//for (FPrimaryAssetId& AssetId : PS->AvailableUpgradeIds)
+	//{
+	//	FPrimaryAssetId{ "Upgrade::1" };
+	//	UUpgradeDataAsset* UpgradeData = UpgradeSystem->GetDataAssetFromPrimaryAssetId<UUpgradeDataAsset>(AssetId);
+	//	UpgradeData->UpgradeImage;
+	//	UpgradeData->UpgradeName;
+	//	UpgradeData->UpgradeDescription;
+	//}
+
+	UpgradeDataAsset = UpgradeSystem->GetDataAssetFromPrimaryAssetId<UUpgradeDataAsset>(AssetId);
+
+	if (IsValid(UpgradeDataAsset))
 	{
-		FPrimaryAssetId{ "Upgrade::1" };
-		UUpgradeDataAsset* UpgradeData = UpgradeSystem->GetDataAssetFromPrimaryAssetId<UUpgradeDataAsset>(AssetId);
-		UpgradeData->UpgradeImage;
-		UpgradeData->UpgradeName;
-		UpgradeData->UpgradeDescription;
-
+		AbilityImage->SetBrush(MakeBrush(UpgradeDataAsset->UpgradeImage, Size));
+		AbilityName->SetText(FText::FromName(UpgradeDataAsset->UpgradeName));
+		AbilityInfo->SetText(FText::FromName(UpgradeDataAsset->UpgradeDescription));
 	}
-
-
-
-	//UpgradeDataAsset
-
-	//AbilityImage->SetBrush(MakeBrush(, Size));
 }
+
+void UYggAbilityUserWidget::AbilitySelectEvent()
+{
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	UHeroAttributeComponent* CAC = PC->GetPawn()->GetComponentByClass<UHeroAttributeComponent>();
+	
+	UUpgradeSystem* UpgradeSystem = UUpgradeSystem::Get(GetWorld());
+
+	UpgradeSystem->Upgrade(CAC, UpgradeDataAsset);
+}
+
