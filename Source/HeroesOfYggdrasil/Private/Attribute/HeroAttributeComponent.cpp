@@ -71,9 +71,7 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 		{
 
 			MaxHP = Data->MaxHP;
-			ServerSetHP
 			HP = MaxHP;
-			HPRegen = Data->HPRegen;
 			MaxMoveSpeed = Data->MaxMoveSpeed;
 			JumpPower = Data->JumpRate;
 			AttackPoints = Data->AttPower;

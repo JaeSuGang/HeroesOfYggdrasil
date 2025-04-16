@@ -36,9 +36,6 @@ public:
 	UDataTable* BaseData;
 
 	bool IsAttackCheck();
-	
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float HPRegen;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float JumpPower;
