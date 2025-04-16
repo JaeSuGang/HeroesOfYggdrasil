@@ -76,7 +76,6 @@ void AYggHeroKhaimera::BeginPlay()
 	if (HeroAttributeComponent)
 	{
 		HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Khaimera"));
-
 	}
 	
 	if (HasAuthority())

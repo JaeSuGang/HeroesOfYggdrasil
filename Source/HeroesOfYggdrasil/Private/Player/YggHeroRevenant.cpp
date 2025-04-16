@@ -34,7 +34,10 @@ void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
-		
+		if (ActionMap.Contains(FName("Attack")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::Attack);
+		}
 	}
 }
 
@@ -43,10 +46,18 @@ void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void AYggHeroRevenant::BeginPlay()
 {
 	Super::BeginPlay();
+	if (HeroAttributeComponent)
+	{
+		HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Revenant"));
+	}
 
 }
 
 void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 {
+	if (bAimMode == false) 
+	{
+		SetAimMode(true);
+	}
 	Super::Attack(Value);
 }
