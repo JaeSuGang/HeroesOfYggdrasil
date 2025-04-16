@@ -30,7 +30,9 @@ UCLASS(meta = (DisplayName = "Ygg | Particle"))
 class HEROESOFYGGDRASIL_API UYggParticleNotify : public UAnimNotify
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void PostLoad() override;
+		
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
 	void DisableOtherEmitters(UParticleSystemComponent* PSComp, const TArray<FString>& EmittersToDisable);
@@ -40,6 +42,9 @@ class HEROESOFYGGDRASIL_API UYggParticleNotify : public UAnimNotify
 #if WITH_EDITOR
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
+
+private:
+	FQuat RotationOffsetQuat;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Particle System"))
@@ -56,4 +61,20 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Skills", ShowOnlyInnerProperties))
 	FSkills Skills;
+
+	// Location offset from the socket
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AnimNotify")
+	FVector LocationOffset;
+
+	// Rotation offset from socket
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AnimNotify")
+	FRotator RotationOffset;
+
+	// Scale to spawn the particle system at
+	UPROPERTY(EditAnywhere, Category = "AnimNotify")
+	FVector Scale = {1.0f, 1.0f, 1.0f};
+
+	// SocketName to attach to
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AnimNotify")
+	FName SocketName;
 };
