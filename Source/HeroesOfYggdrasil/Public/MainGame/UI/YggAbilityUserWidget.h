@@ -21,7 +21,7 @@ class HEROESOFYGGDRASIL_API UYggAbilityUserWidget : public UYggUserWidget
 	GENERATED_BODY()
 	
 public:
-	
+	UFUNCTION(BlueprintCallable)
 	void AbilityInit(FPrimaryAssetId& AssetId);
 
 	UFUNCTION(BlueprintCallable)
@@ -34,6 +34,7 @@ public:
 
 protected:
 	virtual void NativeOnInitialized() override;
+	virtual void NativeDestruct() override;
 
 private:
 	UPROPERTY(meta = (BindWidget))

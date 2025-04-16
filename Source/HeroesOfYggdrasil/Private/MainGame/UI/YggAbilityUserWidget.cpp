@@ -33,6 +33,24 @@ void UYggAbilityUserWidget::NativeOnInitialized()
 	}
 }
 
+void UYggAbilityUserWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	APlayerController* PC = GetOwningPlayer();
+
+	if (IsValid(PC))
+	{
+		AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PC->GetHUD());
+
+		if (SelectButton)
+		{
+			SelectButton->OnClicked.RemoveDynamic(this, &UYggAbilityUserWidget::AbilitySelectEvent);
+			SelectButton->OnClicked.RemoveDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
+		}
+	}
+}
+
 FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size)
 {
 	FSlateBrush Brush;
@@ -68,9 +86,12 @@ void UYggAbilityUserWidget::AbilityInit(FPrimaryAssetId& AssetId)
 
 	UpgradeDataAsset = UpgradeSystem->GetDataAssetFromPrimaryAssetId<UUpgradeDataAsset>(AssetId);
 
-	AbilityImage->SetBrush(MakeBrush(UpgradeDataAsset->UpgradeImage, Size));
-	AbilityName->SetText(FText::FromName(UpgradeDataAsset->UpgradeName));
-	AbilityInfo->SetText(FText::FromName(UpgradeDataAsset->UpgradeDescription));
+	if (IsValid(UpgradeDataAsset))
+	{
+		AbilityImage->SetBrush(MakeBrush(UpgradeDataAsset->UpgradeImage, Size));
+		AbilityName->SetText(FText::FromName(UpgradeDataAsset->UpgradeName));
+		AbilityInfo->SetText(FText::FromName(UpgradeDataAsset->UpgradeDescription));
+	}
 }
 
 void UYggAbilityUserWidget::AbilitySelectEvent()

@@ -83,10 +83,24 @@ void UYggSelectAbilityUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	ExitButton->OnClicked.AddDynamic(this, &UYggSelectAbilityUserWidget::ExitButtonEvent);
+	if (IsValid(ExitButton))
+	{
+		ExitButton->OnClicked.AddDynamic(this, &UYggSelectAbilityUserWidget::ExitButtonEvent);
+	}
+}
+
+void UYggSelectAbilityUserWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (IsValid(ExitButton))
+	{
+		ExitButton->OnClicked.RemoveDynamic(this, &UYggSelectAbilityUserWidget::ExitButtonEvent);
+	}
 }
 
 void UYggSelectAbilityUserWidget::ExitButtonEvent()
 {
 	SetVisibility(ESlateVisibility::Hidden);
 }
+
