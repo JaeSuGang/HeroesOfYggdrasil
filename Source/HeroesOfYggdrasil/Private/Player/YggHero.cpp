@@ -337,7 +337,9 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Death"));
 
 			if (!HeroAttributeComponent) return;
-			HeroAttributeComponent->ServerSetBaseData_Implementation(GetHeroName());
+			/*HeroAttributeComponent->ServerSetBaseData_Implementation(GetHeroName());*/
+			HeroAttributeComponent->Server_SetHP(HeroAttributeComponent->MaxHP);
+			
 		}
 
 		HeroAnimInstance->OnMontageEnded.RemoveDynamic(this, &AYggHero::HandleMontageEnded);
