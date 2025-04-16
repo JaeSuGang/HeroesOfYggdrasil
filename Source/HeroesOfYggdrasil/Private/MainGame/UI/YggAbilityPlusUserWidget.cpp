@@ -17,6 +17,6 @@ void UYggAbilityPlusUserWidget::NativeOnInitialized()
 
 	if (PlusButton)
 	{
-		PlusButton->OnClicked.AddDynamic(MainGameHUD, &AMainGameHUD::PlusButtonEvent);
+		//PlusButton->OnClicked.AddDynamic(MainGameHUD, &AMainGameHUD::PlusButtonEvent);
 	}
 }

@@ -3,6 +3,7 @@
 // UI
 #include "MainGame/UI/YggHPBarUserWidget.h"
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 
 // Player
 #include "Player/YggHero.h"
@@ -19,14 +20,22 @@ void UYggHPBarUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
+}
+
+void UYggHPBarUserWidget::NativeConstruct()
+{
+    Super::NativeConstruct();
+    
     APlayerController* PC = GetOwningPlayer();
-    
+
     UCharacterAttributeComponent* CAC = PC->GetPawn()->GetComponentByClass<UCharacterAttributeComponent>();
-    
+
     if (CAC)
     {
         CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggHPBarUserWidget::UpdateHPBar);
     }
+
+    UpdateHPBar(0);
 }
 
 void UYggHPBarUserWidget::UpdateHPBar(float HP)
@@ -37,9 +46,12 @@ void UYggHPBarUserWidget::UpdateHPBar(float HP)
 
     if (CAC)
     {
-        if (HPBar)
+        if (IsValid(HPBar) && IsValid(HPText))
     	{
-		    HPBar->SetPercent(CAC->HP / CAC->MaxHP);
+            FText HealthText = FText::Format(FText::FromString("{0} / {1}"), FText::AsNumber(CAC->HP), FText::AsNumber(CAC->MaxHP));
+		    
+            HPBar->SetPercent(CAC->HP / CAC->MaxHP);
+            HPText->SetText(HealthText);
     	}
     }
 }

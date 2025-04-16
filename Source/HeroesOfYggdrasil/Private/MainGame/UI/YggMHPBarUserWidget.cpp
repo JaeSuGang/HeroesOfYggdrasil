@@ -27,10 +27,6 @@ void UYggMHPBarUserWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    if (IsValid(CAC))
-    {
-        //CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggMHPBarUserWidget::Init);
-    }
 }
 
 void UYggMHPBarUserWidget::UpdateHPBar(float HP)
@@ -64,7 +60,6 @@ void UYggMHPBarUserWidget::SetAttachedCharacter(AEnemyCharacter* Enemy)
 {
     if (Enemy != nullptr)
     {
-        //EnemyCharacter = Cast<AEnemyCharacter>(Enemy);
         EnemyCharacter = Enemy;
         CAC = EnemyCharacter->GetAttributeComponent();
     }
