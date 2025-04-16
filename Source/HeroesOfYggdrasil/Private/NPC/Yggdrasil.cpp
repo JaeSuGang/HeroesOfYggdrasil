@@ -4,6 +4,7 @@
 #include "NPC/Yggdrasil.h"
 #include <Components/SceneComponent.h>
 #include "Attribute/CharacterAttributeComponent.h"
+// #include <Kismet/GameplayStatics.h>
 #include "StageSystem/StageSystem.h"
 
 AYggdrasil::AYggdrasil()
@@ -42,4 +43,8 @@ void AYggdrasil::CheckHP(float _NULL)
 			UStageSystem::Get(GetWorld())->DefeatInternal();
 		}
 	}
+
+	// UGameplayStatics::getactor()
+
+
 }
