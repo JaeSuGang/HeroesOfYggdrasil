@@ -161,26 +161,8 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
-
-	// 콜리전 디버깅
-	for (auto& Pair : AttackCapsuleComponentMap)
-	{
-		if (UYggAttackCapsuleComponent* Capsule = Pair.Value)
-		{
-			DrawDebugCapsule(
-				GetWorld(),
-				Capsule->GetComponentLocation(),
-				Capsule->GetScaledCapsuleHalfHeight(),
-				Capsule->GetScaledCapsuleRadius(),
-				Capsule->GetComponentQuat(),
-				FColor::Red,
-				true,   // persistent
-				10.0f,  // duration
-				0,
-				2.0f    // thickness
-			);
-		}
-	}
+	
+	
 
 }
 
@@ -333,11 +315,11 @@ void AEnemyCharacter::AttackCollisionInit()
 	// 콜리전 설정
 	RightAttackCapsule->SetOwnerCharacter(this);
 	RightAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
-	AttackCapsuleComponentMap.Add(TEXT("RightAttack"), RightAttackCapsule);
+	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), RightAttackCapsule);
 
 	LeftAttackCapsule->SetOwnerCharacter(this);
 	LeftAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
-	AttackCapsuleComponentMap.Add(TEXT("LeftAttack"), LeftAttackCapsule);
+	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), LeftAttackCapsule);
 
 	// 오른손 소켓에 부착
 	if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("MOUNTAIN_DRAGON_-R-Hand")))
@@ -347,8 +329,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("MOUNTAIN_DRAGON_-R-Hand")
 		);
-		RightAttackCapsule->SetCapsuleSize(100.0f, 100.0f); // (Radius, HalfHeight)
-		
+		RightAttackCapsule->SetCapsuleSize(300.0f, 200.0f); // (Radius, HalfHeight)
 	}
 	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r")))
 	{
@@ -374,7 +355,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("MOUNTAIN_DRAGON_-L-Hand")
 		);
-		LeftAttackCapsule->SetCapsuleSize(100.0f, 100.0f);
+		LeftAttackCapsule->SetCapsuleSize(300.0f, 200.0f);
 	}
 	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l")))
 	{
