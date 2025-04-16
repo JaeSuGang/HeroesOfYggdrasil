@@ -177,6 +177,13 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	}
 }
 
+void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	// 타이머 정리
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+}
 
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
