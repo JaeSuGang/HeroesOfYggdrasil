@@ -8,9 +8,11 @@
 #include "Components/VerticalBox.h"
 #include "Components/VerticalBoxSlot.h"
 #include "Component/CaptureComponent.h"
+#include "Attribute/CharacterAttributeComponent.h"
 #include "Player/YggHero.h"
 #include "MainGame/UI/YggHPBarUserWidget.h"
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
+#include "Data/YggEnumData.h"
 
 
 void UYggPlayerStatusUserWidget::NativeOnInitialized()
@@ -18,6 +20,14 @@ void UYggPlayerStatusUserWidget::NativeOnInitialized()
     Super::NativeOnInitialized();
 
     SetFaceCam();
+
+    APlayerController* PC = GetWorld()->GetFirstPlayerController();
+    AYggHero* Pawn = PC->GetPawn<AYggHero>();
+
+    UCharacterAttributeComponent* CAC =  Pawn->GetAttributeComponent();
+
+    //CAC->HasTag("Character.Debuff." + EStatusEffectType::Poison);
+
 
     //HPBarUserWidget = CreateWidget<UYggHPBarUserWidget>(GetWorld(), HPBarWidgetClass);
     //if (!HPBarUserWidget)
