@@ -390,8 +390,8 @@ void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 	FVector BaseLocation = GetActorLocation();
 	float ZOffset = Capsule ? Capsule->GetScaledCapsuleHalfHeight() : 0.f;
 
-	const int NumToSpawn = 8;
-	const float Radius = 500.f;
+	const int NumToSpawn = 10;
+	const float Radius = 1500.f;
 
 	for (int i = 0; i < NumToSpawn; ++i)
 	{

@@ -44,6 +44,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		else if (DataKeyStr.StartsWith(TEXT("Dragon")))
 		{
 			RotateToTargetActor(_OwnerComp, 0.01f);
+			EnemyCharacter->DragonRangeAttack(TargetActor);
 		}
 	}
 

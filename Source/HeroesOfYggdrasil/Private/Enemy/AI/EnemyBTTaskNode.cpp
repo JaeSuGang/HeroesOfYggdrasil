@@ -71,7 +71,11 @@ void UEnemyBTTaskNode::ChangeState(UBehaviorTreeComponent& _OwnerComp, EEnemyAIS
 {
 	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
 	PlayAIData.EnemyAIState = _State;
-	FinishLatentTask(_OwnerComp, EBTNodeResult::Failed);
+	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
+	if (IsValid(OwningPawn))
+	{
+		FinishLatentTask(_OwnerComp, EBTNodeResult::Failed);
+	}
 }
 
 FPlayAIData& UEnemyBTTaskNode::GetPlayAIData(UBehaviorTreeComponent& _OwnerComp)
