@@ -23,8 +23,13 @@
 #include "MainGame/UI/YggSkillBarUserWidget.h"
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/CharacterAttributeComponent.h"
-
 #include "StageSystem/StageSystem.h"
+
+#include "MainGame/MainGamePlayerState.h"
+
+#include "UpgradeSystem/UpgradeSystem.h"
+#include "UpgradeSystem/UpgradeDataAsset.h"
+
 
 void AMainGameHUD::BeginPlay()
 {
@@ -48,11 +53,6 @@ void AMainGameHUD::BeginPlay()
 
 		Start->SetIsEnabled(false);
 	}
-
-	//AYggPlayerState* PS = PC->GetPlayerState<AYggPlayerState>();
-	//
-	//PS->SetPlayerName("asdf");
-	//PS->GetPlayerName();
 
 	LobbyUserWidget = Cast<UYggLobbyUserWidget>(CurrentWidget);
 
@@ -149,32 +149,13 @@ void AMainGameHUD::CloseCurrentWidget()
 	}
 }
 
-void AMainGameHUD::PlusButtonEvent()
-{
-	if (MainGameWidgetClass)
-	{
-		MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
-
-		MainGameUserWidget->CreateAbility();
-		MainGameUserWidget->DelAbilityPlus();
-	}
-}
-
 void AMainGameHUD::AbilitySelectEvent()
 {
 	if (MainGameWidgetClass)
 	{
 		MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
 
-		APlayerManager* PM = APlayerManager::Get(GetWorld());
-
-		if (PM)
-		{
-			/* 더 이상 사용하지 않는 함수, 주석 처리 */
-			// PM->Server_UpgradeAttack(PC);
-		}
-
-		MainGameUserWidget->DelAbility();
+		MainGameUserWidget->DelSelectAbility();
 	}
 }
 

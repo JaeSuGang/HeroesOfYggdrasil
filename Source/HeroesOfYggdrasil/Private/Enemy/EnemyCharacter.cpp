@@ -177,6 +177,13 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	}
 }
 
+void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	// 타이머 정리
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+}
 
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -383,8 +390,8 @@ void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 	FVector BaseLocation = GetActorLocation();
 	float ZOffset = Capsule ? Capsule->GetScaledCapsuleHalfHeight() : 0.f;
 
-	const int NumToSpawn = 8;
-	const float Radius = 500.f;
+	const int NumToSpawn = 10;
+	const float Radius = 1500.f;
 
 	for (int i = 0; i < NumToSpawn; ++i)
 	{

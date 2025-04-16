@@ -65,7 +65,46 @@ void AYggHeroAurora::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Fly")), ETriggerEvent::Triggered, this, &AYggHeroAurora::Fly);
 		}
+		if (ActionMap.Find(FName("SkillQ")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillQ")), ETriggerEvent::Triggered, this, &AYggHeroAurora::SkillQ);
+		}
 	}
+}
+
+void AYggHeroAurora::SkillQ(const FInputActionValue& Value)
+{
+	Super::SkillQ(Value);
+
+	SetAimMode(true);
+
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+
+
+	float ContinueTime = HeroAttributeComponent->SkillQMaxContinueTime;
+	FTimerHandle TimeHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimeHandle, [this]()
+	{
+		if (USkeletalMeshComponent* MeshComp = GetMesh())
+		{
+			if (UAnimInstance* AnimInstance = MeshComp->GetAnimInstance())
+			{
+				UAnimMontage* CurrentMontage = AnimInstance->GetCurrentActiveMontage();
+				if (CurrentMontage)
+				{
+					float BlendOutTime = 0.25f;
+					AnimInstance->Montage_Stop(BlendOutTime, CurrentMontage);
+				}
+			}
+		}
+
+		SetAimMode(false);
+
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
+		HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
+
+	}, ContinueTime + 0.8f, false);
 }
 
 void AYggHeroAurora::Fly(const FInputActionValue& Value)

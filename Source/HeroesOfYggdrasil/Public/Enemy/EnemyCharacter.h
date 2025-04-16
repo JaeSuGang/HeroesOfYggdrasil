@@ -38,6 +38,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;

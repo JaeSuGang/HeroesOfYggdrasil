@@ -21,11 +21,20 @@ class HEROESOFYGGDRASIL_API UYggAbilityUserWidget : public UYggUserWidget
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION(BlueprintCallable)
+	void AbilityInit(FPrimaryAssetId& AssetId);
 
-	void AbilityInit();
+	UFUNCTION(BlueprintCallable)
+	void AbilitySelectEvent();
+
+	UUpgradeDataAsset* GetUpgradeDataAsset()
+	{
+		return UpgradeDataAsset;
+	}
 
 protected:
 	virtual void NativeOnInitialized() override;
+	virtual void NativeDestruct() override;
 
 private:
 	UPROPERTY(meta = (BindWidget))

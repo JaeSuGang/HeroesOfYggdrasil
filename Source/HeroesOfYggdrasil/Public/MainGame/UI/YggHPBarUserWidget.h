@@ -7,6 +7,7 @@
 #include "YggHPBarUserWidget.generated.h"
 
 class UProgressBar;
+class UTextBlock;
 
 /**
  * 
@@ -17,7 +18,8 @@ class HEROESOFYGGDRASIL_API UYggHPBarUserWidget : public UYggUserWidget
 	GENERATED_BODY()
 	
 public:
-	void NativeOnInitialized() override;
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateHPBar(float HP);
@@ -25,4 +27,7 @@ public:
 protected:
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* HPBar;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* HPText;
 };
