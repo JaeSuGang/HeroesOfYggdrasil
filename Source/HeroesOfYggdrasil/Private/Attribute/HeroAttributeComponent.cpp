@@ -46,7 +46,6 @@ void UHeroAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType
 void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UHeroAttributeComponent, HPRegen);
 	DOREPLIFETIME(UHeroAttributeComponent, JumpPower);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalChance);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalDamageRate);
