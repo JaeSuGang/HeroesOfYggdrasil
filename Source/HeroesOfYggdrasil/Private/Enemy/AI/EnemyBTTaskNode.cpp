@@ -57,15 +57,8 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 		
 		if (PC->IsInputKeyDown(EKeys::O))
 		{
-			APawn* SelfActor = PlayAIData.SelfPawn;
-			AAIController* SelfController = SelfActor->GetController<AAIController>();
-
 			ChangeState(_OwnerComp, EEnemyAIState::Idle);
-			
-			if (SelfController)
-			{
-				SelfController->StopMovement();
-			}
+
 		}
 		if (PC->IsInputKeyDown(EKeys::L))
 		{
