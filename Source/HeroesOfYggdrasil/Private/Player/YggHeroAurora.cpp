@@ -65,7 +65,18 @@ void AYggHeroAurora::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Fly")), ETriggerEvent::Triggered, this, &AYggHeroAurora::Fly);
 		}
+		if (ActionMap.Find(FName("SkillQ")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillQ")), ETriggerEvent::Triggered, this, &AYggHeroAurora::SkillQ);
+		}
 	}
+}
+
+void AYggHeroAurora::SkillQ(const FInputActionValue& Value)
+{
+	Super::SkillQ(Value);
+
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveAble"));
 }
 
 void AYggHeroAurora::Fly(const FInputActionValue& Value)
