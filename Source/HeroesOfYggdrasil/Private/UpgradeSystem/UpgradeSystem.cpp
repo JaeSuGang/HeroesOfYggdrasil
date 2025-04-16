@@ -49,10 +49,7 @@ void UUpgradeSystem::SetUpgradePointInternal(APlayerState* PlayerState, int Poin
 		{
 			MPS->UpgradePoints = PointToSet;
 			MPS->OnRep_UpgradePoints();
-			if (MPS->AvailableUpgradeIds.Num() <= 0)
-			{
-				GenerateUpgradeChoicesInternal(MPS, 3);
-			}
+			GenerateUpgradeChoicesInternal(MPS, 3);
 		}
 	}
 }

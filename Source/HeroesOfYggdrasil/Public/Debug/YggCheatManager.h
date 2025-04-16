@@ -16,6 +16,9 @@ class HEROESOFYGGDRASIL_API UYggCheatManager : public UCheatManager
 	
 public:
 	UFUNCTION(Exec)
+	void Upgrade(int index);
+
+	UFUNCTION(Exec)
 	void AddUpgradePoint(int a);
 
 	UFUNCTION(Exec)
