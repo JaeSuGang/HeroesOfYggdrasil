@@ -29,6 +29,12 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_TakeDamage(float fAmount);
 
+
+public:
+	/* 1초마다 호출되는 체력 재생 함수 */
+	UFUNCTION()
+	void GenerateHpInternal();
+
 protected:
 	UFUNCTION(Client, Reliable)
 	void Client_TakeDamage(float fAmount);
@@ -98,6 +104,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	float GetAttackSpeedRate() const;
 
+	/* 체력 재생 설정 함수 */
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Server_SetHPGeneration(float fAmount);
+	void Server_SetHPGeneration_Implementation(float fAmount);
+
 public:
 	UFUNCTION()
 	void OnRep_Status();
@@ -125,4 +136,8 @@ public:
 	/* 공격관련 애니메이션 재생속도, 기본 재생속도 = 1.0f */
 	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
 	float AttackSpeedRate;
+
+	/* 체력 재생 */
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
+	float HPGeneration;
 };

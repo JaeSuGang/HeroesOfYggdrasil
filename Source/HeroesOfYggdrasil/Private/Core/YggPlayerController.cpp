@@ -10,12 +10,15 @@
 #include "MainGame/PlayerSelectZone.h"
 #include "Player/YggHero.h"
 #include "Attribute/CharacterAttributeComponent.h"
+#include "Debug/YggCheatManager.h"
 
 AYggPlayerController::AYggPlayerController(const FObjectInitializer& ObjectInitializer)
     :
     Super(ObjectInitializer)
 {
 	TeamID = FGenericTeamId{ 0 };
+
+	CheatClass = UYggCheatManager::StaticClass();
 }
 
 void AYggPlayerController::SetupInputComponent()

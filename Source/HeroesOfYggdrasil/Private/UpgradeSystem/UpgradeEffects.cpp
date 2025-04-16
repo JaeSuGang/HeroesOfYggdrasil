@@ -23,6 +23,7 @@ void UUpgradeEffect_Stats::ApplyInternal_Implementation(UAttributeComponent* Tar
 		if (HPIncrement != 0.0f)
 		{
 			CastedTargetAttribute->Server_SetMaxHP(CastedTargetAttribute->MaxHP + HPIncrement);
+			CastedTargetAttribute->Server_SetHP(CastedTargetAttribute->HP + HPIncrement);
 		}
 
 		if (MoveSpeedIncrement != 0.0f)
@@ -43,41 +44,19 @@ void UUpgradeEffect_Stats::ApplyInternal_Implementation(UAttributeComponent* Tar
 
 void UUpgradeEffect_TeamStats::ApplyInternal_Implementation(UAttributeComponent* TargetAttribute)
 {
-	for (auto Iter = GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
+	for (auto Iter = TargetAttribute->GetWorld()->GetPlayerControllerIterator(); Iter; ++Iter)
 	{
-		if (APlayerController* PC = Cast<APlayerController>(Iter->Get()))
+		if (APawn* IndividualPawn = Iter->Get()->GetPawn())
 		{
-			if (PC->GetPawn())
+			if (UAttributeComponent* IndividualAttribute = Iter->Get()->GetPawn()->GetComponentByClass<UAttributeComponent>())
 			{
-				if (UHeroAttributeComponent* TargetAttribute = Cast<UHeroAttributeComponent>(PC->GetPawn()->GetComponentByClass<UHeroAttributeComponent>()))
-				{
-					if (AttackIncrement != 0.0f)
-					{
-						TargetAttribute->Server_SetAttackPoints(TargetAttribute->AttackPoints + AttackIncrement);
-					}
-
-					if (DefenseIncrement != 0.0f)
-					{
-						TargetAttribute->Server_SetDefensePoints(TargetAttribute->DefensePoints + DefenseIncrement);
-					}
-
-					if (HPIncrement != 0.0f)
-					{
-						TargetAttribute->Server_SetMaxHP(TargetAttribute->MaxHP + HPIncrement);
-					}
-
-					if (MoveSpeedIncrement != 0.0f)
-					{
-						TargetAttribute->Server_SetMaxMoveSpeed(TargetAttribute->MaxMoveSpeed + MoveSpeedIncrement);
-					}
-
-					if (AttackSpeedIncrement != 0.0f)
-					{
-						TargetAttribute->Server_SetAttackSpeedRate(TargetAttribute->AttackSpeedRate + AttackSpeedIncrement);
-					}
-				}
-
+				Super::ApplyInternal_Implementation(IndividualAttribute);
 			}
 		}
 	}
+}
+
+void UUpgradeEffect_World::ApplyInternal_Implementation(UAttributeComponent* TargetAttribute)
+{
+
 }

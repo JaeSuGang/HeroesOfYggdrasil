@@ -20,6 +20,7 @@ void AEnemyAnimCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	USkeletalMeshComponent* MeshName =  GetMesh();
 	EnemyBaseAnimInstance = Cast<UEnemyBaseAnimInstance>(GetMesh()->GetAnimInstance());
 }
 

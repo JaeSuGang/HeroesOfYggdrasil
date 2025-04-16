@@ -23,7 +23,13 @@ void UBattleStage::TickLogic(float DeltaTime)
 {
 	Super::TickLogic(DeltaTime);
 
-
+	if (AEnemyManager* EM = AEnemyManager::Get(StageSystem->GetWorld()))
+	{
+		if (EM->AllEnemyCharacter.Num() <= 0)
+		{
+			EnterNextStage();
+		}
+	}
 }
 
 void UBattleStage::SpawnWave(FOnEnterStageParams OnEnterStageParams)
