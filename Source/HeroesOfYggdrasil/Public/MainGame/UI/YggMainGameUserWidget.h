@@ -11,10 +11,12 @@
 
 
 class UCanvasPanel;
+class UButton;
 class UYggPlayerStatusUserWidget;
 class UYggOrderStatusUserWidget;
 class UYggAbilityPlusUserWidget;
 class UYggAbilityUserWidget;
+class UYggSelectAbilityUserWidget;
 class UYggCastingBarUserWidget;
 class UYggSkillBarUserWidget;
 class UYggDeathPopupUserWidget;
@@ -43,34 +45,29 @@ public:
 		return SkillBarWidget;
 	}
 
-	//UFUNCTION(BlueprintCallable, Category = YGG)
-	//void CreateAbilityPlus();
-
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void StartAbilityPlus();
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void EndAbilityPlus();
 
-	//UFUNCTION()
-	//void OnUpgradePointChange(FOnUpgradePointsChangedParams OnUpgradePointsChangedParams);
-
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void CreateAbility();
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
-	void DelAbilityPlus();
-
-	UFUNCTION(BlueprintCallable, Category = YGG)
-	void DelAbility();
+	void DelSelectAbility();
 
 
 protected:
 	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
 
 private:
 	UPROPERTY(meta = (BindWidget))
 	UCanvasPanel* MainGamePanel;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* AbilityPlusButton;
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> PlayerStatusUserWidgetClass;
@@ -79,10 +76,10 @@ private:
 	TSubclassOf<UUserWidget> OrderStatusUserWidgetClass;
 
 	UPROPERTY(EditAnywhere, Category = YGG)
-	TSubclassOf<UUserWidget> AbilityPlusUserWidgetClass;
+	TSubclassOf<UUserWidget> AbilityUserWidgetClass;
 
 	UPROPERTY(EditAnywhere, Category = YGG)
-	TSubclassOf<UUserWidget> AbiltyUserWidgetClass;
+	TSubclassOf<UUserWidget> SelectAbilityUserWidgetClass;
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> CastingBarUserWidgetClass;
@@ -98,12 +95,12 @@ private:
 
 	UPROPERTY()
 	UYggOrderStatusUserWidget* OrderStatusWidget;
-	
-	UPROPERTY()
-	UYggAbilityPlusUserWidget* AbilityPlusWidget;
 
 	UPROPERTY()
 	UYggAbilityUserWidget* AbilityWidget;
+
+	UPROPERTY()
+	UYggSelectAbilityUserWidget* SelectAbilityWidget = nullptr;
 
 	UPROPERTY()
 	UYggCastingBarUserWidget* CastingBarWidget;

@@ -21,8 +21,16 @@ class HEROESOFYGGDRASIL_API UYggAbilityUserWidget : public UYggUserWidget
 	GENERATED_BODY()
 	
 public:
+	
+	void AbilityInit(FPrimaryAssetId& AssetId);
 
-	void AbilityInit();
+	UFUNCTION(BlueprintCallable)
+	void AbilitySelectEvent();
+
+	UUpgradeDataAsset* GetUpgradeDataAsset()
+	{
+		return UpgradeDataAsset;
+	}
 
 protected:
 	virtual void NativeOnInitialized() override;

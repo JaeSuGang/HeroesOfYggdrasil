@@ -9,10 +9,15 @@
 #include "MainGame/UI/YggCastingBarUserWidget.h"
 #include "MainGame/UI/YggSkillBarUserWidget.h"
 #include "MainGame/UI/YggDeathPopupUserWidget.h"
+#include "MainGame/UI/YggSelectAbilityUserWidget.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/Button.h"
 
+#include "Attribute/HeroAttributeComponent.h"
+#include "UpgradeSystem/UpgradeSystem.h"
+#include "UpgradeSystem/UpgradeDataAsset.h"
 
 void UYggMainGameUserWidget::NativeOnInitialized()
 {
@@ -85,107 +90,56 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
 		}
 	}
-
-	if (!AbilityPlusUserWidgetClass)
-		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-
-	AbilityPlusWidget = CreateWidget<UYggAbilityPlusUserWidget>(GetWorld(), AbilityPlusUserWidgetClass);
-
-	if (AbilityPlusWidget)
-	{
-		MainGamePanel->AddChild(AbilityPlusWidget);
-
-		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(AbilityPlusWidget->Slot))
-		{
-			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
-			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
-			CanvasSlot->SetPosition(FVector2D(500.0f, 500.0f));
-		}
-	}
-
-	APlayerController* PC = GetWorld()->GetFirstPlayerController();
-	AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
-
-	//PS->OnUpgradePointsChanged.AddDynamic(this, &UYggMainGameUserWidget::OnUpgradePointChange);
 }
 
-//void UYggMainGameUserWidget::CreateAbilityPlus()
-//{
-//	if (!AbilityPlusUserWidgetClass)
-//		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-//
-//	AbilityPlusWidget = CreateWidget<UYggAbilityPlusUserWidget>(GetWorld(), AbilityPlusUserWidgetClass);
-//
-//	if (AbilityPlusWidget)
-//	{
-//		MainGamePanel->AddChild(AbilityPlusWidget);
-//
-//		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(AbilityPlusWidget->Slot))
-//		{
-//			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
-//			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
-//			CanvasSlot->SetPosition(FVector2D(500.0f, 500.0f));
-//		}
-//	}
-//}
+void UYggMainGameUserWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	AbilityPlusButton->OnClicked.AddDynamic(this, &UYggMainGameUserWidget::CreateAbility);
+}
 
 void UYggMainGameUserWidget::StartAbilityPlus()
 {
-	AbilityPlusWidget->SetVisibility(ESlateVisibility::Visible);
+	AbilityPlusButton->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UYggMainGameUserWidget::EndAbilityPlus()
 {
-	AbilityPlusWidget->SetVisibility(ESlateVisibility::Hidden);
+	AbilityPlusButton->SetVisibility(ESlateVisibility::Hidden);
 }
-
-//void UYggMainGameUserWidget::OnUpgradePointChange(FOnUpgradePointsChangedParams OnUpgradePointsChangedParams)
-//{
-//	if (0 < OnUpgradePointsChangedParams.NewUpgradePoints)
-//	{
-//		CreateAbilityPlus();
-//	}
-//	else
-//	{
-//
-//	}
-//	
-//}
 
 void UYggMainGameUserWidget::CreateAbility()
 {
-	if (!AbiltyUserWidgetClass)
+	if (nullptr != SelectAbilityWidget)
+	{
+		SelectAbilityWidget->SetVisibility(ESlateVisibility::Visible);
+		return;
+	}
+
+	if (!SelectAbilityUserWidgetClass)
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
 
-	AbilityWidget = CreateWidget<UYggAbilityUserWidget>(GetWorld(), AbiltyUserWidgetClass);
+	SelectAbilityWidget = CreateWidget<UYggSelectAbilityUserWidget>(GetWorld(), SelectAbilityUserWidgetClass);
 
-	if (AbilityWidget)
+	if (SelectAbilityWidget)
 	{
-		MainGamePanel->AddChild(AbilityWidget);
+		MainGamePanel->AddChild(SelectAbilityWidget);
 
-		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(AbilityWidget->Slot))
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(SelectAbilityWidget->Slot))
 		{
+			CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f, 1.0f, 1.0f));
+			CanvasSlot->SetOffsets(FMargin(0.0f));
 			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
-			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
-			CanvasSlot->SetPosition(FVector2D(0.0f, 0.0f));
 		}
 	}
 }
 
-void UYggMainGameUserWidget::DelAbilityPlus()
+void UYggMainGameUserWidget::DelSelectAbility()
 {
-	if (AbilityPlusWidget)
+	if (SelectAbilityWidget)
 	{
-		AbilityPlusWidget->RemoveFromParent();
-		AbilityPlusWidget = nullptr;
-	}
-}
-
-void UYggMainGameUserWidget::DelAbility()
-{
-	if (AbilityWidget)
-	{
-		AbilityWidget->RemoveFromParent();
-		AbilityWidget = nullptr;
+		SelectAbilityWidget->RemoveFromParent();
+		SelectAbilityWidget = nullptr;
 	}
 }
