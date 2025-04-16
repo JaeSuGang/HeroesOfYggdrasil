@@ -22,5 +22,7 @@ protected:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	virtual void SkillQ(const FInputActionValue& Value) override;
+
 	void Fly(const FInputActionValue& Value);
 };

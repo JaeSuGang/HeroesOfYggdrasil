@@ -33,11 +33,19 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 	FPlayAIData& AIData = GetPlayAIData(_OwnerComp);
 
 
+	APawn* SelfActor = AIData.SelfPawn;
+	AAIController* SelfController = SelfActor->GetController<AAIController>();
+	
+	if (SelfController)
+	{
+		SelfController->StopMovement();
+	}
+
 	TargetCheck(_OwnerComp);
 
 	if (nullptr != AIData.TargetActor)
 	{
-		ChangeState(_OwnerComp, EEnemyAIState::Trace);
+		//ChangeState(_OwnerComp, EEnemyAIState::Trace);
 		return;
 	}
 }

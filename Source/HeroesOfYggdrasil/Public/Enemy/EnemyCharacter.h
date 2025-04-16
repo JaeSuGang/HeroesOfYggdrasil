@@ -38,6 +38,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
@@ -88,8 +90,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemySkillAttack(FVector _TargetLocation);
-
-
+	
+	UFUNCTION(BlueprintCallable)
+	void DragonRangeAttack(AActor* _Actor);
 	//UWidgetComponent* GetWidgetComponent()
 	//{
 	//	return WidgetComponent;
