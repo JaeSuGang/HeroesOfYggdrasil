@@ -41,6 +41,10 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		{
 			EnemyCharacter->SpawnWarningRange(TargetActor);
 		}
+		else if (DataKeyStr.StartsWith(TEXT("Dragon")))
+		{
+			RotateToTargetActor(_OwnerComp, 0.01f);
+		}
 	}
 
 
@@ -96,11 +100,22 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	DeathCheck(_OwnerComp);
-	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+
+	if (IsValid(EnemyCharacter))
+	{
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
+
+		if (!DataKeyStr.StartsWith(TEXT("Dragon")))
+		{
+			RotateToTargetActor(_OwnerComp, _DeltaSeconds);
+		}
+
+	}
 
 	if (SelfController)
 	{

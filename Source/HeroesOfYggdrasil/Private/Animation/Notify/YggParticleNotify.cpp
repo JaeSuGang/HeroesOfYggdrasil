@@ -28,6 +28,13 @@
 #include "Attribute/EnemyAttributeComponent.h"
 #include "Attribute/CharacterAttributeComponent.h"
 
+void UYggParticleNotify::PostLoad()
+{
+	Super::PostLoad();
+
+	RotationOffsetQuat = FQuat(RotationOffset);
+}
+
 void UYggParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
     if (!IsValid(MeshComp) || !IsValid(MeshComp->GetOwner())) return;
@@ -67,9 +74,10 @@ void UYggParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceB
 		UParticleSystemComponent* PSComp = UGameplayStatics::SpawnEmitterAttached(
 			PSTemplate,
 			MeshComp,
-			NAME_None,
-			FVector::ZeroVector,
-			FRotator::ZeroRotator,
+			SocketName,
+			LocationOffset,
+			RotationOffset,
+			Scale,
 			EAttachLocation::SnapToTarget,
 			true
 		);
@@ -135,6 +143,11 @@ void UYggParticleNotify::PostEditChangeProperty(FPropertyChangedEvent& PropertyC
 	else if (PropName == GET_MEMBER_NAME_CHECKED(UYggParticleNotify, NSTemplate) && NSTemplate)
 	{
 		PSTemplate = nullptr;
+	}
+
+	if (PropertyChangedEvent.MemberProperty && PropertyChangedEvent.MemberProperty->GetFName() == GET_MEMBER_NAME_CHECKED(UYggParticleNotify, RotationOffset))
+	{
+		RotationOffsetQuat = FQuat(RotationOffset);
 	}
 }
 #endif

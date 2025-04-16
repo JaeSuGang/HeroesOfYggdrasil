@@ -1,5 +1,3 @@
-
-
 #include "Enemy/EnemyCharacter.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -15,55 +13,50 @@
 #include "Data/YggStructData.h"
 #include "Data/YggConst.h"
 
-#include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "AIController.h"
+
+#include "MainGame/UI/YggMiniMapIconActor.h"
+#include "MainGame/UI/MainGameHUD.h"
+
+#include "Component/ActorComponent/Function/TickUtilityFunctionLibrary.h"
+#include "Component/ActorComponent/TickDamageComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Component/MHPBarComponent.h"
+#include "Component/SceneComponent/YggAttackCapsuleComponent.h"
+
+#include "Particles/ParticleSystemComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 #include "Core/YggCharacter.h"
-
-#include "AIController.h"
 #include "Enemy/EnemyGameInstance.h"
-#include "MainGame/UI/YggMiniMapIconActor.h"
 #include "Enemy/EnemyAIController.h"
 #include "Enemy/EnemyProjectile.h"
 #include "Enemy/EnemyRangeAttack.h"
 #include "Enemy/EnemyWarningRange.h"
-
 #include "Global/YggTickActor.h"
-
-#include "Component/ActorComponent/Function/TickUtilityFunctionLibrary.h"
-#include "Component/ActorComponent/TickDamageComponent.h"
-#include "Components/SphereComponent.h"
-#include "Components/WidgetComponent.h"
-#include "Component/MHPBarComponent.h"
-#include "MainGame/UI/MainGameHUD.h"
-
-#include "Component/SceneComponent/YggAttackCapsuleComponent.h"
-#include "Particles/ParticleSystemComponent.h"
-
-#include "NiagaraFunctionLibrary.h"
-#include "NiagaraComponent.h"
-
 
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	// 기본 속성 및 AI 설정
 	CharacterAttributeComponent = CreateDefaultSubobject<UEnemyAttributeComponent>(TEXT("CharacterAttributeComponent"));
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AEnemyAIController::StaticClass();
 
+	// HP 바 위젯 설정
 	MHPBarWidgetComponent = CreateDefaultSubobject<UMHPBarComponent>(TEXT("MHPWidgetComponent"));
 	MHPBarWidgetComponent->SetupAttachment(GetMesh());
 	MHPBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
-	
+
 	TickActorClass = AYggTickActor::StaticClass();
 
-	{
-		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
-		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
-		AttackCapsule->SetOwnerCharacter(this);
-		AttackCapsule->SetCollisionProfileName(TEXT("MonsterCollision"));
-		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
-	}
+	RightAttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("RightAttackCapsule"));
+	LeftAttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("LeftAttackCapsule"));
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -90,14 +83,14 @@ void AEnemyCharacter::BeginPlay()
 		AIData->PlayData.OriginPos.Z = 0.0f;
 
 	}
-		
+
 	// 몬스터 데이터 세팅
 	if (nullptr != Con)
 	{
 		Con->GetBlackboardComponent()->SetValueAsObject(TEXT("EnemyAIData"), AIData);
 	}
 
-	
+
 	// 메시 세팅
 	GetMesh()->SetCollisionProfileName("MonsterCollision");
 	GetMesh()->SetSkeletalMesh(FindData.Mesh);
@@ -106,8 +99,15 @@ void AEnemyCharacter::BeginPlay()
 	GetMesh()->SetGenerateOverlapEvents(true);
 	GetMesh()->SetSimulatePhysics(false);
 
+	USkeletalMeshComponent* SkelMesh = GetMesh();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	UEnemyBaseAnimInstance* NewEnemyAnimInstance = Cast<UEnemyBaseAnimInstance>(AnimInstance);
+	
+
+	AttackCollisionInit();
+	
+	
+
 
 	// 애니메이션 세팅
 	if (nullptr != NewEnemyAnimInstance)
@@ -150,7 +150,7 @@ void AEnemyCharacter::BeginPlay()
 		}
 	}
 
-	
+
 	MHPBarWidgetComponent->Init(this);
 
 	// 충돌 설정
@@ -161,59 +161,55 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
 	MiniMapIcon->SetAttachedCharacter(this);
 	MiniMapIcon->AddToCaptureComponent();
+	
+	
+
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// 체력 정보 실시간 동기화
 	if (IsValid(AIData) && IsValid(CharacterAttributeComponent))
 	{
 		AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
 	}
-
-	//if (APlayerCameraManager* Cam = UGameplayStatics::GetPlayerCameraManager(this, 0))
-	//{
-	//	FVector CamLoc = Cam->GetCameraLocation();
-	//	FVector ToCam = CamLoc - WidgetComponent->GetComponentLocation();
-	//	FRotator LookAtRot = FRotationMatrix::MakeFromX(ToCam).Rotator();
-	//	LookAtRot.Pitch = 0.0f;
-	//	WidgetComponent->SetWorldRotation(LookAtRot);
-	//}
 }
+
+void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	// 타이머 정리
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+}
+
 
 void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
 	DOREPLIFETIME(AEnemyCharacter, DataKey);
 }
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//
+
 }
 
 void AEnemyCharacter::AttackStart()
 {
-	if (this != nullptr)
-	{
-		GetMesh()->SetCollisionProfileName(UEnemyConst::Collision::ProfileName_MonsterAttack);
-	}
+	GetMesh()->SetCollisionProfileName(UEnemyConst::Collision::ProfileName_MonsterAttack);
 }
 
 void AEnemyCharacter::AttackEnd()
 {
-	if (this != nullptr)
-	{
-		GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
-	}
+	GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 }
 
 void AEnemyCharacter::DestroyAllComponents()
@@ -225,14 +221,15 @@ void AEnemyCharacter::DestroyAllComponents()
 	{
 		if (IsValid(Component))
 		{
-			Component->DestroyComponent();  
+			Component->DestroyComponent();
 		}
 	}
 
-	// 미니맵 아이콘 Destroy
-	MiniMapIcon->Destroy();
+	if (MiniMapIcon)
+	{
+		MiniMapIcon->Destroy();
+	}
 
-	// 그 후 자신을 Destroy
 	Destroy();
 }
 
@@ -241,38 +238,26 @@ void AEnemyCharacter::SetDataKey(const FString& _MonsterDataKey)
 	DataKey = _MonsterDataKey;
 }
 
-
-// 궁수 화살 발사
-
 void AEnemyCharacter::SpawnAndFireArrow()
 {
-	if (ProjectileClass == nullptr)
-	{
-		return;
-	}
-	
+	if (!ProjectileClass) return;
+
 	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
 	FRotator SpawnRotation = GetActorRotation();
-
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
 	AEnemyProjectile* Arrow = GetWorld()->SpawnActor<AEnemyProjectile>(ProjectileClass, SpawnLocation, SpawnRotation, SpawnParams);
-	Arrow->SetAttackFloat(CharacterAttributeComponent->AttackPoints);
-	USphereComponent* ArrowCol = Arrow->GetArrowCollision();
-	
-	
-	if (Arrow != nullptr)
+	if (Arrow)
 	{
-		FVector LaunchDirection = GetActorForwardVector();
-		Arrow->GetProjectileMovement()->Velocity = LaunchDirection * 2000.f;
+		Arrow->SetAttackFloat(CharacterAttributeComponent->AttackPoints);
+		Arrow->GetProjectileMovement()->Velocity = GetActorForwardVector() * 2000.f;
 	}
 }
 
 void AEnemyCharacter::HideArrow()
 {
 	GetMesh()->HideBoneByName(FName("arrow_nock"), EPhysBodyOp::PBO_None);
-
 }
 
 void AEnemyCharacter::RevealArrow()
@@ -280,12 +265,6 @@ void AEnemyCharacter::RevealArrow()
 	GetMesh()->UnHideBoneByName(FName("arrow_nock"));
 }
 
-
-
-// 저주술사 
-
-
-// 위험 범위
 void AEnemyCharacter::SpawnWarningRange(AActor* _Actor)
 {
 	SpawnWarningOutRange(_Actor);
@@ -293,73 +272,150 @@ void AEnemyCharacter::SpawnWarningRange(AActor* _Actor)
 
 void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 {
-	if (!WarningOutRangeClass || !_Actor)
-		return;
+	if (!WarningOutRangeClass || !_Actor) return;
 
 	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
 	FVector SpawnLocation = _Actor->GetActorLocation();
 
 	if (Capsule)
 	{
-		float HalfHeight = Capsule->GetScaledCapsuleHalfHeight();
-		SpawnLocation -= FVector(0, 0, HalfHeight);
+		SpawnLocation -= FVector(0, 0, Capsule->GetScaledCapsuleHalfHeight());
 	}
 
 	FRotator SpawnRotation = _Actor->GetActorRotation();
-
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
-	AEnemyWarningRange* EnemyWarningRange = GetWorld()->SpawnActor<AEnemyWarningRange>(
-		WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
-	
-	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
+	GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
 }
-
-
-
-// 공격
 
 void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
 {
-	if (RangeAttackClass == nullptr)
-	{
-		return;
-	}
+	if (!RangeAttackClass) return;
 
 	FVector SpawnLocation = GetActorLocation() + GetActorRightVector() * -50.0f + GetActorUpVector() * 50.0f;
 	FRotator SpawnRotation = GetActorRotation();
-
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
 	AEnemyRangeAttack* RangeAttack = GetWorld()->SpawnActor<AEnemyRangeAttack>(RangeAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
-	
-
-	if (RangeAttack != nullptr)
+	if (RangeAttack)
 	{
 		RangeAttack->SetOwner(this);
-		const float Speed = 2000.f;
-		FVector Direction = (_TargetLocation - SpawnLocation).GetSafeNormal();
-		RangeAttack->GetProjectileMovement()->Velocity = Direction * Speed;
+		RangeAttack->GetProjectileMovement()->Velocity = (_TargetLocation - SpawnLocation).GetSafeNormal() * 2000.f;
 	}
 }
-
-
 
 void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 {
 	if (!HasAuthority()) return;
+
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(_Target);
 	AYggHero* Hero = Cast<AYggHero>(_Target);
+	if (!IsValid(Hero) && !IsValid(Enemy)) return;
 
-	if (!IsValid(Hero) && !IsValid(Enemy))
+	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target);
+}
+
+void AEnemyCharacter::AttackCollisionInit()
+{
+	// 콜리전 설정
+	RightAttackCapsule->SetOwnerCharacter(this);
+	RightAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
+	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), RightAttackCapsule);
+
+	LeftAttackCapsule->SetOwnerCharacter(this);
+	LeftAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
+	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), LeftAttackCapsule);
+
+	// 오른손 소켓에 부착
+	if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("MOUNTAIN_DRAGON_-R-Hand")))
 	{
-		return;
+		RightAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("MOUNTAIN_DRAGON_-R-Hand")
+		);
+		RightAttackCapsule->SetCapsuleSize(300.0f, 200.0f); // (Radius, HalfHeight)
+	}
+	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r")))
+	{
+		RightAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("weapon_r")
+		);
+	}
+	else
+	{
+		RightAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::KeepRelativeTransform
+		);
 	}
 
+	// 왼손 소켓에 부착
+	if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("MOUNTAIN_DRAGON_-L-Hand")))
+	{
+		LeftAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("MOUNTAIN_DRAGON_-L-Hand")
+		);
+		LeftAttackCapsule->SetCapsuleSize(300.0f, 200.0f);
+	}
+	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l")))
+	{
+		LeftAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("weapon_l")
+		);
+	}
+	else
+	{
+		LeftAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::KeepRelativeTransform
+		);
+	}
+}
 
-	float Damage = CharacterAttributeComponent->AttackPoints / 10.0f;
-	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target);
-	
+
+void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
+{
+	if (!WarningOutRangeClass || !_Actor) return;
+
+	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
+	FVector BaseLocation = GetActorLocation();
+	float ZOffset = Capsule ? Capsule->GetScaledCapsuleHalfHeight() : 0.f;
+
+	const int NumToSpawn = 8;
+	const float Radius = 500.f;
+
+	for (int i = 0; i < NumToSpawn; ++i)
+	{
+		// 각 위치값 미리 계산
+		float Angle = FMath::RandRange(0.f, 360.f);
+		float Distance = FMath::RandRange(Radius * 0.5f, Radius);
+		float X = FMath::Cos(FMath::DegreesToRadians(Angle)) * Distance;
+		float Y = FMath::Sin(FMath::DegreesToRadians(Angle)) * Distance;
+		FVector SpawnLocation = BaseLocation + FVector(X, Y, -ZOffset);
+
+		// 랜덤한 딜레이 시간 (0~3초)
+		float Delay = FMath::FRandRange(0.f, 3.f);
+
+		// 타이머 바인딩용 로컬 복사 변수
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([this, SpawnLocation, _Actor]()
+			{
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.Owner = this;
+				GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, _Actor->GetActorRotation(), SpawnParams);
+			});
+
+		// 타이머로 예약
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, Delay, false);
+	}
 }

@@ -41,7 +41,6 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	DeathCheck(_OwnerComp);
-	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
@@ -49,6 +48,16 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 
+	if (IsValid(EnemyCharacter))
+	{
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
+
+		if (!DataKeyStr.StartsWith(TEXT("Dragon")))
+		{
+			RotateToTargetActor(_OwnerComp, _DeltaSeconds);
+		}
+
+	}
 	if (IsValid(EnemyCharacter))
 	{
 		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();

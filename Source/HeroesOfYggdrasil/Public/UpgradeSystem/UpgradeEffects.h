@@ -35,10 +35,22 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackSpeedIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HPGeneration;
 };
 
 UCLASS(Blueprintable)
-class HEROESOFYGGDRASIL_API UUpgradeEffect_TeamStats : public UUpgradeEffectBase
+class HEROESOFYGGDRASIL_API UUpgradeEffect_TeamStats : public UUpgradeEffect_Stats
+{
+	GENERATED_BODY()
+
+public:
+	virtual void ApplyInternal_Implementation(UAttributeComponent* TargetAttribute) override;
+};
+
+UCLASS(Blueprintable)
+class HEROESOFYGGDRASIL_API UUpgradeEffect_World: public UUpgradeEffectBase
 {
 	GENERATED_BODY()
 
@@ -47,17 +59,8 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackIncrement;
+	bool bHealAllPlayers;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float DefenseIncrement;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float HPIncrement;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float MoveSpeedIncrement;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float AttackSpeedIncrement;
+	bool bHealYggdrasil;
 };

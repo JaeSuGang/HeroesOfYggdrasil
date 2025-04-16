@@ -79,16 +79,22 @@ void UStageSystem::UnregisterObjectsToReplicate()
 
 void UStageSystem::VictoryInternal()
 {
-	UE_LOG(LogTemp, Error, TEXT("%S%u : Victory!"), __FUNCTION__, __LINE__);
+	if (GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S%u : Victory!"), __FUNCTION__, __LINE__);
 
-	MulticastVictory(FOnVictoryParams{});
+		MulticastVictory(FOnVictoryParams{});
+	}
 }
 
 void UStageSystem::DefeatInternal()
 {
-	UE_LOG(LogTemp, Error, TEXT("%S%u : Defeated!"), __FUNCTION__, __LINE__);
+	if (GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S%u : Defeated!"), __FUNCTION__, __LINE__);
 
-	MulticastDefeated(FOnDefeatedParams{});
+		MulticastDefeated(FOnDefeatedParams{});
+	}
 }
 
 void UStageSystem::MulticastDefeated_Implementation(FOnDefeatedParams OnDefeatedParams)
@@ -101,11 +107,14 @@ void UStageSystem::MulticastVictory_Implementation(FOnVictoryParams OnVictoryPar
 	OnVictory.Broadcast(OnVictoryParams);
 }
 
-void UStageSystem::StartGame()
+void UStageSystem::StartGame()												
 {
-	EnterStage(0);
+	if (GetOwner()->HasAuthority())
+	{
+		EnterStage(0);
 
-	BroadcastGameStart(FOnGameStartParams{});
+		BroadcastGameStart(FOnGameStartParams{});
+	}
 }
 
 void UStageSystem::BroadcastGameStart_Implementation(FOnGameStartParams OnGameStartParams)

@@ -23,6 +23,11 @@ void UCharacterAttributeComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (GetOwner()->HasAuthority())
+	{
+		FTimerHandle TH{};
+		GetWorld()->GetTimerManager().SetTimer(TH, this, &UCharacterAttributeComponent::GenerateHpInternal, 1.0f, true);
+	}
 }
 
 void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -35,6 +40,15 @@ void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePr
 	DOREPLIFETIME(UCharacterAttributeComponent, AttackPoints);
 	DOREPLIFETIME(UCharacterAttributeComponent, MaxMoveSpeed);
 	DOREPLIFETIME(UCharacterAttributeComponent, AttackSpeedRate);
+}
+
+void UCharacterAttributeComponent::GenerateHpInternal()
+{
+	float HpToApply{};
+
+	HpToApply = HP + HPGeneration > MaxHP ? MaxHP : HP + HPGeneration;
+
+	Server_SetHP(HpToApply);
 }
 
 
@@ -66,6 +80,11 @@ float UCharacterAttributeComponent::GetMaxMoveSpeed() const
 float UCharacterAttributeComponent::GetAttackSpeedRate() const
 {
 	return AttackSpeedRate;
+}
+
+void UCharacterAttributeComponent::Server_SetHPGeneration_Implementation(float fAmount)
+{
+	HPGeneration = fAmount;
 }
 
 void UCharacterAttributeComponent::OnRep_Status()
