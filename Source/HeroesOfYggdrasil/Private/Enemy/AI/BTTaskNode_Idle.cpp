@@ -37,7 +37,7 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 
 	if (nullptr != AIData.TargetActor)
 	{
-		ChangeState(_OwnerComp, EEnemyAIState::Trace);
+		//ChangeState(_OwnerComp, EEnemyAIState::Trace);
 		return;
 	}
 }

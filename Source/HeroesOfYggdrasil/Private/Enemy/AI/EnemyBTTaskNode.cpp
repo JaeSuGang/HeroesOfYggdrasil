@@ -50,6 +50,28 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	DeathCheckTime -= _DeltaSeconds;
+
+
+	if (APlayerController* PC = UGameplayStatics::GetPlayerController(PlayAIData.SelfPawn, 0))
+	{
+		
+		if (PC->IsInputKeyDown(EKeys::O))
+		{
+			APawn* SelfActor = PlayAIData.SelfPawn;
+			AAIController* SelfController = SelfActor->GetController<AAIController>();
+
+			ChangeState(_OwnerComp, EEnemyAIState::Idle);
+			
+			if (SelfController)
+			{
+				SelfController->StopMovement();
+			}
+		}
+		if (PC->IsInputKeyDown(EKeys::L))
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::TraceYggdrasil);
+		}
+	}
 }
 
 void UEnemyBTTaskNode::ChangeState(UBehaviorTreeComponent& _OwnerComp, EEnemyAIState _State)
@@ -191,23 +213,29 @@ void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 
 void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
 {
-
 	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
 
-	APawn* SelfActor = PlayAIData.SelfPawn;
+	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
 	AActor* TargetActor = PlayAIData.TargetActor;
 
-	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
+	if (!OwningPawn || !TargetActor) return;
 
-	if (OwningPawn && TargetActor)
+	const FString TargetName = TargetActor->GetName();
+
+	if (TargetName.StartsWith(TEXT("BP_YggHero")) || TargetName.StartsWith(TEXT("BP_Yggdrasil")))
 	{
-		if (FName("BP_YggHero") == TargetActor->GetName().Left(10) || FName("BP_Yggdrasil") == TargetActor->GetName().Left(12))
-		{
-			const FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(OwningPawn->GetActorLocation(), TargetActor->GetActorLocation());
-			FRotator TargetRot = FMath::RInterpTo(OwningPawn->GetActorRotation(), LookAtRot, _DeltaSeconds, RotationInterSpeed);
-			TargetRot.Pitch = 0.0f;
-			OwningPawn->SetActorRotation(TargetRot);
-		}
+		const FVector PawnLoc = OwningPawn->GetActorLocation();
+		const FVector TargetLoc = TargetActor->GetActorLocation();
+
+		const FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(PawnLoc, TargetLoc);
+
+		FRotator CurrentRot = OwningPawn->GetActorRotation();
+		FRotator TargetRot = FMath::RInterpTo(CurrentRot, LookAtRot, _DeltaSeconds, RotationInterSpeed);
+
+		TargetRot.Pitch = 0.f;
+		TargetRot.Roll = 0.f;
+
+		OwningPawn->SetActorRotation(TargetRot); 
 	}
 }
 

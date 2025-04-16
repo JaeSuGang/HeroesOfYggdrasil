@@ -88,8 +88,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemySkillAttack(FVector _TargetLocation);
-
-
+	
+	UFUNCTION(BlueprintCallable)
+	void DragonRangeAttack(AActor* _Actor);
 	//UWidgetComponent* GetWidgetComponent()
 	//{
 	//	return WidgetComponent;

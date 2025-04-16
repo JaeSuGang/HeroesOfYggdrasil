@@ -373,3 +373,42 @@ void AEnemyCharacter::AttackCollisionInit()
 		);
 	}
 }
+
+
+void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
+{
+	if (!WarningOutRangeClass || !_Actor) return;
+
+	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
+	FVector BaseLocation = GetActorLocation();
+	float ZOffset = Capsule ? Capsule->GetScaledCapsuleHalfHeight() : 0.f;
+
+	const int NumToSpawn = 8;
+	const float Radius = 500.f;
+
+	for (int i = 0; i < NumToSpawn; ++i)
+	{
+		// 각 위치값 미리 계산
+		float Angle = FMath::RandRange(0.f, 360.f);
+		float Distance = FMath::RandRange(Radius * 0.5f, Radius);
+		float X = FMath::Cos(FMath::DegreesToRadians(Angle)) * Distance;
+		float Y = FMath::Sin(FMath::DegreesToRadians(Angle)) * Distance;
+		FVector SpawnLocation = BaseLocation + FVector(X, Y, -ZOffset);
+
+		// 랜덤한 딜레이 시간 (0~3초)
+		float Delay = FMath::FRandRange(0.f, 3.f);
+
+		// 타이머 바인딩용 로컬 복사 변수
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([this, SpawnLocation, _Actor]()
+			{
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.Owner = this;
+				GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, _Actor->GetActorRotation(), SpawnParams);
+			});
+
+		// 타이머로 예약
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, Delay, false);
+	}
+}
