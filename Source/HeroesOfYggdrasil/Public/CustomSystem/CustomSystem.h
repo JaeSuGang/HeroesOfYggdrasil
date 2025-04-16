@@ -41,10 +41,9 @@ public:
 		if (Handle.IsValid())
 		{
 			Handle->WaitUntilComplete();
-
-			T* LoadedDataAsset = GEngine->AssetManager->GetPrimaryAssetObject<T>(PrimaryDataAssetId);
-			return LoadedDataAsset;
 		}
-		return nullptr;
+
+		T* LoadedDataAsset = GEngine->AssetManager->GetPrimaryAssetObject<T>(PrimaryDataAssetId);
+		return LoadedDataAsset;
 	}
 };

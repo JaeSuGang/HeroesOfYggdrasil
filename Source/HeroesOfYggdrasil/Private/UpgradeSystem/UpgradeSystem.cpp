@@ -54,7 +54,7 @@ void UUpgradeSystem::SetUpgradePointInternal(APlayerState* PlayerState, int Poin
 	}
 }
 
-void UUpgradeSystem::UpgradeByUpgradeId(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId UpgradeDataAssetId)
+void UUpgradeSystem::UpgradeByUpgradeId(UAttributeComponent* AttributeComponent, FPrimaryAssetId UpgradeDataAssetId)
 {
 	if (GetOwner()->HasAuthority())
 	{
@@ -83,7 +83,7 @@ void UUpgradeSystem::UpgradeByUpgradeId(UHeroAttributeComponent* AttributeCompon
 	}
 }
 
-void UUpgradeSystem::Upgrade(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData)
+void UUpgradeSystem::Upgrade(UAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData)
 {
 	if (GetOwner()->HasAuthority())
 	{
@@ -95,7 +95,7 @@ void UUpgradeSystem::Upgrade(UHeroAttributeComponent* AttributeComponent, UUpgra
 	}
 }
 
-void UUpgradeSystem::RequestUpgrade_Implementation(UHeroAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId)
+void UUpgradeSystem::RequestUpgrade_Implementation(UAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId)
 {
 	GEngine->AssetManager->LoadPrimaryAsset(AssetId, TArray<FName>(), FStreamableDelegate::CreateLambda([this, AttributeComponent, AssetId]()
 		{
@@ -118,7 +118,7 @@ void UUpgradeSystem::RequestUpgrade_Implementation(UHeroAttributeComponent* Attr
 
 }
 
-void UUpgradeSystem::UpgradeInternal(UHeroAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData)
+void UUpgradeSystem::UpgradeInternal(UAttributeComponent* AttributeComponent, UUpgradeDataAsset* UpgradeData)
 {
 	if (!AttributeComponent || !UpgradeData)
 		return;
