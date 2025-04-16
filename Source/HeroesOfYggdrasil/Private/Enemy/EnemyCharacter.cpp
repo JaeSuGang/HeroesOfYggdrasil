@@ -58,11 +58,21 @@ AEnemyCharacter::AEnemyCharacter()
 	TickActorClass = AYggTickActor::StaticClass();
 
 	{
-		UYggAttackCapsuleComponent* AttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Right"));
-		AttackCapsule->SetupAttachment(GetMesh(),TEXT("weapon_r"));
-		AttackCapsule->SetOwnerCharacter(this);
-		AttackCapsule->SetCollisionProfileName(TEXT("MonsterCollision"));
-		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), AttackCapsule);
+		auto TryCreateAttackCapsule = [&](FName BoneName, FName CapsuleName, FName MapKey)
+		{
+			if (GetMesh()->DoesSocketExist(BoneName))
+			{
+				UYggAttackCapsuleComponent* Capsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(CapsuleName);
+				Capsule->SetupAttachment(GetMesh(), BoneName);
+				Capsule->SetOwnerCharacter(this);
+				Capsule->SetCollisionProfileName(TEXT("MonsterCollision"));
+				AttackCapsuleComponentMap.Add(MapKey, Capsule);
+			}
+		};
+
+		TryCreateAttackCapsule(TEXT("weapon_r"), TEXT("Right"), TEXT("NormalAttack"));
+		TryCreateAttackCapsule(TEXT("MOUNTAIN_DRAGON_-L-Hand"), TEXT("LeftHand"), TEXT("NormalAttack"));
+		TryCreateAttackCapsule(TEXT("MOUNTAIN_DRAGON_-R-Hand"), TEXT("RightHand"), TEXT("NormalAttack"));
 	}
 }
 
@@ -106,6 +116,7 @@ void AEnemyCharacter::BeginPlay()
 	GetMesh()->SetGenerateOverlapEvents(true);
 	GetMesh()->SetSimulatePhysics(false);
 
+	USkeletalMeshComponent* SkelMesh =  GetMesh();
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	UEnemyBaseAnimInstance* NewEnemyAnimInstance = Cast<UEnemyBaseAnimInstance>(AnimInstance);
 
@@ -363,3 +374,4 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target);
 	
 }
+
