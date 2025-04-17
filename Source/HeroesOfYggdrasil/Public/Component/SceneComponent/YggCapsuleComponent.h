@@ -10,6 +10,7 @@
  * 
  */
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOverLapBeginPlusLogic);
 
 class AYggCharacter;
 
@@ -30,8 +31,12 @@ public:
 	{
 		OwnerCharacter = Owner;
 	}
-	
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnOverLapBeginPlusLogic PlusLogic;
 protected:
+
+	
+
 	UPROPERTY()
 	AYggCharacter* OwnerCharacter;
 
