@@ -62,7 +62,7 @@ void UMHPBarComponent::UpdateHPBarWidgetToAll_Implementation(float HP)
 {
 	if (MHPBarWidget)
 	{
-		MHPBarWidget->UpdateHPBar(HP);
+		MHPBarWidget->UpdateHPBar();
 	}
 }
 
@@ -70,7 +70,7 @@ void UMHPBarComponent::OnStatusChanged()
 {
 	if (IsValid(MHPBarWidget))
 	{
-		MHPBarWidget->UpdateHPBar(0.0f);
+		MHPBarWidget->UpdateHPBar();
 	}
 }
 

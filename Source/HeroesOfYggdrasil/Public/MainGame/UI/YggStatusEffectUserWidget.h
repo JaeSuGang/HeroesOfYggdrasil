@@ -11,7 +11,7 @@ class UImage;
 class UTexture2D;
 
 USTRUCT()
-struct FStatusEffectData
+struct FUIStatusEffectData
 {
 	GENERATED_BODY()
 
