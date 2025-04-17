@@ -26,7 +26,7 @@ void UYggPlayerStatusUserWidget::NativeOnInitialized()
 
     UCharacterAttributeComponent* CAC =  Pawn->GetAttributeComponent();
 
-    //CAC->HasTag("Character.Debuff." + EStatusEffectType::Poison);
+    //CAC->HasTag(TEXT("DeBuff.Poison"));
 
 
     //HPBarUserWidget = CreateWidget<UYggHPBarUserWidget>(GetWorld(), HPBarWidgetClass);
