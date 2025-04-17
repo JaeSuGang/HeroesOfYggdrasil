@@ -9,6 +9,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 
+#include "Animation/YggHeroAnimInstance.h"
+
 AYggHeroAurora::AYggHeroAurora()
 {
 	{
@@ -35,6 +37,9 @@ void AYggHeroAurora::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (ActionMap.IsEmpty()) return;
+	ActionMap.Remove(FName("ToggleAimMode"));
+	ActionMap.Remove(FName("CameraZoomInOut"));
 
 	if (!HeroAttributeComponent) return;
 	HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Aurora"));
@@ -61,6 +66,11 @@ void AYggHeroAurora::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
+		if (ActionMap.Contains(FName("Attack")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroAurora::Attack);
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHeroAurora::EndAttack);
+		}
 		if (ActionMap.Find(FName("Fly")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Fly")), ETriggerEvent::Triggered, this, &AYggHeroAurora::Fly);
@@ -84,6 +94,35 @@ void AYggHeroAurora::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
+void AYggHeroAurora::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	FTimerHandle InitTimer;
+	GetWorld()->GetTimerManager().SetTimer(InitTimer, [this]()
+	{
+		SetAimMode(true);
+	}, 2.0f, false);
+}
+
+void AYggHeroAurora::Attack(const FInputActionValue& Value)
+{
+	if (bIsSkillE)
+	{
+		bIsSkillE = false;
+
+		OnSkillCastEnd.Broadcast();
+		return;
+	}
+
+	Super::Attack(Value);
+}
+
+void AYggHeroAurora::EndAttack(const FInputActionValue& Value)
+{
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.PressedAttack"));
+}
+
 void AYggHeroAurora::Fly(const FInputActionValue& Value)
 {
 	// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, FString("dddd"));
@@ -93,11 +132,8 @@ void AYggHeroAurora::SkillQ(const FInputActionValue& Value)
 {
 	Super::SkillQ(Value);
 
-	SetAimMode(true);
-
 	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
-
 
 	float ContinueTime = HeroAttributeComponent->SkillQMaxContinueTime;
 	FTimerHandle TimeHandle;
@@ -116,8 +152,6 @@ void AYggHeroAurora::SkillQ(const FInputActionValue& Value)
 			}
 		}
 
-		SetAimMode(false);
-
 		HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
 
@@ -128,7 +162,7 @@ void AYggHeroAurora::SkillE(const FInputActionValue& Value)
 {
 	Super::SkillE(Value);
 
-	SetAimMode(true);
+	bIsSkillE = true;
 
 	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
 }
