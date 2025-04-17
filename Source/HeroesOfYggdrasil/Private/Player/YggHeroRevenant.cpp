@@ -38,6 +38,10 @@ void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::Attack);
 		}
+		if (ActionMap.Contains(FName("SkillE")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillE")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::SkillE);
+		}
 	}
 }
 
@@ -60,4 +64,13 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	Super::Attack(Value);
+}
+
+void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
+{
+	if (bAimMode == false)
+	{
+		SetAimMode(true);
+	}
+	Super::SkillE(Value);
 }

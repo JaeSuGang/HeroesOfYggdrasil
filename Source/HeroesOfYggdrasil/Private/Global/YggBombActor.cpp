@@ -8,6 +8,7 @@ AYggBombActor::AYggBombActor()
 {
 	ExplosionAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("ExplosionAttackCapsuleComponent"));
 	ExplosionAttackCapsuleComponent->SetupAttachment(RootComponent);
+	ProjectileType = EProjectileType::TargetParabola;
 
 }
 
@@ -21,7 +22,6 @@ void AYggBombActor::BeginPlay()
 	Super::BeginPlay();
 	if (OwnerCharacter)
 	{
-
 		ExplosionAttackCapsuleComponent->SetOwnerCharacter(OwnerCharacter);
 	}
 	AttackCapsuleComponent->PlusLogic.AddDynamic(this, &AYggBombActor::ExplosionOn);
