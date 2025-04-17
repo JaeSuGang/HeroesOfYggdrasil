@@ -72,11 +72,7 @@ void UYggAttackCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedCom
 	if (!AttackCharacterAttributeComponent) { return; }
 	DamageCharacterAttributeComponent->Server_TakeDamage(AttackCharacterAttributeComponent->GetAttackPoints() * Coefficient);
 
-	// 지워도됨
-	FString Damage = FString::Printf(TEXT("Damage : %f"), AttackCharacterAttributeComponent->GetAttackPoints() * Coefficient);
-	GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Red, Damage);
-	FString CurHP = FString::Printf(TEXT("HP : %f"), DamageCharacterAttributeComponent->GetHP());
-	GEngine->AddOnScreenDebugMessage(1, 1.0f, FColor::Red, CurHP);
+	BlueprintOverLapBegin(OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 }
 
 void UYggAttackCapsuleComponent::CollisionOn()
