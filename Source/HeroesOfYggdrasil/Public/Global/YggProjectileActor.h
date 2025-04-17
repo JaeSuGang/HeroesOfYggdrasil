@@ -67,6 +67,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void SetAimDir(FVector _AimDirection);
+
+	UFUNCTION()
+	void SetOwnerCharacter(class AYggCharacter* _OwnerCharacter) { OwnerCharacter = _OwnerCharacter; }
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	EProjectileType ProjectileType;
@@ -74,8 +80,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UProjectileMovementComponent> ProjectileMovement;
 
-	UPROPERTY()
-	TObjectPtr<AActor> OwnerActor;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UYggAttackCapsuleComponent> AttackCapsuleComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	UDataTable* ProjectileData;
@@ -83,9 +89,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	FName RowName;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor")
+	class AYggCharacter* OwnerCharacter;
 
 
 	FSpawnProjectileDataRow ProjectileDataRow;
+
+	FVector AimDirection;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AYggProjectileActor")
+	TObjectPtr<class UNiagaraComponent> NiagaraSystemComponent;
+
+	UPROPERTY(EditDefaultsOnly, Category = "AYggProjectileActor")
+	TObjectPtr<class UParticleSystemComponent> ParticleSystemComponent;
 
 	void LineMode();
 	void ParabolaMode();
