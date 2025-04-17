@@ -18,6 +18,7 @@ class HEROESOFYGGDRASIL_API UHeroRollNotifyState : public UAnimNotifyState
 	virtual void NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference) override;
 	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float RollRate = 3.0f;
 };
