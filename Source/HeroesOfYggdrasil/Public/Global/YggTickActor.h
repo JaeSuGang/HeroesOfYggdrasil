@@ -46,7 +46,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Tag")
 	void DestroyStatusTag();
 
-	static AYggTickActor* SpawnTickEffectIfNotExist(AYggCharacter* Owner, AYggCharacter* Target);
+	UFUNCTION(BlueprintCallable, Category = "DataTable")
+	void LoadEffectFromDataTable();
+
+	static AYggTickActor* SpawnTickEffectIfNotExist(AYggCharacter* Owner, AYggCharacter* Target, EStatusEffectType EffectType = EStatusEffectType::Burn, float TickDamage = 1.f, float Interval = 0.5f, float TickTime = 5.f);
 
 protected:
 	// Called when the game starts or when spawned
@@ -62,6 +65,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* DefualtSceneRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
+	EStatusEffectType TickEffectType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
 	float StatusTickTime;

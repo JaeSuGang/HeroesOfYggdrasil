@@ -70,6 +70,7 @@ void AYggTickActor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	LoadEffectFromDataTable();
 	SpawnEffect(TickDamageComponent->TargetActor);
 }
 
@@ -79,7 +80,7 @@ void AYggTickActor::Tick(float DeltaTime)
 
 	StatusTickTime -= DeltaTime;
 
-	if (StatusTickTime < 0.0f)
+	if (StatusTickTime < 0.0f || TickDamageComponent->TargetActor->GetAttributeComponent()->HasTag(TEXT("Character.State.Death")))
 	{
 		DestroyStatusTag();
 
@@ -104,6 +105,33 @@ void AYggTickActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 	DOREPLIFETIME(AYggTickActor, TickNiagaraSystem);
 	DOREPLIFETIME(AYggTickActor, TickParticle);
+}
+
+void AYggTickActor::LoadEffectFromDataTable()
+{
+	FName RowName = ConvertStatusEnumToRowName(TickEffectType);
+	StatusRowName = RowName;
+
+
+	TSoftObjectPtr<UDataTable> TableRef = TSoftObjectPtr<UDataTable>(
+		FSoftObjectPath("/Game/Data/StatusTickActorDataTable.StatusTickActorDataTable"));
+
+	if (!TableRef.IsValid())
+	{
+		TableRef.LoadSynchronous();
+	}
+
+	StatusTickDataTable = TableRef.Get();
+
+	if (StatusTickDataTable)
+	{
+		if (const FStatusTickDataRow* Row = StatusTickDataTable->FindRow<FStatusTickDataRow>(RowName, nullptr))
+		{
+			TickParticle = Row->Particle;
+			TickNiagaraSystem = Row->NiagaraSystem;
+			
+		}
+	}
 }
 
 void AYggTickActor::DestroyStatusTag()
@@ -256,8 +284,8 @@ void AYggTickActor::SpawnEffect_Implementation(AYggCharacter* _Target)
 }
 
 
-
-AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AYggCharacter* Target)
+// 공격 캐릭터 , 타겟 캐릭터, EStatusEffectType(YggEnum), 데미지, 간격, 공격 시간
+AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AYggCharacter* Target, EStatusEffectType EffectType, float TickDamage,float Interval, float TickTime)
 {
 	if (!IsValid(Target)) return nullptr;
 
@@ -324,26 +352,13 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 	AYggTickActor* TickActor = Owner->GetWorld()->SpawnActorDeferred<AYggTickActor>(AYggTickActor::StaticClass(), SpawnTransform, Target);
 
 	TickActor->TickDamageComponent->TargetActor = Target;
-	TickActor->TickDamageComponent->TickInterval = 0.5f;
-	TickActor->TickDamageComponent->DamageAmount = 0.1f;
+	TickActor->TickDamageComponent->TickInterval = Interval;
+	TickActor->TickDamageComponent->DamageAmount = TickDamage;
+	TickActor->StatusTickTime = TickTime;
+	TickActor->TickEffectType = EffectType;
 
 	AEnemyCharacter* OwnerEnemy = Cast<AEnemyCharacter>(Owner);
 	AYggHero* OwnerHero = Cast<AYggHero>(Owner);
-
-	if (IsValid(OwnerEnemy))
-	{
-		TickActor->TickNiagaraSystem = OwnerEnemy->TickNiagaraSystem;
-		TickActor->TickParticle = OwnerEnemy->TickParticle;
-		TickActor->StatusTickTime = 5.0f;
-	}
-
-	if (IsValid(OwnerHero))
-	{
-		//TickActor->TickNiagaraSystem = OwnerHero->TickNiagaraSystem;
-		//TickActor->TickParticle = OwnerHero->TickParticle;
-		//TickActor->StatusTickTime = 5.0f;
-	}
-
 
 	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 

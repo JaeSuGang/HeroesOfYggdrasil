@@ -316,7 +316,7 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 	AYggHero* Hero = Cast<AYggHero>(_Target);
 	if (!IsValid(Hero) && !IsValid(Enemy)) return;
 	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
-	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target);
+	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect);
 }
 
 void AEnemyCharacter::AttackCollisionInit()
