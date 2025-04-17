@@ -48,7 +48,8 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		else if (EEnemyType::Dragon == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
 		{
 			RotateToTargetActor(_OwnerComp, 0.01f);
-			EnemyCharacter->DragonRangeAttack(TargetActor);
+			//EnemyCharacter->DragonRangeAttack(TargetActor);
+			EnemyCharacter->DragonBreath();
 		}
 	}
 

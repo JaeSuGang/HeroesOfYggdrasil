@@ -104,7 +104,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void DragonRangeAttack(AActor* _Actor);
-	
+
+	UFUNCTION(BlueprintCallable)
+	void DragonBreath();
+
 	UFUNCTION()
 	void HandleHeroEnteredRange(AYggCharacter* _Target);
 

@@ -424,6 +424,38 @@ void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 	}
 }
 
+
+
+void AEnemyCharacter::DragonBreath()
+{
+	if (!TickNiagaraSystem.IsValid())
+	{
+		TickNiagaraSystem.LoadSynchronous();
+	}
+
+	if (!TickNiagaraSystem.IsValid()) return;
+
+	FTimerHandle SpawnTimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this]()
+	{
+		UNiagaraComponent* FireBreathComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			TickNiagaraSystem.Get(),
+			GetMesh(),
+			FName("MOUNTAIN_DRAGON_-Breath"),
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::SnapToTarget,
+			true,
+			true
+		);
+
+
+	}), 0.5f, false);
+}
+
+
+
 EEnemyType AEnemyCharacter::ConvertStringToEnemyType(const FString& EnemyKey)
 {
 	if (EnemyKey.StartsWith(TEXT("Minion_Melee")))
