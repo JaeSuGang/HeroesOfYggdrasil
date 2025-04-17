@@ -59,9 +59,11 @@ AYggTickActor::AYggTickActor()
 void AYggTickActor::BeginPlay()
 {
 	Super::BeginPlay();
-
-	TickEffectInit();
-	SpawnEffect(TickDamageComponent->TargetActor);
+	if (HasAuthority())
+	{
+		TickEffectInit();
+	//	SpawnEffect(TickDamageComponent->TargetActor);
+	}
 }
 
 // Tick: 시간 경과에 따른 상태 체크 및 삭제 처리
@@ -111,8 +113,9 @@ void AYggTickActor::TickEffectInit()
 void AYggTickActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
+	
 	DOREPLIFETIME(AYggTickActor, TickEffectType);
+	DOREPLIFETIME(AYggTickActor, DefualtSceneRoot);
 	DOREPLIFETIME(AYggTickActor, NiagaraEffect);
 	DOREPLIFETIME(AYggTickActor, ParticleEffect);
 }
@@ -209,67 +212,13 @@ void AYggTickActor::SpawnEffect_Implementation(AYggCharacter* _Target)
 	}
 }
 
-//
-//// 상태이상 TickActor가 없다면 생성
-//AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AYggCharacter* Target, EStatusEffectType InEffectType, float TickTime, float Scale)
-//{
-//	if (!IsValid(Target)) return nullptr;
-//
-//	// 이미 부착된 TickActor가 있다면 시간만 갱신
-//	AYggTickActor* ExistingTickActor = UTickUtilityFunctionLibrary::FindAttachedTickActor(Target);
-//	if (IsValid(ExistingTickActor))
-//	{
-//		FName RowName = ExistingTickActor->StatusRowName;
-//		FName StatusTag;
-//
-//		if (Cast<AYggHero>(ExistingTickActor->TickDamageComponent->TargetActor))
-//			StatusTag = FName(*("Character.DeBuff." + RowName.ToString()));
-//		else if (Cast<AEnemyCharacter>(ExistingTickActor->TickDamageComponent->TargetActor))
-//			StatusTag = FName(*("Enemy.DeBuff." + RowName.ToString()));
-//
-//		UCharacterAttributeComponent* AttrComp = Cast<AYggCharacter>(ExistingTickActor->TickDamageComponent->TargetActor)->GetAttributeComponent();
-//		if (IsValid(AttrComp) && AttrComp->HasTag(StatusTag))
-//		{
-//			if (FStatusTickDataRow* Row = ExistingTickActor->StatusTickDataTable->FindRow<FStatusTickDataRow>(RowName, nullptr))
-//				ExistingTickActor->StatusTickTime = TickTime;
-//		}
-//		return nullptr;
-//	}
-//
-//	// 새 TickActor 스폰
-//	FTransform SpawnTransform(Target->GetActorRotation(), Target->GetActorLocation());
-//
-//	TSubclassOf<AYggTickActor> TickActorBPClass = LoadClass<AYggTickActor>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Global/BP_YggTickActor.BP_YggTickActor'"));
-//
-//	if (!TickActorBPClass)
-//	{
-//		return nullptr;
-//	}
-//
-//	AYggTickActor* TickActor = Owner->GetWorld()->SpawnActorDeferred<AYggTickActor>(TickActorBPClass, SpawnTransform, Target);
-//
-//
-//	TickActor->TickDamageComponent->TargetActor = Target;
-//	TickActor->TickDamageComponent->TickInterval = 0.5f;
-//	TickActor->TickDamageComponent->DamageAmount = 0.1f;
-//	TickActor->TickEffectType = InEffectType;
-//	TickActor->StatusTickTime = TickTime;
-//	TickActor->TickActorScale = Scale;
-//	TickActor->StatusRowName = UTickUtilityFunctionLibrary::ConvertStatusEffectTypeToName(InEffectType);
-//
-//	FName NewRowName = TickActor->StatusRowName;
-//
-//
-//	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
-//
-//
-//
-//	// 상태이상 태그 부착
-//	FName Tag = FName(*((Cast<AYggHero>(Target) ? "Character.DeBuff." : "Enemy.DeBuff.") + TickActor->StatusRowName.ToString()));
-//	TickActor->Tag = Tag;
-//	Target->GetAttributeComponent()->AddTag(Tag);
-//
-//	return TickActor;
-//
-//
-//}
+void AYggTickActor::OnRep_EffectAssets()
+{
+	NiagaraEffect.LoadSynchronous();
+	ParticleEffect.LoadSynchronous();
+
+	if (TickDamageComponent && TickDamageComponent->TargetActor)
+	{
+		SpawnEffect(TickDamageComponent->TargetActor);
+	}
+}

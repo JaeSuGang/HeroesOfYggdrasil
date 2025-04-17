@@ -57,6 +57,11 @@ AYggTickActor* UTickEffectManager::SpawnTickActorIfNeeded(
 	{
 		return nullptr;
 	}
+	if (!IsValid(Owner) || !Owner->HasAuthority())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TickEffectManager: Only server should spawn TickActor."));
+		return nullptr;
+	}
 
 	AYggTickActor* TickActor = Owner->GetWorld()->SpawnActorDeferred<AYggTickActor>(TickActorBPClass, SpawnTransform, Target);
 
@@ -89,6 +94,8 @@ AYggTickActor* UTickEffectManager::SpawnTickActorIfNeeded(
 
 	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 
+	TickActor->SpawnEffect(TickActor->TickDamageComponent->TargetActor);
+
 
 	if (AYggCharacter* Hero = Cast<AYggHero>(TickActor->TickDamageComponent->TargetActor))
 	{
@@ -106,6 +113,8 @@ AYggTickActor* UTickEffectManager::SpawnTickActorIfNeeded(
 			Enemy->GetAttributeComponent()->AddTag(TickActor->Tag);
 		}
 	}
+
+
 
 	return TickActor;
 }

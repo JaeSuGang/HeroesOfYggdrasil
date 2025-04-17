@@ -42,6 +42,10 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void CleanupEffects();
 
+
+	UFUNCTION()
+	void OnRep_EffectAssets();
+
 	UFUNCTION(BlueprintCallable, Category = "Tag")
 	void DestroyStatusTag();
 
@@ -58,7 +62,7 @@ public:
 	FName StatusRowName = TEXT("Poison");
 
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(Replicated, VisibleAnywhere)
 	USceneComponent* DefualtSceneRoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
@@ -67,10 +71,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
 	float TickActorScale;
 
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "TickEffect")
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EffectAssets, BlueprintReadWrite, Category = "TickEffect")
 	TSoftObjectPtr<UNiagaraSystem> NiagaraEffect;
 
-	UPROPERTY(EditAnywhere, Replicated, BlueprintReadWrite, Category = "TickEffect")
+	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EffectAssets, BlueprintReadWrite, Category = "TickEffect")
 	TSoftObjectPtr<UParticleSystem> ParticleEffect;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "TickEffects")
