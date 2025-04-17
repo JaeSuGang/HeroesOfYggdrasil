@@ -57,6 +57,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void DelSelectAbility();
 
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void TempFunc();
 
 protected:
 	virtual void NativeOnInitialized() override;

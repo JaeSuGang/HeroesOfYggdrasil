@@ -143,3 +143,8 @@ void UYggMainGameUserWidget::DelSelectAbility()
 		SelectAbilityWidget = nullptr;
 	}
 }
+
+void UYggMainGameUserWidget::TempFunc()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Cyan, FString("zzzzzzzzzzz"));
+}
