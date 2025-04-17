@@ -22,7 +22,7 @@ public:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateHPBar(float HP);
+	void UpdateHPBar();
 
 protected:
 	UPROPERTY(meta = (BindWidget))

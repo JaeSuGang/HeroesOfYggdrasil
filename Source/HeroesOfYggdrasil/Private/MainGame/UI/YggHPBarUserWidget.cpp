@@ -32,13 +32,13 @@ void UYggHPBarUserWidget::NativeConstruct()
 
     if (CAC)
     {
-        CAC->ClientDelegate_OnTakeDamage.AddDynamic(this, &UYggHPBarUserWidget::UpdateHPBar);
+        CAC->ClientDelegate_OnStatusChanged.AddDynamic(this, &UYggHPBarUserWidget::UpdateHPBar);
     }
 
-    UpdateHPBar(0);
+    UpdateHPBar();
 }
 
-void UYggHPBarUserWidget::UpdateHPBar(float HP)
+void UYggHPBarUserWidget::UpdateHPBar()
 {
     APlayerController* PC = GetOwningPlayer();
 

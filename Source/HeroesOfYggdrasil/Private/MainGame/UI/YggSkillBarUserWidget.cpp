@@ -24,17 +24,21 @@ void UYggSkillBarUserWidget::NativeConstruct()
 
     if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
     {
-        if (APawn* Pawn = PC->GetPawn())
+        if (AYggHero* Pawn = PC->GetPawn<AYggHero>())
         {
-            FString FullClassName = Pawn->GetClass()->GetName();
+            UHeroAttributeComponent* CAC = Pawn->GetHeroAttributeComponent();
+            
+            //FString FullClassName = Pawn->GetClass()->GetName();
+            //
+            //FString CleanName;
+            //FullClassName.Split(TEXT("_C"), &CleanName, nullptr);
+            //
+            //FString HeroName;
+            //CleanName.Split(TEXT("BP_YggHero"), nullptr, &HeroName);
 
-            FString CleanName;
-            FullClassName.Split(TEXT("_C"), &CleanName, nullptr);
+            FName Name = CAC->GetName();
 
-            FString HeroName;
-            CleanName.Split(TEXT("BP_YggHero"), nullptr, &HeroName);
-
-            SetSkillIcon(FName(HeroName));
+            SetSkillIcon(Name);
 
             InitSkills();
 
