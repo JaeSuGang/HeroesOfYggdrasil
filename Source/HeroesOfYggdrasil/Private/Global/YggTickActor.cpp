@@ -70,8 +70,11 @@ void AYggTickActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	LoadEffectFromDataTable();
-	SpawnEffect(TickDamageComponent->TargetActor);
+	if (HasAuthority()) {
+		//LoadEffectFromDataTable(); // Replicated 전에 서버에서만 로드
+		SpawnEffect(TickDamageComponent->TargetActor);
+	}
+	
 }
 
 void AYggTickActor::Tick(float DeltaTime)
@@ -129,7 +132,6 @@ void AYggTickActor::LoadEffectFromDataTable()
 		{
 			TickParticle = Row->Particle;
 			TickNiagaraSystem = Row->NiagaraSystem;
-			
 		}
 	}
 }
@@ -356,6 +358,7 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 	TickActor->TickDamageComponent->DamageAmount = TickDamage;
 	TickActor->StatusTickTime = TickTime;
 	TickActor->TickEffectType = EffectType;
+	TickActor->LoadEffectFromDataTable(); // Replicated 전에 서버에서만 로드
 
 	AEnemyCharacter* OwnerEnemy = Cast<AEnemyCharacter>(Owner);
 	AYggHero* OwnerHero = Cast<AYggHero>(Owner);
