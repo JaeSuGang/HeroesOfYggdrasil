@@ -47,5 +47,18 @@ enum class EStatusEffectType : uint8
 	Poison    UMETA(DisplayName = "Poison"),
 	Burn      UMETA(DisplayName = "Burn"),
 	Slow	  UMETA(DisplayName = "Slow"),
-	Stunned   UMETA(DisplayName = "Stunned")
+	Stunned   UMETA(DisplayName = "Stunned"),
+	MAX UMETA(DisplayName = "MAX")
+};
+
+
+UENUM(BlueprintType)
+enum class EEnemyType : uint8
+{
+	Unknown			UMETA(DisplayName = "Unknown"),
+	Minion_Melee	UMETA(DisplayName = "Minion_Melee"),
+	Minion_Archer	UMETA(DisplayName = "Minion_Archer"),
+	Minion_Witch	UMETA(DisplayName = "Minion_Witch"),
+	Dragon			UMETA(DisplayName = "Dragon"),
+	MAX UMETA(DisplayName = "MAX")
 };

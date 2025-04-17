@@ -6,6 +6,7 @@
 
 UBTTaskNode_Attack::UBTTaskNode_Attack()
 {
+	// 기본 상태를 Attack으로 설정
 	EnemyAIStateValue = EEnemyAIState::Attack;
 }
 
@@ -16,12 +17,14 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
-	
+
+	// 타겟의 위치 저장
 	if (IsValid(TargetActor))
 	{
 		TargetRangeLocation = TargetActor->GetActorLocation();
 	}
 
+	// 애니메이션 상태 전환
 	if (IsValid(SelfActor))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
@@ -33,22 +36,23 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	{
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
-		if (DataKeyStr.StartsWith(TEXT("Minion_Archer")))
+		// 타입에 따라 다른 동작 수행
+		if (EEnemyType::Minion_Archer == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
 		{
 			EnemyCharacter->RevealArrow();
 		}
-		else if (DataKeyStr.StartsWith(TEXT("Minion_Witch")))
+		else if (EEnemyType::Minion_Witch == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
 		{
 			EnemyCharacter->SpawnWarningRange(TargetActor);
 		}
-		else if (DataKeyStr.StartsWith(TEXT("Dragon")))
+		else if (EEnemyType::Dragon == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
 		{
 			RotateToTargetActor(_OwnerComp, 0.01f);
 			EnemyCharacter->DragonRangeAttack(TargetActor);
 		}
 	}
 
-
+	// 타겟이 사망 상태이면 상태 전환
 	if (IsValid(TargetActor))
 	{
 		AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
@@ -62,31 +66,31 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		}
 	}
 
-
-	// 타이머를 이용한 상태 전이 예약
+	// 공격 완료 후 상태 전이를 위한 타이머 설정
 	float Duration = FMath::Max(PlayAIData.Data.AttackTime, 0.1f);
 	FTimerDelegate TimerDel;
 	FTimerHandle TimerHandle;
 
 	TimerDel.BindLambda([this, &_OwnerComp, EnemyCharacter]()
-	{
-		if (IsValid(EnemyCharacter))
 		{
-			FString DataKeyStr = EnemyCharacter->GetDataKey();
-
-			if (DataKeyStr.StartsWith(TEXT("Minion_Archer")))
+			if (IsValid(EnemyCharacter))
 			{
-				EnemyCharacter->SpawnAndFireArrow();
-				EnemyCharacter->HideArrow();
+				FString DataKeyStr = EnemyCharacter->GetDataKey();
+				
+				// 공격 애니메이션/이펙트 수행
+				if (EEnemyType::Minion_Archer == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
+				{
+					EnemyCharacter->SpawnAndFireArrow();
+					EnemyCharacter->HideArrow();
+				}
+				else if (EEnemyType::Minion_Witch == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
+				{
+					EnemyCharacter->SpawnEnemySkillAttack(TargetRangeLocation);
+				}
 			}
-			else if (DataKeyStr.StartsWith(TEXT("Minion_Witch")))
-			{
-				EnemyCharacter->SpawnEnemySkillAttack(TargetRangeLocation);
-			}
-		}
 
-		UEnemyBTTaskNode::ChangeState(_OwnerComp, EEnemyAIState::Await);
-	});
+			UEnemyBTTaskNode::ChangeState(_OwnerComp, EEnemyAIState::Await);
+		});
 
 	PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
 		TimerHandle,
@@ -100,6 +104,7 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
+	// 사망 체크
 	DeathCheck(_OwnerComp);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
@@ -111,13 +116,14 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	{
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
-		if (!DataKeyStr.StartsWith(TEXT("Dragon")))
+		// 드래곤 외 몬스터는 타겟 방향으로 회전
+		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
 		{
 			RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 		}
-
 	}
 
+	// 이동 중지
 	if (SelfController)
 	{
 		SelfController->StopMovement();

@@ -42,23 +42,28 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION()
 	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION(BlueprintCallable)
 	void AttackStart() override;
+
+	UFUNCTION(BlueprintCallable)
 
 	void AttackEnd() override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
+
+	EEnemyType ConvertStringToEnemyType(const FString& EnemyKey);
+
+	UFUNCTION(BlueprintCallable)
 	void DestroyAllComponents();
 
-	const FMonsterDataRow* GetData()
-	{
-		return MonsterData;
-	}
+	
 
+	UFUNCTION(BlueprintCallable)
 	void SetDataKey(const FString& _MonsterDataKey);
 	
 
@@ -68,9 +73,15 @@ public:
 		return CharacterAttributeComponent->HP;
 	}
 	
+	UFUNCTION(BlueprintCallable)
 	FString GetDataKey()
 	{
 		return DataKey;
+	}
+
+	const FMonsterDataRow* GetData()
+	{
+		return MonsterData;
 	}
 
 	UFUNCTION(BlueprintCallable)
@@ -93,11 +104,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void DragonRangeAttack(AActor* _Actor);
-	//UWidgetComponent* GetWidgetComponent()
-	//{
-	//	return WidgetComponent;
-	//}
-
+	
 	UFUNCTION()
 	void HandleHeroEnteredRange(AYggCharacter* _Target);
 
@@ -120,9 +127,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Minimap")
 	class AYggMiniMapIconActor* MiniMapIcon;
 
-	UPROPERTY(EditDefaultsOnly, Category = "StatusTick")
-	TSubclassOf<AYggTickActor> TickActorClass; 
-
 	UPROPERTY(BlueprintAssignable, Category = "EnemyEvent")
 	FOnHeroEnteredRangeDelegate OnHeroEnteredRange;
 
@@ -136,6 +140,9 @@ private:
 	// 몬스터 이름 데이터
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	FString DataKey = "";
+
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	EEnemyType EnemyType = EEnemyType::Unknown;
 
 	const FMonsterDataRow* MonsterData = nullptr;
 
