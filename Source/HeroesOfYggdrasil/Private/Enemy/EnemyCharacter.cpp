@@ -38,7 +38,6 @@
 #include "Enemy/EnemyWarningRange.h"
 
 #include "Global/YggTickActor.h"
-#include "Global/TickEffectManager.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -317,7 +316,7 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 	AYggHero* Hero = Cast<AYggHero>(_Target);
 	if (!IsValid(Hero) && !IsValid(Enemy)) return;
 	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
-	UTickEffectManager::SpawnTickActorIfNeeded(this, _Target, Effect, 5.0f, 1.0f);
+	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target);
 }
 
 void AEnemyCharacter::AttackCollisionInit()
