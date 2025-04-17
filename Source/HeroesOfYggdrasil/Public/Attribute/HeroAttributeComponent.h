@@ -83,6 +83,20 @@ public:
 	float SkillRMaxContinueTime;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillQCurCastingTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillECurCastingTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillRCurCastingTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillQMaxCastingTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillEMaxCastingTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillRMaxCastingTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	FHeroSkillInfoRow SkillQInfo;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)

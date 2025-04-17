@@ -14,7 +14,7 @@ void UGreystoneRJump::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
     AYggHeroGreystone* Greystone = Cast<AYggHeroGreystone>(MeshComp->GetOwner());
     if (!IsValid(Greystone)) return;
 
-    float Duration = Greystone->GetHeroAttributeComponent()->SkillRMaxContinueTime;
+    float Duration = Greystone->GetHeroAttributeComponent()->SkillRMaxCastingTime;
     Greystone->OnSkillCast.Broadcast(Duration);
 
     if (auto* AnimInstance = MeshComp->GetAnimInstance())
@@ -25,7 +25,7 @@ void UGreystoneRJump::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
         {
             AnimInstance->Montage_Pause(CurrentMontage);
 
-            float ContinueTime = Greystone->GetHeroAttributeComponent()->SkillRMaxContinueTime;
+            float ContinueTime = Greystone->GetHeroAttributeComponent()->SkillRMaxCastingTime;
 
             MeshComp->GetWorld()->GetTimerManager().SetTimer(JumpTimerHandle, [AnimInstance, CurrentMontage]()
             {

@@ -16,7 +16,7 @@ UHeroAttributeComponent::UHeroAttributeComponent()
 
 void UHeroAttributeComponent::BeginPlay()
 {
-    Super::BeginPlay();   
+    Super::BeginPlay();
 	ClientDelegate_OnStatusChanged.AddDynamic(this, &UHeroAttributeComponent::UpdateStatus);
 }
 
@@ -95,6 +95,13 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			SkillQMaxContinueTime = Data->SkillQInfo.ContinueTime;
 			SkillEMaxContinueTime = Data->SkillEInfo.ContinueTime;
 			SkillRMaxContinueTime = Data->SkillRInfo.ContinueTime;
+
+			SkillQCurCastingTime = 0.0f;
+			SkillECurCastingTime = 0.0f;
+			SkillRCurCastingTime = 0.0f;
+			SkillQMaxCastingTime = Data->SkillQInfo.CastingTime;
+			SkillEMaxCastingTime = Data->SkillEInfo.CastingTime;
+			SkillRMaxCastingTime = Data->SkillRInfo.CastingTime;
 		}
 	}
 }
