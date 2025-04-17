@@ -23,7 +23,7 @@ public:
 	void NativeConstruct() override;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateHPBar(float HP);
+	void UpdateHPBar();
 
 	UFUNCTION(BlueprintCallable)
 	void Init(float HP);

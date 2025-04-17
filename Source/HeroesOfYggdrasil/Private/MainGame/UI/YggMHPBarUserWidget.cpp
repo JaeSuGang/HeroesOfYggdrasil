@@ -29,7 +29,7 @@ void UYggMHPBarUserWidget::NativeConstruct()
 
 }
 
-void UYggMHPBarUserWidget::UpdateHPBar(float HP)
+void UYggMHPBarUserWidget::UpdateHPBar()
 {
     if (IsValid(CAC))
     {
