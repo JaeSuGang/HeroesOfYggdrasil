@@ -32,8 +32,8 @@ EStatusEffectType UTickUtilityFunctionLibrary::FindStatusEffectType(AEnemyCharac
 	const FString& Key = Enemy->GetDataKey();
 
 	if (Key == TEXT("Minion_Witch_0")) return EStatusEffectType::Poison;
-	if (Key == TEXT("Minion_Witch_1")) return EStatusEffectType::Stunned;
-	if (Key == TEXT("Minion_Witch_2")) return EStatusEffectType::Slow;
+	if (Key == TEXT("Minion_Witch_1")) return EStatusEffectType::Slow;
+	if (Key == TEXT("Minion_Witch_2")) return EStatusEffectType::Stunned;
 	if (Key == TEXT("Minion_Witch_3")) return EStatusEffectType::Burn;
 	if (Key == TEXT("Dragon"))		   return EStatusEffectType::Burn;
 

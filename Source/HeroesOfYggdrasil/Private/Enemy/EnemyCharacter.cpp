@@ -312,11 +312,16 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 {
 	if (!HasAuthority()) return;
 
-	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(_Target);
 	AYggHero* Hero = Cast<AYggHero>(_Target);
-	if (!IsValid(Hero) && !IsValid(Enemy)) return;
+
+	if (!IsValid(Hero)) return;
+
+	float Att = CharacterAttributeComponent->GetAttackPoints();
+
+	Att /= 10.f;
+
 	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
-	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect);
+	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect, Att);
 }
 
 void AEnemyCharacter::AttackCollisionInit()
