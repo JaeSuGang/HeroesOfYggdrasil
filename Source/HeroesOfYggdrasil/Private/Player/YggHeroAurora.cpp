@@ -38,7 +38,7 @@ void AYggHeroAurora::BeginPlay()
 
 	if (!HeroAttributeComponent) return;
 	HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Aurora"));
-	//UpdateStatus();	
+	//UpdateStatus();
 }
 
 void AYggHeroAurora::Tick(float DeltaTime)
@@ -69,7 +69,24 @@ void AYggHeroAurora::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillQ")), ETriggerEvent::Triggered, this, &AYggHeroAurora::SkillQ);
 		}
+		if (ActionMap.Find(FName("SkillE")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillE")), ETriggerEvent::Triggered, this, &AYggHeroAurora::SkillE);
+		}
+		if (ActionMap.Find(FName("SkillR")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillR")), ETriggerEvent::Triggered, this, &AYggHeroAurora::SkillR);
+		}
+		if (ActionMap.Find(FName("Roll")))
+		{
+			EnhancedInput->BindAction(*ActionMap.Find(FName("Roll")), ETriggerEvent::Triggered, this, &AYggHeroAurora::Roll);
+		}
 	}
+}
+
+void AYggHeroAurora::Fly(const FInputActionValue& Value)
+{
+	// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, FString("dddd"));
 }
 
 void AYggHeroAurora::SkillQ(const FInputActionValue& Value)
@@ -107,7 +124,23 @@ void AYggHeroAurora::SkillQ(const FInputActionValue& Value)
 	}, ContinueTime + 0.8f, false);
 }
 
-void AYggHeroAurora::Fly(const FInputActionValue& Value)
+void AYggHeroAurora::SkillE(const FInputActionValue& Value)
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, FString("dddd"));
+	Super::SkillE(Value);
+
+	SetAimMode(true);
+
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
+}
+
+void AYggHeroAurora::SkillR(const FInputActionValue& Value)
+{
+	Super::SkillR(Value);
+}
+
+void AYggHeroAurora::Roll(const FInputActionValue& Value)
+{
+	Super::Roll(Value);
+
+
 }

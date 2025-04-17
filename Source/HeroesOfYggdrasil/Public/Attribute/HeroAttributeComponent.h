@@ -21,6 +21,11 @@ class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UCharacterAttribute
 public:
 	UHeroAttributeComponent();
 
+	FName GetName()
+	{
+		return HeroName;
+	}
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -36,9 +41,9 @@ public:
 	UDataTable* BaseData;
 
 	bool IsAttackCheck();
-	
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float HPRegen;
+
+	UPROPERTY()
+	FName HeroName;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float JumpPower;
@@ -76,6 +81,20 @@ public:
 	float SkillEMaxContinueTime;
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float SkillRMaxContinueTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillQCurCastingTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillECurCastingTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillRCurCastingTime;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillQMaxCastingTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillEMaxCastingTime;
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float SkillRMaxCastingTime;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	FHeroSkillInfoRow SkillQInfo;

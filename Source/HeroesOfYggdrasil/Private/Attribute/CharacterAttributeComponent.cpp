@@ -85,6 +85,11 @@ float UCharacterAttributeComponent::GetAttackSpeedRate() const
 void UCharacterAttributeComponent::Server_SetHPGeneration_Implementation(float fAmount)
 {
 	HPGeneration = fAmount;
+	ServerDelegate_OnStatusChanged.Broadcast();
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		OnRep_Status();
+	}
 }
 
 void UCharacterAttributeComponent::OnRep_Status()
@@ -97,6 +102,10 @@ void UCharacterAttributeComponent::Server_SetDefensePoints_Implementation(float 
 	DefensePoints = fAmount;
 
 	ServerDelegate_OnStatusChanged.Broadcast();
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		OnRep_Status();
+	}
 }
 
 void UCharacterAttributeComponent::Server_SetAttackSpeedRate_Implementation(float fAmount)
@@ -145,6 +154,11 @@ void UCharacterAttributeComponent::Server_SetMaxHP_Implementation(float fAmount)
 void UCharacterAttributeComponent::Server_SetHP_Implementation(float fAmount)
 {
 	HP = fAmount;
+	ServerDelegate_OnStatusChanged.Broadcast();
+	if (GetOwner() && GetOwner()->HasAuthority())
+	{
+		OnRep_Status();
+	}
 }
 
 void UCharacterAttributeComponent::Client_TakeDamage_Implementation(float fAmount)

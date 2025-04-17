@@ -16,7 +16,7 @@ UHeroAttributeComponent::UHeroAttributeComponent()
 
 void UHeroAttributeComponent::BeginPlay()
 {
-    Super::BeginPlay();   
+    Super::BeginPlay();
 	ClientDelegate_OnStatusChanged.AddDynamic(this, &UHeroAttributeComponent::UpdateStatus);
 }
 
@@ -46,7 +46,6 @@ void UHeroAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType
 void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UHeroAttributeComponent, HPRegen);
 	DOREPLIFETIME(UHeroAttributeComponent, JumpPower);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalChance);
 	DOREPLIFETIME(UHeroAttributeComponent, CriticalDamageRate);
@@ -69,9 +68,9 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 		FHeroBaseStatusInfoRow* Data = BaseData->FindRow<FHeroBaseStatusInfoRow>(Name, nullptr);
 		if (Data)
 		{
+			HeroName = Name;
 			MaxHP = Data->MaxHP;
 			HP = MaxHP;
-			HPRegen = Data->HPRegen;
 			MaxMoveSpeed = Data->MaxMoveSpeed;
 			JumpPower = Data->JumpRate;
 			AttackPoints = Data->AttPower;
@@ -96,6 +95,13 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			SkillQMaxContinueTime = Data->SkillQInfo.ContinueTime;
 			SkillEMaxContinueTime = Data->SkillEInfo.ContinueTime;
 			SkillRMaxContinueTime = Data->SkillRInfo.ContinueTime;
+
+			SkillQCurCastingTime = 0.0f;
+			SkillECurCastingTime = 0.0f;
+			SkillRCurCastingTime = 0.0f;
+			SkillQMaxCastingTime = Data->SkillQInfo.CastingTime;
+			SkillEMaxCastingTime = Data->SkillEInfo.CastingTime;
+			SkillRMaxCastingTime = Data->SkillRInfo.CastingTime;
 		}
 	}
 }

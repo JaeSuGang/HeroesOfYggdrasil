@@ -24,7 +24,7 @@ void UHeroRollNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSeq
 	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
 	if (!Hero) return;
 
-	const float RollSpeed = Hero->GetHeroAttributeComponent()->MaxMoveSpeed * 3.0f;
+	const float RollSpeed = Hero->GetHeroAttributeComponent()->MaxMoveSpeed * RollRate;
 	FVector RollDirection = Hero->GetActorForwardVector();
 	FVector Movement = RollDirection * RollSpeed * FrameDeltaTime;
 
