@@ -57,6 +57,8 @@ void AYggProjectileActor::BeginPlay()
 		ParticleSystemComponent->Activate(true);
 	}
 
+
+
 	switch (ProjectileType)
 	{
 	case EProjectileType::Line:
@@ -74,6 +76,12 @@ void AYggProjectileActor::BeginPlay()
 	default:
 		break;
 	}
+	
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
+		{
+			Destroy();
+		}, ProjectileDataRow.DestroyTime, false);
 }
 
 // Called every frame
