@@ -10,7 +10,6 @@
 #include "Attribute/CharacterAttributeComponent.h"
 #include "Attribute/EnemyAttributeComponent.h"
 
-#include "Data/YggStructData.h"
 #include "Data/YggConst.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
@@ -37,7 +36,9 @@
 #include "Enemy/EnemyProjectile.h"
 #include "Enemy/EnemyRangeAttack.h"
 #include "Enemy/EnemyWarningRange.h"
+
 #include "Global/YggTickActor.h"
+#include "Global/TickEffectManager.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -53,7 +54,6 @@ AEnemyCharacter::AEnemyCharacter()
 	MHPBarWidgetComponent->SetupAttachment(GetMesh());
 	MHPBarWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, 200.0f));
 
-	TickActorClass = AYggTickActor::StaticClass();
 
 	RightAttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("RightAttackCapsule"));
 	LeftAttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("LeftAttackCapsule"));
@@ -69,6 +69,8 @@ void AEnemyCharacter::BeginPlay()
 
 	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
 	MonsterData = &FindData;
+	EnemyType = ConvertStringToEnemyType(DataKey);
+
 
 	AEnemyAIController* Con = Cast<AEnemyAIController>(GetController());
 
@@ -195,6 +197,7 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AEnemyCharacter, DataKey);
+	DOREPLIFETIME(AEnemyCharacter, EnemyType);
 }
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -313,8 +316,8 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(_Target);
 	AYggHero* Hero = Cast<AYggHero>(_Target);
 	if (!IsValid(Hero) && !IsValid(Enemy)) return;
-
-	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target);
+	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
+	UTickEffectManager::SpawnTickActorIfNeeded(this, _Target, Effect, 5.0f, 1.0f);
 }
 
 void AEnemyCharacter::AttackCollisionInit()
@@ -345,6 +348,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("weapon_r")
 		);
+		RightAttackCapsule->SetCapsuleSize(100.0f, 100.0f);
 	}
 	else
 	{
@@ -371,6 +375,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("weapon_l")
 		);
+		LeftAttackCapsule->SetCapsuleSize(100.0f, 100.0f);
 	}
 	else
 	{
@@ -418,4 +423,26 @@ void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 		// 타이머로 예약
 		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, Delay, false);
 	}
+}
+
+EEnemyType AEnemyCharacter::ConvertStringToEnemyType(const FString& EnemyKey)
+{
+	if (EnemyKey.StartsWith(TEXT("Minion_Melee")))
+	{
+		return EEnemyType::Minion_Melee;
+	}
+	else if (EnemyKey.StartsWith(TEXT("Minion_Archer")))
+	{
+		return EEnemyType::Minion_Archer;
+	}
+	else if (EnemyKey.StartsWith(TEXT("Minion_Witch")))
+	{
+		return EEnemyType::Minion_Witch;
+	}
+	else if (EnemyKey.StartsWith(TEXT("Dragon")))
+	{
+		return EEnemyType::Dragon;
+	}
+
+	return EEnemyType::Unknown;
 }

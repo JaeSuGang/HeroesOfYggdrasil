@@ -52,7 +52,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	{
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
-		if (!DataKeyStr.StartsWith(TEXT("Dragon")))
+		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
 		{
 			RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 		}
@@ -82,7 +82,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 				ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
 				return;
 			}
-		}
+		} 
 	}
 }
 

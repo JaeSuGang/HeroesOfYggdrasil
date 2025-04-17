@@ -72,7 +72,7 @@ void UYggAttackCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedCom
 	if (!AttackCharacterAttributeComponent) { return; }
 	DamageCharacterAttributeComponent->Server_TakeDamage(AttackCharacterAttributeComponent->GetAttackPoints() * Coefficient);
 
-	BlueprintOverLapBegin(OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	PlusLogic.Broadcast();
 }
 
 void UYggAttackCapsuleComponent::CollisionOn()

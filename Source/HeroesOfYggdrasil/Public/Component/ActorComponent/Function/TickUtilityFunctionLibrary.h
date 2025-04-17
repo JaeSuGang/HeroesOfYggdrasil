@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Data/YggEnumData.h"
 #include "TickUtilityFunctionLibrary.generated.h"
 
 
 class AYggHero;
+class AEnemyCharacter;
 class AYggTickActor;
 
 
@@ -22,4 +24,9 @@ class HEROESOFYGGDRASIL_API UTickUtilityFunctionLibrary : public UBlueprintFunct
 public:
 	UFUNCTION(BlueprintCallable, Category = "Tick")
 	static AYggTickActor* FindAttachedTickActor(AYggCharacter* HeroTarget);
+
+	static EStatusEffectType FindStatusEffectType(AEnemyCharacter* Enemy);
+
+	static FName ConvertStatusEffectTypeToName(EStatusEffectType Type);
+	
 };

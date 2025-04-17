@@ -91,7 +91,7 @@ void AEnemyWarningRange::Tick(float DeltaTime)
 
     if (TimeElapsed > Duration)
     {
-        SpawnEffect();
+        SpawnRangeEffect();
         RangeAttackCollision->SetCapsuleSize(100.0f, 100.0f);
         RangeAttackCollision->CollisionOn();
         Destroy();
@@ -99,7 +99,7 @@ void AEnemyWarningRange::Tick(float DeltaTime)
     }
 }
 
-void AEnemyWarningRange::SpawnEffect_Implementation()
+void AEnemyWarningRange::SpawnRangeEffect_Implementation()
 {
     if (IsValid(YggCharacterEnemy))
     {

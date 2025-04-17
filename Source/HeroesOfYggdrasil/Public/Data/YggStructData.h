@@ -198,6 +198,39 @@ public:
 };
 
 USTRUCT(BlueprintType)
+struct FStatusEffectData
+{
+	GENERATED_BODY()
+	FStatusEffectData() {}
+	~FStatusEffectData() {}
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraSystem* PoisonNiagaraSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraSystem* StunNiagaraSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraSystem* FrozenNiagaraSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UNiagaraSystem* BurnNiagaraSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UParticleSystem* PoisonParticleSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UParticleSystem* StunParticleSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UParticleSystem* FrozenParticleSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UParticleSystem* BurnParticleSystem;
+};
+
+USTRUCT(BlueprintType)
 struct FPlayAIData
 {
 	GENERATED_BODY()
@@ -222,12 +255,6 @@ public:
 	class UEnemyBaseAnimInstance* UEnemyBaseAnimInstance = nullptr;
 
 	FVector OriginPos;
-
-	
-	
-	// int AttackAnimationCount;
-
-	
 };
 
 UCLASS(BlueprintType)

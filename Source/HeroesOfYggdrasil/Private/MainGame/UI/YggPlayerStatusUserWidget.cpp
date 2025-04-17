@@ -21,10 +21,10 @@ void UYggPlayerStatusUserWidget::NativeOnInitialized()
 
     SetFaceCam();
 
-    APlayerController* PC = GetWorld()->GetFirstPlayerController();
+    /*APlayerController* PC = GetWorld()->GetFirstPlayerController();
     AYggHero* Pawn = PC->GetPawn<AYggHero>();
 
-    UCharacterAttributeComponent* CAC =  Pawn->GetAttributeComponent();
+    UCharacterAttributeComponent* CAC =  Pawn->GetAttributeComponent();*/
 
     //CAC->HasTag(TEXT("DeBuff.Poison"));
 
