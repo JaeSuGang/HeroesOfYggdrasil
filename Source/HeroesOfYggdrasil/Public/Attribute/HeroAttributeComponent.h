@@ -21,6 +21,11 @@ class HEROESOFYGGDRASIL_API UHeroAttributeComponent : public UCharacterAttribute
 public:
 	UHeroAttributeComponent();
 
+	FName GetName()
+	{
+		return HeroName;
+	}
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
@@ -36,6 +41,9 @@ public:
 	UDataTable* BaseData;
 
 	bool IsAttackCheck();
+
+	UPROPERTY()
+	FName HeroName;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float JumpPower;

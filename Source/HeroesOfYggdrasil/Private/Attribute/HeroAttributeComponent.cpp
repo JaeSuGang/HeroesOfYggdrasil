@@ -68,7 +68,7 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 		FHeroBaseStatusInfoRow* Data = BaseData->FindRow<FHeroBaseStatusInfoRow>(Name, nullptr);
 		if (Data)
 		{
-
+			HeroName = Name;
 			MaxHP = Data->MaxHP;
 			HP = MaxHP;
 			MaxMoveSpeed = Data->MaxMoveSpeed;
