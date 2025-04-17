@@ -22,7 +22,7 @@ AYggTickActor* UTickEffectManager::SpawnTickActorIfNeeded(
 	float Scale
 )
 {
-	if (!IsValid(Target)) return nullptr;
+	if (!IsValid(Owner) || !Owner->HasAuthority()) return nullptr;
 
 	// 이미 부착된 TickActor가 있다면 시간만 갱신
 	AYggTickActor* ExistingTickActor = UTickUtilityFunctionLibrary::FindAttachedTickActor(Target);
@@ -57,6 +57,8 @@ AYggTickActor* UTickEffectManager::SpawnTickActorIfNeeded(
 	{
 		return nullptr;
 	}
+
+
 	if (!IsValid(Owner) || !Owner->HasAuthority())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("TickEffectManager: Only server should spawn TickActor."));
@@ -94,8 +96,14 @@ AYggTickActor* UTickEffectManager::SpawnTickActorIfNeeded(
 
 	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 
-	TickActor->SpawnEffect(TickActor->TickDamageComponent->TargetActor);
 
+
+	TickActor->TickDamageComponent->SetIsReplicated(true);
+
+	if (TickActor->TickDamageComponent && !TickActor->TickDamageComponent->IsRegistered())
+	{
+		TickActor->TickDamageComponent->RegisterComponent();
+	}
 
 	if (AYggCharacter* Hero = Cast<AYggHero>(TickActor->TickDamageComponent->TargetActor))
 	{
@@ -113,8 +121,6 @@ AYggTickActor* UTickEffectManager::SpawnTickActorIfNeeded(
 			Enemy->GetAttributeComponent()->AddTag(TickActor->Tag);
 		}
 	}
-
-
 
 	return TickActor;
 }

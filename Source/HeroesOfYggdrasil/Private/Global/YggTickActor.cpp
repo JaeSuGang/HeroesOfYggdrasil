@@ -53,17 +53,42 @@ AYggTickActor::AYggTickActor()
 
 	TickDamageComponent = CreateDefaultSubobject<UTickDamageComponent>(TEXT("TickDamageComp"));
 	TimeEventComponent = CreateDefaultSubobject<UTimeEventComponent>(TEXT("TimeEventComponent"));
+
+
+	TickDamageComponent->SetIsReplicated(true);
+
+	
 }
 
 // BeginPlay: 초기 이펙트 실행
 void AYggTickActor::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	if (TickDamageComponent && !TickDamageComponent->IsRegistered())
+	{
+		TickDamageComponent->RegisterComponent();
+	}
+
 	if (HasAuthority())
 	{
 		TickEffectInit();
-	//	SpawnEffect(TickDamageComponent->TargetActor);
+		SpawnEffect(TickDamageComponent->TargetActor);
 	}
+
+	if (!HasAuthority())
+	{
+		// 클라이언트: 복제 후 TargetActor 있을 때 실행
+		FTimerHandle DelayHandle;
+		GetWorldTimerManager().SetTimer(DelayHandle, [this]()
+			{
+				if (IsValid(TickDamageComponent) && IsValid(TickDamageComponent->TargetActor))
+				{
+					SpawnEffect(TickDamageComponent->TargetActor);
+				}
+			}, 0.2f, false);
+	}
+
 }
 
 // Tick: 시간 경과에 따른 상태 체크 및 삭제 처리
@@ -94,6 +119,11 @@ void AYggTickActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AYggTickActor::TickEffectInit()
 {
+	if (!HasAuthority())
+	{
+		return;
+	}
+
 	FStatusTickDataRow* DataRow = StatusTickDataTable->FindRow<FStatusTickDataRow>(StatusRowName, nullptr);
 
 	if (DataRow)
@@ -113,11 +143,11 @@ void AYggTickActor::TickEffectInit()
 void AYggTickActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	
-	DOREPLIFETIME(AYggTickActor, TickEffectType);
-	DOREPLIFETIME(AYggTickActor, DefualtSceneRoot);
+
 	DOREPLIFETIME(AYggTickActor, NiagaraEffect);
 	DOREPLIFETIME(AYggTickActor, ParticleEffect);
+	DOREPLIFETIME(AYggTickActor, TickDamageComponent);
+	
 }
 
 // 상태이상 태그 제거
@@ -166,8 +196,6 @@ void AYggTickActor::CleanupEffects_Implementation()
 // 이펙트 스폰 (히어로 / 적 구분)
 void AYggTickActor::SpawnEffect_Implementation(AYggCharacter* _Target)
 {
-	if (!IsValid(_Target)) return;
-
 	if (!NiagaraEffect.IsValid())
 	{
 		NiagaraEffect.LoadSynchronous(); // 강제 로드
@@ -189,6 +217,7 @@ void AYggTickActor::SpawnEffect_Implementation(AYggCharacter* _Target)
 			ParticleComp->SetRelativeScale3D(FVector(TickActorScale, TickActorScale, TickActorScale));
 			ParticleComp->RegisterComponent();
 			ParticleComp->AttachToComponent(_Target->GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+			ParticleComp->SetIsReplicated(true);
 		}
 	}
 
@@ -208,6 +237,7 @@ void AYggTickActor::SpawnEffect_Implementation(AYggCharacter* _Target)
 		if (NiagaraComp)
 		{
 			NiagaraComp->SetRelativeScale3D(FVector(TickActorScale, TickActorScale, TickActorScale));
+			NiagaraComp->SetIsReplicated(true);
 		}
 	}
 }
@@ -217,7 +247,7 @@ void AYggTickActor::OnRep_EffectAssets()
 	NiagaraEffect.LoadSynchronous();
 	ParticleEffect.LoadSynchronous();
 
-	if (TickDamageComponent && TickDamageComponent->TargetActor)
+	if (!HasAuthority())
 	{
 		SpawnEffect(TickDamageComponent->TargetActor);
 	}

@@ -71,16 +71,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
 	float TickActorScale;
 
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EffectAssets, BlueprintReadWrite, Category = "TickEffect")
+	UPROPERTY(EditAnywhere, Replicated, ReplicatedUsing = OnRep_EffectAssets, BlueprintReadWrite, Category = "TickEffect")
 	TSoftObjectPtr<UNiagaraSystem> NiagaraEffect;
 
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EffectAssets, BlueprintReadWrite, Category = "TickEffect")
+	UPROPERTY(EditAnywhere, Replicated, ReplicatedUsing = OnRep_EffectAssets, BlueprintReadWrite, Category = "TickEffect")
 	TSoftObjectPtr<UParticleSystem> ParticleEffect;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "TickEffects")
 	EStatusEffectType TickEffectType;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tick")
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "Tick")
 	UTickDamageComponent* TickDamageComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Tick")
