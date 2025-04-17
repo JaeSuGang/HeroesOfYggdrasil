@@ -29,15 +29,14 @@ struct FStatusEffectData
 	float RemainingTime = 0.0f;
 };
 
-
 /**
  * 
  */
 UCLASS()
-class UYggStatusEffectUserWidget : public UYggUserWidget
+class HEROESOFYGGDRASIL_API UYggStatusEffectUserWidget : public UYggUserWidget
 {
 	GENERATED_BODY()
-	
+
 
 public:
 
