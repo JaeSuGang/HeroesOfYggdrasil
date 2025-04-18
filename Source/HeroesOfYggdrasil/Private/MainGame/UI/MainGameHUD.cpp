@@ -129,7 +129,10 @@ void AMainGameHUD::ShowMainGameWidget()
 		PC = GetWorld()->GetFirstPlayerController();
 		AMainGamePlayerState* PS = PC->GetPlayerState<AMainGamePlayerState>();
 	
-		PS->OnUpgradePointsChanged.AddDynamic(this, &AMainGameHUD::OnUpgradePointChange);
+		if (!PS->OnUpgradePointsChanged.IsAlreadyBound(this, &AMainGameHUD::OnUpgradePointChange))
+		{
+			PS->OnUpgradePointsChanged.AddDynamic(this, &AMainGameHUD::OnUpgradePointChange);
+		} 
 
 		CurrentWidget->AddToViewport();
 	}
