@@ -9,6 +9,14 @@
 class UTexture2D;
 class UUpgradeEffectBase;
 
+UENUM(BlueprintType)
+enum class EUpgradeRarity : uint8
+{
+	Common UMETA(DisplayName = "노말"),
+	Epic UMETA(DisplayName = "에픽"),
+	Legandary UMETA(DisplayName = "레전더리")
+};
+
 /**
  * 담당 코더 : 김경민
  */
@@ -23,6 +31,9 @@ public:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName Id;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EUpgradeRarity Rarity;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName UpgradeName;

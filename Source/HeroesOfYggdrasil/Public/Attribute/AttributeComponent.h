@@ -55,6 +55,10 @@ public:
 	void RemoveTags(const TArray<FName>& Tags);
 
 public:
+	UPROPERTY()
+	FOnTagsChanged OnTagsChanged;
+
+public:
 	UFUNCTION()
 	void OnRep_Tags();
 
