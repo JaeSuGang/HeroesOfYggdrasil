@@ -23,6 +23,13 @@ protected:
 	virtual void Attack(const FInputActionValue& Value) override;
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	virtual void SkillE(const FInputActionValue& Value) override;
+
+public:
+	UFUNCTION(Server, Reliable)
+	void Server_SetPendingAimDirection(const FVector& InAimDir);
+
+	UPROPERTY()
+	FVector AimDirection;
 	/*virtual void SkillR(const FInputActionValue& Value) override;*/
 	
 

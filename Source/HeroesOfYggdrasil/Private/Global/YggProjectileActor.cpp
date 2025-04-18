@@ -16,6 +16,7 @@ AYggProjectileActor::AYggProjectileActor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
@@ -96,12 +97,12 @@ void AYggProjectileActor::SetAimDir(FVector _AimDirection)
 	}
 }
 
-void AYggProjectileActor::Server_SetAimDir(FVector _AimDirection)
+void AYggProjectileActor::Server_SetAimDir_Implementation(FVector _AimDirection)
 {
 	MultiCast_SetAimDir(_AimDirection);
 }
 
-void AYggProjectileActor::MultiCast_SetAimDir(FVector _AimDirection)
+void AYggProjectileActor::MultiCast_SetAimDir_Implementation(FVector _AimDirection)
 {
 	AimDirection = _AimDirection;
 }

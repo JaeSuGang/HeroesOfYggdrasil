@@ -67,6 +67,27 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 	{
 		SetAimMode(true);
 	}
+	
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return;
+
+	FVector CamLoc;
+	FRotator CamRot;
+	PC->GetPlayerViewPoint(CamLoc, CamRot);
+
+	FVector TraceEnd = CamLoc + CamRot.Vector() * 10000.f;
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, CamLoc, TraceEnd, ECC_Visibility, QueryParams);
+
+	FVector TargetLocation = bHit ? HitResult.ImpactPoint : TraceEnd;
+	FVector AimDir = (TargetLocation - GetActorLocation()).GetSafeNormal();
+
+	Server_SetPendingAimDirection(AimDir);
 	Super::Attack(Value);
 }
 
@@ -103,4 +124,9 @@ void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	Super::SkillE(Value);
+}
+
+void AYggHeroRevenant::Server_SetPendingAimDirection_Implementation(const FVector& InAimDir)
+{
+	AimDirection = InAimDir;
 }
