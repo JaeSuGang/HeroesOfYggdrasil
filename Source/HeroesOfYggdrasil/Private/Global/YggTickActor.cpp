@@ -231,7 +231,7 @@ void AYggTickActor::SpawnEffect_Implementation(AYggCharacter* _Target)
 			UNiagaraComponent* NiagaraComp = UNiagaraFunctionLibrary::SpawnSystemAttached(
 				TickNiagaraSystem.Get(),
 				Hero->GetRootComponent(),           // 또는 CapsuleComponent 등 중심 컴포넌트
-				TEXT("butt_cloth_l_01"),
+				TEXT("Chest"),
 				FVector::ZeroVector,                   // 타겟 중심
 				FRotator::ZeroRotator,
 				EAttachLocation::SnapToTarget,         // 정확히 중심에 부착
