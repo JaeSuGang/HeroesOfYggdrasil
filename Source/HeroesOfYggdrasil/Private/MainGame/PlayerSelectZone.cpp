@@ -98,6 +98,7 @@ void APlayerSelectZone::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(APlayerSelectZone, CurrentTableIndex);
+	DOREPLIFETIME(APlayerSelectZone, SpawnedSelectable);
 }
 
 APawn* APlayerSelectZone::GetSpawnedSelectable() const
@@ -105,13 +106,20 @@ APawn* APlayerSelectZone::GetSpawnedSelectable() const
 	return SpawnedSelectable;
 }
 
-void APlayerSelectZone::ForceMainWidget_Implementation()
+void APlayerSelectZone::ForceMainWidget()
 {
-	if (AMainGameHUD* MGH = GetWorld()->GetFirstPlayerController()->GetHUD<AMainGameHUD>())
+	if (!SpawnedSelectable)
+		return;
+
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
-		MGH->CloseCurrentWidget();
-		MGH->ShowMainGameWidget();
+		if (AMainGameHUD* MGH = Cast<AMainGameHUD>(PC->GetHUD()))
+		{
+			MGH->CloseCurrentWidget();
+			MGH->ShowMainGameWidget();
+		}
 	}
+	
 }
 
 void APlayerSelectZone::SetToPosition_Implementation(int nIndex)
@@ -178,9 +186,9 @@ void APlayerSelectZone::SpawnNextSelectable(int nHowMuchNext)
 
 void APlayerSelectZone::OnStartGame(FOnGameStartParams OnGameStartParams)
 {
-	if (HasAuthority())
+	if (HasLocalNetOwner())
 	{
-		SelectCharacter();
 		ForceMainWidget();
+		SelectCharacter();
 	}
 }

@@ -78,6 +78,7 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			CriticalChance = Data->CriticalChance;
 			CriticalDamageRate = Data->CriticalDamageRate;
 		
+			AttackInfo = Data->AttackInfo;
 			SkillQInfo = Data->SkillQInfo;
 			SkillEInfo = Data->SkillEInfo;
 			SkillRInfo = Data->SkillRInfo;

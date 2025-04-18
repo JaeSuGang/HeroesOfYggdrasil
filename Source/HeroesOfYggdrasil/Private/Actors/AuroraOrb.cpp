@@ -2,6 +2,11 @@
 
 
 #include "Actors/AuroraOrb.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "GameFramework/PlayerController.h"
+#include "Enemy/EnemyCharacter.h"
 
 // Sets default values
 AAuroraOrb::AAuroraOrb()
@@ -9,6 +14,20 @@ AAuroraOrb::AAuroraOrb()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
+    OrbCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("OrbCapsule"));
+    SetRootComponent(OrbCapsule);
+    OrbCapsule->InitCapsuleSize(20.f, 20.f);
+    OrbCapsule->AddRelativeRotation(FRotator(0.0f, 0.0f, 90.0f));
+    OrbCapsule->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel3);
+    OrbCapsule->SetHiddenInGame(true);
+    OrbCapsule->SetVisibility(false);
+
+    MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
+    MeshComp->SetupAttachment(OrbCapsule);
+    MeshComp->SetRelativeLocation(FVector::ZeroVector);
+    MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+    OrbCapsule->OnComponentBeginOverlap.AddDynamic(this, &AAuroraOrb::OnOrbOverlapBegin);
 }
 
 // Called when the game starts or when spawned
@@ -42,3 +61,17 @@ void AAuroraOrb::Tick(float DeltaTime)
     }
 }
 
+void AAuroraOrb::OnOrbOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    if (OtherActor && OtherActor != this && OtherComp)
+    {
+        AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
+        if (!IsValid(Enemy)) return;
+
+        Enemy->GetAttributeComponent()->Server_TakeDamage(AttPower);
+
+        // Particle 소환.
+
+        this->Destroy();
+    }
+}

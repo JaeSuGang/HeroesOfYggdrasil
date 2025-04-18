@@ -97,6 +97,9 @@ public:
 	float SkillRMaxCastingTime;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	FHeroSkillInfoRow AttackInfo;
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	FHeroSkillInfoRow SkillQInfo;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
