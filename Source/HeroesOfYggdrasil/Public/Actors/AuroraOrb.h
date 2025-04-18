@@ -40,14 +40,17 @@ public:
 		AttPower = Value;
 	}
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Visual")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* MeshComp;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	UCapsuleComponent* OrbCapsule;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	TObjectPtr<UParticleSystem> PSTemplate;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Particle")
+	TObjectPtr<UParticleSystem> PSTrail;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Particle")
+	TObjectPtr<UParticleSystem> PSImpact;
 
 private:
 	FVector MoveDirection = FVector::ZeroVector;

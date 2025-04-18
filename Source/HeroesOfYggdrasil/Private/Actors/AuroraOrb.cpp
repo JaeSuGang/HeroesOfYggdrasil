@@ -2,11 +2,15 @@
 
 
 #include "Actors/AuroraOrb.h"
+
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
+
 #include "Particles/ParticleSystemComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "Enemy/EnemyCharacter.h"
+
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AAuroraOrb::AAuroraOrb()
@@ -20,7 +24,7 @@ AAuroraOrb::AAuroraOrb()
     OrbCapsule->AddRelativeRotation(FRotator(0.0f, 0.0f, 90.0f));
     OrbCapsule->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel3);
     OrbCapsule->SetHiddenInGame(true);
-    OrbCapsule->SetVisibility(false);
+    OrbCapsule->SetVisibility(true);
 
     MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComp"));
     MeshComp->SetupAttachment(OrbCapsule);
@@ -47,6 +51,19 @@ void AAuroraOrb::BeginPlay()
         this->Destroy();
     }
     , 3.0f, false);
+
+    if (PSTrail)
+    {
+        UGameplayStatics::SpawnEmitterAttached(
+            PSTrail,
+            OrbCapsule,
+            NAME_None,
+            FVector::ZeroVector,
+            FRotator::ZeroRotator,
+            EAttachLocation::KeepRelativeOffset,
+            true
+        );
+    }
 }
 
 // Called every frame
@@ -70,7 +87,15 @@ void AAuroraOrb::OnOrbOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 
         Enemy->GetAttributeComponent()->Server_TakeDamage(AttPower);
 
-        // Particle 소환.
+        if (PSImpact)
+        {
+            UGameplayStatics::SpawnEmitterAtLocation(
+                GetWorld(),
+                PSImpact,
+                GetActorLocation(),
+                GetActorRotation()
+            );
+        }
 
         this->Destroy();
     }
