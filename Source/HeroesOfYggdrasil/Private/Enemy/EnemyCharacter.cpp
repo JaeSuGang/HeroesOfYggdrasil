@@ -345,22 +345,16 @@ void AEnemyCharacter::AttackCollisionInit()
 		);
 		RightAttackCapsule->SetCapsuleSize(300.0f, 200.0f); // (Radius, HalfHeight)
 	}
-	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r")))
+	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r_head")))
 	{
 		RightAttackCapsule->AttachToComponent(
 			GetMesh(),
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			TEXT("weapon_r")
+			TEXT("weapon_r_head")
 		);
-		RightAttackCapsule->SetCapsuleSize(100.0f, 100.0f);
+		RightAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
 	}
-	else
-	{
-		RightAttackCapsule->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::KeepRelativeTransform
-		);
-	}
+	
 
 	// 왼손 소켓에 부착
 	if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("MOUNTAIN_DRAGON_-L-Hand")))
@@ -372,28 +366,24 @@ void AEnemyCharacter::AttackCollisionInit()
 		);
 		LeftAttackCapsule->SetCapsuleSize(300.0f, 200.0f);
 	}
-	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l")))
+	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l_head")))
 	{
 		LeftAttackCapsule->AttachToComponent(
 			GetMesh(),
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			TEXT("weapon_l")
+			TEXT("weapon_l_head")
 		);
-		LeftAttackCapsule->SetCapsuleSize(100.0f, 100.0f);
+		LeftAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
 	}
-	else
-	{
-		LeftAttackCapsule->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::KeepRelativeTransform
-		);
-	}
+
 }
 
 
 void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 {
-	if (!WarningOutRangeClass || !_Actor) return;
+	if (!WarningOutRangeClass || !_Actor || DataKey != FString(TEXT("Dragon"))) return;
+
+
 
 	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
 	FVector BaseLocation = GetActorLocation();
@@ -433,6 +423,8 @@ void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 
 void AEnemyCharacter::DragonBreath()
 {
+	if (DataKey != FString(TEXT("Dragon"))) return;
+
 	if (!TickNiagaraSystem.IsValid())
 	{
 		TickNiagaraSystem.LoadSynchronous();
@@ -481,4 +473,28 @@ EEnemyType AEnemyCharacter::ConvertStringToEnemyType(const FString& EnemyKey)
 	}
 
 	return EEnemyType::Unknown;
+}
+
+
+void AEnemyCharacter::DrawDebugFromCapsuleComponent(UCapsuleComponent* CapsuleComp, FColor Color, float LifeTime)
+{
+	if (!CapsuleComp || !CapsuleComp->GetWorld()) return;
+
+	FVector Center = CapsuleComp->GetComponentLocation();
+	float Radius = CapsuleComp->GetScaledCapsuleRadius();
+	float HalfHeight = CapsuleComp->GetScaledCapsuleHalfHeight();
+	FQuat Rotation = CapsuleComp->GetComponentQuat();
+
+	DrawDebugCapsule(
+		CapsuleComp->GetWorld(),
+		Center,
+		HalfHeight,
+		Radius,
+		Rotation,
+		Color,
+		false,
+		LifeTime,
+		0,
+		1.5f
+	);
 }

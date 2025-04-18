@@ -61,6 +61,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DestroyAllComponents();
 
+	void DrawDebugFromCapsuleComponent(UCapsuleComponent* CapsuleComp, FColor Color = FColor::Red, float LifeTime = 0.1f);
 	
 
 	UFUNCTION(BlueprintCallable)
