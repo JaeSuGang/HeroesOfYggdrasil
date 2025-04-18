@@ -25,13 +25,22 @@ public:
 	void StatusInit();
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
+	void ShowStatus();
+
+	UFUNCTION(BlueprintCallable, Category = "YGG")
 	void EndStatus();
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
 	void ShowAbility();
 
+	UFUNCTION(BlueprintCallable, Category = "YGG")
+	UTexture2D* SetTexture(FName Hero);
+
 	//UFUNCTION(BlueprintCallable, Category = "YGG")
 	//void EndAbility();
+
+	//UFUNCTION(BlueprintCallable, Category = "YGG")
+	//void UpdateDebuffUI(FOnTagsChangedParams OnTagsChangedParams);
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -72,16 +81,16 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* AbilityShowButton;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Symbol")
+	UPROPERTY(EditAnywhere, Category = "Symbol")
 	UTexture2D* GreystoneSymbol;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Symbol")
+	UPROPERTY(EditAnywhere, Category = "Symbol")
 	UTexture2D* KhaimeraSymbol;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Symbol")
+	UPROPERTY(EditAnywhere, Category = "Symbol")
 	UTexture2D* RevenantSymbol;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Symbol")
+	UPROPERTY(EditAnywhere, Category = "Symbol")
 	UTexture2D* AuroraSymbol;
 
 	UHeroAttributeComponent* HAC;

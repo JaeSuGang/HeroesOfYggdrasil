@@ -10,6 +10,8 @@
 #include "MainGame/UI/YggSkillBarUserWidget.h"
 #include "MainGame/UI/YggDeathPopupUserWidget.h"
 #include "MainGame/UI/YggSelectAbilityUserWidget.h"
+#include "MainGame/UI/YggStatusUserWidget.h"
+#include "MainGame/UI/YggStatusEffectUserWidget.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
@@ -90,6 +92,22 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
 		}
 	}
+
+	StatusWidget = CreateWidget<UYggStatusUserWidget>(GetWorld(), StatusWidgetClass);
+	if (!StatusWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	if (IsValid(StatusWidget))
+	{
+		MainGamePanel->AddChild(StatusWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(StatusWidget->Slot))
+		{
+			CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f, 1.0f, 1.0f));
+			CanvasSlot->SetOffsets(FMargin(0.0f));
+			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+		}
+	}
 }
 
 void UYggMainGameUserWidget::NativeConstruct()
@@ -147,4 +165,5 @@ void UYggMainGameUserWidget::DelSelectAbility()
 void UYggMainGameUserWidget::TempFunc()
 {
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Cyan, FString("zzzzzzzzzzz"));
+	StatusWidget->SetVisibility(ESlateVisibility::Visible);
 }

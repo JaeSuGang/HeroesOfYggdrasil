@@ -14,6 +14,18 @@
 #include "Player/YggHero.h"
 
 
+//void UYggStatusUserWidget::UpdateDebuffUI(FOnTagsChangedParams OnTagsChangedParams)
+//{
+//	if (HAC->HasTagExact("Character.DeBuff.Poison"))
+//	{
+//
+//	}
+//	if (HAC->HasTagExact("Character.DeBuff.Poison"))
+//	{
+//
+//	}
+//}
+
 void UYggStatusUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
@@ -29,6 +41,10 @@ void UYggStatusUserWidget::NativeOnInitialized()
 	{
 		AbilityShowButton->OnClicked.AddDynamic(this, &UYggStatusUserWidget::ShowAbility);
 	}
+
+	StatusInit();
+
+	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UYggStatusUserWidget::NativeConstruct()
@@ -45,6 +61,16 @@ void UYggStatusUserWidget::NativeDestruct()
 
 }
 
+FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f)
+{
+	FSlateBrush Brush;
+	Brush.SetResourceObject(Tex);
+	Brush.ImageSize = Size;
+	Brush.TintColor = FLinearColor(Brightness, Brightness, Brightness, 1.0f);
+	Brush.DrawAs = ESlateBrushDrawType::Image;
+	return Brush;
+}
+
 void UYggStatusUserWidget::StatusInit()
 {
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
@@ -55,9 +81,12 @@ void UYggStatusUserWidget::StatusInit()
 
 	FVector2D IconSize(64.0f, 64.0f);
 
-	
+	//HAC->OnTagsChanged.AddDynamic(this, &UYggStatusUserWidget::UpdateDebuffUI);
 
-	//Symbol->SetBrush(MakeBrush());
+	if (IsValid(Symbol))
+	{
+		Symbol->SetBrush(MakeBrush(SetTexture(Hero->GetFName()), IconSize, 1.0f));
+	}
 
 	if (IsValid(HPBar))
 	{
@@ -101,6 +130,11 @@ void UYggStatusUserWidget::StatusInit()
 	
 }
 
+void UYggStatusUserWidget::ShowStatus()
+{
+	SetVisibility(ESlateVisibility::Visible);
+}
+
 void UYggStatusUserWidget::EndStatus()
 {
 	SetVisibility(ESlateVisibility::Hidden);
@@ -111,22 +145,34 @@ void UYggStatusUserWidget::ShowAbility()
 
 }
 
-FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f)
-{
-	FSlateBrush Brush;
-	Brush.SetResourceObject(Tex);
-	Brush.ImageSize = Size;
-	Brush.TintColor = FLinearColor(Brightness, Brightness, Brightness, 1.0f);
-	Brush.DrawAs = ESlateBrushDrawType::Image;
-	return Brush;
-}
 
-UTexture2D SetTexture(FName Hero)
+UTexture2D* UYggStatusUserWidget::SetTexture(FName Hero)
 {
 	UTexture2D* Tex = nullptr;
 
 	if (FName("Greystone") == Hero)
 	{
-		//Tex = GreystoneSymbol;
+		Tex = GreystoneSymbol;
+		return Tex;
 	}
+
+	if (FName("Khaimera") == Hero)
+	{
+		Tex = KhaimeraSymbol;
+		return Tex;
+	}
+
+	if (FName("Aurora") == Hero)
+	{
+		Tex = AuroraSymbol;
+		return Tex;
+	}
+
+	if (FName("Revenant") == Hero)
+	{
+		Tex = RevenantSymbol;
+		return Tex;
+	}
+
+	return Tex;
 }
