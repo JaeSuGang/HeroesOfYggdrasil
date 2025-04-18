@@ -23,27 +23,7 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 	}
 
 
-	// 거리 기반 상태 분기
-	if (IsValid(TargetCharacter))
-	{
-		UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
-		if (IsValid(TargetAttributeComponent) && TargetAttributeComponent->HasTag(TEXT("Character")))
-		{
-			FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
-			float Distance = TargetDir.Size();
-
-			if (Distance >= PlayAIData.Data.StrafeRange)
-			{
-				ChangeState(_OwnerComp, EEnemyAIState::Trace);
-				return;
-			}
-			if (Distance >= PlayAIData.Data.AttackRange)
-			{
-				ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
-				return;
-			}
-		}
-	}
+	
 
 
 	// 공격 상태 전환
@@ -79,14 +59,15 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 
 			TimerDel.BindLambda([this, &_OwnerComp, EnemyCharacter]() {
 
-				float HealthPercent = EnemyCharacter->GetAttributeComponent()->GetHP() / EnemyCharacter->GetAttributeComponent()->MaxHP;
-				// ex: 0.0 ~ 1.0
-				FPlayAIData& LocalData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-
 				if (!IsValid(EnemyCharacter))
 				{
 					return;
 				}
+
+				float HealthPercent = EnemyCharacter->GetAttributeComponent()->GetHP() / EnemyCharacter->GetAttributeComponent()->MaxHP;
+				// ex: 0.0 ~ 1.0
+				FPlayAIData& LocalData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+
 
 				if (HealthPercent <= 0.5f && !LocalData.bUsedBreathAttack)
 				{
@@ -151,7 +132,27 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	{
 		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
 	}
+	// 거리 기반 상태 분기
+	if (IsValid(TargetCharacter))
+	{
+		UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+		if (IsValid(TargetAttributeComponent) && TargetAttributeComponent->HasTag(TEXT("Character")))
+		{
+			FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+			float Distance = TargetDir.Size();
 
+			if (Distance >= PlayAIData.Data.StrafeRange)
+			{
+				ChangeState(_OwnerComp, EEnemyAIState::Trace);
+				return;
+			}
+			if (Distance >= PlayAIData.Data.AttackRange)
+			{
+				ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
+				return;
+			}
+		}
+	}
 	
 
 }
