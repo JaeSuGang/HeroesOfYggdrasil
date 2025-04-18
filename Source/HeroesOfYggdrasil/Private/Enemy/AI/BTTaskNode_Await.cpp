@@ -23,7 +23,27 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 	}
 
 
-	
+	// 거리 기반 상태 분기
+	if (IsValid(TargetCharacter))
+	{
+		UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+		if (IsValid(TargetAttributeComponent) && TargetAttributeComponent->HasTag(TEXT("Character")))
+		{
+			FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
+			float Distance = TargetDir.Size();
+
+			if (Distance >= PlayAIData.Data.StrafeRange)
+			{
+				ChangeState(_OwnerComp, EEnemyAIState::Trace);
+				return;
+			}
+			if (Distance >= PlayAIData.Data.AttackRange)
+			{
+				ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
+				return;
+			}
+		}
+	}
 
 
 	// 공격 상태 전환
@@ -76,12 +96,12 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 				}
 				else
 				{
-
+					FRandomStream RandStream;
 					RandStream.GenerateNewSeed();
 
 					float Rand = RandStream.FRand(); // 0.0 ~ 1.0 float
 
-					if (Rand <= 0.6f)
+					if (Rand <= 0.5f)
 					{
 						ChangeState(_OwnerComp, EEnemyAIState::Attack); // 일반 공격
 					}
@@ -113,7 +133,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	DeathCheck(_OwnerComp);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-	APawn* SelfActor = PlayAIData.SelfPawn;
+	APawn* SelfActor = _OwnerComp.GetAIOwner()->GetPawn();
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
@@ -132,29 +152,6 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	{
 		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
 	}
-	// 거리 기반 상태 분기
-	if (IsValid(TargetCharacter))
-	{
-		UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
-		if (IsValid(TargetAttributeComponent) && TargetAttributeComponent->HasTag(TEXT("Character")))
-		{
-			FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
-			float Distance = TargetDir.Size();
-
-			if (Distance >= PlayAIData.Data.StrafeRange)
-			{
-				ChangeState(_OwnerComp, EEnemyAIState::Trace);
-				return;
-			}
-			if (Distance >= PlayAIData.Data.AttackRange)
-			{
-				ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
-				return;
-			}
-		}
-	}
-	
-
 }
 
 void UBTTaskNode_Await::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)

@@ -36,6 +36,17 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	{
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
+		// 드래곤 외 몬스터는 타겟 방향으로 회전
+		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
+		{
+			RotateToTargetActor(_OwnerComp, 0.1f);
+		}
+	}
+
+	if (IsValid(EnemyCharacter))
+	{
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
+
 		// 타입에 따라 다른 동작 수행
 		if (EEnemyType::Minion_Archer == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
 		{
@@ -109,18 +120,7 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
-
-	if (IsValid(EnemyCharacter))
-	{
-		FString DataKeyStr = EnemyCharacter->GetDataKey();
-
-		// 드래곤 외 몬스터는 타겟 방향으로 회전
-		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
-		{
-			RotateToTargetActor(_OwnerComp, _DeltaSeconds);
-		}
-	}
+	
 
 	// 이동 중지
 	if (SelfController)

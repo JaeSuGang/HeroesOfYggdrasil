@@ -25,6 +25,5 @@ public:
 	virtual void DeathCheck(UBehaviorTreeComponent& _OwnerComp) override;
 
 public:
-	UPROPERTY()
-	FRandomStream RandStream;
+	
 };
