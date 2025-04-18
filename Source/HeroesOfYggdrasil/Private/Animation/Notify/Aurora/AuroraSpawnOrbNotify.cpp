@@ -3,6 +3,8 @@
 
 #include "Animation/Notify/Aurora/AuroraSpawnOrbNotify.h"
 #include "Actors/AuroraOrb.h"
+#include "Player/YggHero.h"
+#include "Attribute/HeroAttributeComponent.h"
 
 void UAuroraSpawnOrbNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
@@ -10,12 +12,18 @@ void UAuroraSpawnOrbNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequen
 
     if (!OrbClass) return;
 
-    FVector SpawnLoc = MeshComp->GetSocketLocation(TEXT("Sword_Mid"));
+    FVector SpawnLoc = MeshComp->GetBoneLocation(TEXT("upperarm_r"));
     FRotator SpawnRot = MeshComp->GetComponentRotation();
 
     FActorSpawnParameters Params;
     Params.Owner = MeshComp->GetOwner();
     Params.Instigator = MeshComp->GetOwner()->GetInstigator();
 
-    GetWorld()->SpawnActor<AAuroraOrb>(OrbClass, SpawnLoc, SpawnRot, Params);
+    AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
+    if (!IsValid(Hero)) return;
+    float AttPower = Hero->GetHeroAttributeComponent()->AttackInfo.SkillCoefficient;
+
+    AAuroraOrb* Orb = GetWorld()->SpawnActor<AAuroraOrb>(OrbClass, SpawnLoc, SpawnRot, Params);
+    if (!IsValid(Orb)) return;
+    Orb->SetAttPower(AttPower);
 }
