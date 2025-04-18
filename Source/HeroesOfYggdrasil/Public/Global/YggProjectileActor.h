@@ -58,8 +58,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	UFUNCTION()
 	void SetAimDir(FVector _AimDirection);
+
+	UFUNCTION(Reliable, Server)
+	void Server_SetAimDir(FVector _AimDirection);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void MultiCast_SetAimDir(FVector _AimDirection);
+
 
 	UFUNCTION()
 	void SetOwnerCharacter(class AYggCharacter* _OwnerCharacter) { OwnerCharacter = _OwnerCharacter; }
@@ -91,7 +100,9 @@ protected:
 
 	FSpawnProjectileDataRow ProjectileDataRow;
 
+	UPROPERTY(Replicated)
 	FVector AimDirection;
+
 
 	void LineMode();
 	void ParabolaMode();

@@ -6,6 +6,8 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
+#include "Net/UnrealNetwork.h"
+
 #include "Core/YggCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -75,7 +77,31 @@ void AYggProjectileActor::Tick(float DeltaTime)
 	DrawDebugSphere(GetWorld(), GetActorLocation(), 10.f, 12, FColor::Red);
 }
 
+void AYggProjectileActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AYggProjectileActor, AimDirection);
+}
+
 void AYggProjectileActor::SetAimDir(FVector _AimDirection)
+{
+	
+	if (HasAuthority())
+	{
+		AimDirection = _AimDirection;
+	}
+	else
+	{
+		Server_SetAimDir(_AimDirection);
+	}
+}
+
+void AYggProjectileActor::Server_SetAimDir(FVector _AimDirection)
+{
+	MultiCast_SetAimDir(_AimDirection);
+}
+
+void AYggProjectileActor::MultiCast_SetAimDir(FVector _AimDirection)
 {
 	AimDirection = _AimDirection;
 }
