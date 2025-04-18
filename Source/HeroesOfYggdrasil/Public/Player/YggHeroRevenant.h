@@ -21,7 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
-	/*virtual void SkillQ(const FInputActionValue& Value) override;*/
+	virtual void SkillQ(const FInputActionValue& Value) override;
 	virtual void SkillE(const FInputActionValue& Value) override;
 	/*virtual void SkillR(const FInputActionValue& Value) override;*/
 	

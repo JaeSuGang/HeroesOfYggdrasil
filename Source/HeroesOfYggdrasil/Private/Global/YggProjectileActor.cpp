@@ -2,11 +2,9 @@
 
 
 #include "Global/YggProjectileActor.h"
+
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
-
-#include "NiagaraComponent.h"
-#include "Particles/ParticleSystemComponent.h"
 
 #include "Core/YggCharacter.h"
 #include "Kismet/GameplayStatics.h"
@@ -25,11 +23,6 @@ AYggProjectileActor::AYggProjectileActor()
 	AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("AttackCapsuleComponent"));
 	AttackCapsuleComponent->SetupAttachment(RootComponent);
 
-	NiagaraSystemComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraSystem"));
-	NiagaraSystemComponent->SetupAttachment(RootComponent);
-
-	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystem"));
-	ParticleSystemComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -46,16 +39,7 @@ void AYggProjectileActor::BeginPlay()
 	ProjectileMovement->InitialSpeed = ProjectileDataRow.InitialSpeed;
 	ProjectileMovement->MaxSpeed = ProjectileDataRow.MaxSpeed;
 	ProjectileMovement->Velocity = AimDirection * ProjectileDataRow.InitialSpeed;
-	if (ProjectileDataRow.NiagaraSystem.IsValid())
-	{
-		NiagaraSystemComponent->SetAsset(ProjectileDataRow.NiagaraSystem.LoadSynchronous());
-		NiagaraSystemComponent->Activate(true);
-	}
-	else
-	{
-		ParticleSystemComponent->SetTemplate(ProjectileDataRow.Particle.LoadSynchronous());
-		ParticleSystemComponent->Activate(true);
-	}
+	
 
 
 
@@ -127,7 +111,7 @@ void AYggProjectileActor::TargetParabolaMode()
 
 	if (bHasSolution)
 	{
-		ProjectileMovement->Velocity = TossVelocity;
+		ProjectileMovement->Velocity += TossVelocity;
 	}
 }
 

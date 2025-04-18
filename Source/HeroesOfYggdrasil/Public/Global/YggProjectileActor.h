@@ -37,15 +37,6 @@ struct FSpawnProjectileDataRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
 	float MaxSpeed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
-	TSoftObjectPtr<UStaticMesh> StaticMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
-	TSoftObjectPtr<class UNiagaraSystem> NiagaraSystem;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
-	TSoftObjectPtr<class UParticleSystem> Particle;
 };
 
 
@@ -101,12 +92,6 @@ protected:
 	FSpawnProjectileDataRow ProjectileDataRow;
 
 	FVector AimDirection;
-
-	UPROPERTY(EditDefaultsOnly, Category = "AYggProjectileActor")
-	TObjectPtr<class UNiagaraComponent> NiagaraSystemComponent;
-
-	UPROPERTY(EditDefaultsOnly, Category = "AYggProjectileActor")
-	TObjectPtr<class UParticleSystemComponent> ParticleSystemComponent;
 
 	void LineMode();
 	void ParabolaMode();

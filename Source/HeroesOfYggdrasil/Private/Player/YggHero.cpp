@@ -352,6 +352,10 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 void AYggHero::Roll(const FInputActionValue& Value)
 {
+	if (bAimMode)
+	{
+		SetAimMode(false);
+	}
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
 	if (HeroAttributeComponent->CurRollCount <= 0) return;
 

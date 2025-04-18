@@ -42,6 +42,10 @@ void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("SkillE")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::SkillE);
 		}
+		if (ActionMap.Contains(FName("SkillQ")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillQ")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::SkillQ);
+		}
 	}
 }
 
@@ -64,6 +68,32 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	Super::Attack(Value);
+}
+
+void AYggHeroRevenant::SkillQ(const FInputActionValue& Value)
+{
+
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+	if (bAimMode == false)
+	{
+		SetAimMode(true);
+	}
+	//if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		MulticastHeroSkillQ(Value);
+	}
+	else
+	{
+		ServerHeroSkillQ(Value);
+	}
+
+	float CoolTime = HeroAttributeComponent->SkillQMaxCoolTime;
+	OnSkillQ.Broadcast(FName("SkillQ"), CoolTime);
 }
 
 void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
