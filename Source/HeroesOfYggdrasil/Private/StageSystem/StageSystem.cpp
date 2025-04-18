@@ -2,8 +2,11 @@
 
 #include "StageSystem/StageSystem.h"
 
+#include "EngineUtils.h"
 #include "GameFramework/GameState.h"
 #include "Net/UnrealNetwork.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
 
 #include "StageSystem/StageBase.h"
 #include "StageSystem/Stages/BattleStage.h"
@@ -45,10 +48,18 @@ void UStageSystem::BeginPlay()
 {
 	Super::BeginPlay();
 
+	for (TActorIterator<ALevelSequenceActor> Iter(GetWorld()); Iter; ++Iter)
+	{
+		LevelSequenceActor = *Iter;
+		break;
+	}
+
 	for (UStageBase* Stage : StageCycle)
 	{
 		Stage->BeginPlay(this);
 	}
+
+	OnDefeated.AddDynamic(this, &UStageSystem::PlayDefeatLevelSequence);
 }
 
 void UStageSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -191,6 +202,18 @@ UReinforceStage* UStageSystem::GetReinforceStage() const
 		}
 	}
 	return nullptr;
+}
+
+void UStageSystem::PlayDefeatLevelSequence(FOnDefeatedParams OnDefeatedParams)
+{
+	if (LevelSequenceActor)
+	{
+		LevelSequenceActor->GetSequencePlayer()->Play();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("%S%u : LevelSequenceActor Not Defined!"), __FUNCTION__, __LINE__);
+	}
 }
 
 

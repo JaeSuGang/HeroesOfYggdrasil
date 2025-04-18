@@ -7,6 +7,7 @@
 #include "CustomSystem/CustomSystem.h"
 #include "StageSystem.generated.h"
 
+class ALevelSequenceActor;
 class UStageBase;
 class UBattleStage;
 class UReinforceStage;
@@ -103,6 +104,10 @@ public:
 	UFUNCTION()
 	UReinforceStage* GetReinforceStage() const;
 
+protected:
+	UFUNCTION()
+	void PlayDefeatLevelSequence(FOnDefeatedParams OnDefeatedParams);
+
 public:
 	UPROPERTY(BlueprintAssignable)
 	FOnGameStarted OnGameStarted;
@@ -116,6 +121,9 @@ public:
 public:	
 	UPROPERTY(Replicated, Instanced, EditAnywhere)
 	TArray<UStageBase*> StageCycle;
+
+	UPROPERTY(VisibleAnywhere)
+	ALevelSequenceActor* LevelSequenceActor;
 
 	UPROPERTY(Replicated, VisibleAnywhere)
 	int CurrentRound;
