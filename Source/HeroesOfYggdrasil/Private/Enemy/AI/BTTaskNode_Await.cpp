@@ -13,27 +13,83 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 	Super::Start(_OwnerComp);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	APawn* SelfActor = PlayAIData.SelfPawn;
 
 	if (IsValid(PlayAIData.SelfAnimPawn))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
-	// 상태 전이 예약
-	float Duration = FMath::Max(PlayAIData.Data.AwaitTime, 0.1f);
-	FTimerDelegate TimerDel;
-	FTimerHandle TimerHandle;
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
-	TimerDel.BindLambda([this, &_OwnerComp]() {
-		ChangeState(_OwnerComp, EEnemyAIState::Attack);
-		});
+	if (IsValid(EnemyCharacter))
+	{
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
 
-	PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
-		TimerHandle,
-		TimerDel,
-		Duration,
-		false
-	);
+		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
+		{
+			// 상태 전이 예약
+			float Duration = FMath::Max(PlayAIData.Data.AwaitTime, 0.1f);
+			FTimerDelegate TimerDel;
+			FTimerHandle TimerHandle;
+
+			TimerDel.BindLambda([this, &_OwnerComp]() {
+				ChangeState(_OwnerComp, EEnemyAIState::Attack);
+				});
+
+			PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
+				TimerHandle,
+				TimerDel,
+				Duration,
+				false
+			);
+		}
+		else // 드래곤일 경우
+		{
+			float Duration = FMath::Max(PlayAIData.Data.AwaitTime, 0.1f);
+			FTimerDelegate TimerDel;
+			FTimerHandle TimerHandle;
+
+			TimerDel.BindLambda([this, &_OwnerComp, EnemyCharacter]() {
+
+				float HealthPercent = EnemyCharacter->GetAttributeComponent()->GetHP() / EnemyCharacter->GetAttributeComponent()->MaxHP;
+				// ex: 0.0 ~ 1.0
+				FPlayAIData& LocalData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+
+				if (HealthPercent <= 0.5f && !LocalData.bUsedBreathAttack)
+				{
+					LocalData.bUsedBreathAttack = true;
+					ChangeState(_OwnerComp, EEnemyAIState::DragonBreath);
+				}
+				else
+				{
+					FRandomStream RandStream;
+					RandStream.GenerateNewSeed(); 
+
+					float Rand = RandStream.FRand(); // 0.0 ~ 1.0 float
+
+					if (Rand <= 0.6f)
+					{
+						ChangeState(_OwnerComp, EEnemyAIState::Attack); // 일반 공격
+					}
+					else
+					{
+						ChangeState(_OwnerComp, EEnemyAIState::DragonMeteor); // 범위 공격
+					}
+				}
+
+				});
+
+			PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
+				TimerHandle,
+				TimerDel,
+				Duration,
+				false
+			);
+		}
+
+	}
+	
 }
 
 void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)

@@ -38,7 +38,6 @@
 #include "Enemy/EnemyWarningRange.h"
 
 #include "Global/YggTickActor.h"
-#include "Global/TickEffectManager.h"
 
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -313,11 +312,16 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 {
 	if (!HasAuthority()) return;
 
-	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(_Target);
 	AYggHero* Hero = Cast<AYggHero>(_Target);
-	if (!IsValid(Hero) && !IsValid(Enemy)) return;
+
+	if (!IsValid(Hero)) return;
+
+	float Att = CharacterAttributeComponent->GetAttackPoints();
+
+	Att /= 10.f;
+
 	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
-	UTickEffectManager::SpawnTickActorIfNeeded(this, _Target, Effect, 5.0f, 1.0f);
+	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect, Att);
 }
 
 void AEnemyCharacter::AttackCollisionInit()
@@ -341,22 +345,16 @@ void AEnemyCharacter::AttackCollisionInit()
 		);
 		RightAttackCapsule->SetCapsuleSize(300.0f, 200.0f); // (Radius, HalfHeight)
 	}
-	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r")))
+	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r_head")))
 	{
 		RightAttackCapsule->AttachToComponent(
 			GetMesh(),
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			TEXT("weapon_r")
+			TEXT("weapon_r_head")
 		);
-		RightAttackCapsule->SetCapsuleSize(100.0f, 100.0f);
+		RightAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
 	}
-	else
-	{
-		RightAttackCapsule->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::KeepRelativeTransform
-		);
-	}
+	
 
 	// 왼손 소켓에 부착
 	if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("MOUNTAIN_DRAGON_-L-Hand")))
@@ -368,28 +366,24 @@ void AEnemyCharacter::AttackCollisionInit()
 		);
 		LeftAttackCapsule->SetCapsuleSize(300.0f, 200.0f);
 	}
-	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l")))
+	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l_head")))
 	{
 		LeftAttackCapsule->AttachToComponent(
 			GetMesh(),
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			TEXT("weapon_l")
+			TEXT("weapon_l_head")
 		);
-		LeftAttackCapsule->SetCapsuleSize(100.0f, 100.0f);
+		LeftAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
 	}
-	else
-	{
-		LeftAttackCapsule->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::KeepRelativeTransform
-		);
-	}
+
 }
 
 
 void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 {
-	if (!WarningOutRangeClass || !_Actor) return;
+	if (!WarningOutRangeClass || !_Actor || DataKey != FString(TEXT("Dragon"))) return;
+
+
 
 	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
 	FVector BaseLocation = GetActorLocation();
@@ -423,7 +417,59 @@ void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 		// 타이머로 예약
 		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, Delay, false);
 	}
+
+	if (!TickParticle.IsNull())
+	{
+		UParticleSystem* Particle = TickParticle.LoadSynchronous(); // 동기 로딩
+
+		if (Particle)
+		{
+			UGameplayStatics::SpawnEmitterAttached(
+				Particle,                         
+				GetMesh(),                    
+				FName("MOUNTAIN_DRAGON_-magiccircle"),
+				FVector::ZeroVector,              // 소켓 기준 오프셋
+				FRotator::ZeroRotator,            // 소켓 기준 회전
+				EAttachLocation::SnapToTarget,
+				true                           
+			);
+		}
+	}
 }
+
+
+
+void AEnemyCharacter::DragonBreath()
+{
+	if (DataKey != FString(TEXT("Dragon"))) return;
+
+	if (!TickNiagaraSystem.IsValid())
+	{
+		TickNiagaraSystem.LoadSynchronous();
+	}
+
+	if (!TickNiagaraSystem.IsValid()) return;
+
+	FTimerHandle SpawnTimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this]()
+	{
+		UNiagaraComponent* FireBreathComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			TickNiagaraSystem.Get(),
+			GetMesh(),
+			FName("MOUNTAIN_DRAGON_-Breath"),
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::SnapToTarget,
+			true,
+			true
+		);
+
+
+	}), 3.f, false);
+}
+
+
 
 EEnemyType AEnemyCharacter::ConvertStringToEnemyType(const FString& EnemyKey)
 {
@@ -445,4 +491,28 @@ EEnemyType AEnemyCharacter::ConvertStringToEnemyType(const FString& EnemyKey)
 	}
 
 	return EEnemyType::Unknown;
+}
+
+
+void AEnemyCharacter::DrawDebugFromCapsuleComponent(UCapsuleComponent* CapsuleComp, FColor Color, float LifeTime)
+{
+	if (!CapsuleComp || !CapsuleComp->GetWorld()) return;
+
+	FVector Center = CapsuleComp->GetComponentLocation();
+	float Radius = CapsuleComp->GetScaledCapsuleRadius();
+	float HalfHeight = CapsuleComp->GetScaledCapsuleHalfHeight();
+	FQuat Rotation = CapsuleComp->GetComponentQuat();
+
+	DrawDebugCapsule(
+		CapsuleComp->GetWorld(),
+		Center,
+		HalfHeight,
+		Radius,
+		Rotation,
+		Color,
+		false,
+		LifeTime,
+		0,
+		1.5f
+	);
 }

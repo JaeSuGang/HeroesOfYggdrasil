@@ -7,6 +7,17 @@
 #include "GameplayTagContainer.h"
 #include "AttributeComponent.generated.h"
 
+USTRUCT()
+struct FOnTagsChangedParams
+{
+	GENERATED_BODY()
+
+
+};
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTagsChanged, FOnTagsChangedParams, OnTagsChangedParams);
+
 /**
  * 담당 코더 : 김경민
  */
@@ -43,7 +54,15 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void RemoveTags(const TArray<FName>& Tags);
 
+public:
+	UPROPERTY()
+	FOnTagsChanged OnTagsChanged;
+
+public:
+	UFUNCTION()
+	void OnRep_Tags();
+
 protected:
-	UPROPERTY(EditAnywhere, Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_Tags, EditAnywhere)
 	FGameplayTagContainer GameplayTags;
 };

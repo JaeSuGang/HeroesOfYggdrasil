@@ -61,6 +61,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DestroyAllComponents();
 
+	void DrawDebugFromCapsuleComponent(UCapsuleComponent* CapsuleComp, FColor Color = FColor::Red, float LifeTime = 0.1f);
 	
 
 	UFUNCTION(BlueprintCallable)
@@ -104,7 +105,10 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void DragonRangeAttack(AActor* _Actor);
-	
+
+	UFUNCTION(BlueprintCallable)
+	void DragonBreath();
+
 	UFUNCTION()
 	void HandleHeroEnteredRange(AYggCharacter* _Target);
 

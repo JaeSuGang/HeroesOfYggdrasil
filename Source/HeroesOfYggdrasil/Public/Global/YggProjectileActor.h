@@ -73,6 +73,9 @@ public:
 	UFUNCTION()
 	void SetOwnerCharacter(class AYggCharacter* _OwnerCharacter) { OwnerCharacter = _OwnerCharacter; }
 
+	UFUNCTION()
+	void SetTargetLocation(FVector _TargetLocation) { TargetLocation = _TargetLocation; }
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	EProjectileType ProjectileType;
@@ -91,6 +94,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor")
 	class AYggCharacter* OwnerCharacter;
+	
+	FVector TargetLocation;
 
 
 	FSpawnProjectileDataRow ProjectileDataRow;

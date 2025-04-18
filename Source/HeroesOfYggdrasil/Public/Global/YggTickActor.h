@@ -19,22 +19,23 @@ struct FStatusTickDataRow;
 
 
 
+
+
+
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggTickActor : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AYggTickActor();
-	
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
-	UFUNCTION()
-	void TickEffectInit();
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void SpawnEffect(AYggCharacter* _Target);
@@ -42,12 +43,13 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void CleanupEffects();
 
-
-	UFUNCTION()
-	void OnRep_EffectAssets();
-
 	UFUNCTION(BlueprintCallable, Category = "Tag")
 	void DestroyStatusTag();
+
+	UFUNCTION(BlueprintCallable, Category = "DataTable")
+	void LoadEffectFromDataTable();
+
+	static AYggTickActor* SpawnTickEffectIfNotExist(AYggCharacter* Owner, AYggCharacter* Target, EStatusEffectType EffectType = EStatusEffectType::Burn, float TickDamage = 1.f, float Interval = 0.5f, float TickTime = 5.f);
 
 protected:
 	// Called when the game starts or when spawned
@@ -61,24 +63,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickDataTable")
 	FName StatusRowName = TEXT("Poison");
 
-
-	UPROPERTY(Replicated, VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere)
 	USceneComponent* DefualtSceneRoot;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
+	EStatusEffectType TickEffectType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
 	float StatusTickTime;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TickTime")
-	float TickActorScale;
+	UPROPERTY(EditAnywhere, Replicated, Category = "TickEffects")
+	TSoftObjectPtr<UParticleSystem> TickParticle;
 
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EffectAssets, BlueprintReadWrite, Category = "TickEffect")
-	TSoftObjectPtr<UNiagaraSystem> NiagaraEffect;
-
-	UPROPERTY(EditAnywhere, ReplicatedUsing = OnRep_EffectAssets, BlueprintReadWrite, Category = "TickEffect")
-	TSoftObjectPtr<UParticleSystem> ParticleEffect;
-
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = "TickEffects")
-	EStatusEffectType TickEffectType;
+	UPROPERTY(EditAnywhere, Replicated, Category = "TickEffects")
+	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Tick")
 	UTickDamageComponent* TickDamageComponent;
@@ -88,6 +86,5 @@ public:
 
 	UPROPERTY(VisibleAnywhere, Category = "Tick")
 	FName Tag;
-
-	
 };
+

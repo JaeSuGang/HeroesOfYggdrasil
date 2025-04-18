@@ -5,6 +5,8 @@
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Net/UnrealNetwork.h"
+
 #include "Core/YggCharacter.h"
 
 #include "Player/YggHero.h"
@@ -18,6 +20,7 @@
 UTickDamageComponent::UTickDamageComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
+
 }
 
 void UTickDamageComponent::BeginPlay()
@@ -43,6 +46,25 @@ void UTickDamageComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 	}
 }
 
+void UTickDamageComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UTickDamageComponent, TargetActor);
+}
+
+
+void UTickDamageComponent::OnRep_TargetActor()
+{
+	if (TargetActor)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("[CLIENT] TargetActor replicated: %s"), *TargetActor->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[CLIENT] TargetActor is still NULL"));
+	}
+}
 
 void UTickDamageComponent::ApplyDamage()
 {

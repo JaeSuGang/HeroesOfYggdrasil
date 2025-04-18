@@ -34,9 +34,18 @@ bool UAttributeComponent::HasTagExact(const FName& Tag)
 	return GameplayTags.HasTagExact(FGameplayTag::RequestGameplayTag(Tag));
 }
 
+void UAttributeComponent::OnRep_Tags()
+{
+	OnTagsChanged.Broadcast(FOnTagsChangedParams{});
+}
+
 void UAttributeComponent::AddTag_Implementation(const FName& Tag)
 {
 	GameplayTags.AddTag(FGameplayTag::RequestGameplayTag(Tag));
+	if (GetOwner()->HasAuthority())
+	{
+		OnRep_Tags();
+	}
 }
 
 void UAttributeComponent::AddTags_Implementation(const TArray<FName>& Tags)
@@ -45,11 +54,19 @@ void UAttributeComponent::AddTags_Implementation(const TArray<FName>& Tags)
 	{
 		GameplayTags.AddTag(FGameplayTag::RequestGameplayTag(Tag));
 	}
+	if (GetOwner()->HasAuthority())
+	{
+		OnRep_Tags();
+	}
 }
 
 void UAttributeComponent::RemoveTag_Implementation(const FName& Tag)
 {
 	GameplayTags.RemoveTag(FGameplayTag::RequestGameplayTag(Tag));
+	if (GetOwner()->HasAuthority())
+	{
+		OnRep_Tags();
+	}
 }
 
 void UAttributeComponent::RemoveTags_Implementation(const TArray<FName>& Tags)
@@ -57,6 +74,10 @@ void UAttributeComponent::RemoveTags_Implementation(const TArray<FName>& Tags)
 	for (const FName Tag : Tags)
 	{
 		GameplayTags.RemoveTag(FGameplayTag::RequestGameplayTag(Tag));
+	}
+	if (GetOwner()->HasAuthority())
+	{
+		OnRep_Tags();
 	}
 }
 

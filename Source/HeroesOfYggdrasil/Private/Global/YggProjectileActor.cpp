@@ -111,7 +111,24 @@ void AYggProjectileActor::ParabolaMode()
 
 void AYggProjectileActor::TargetParabolaMode()
 {
+	if (!ProjectileMovement) return;
 
+	FVector StartLocation = GetActorLocation();
+	FVector TossVelocity;
+
+	// 고정된 발사 속도로 포물선 궤적 계산
+	bool bHasSolution = UGameplayStatics::SuggestProjectileVelocity_CustomArc(
+		this,
+		TossVelocity,
+		StartLocation,
+		TargetLocation,
+		0.5f // Arc parameter: 0.0 = flat shot, 1.0 = high arc (0.5은 보통 느낌)
+	);
+
+	if (bHasSolution)
+	{
+		ProjectileMovement->Velocity = TossVelocity;
+	}
 }
 
 void AYggProjectileActor::HomingMode()

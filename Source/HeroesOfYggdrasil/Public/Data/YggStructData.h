@@ -255,6 +255,8 @@ public:
 	class UEnemyBaseAnimInstance* UEnemyBaseAnimInstance = nullptr;
 
 	FVector OriginPos;
+
+	bool bUsedBreathAttack;
 };
 
 UCLASS(BlueprintType)

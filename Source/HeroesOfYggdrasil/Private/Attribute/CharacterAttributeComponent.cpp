@@ -44,11 +44,14 @@ void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePr
 
 void UCharacterAttributeComponent::GenerateHpInternal()
 {
-	float HpToApply{};
+	if (HPGeneration > 0 && HP > 0)
+	{
+		float HpToApply{};
 
-	HpToApply = HP + HPGeneration > MaxHP ? MaxHP : HP + HPGeneration;
+		HpToApply = HP + HPGeneration > MaxHP ? MaxHP : HP + HPGeneration;
 
-	Server_SetHP(HpToApply);
+		Server_SetHP(HpToApply);
+	}
 }
 
 

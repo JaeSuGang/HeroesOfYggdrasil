@@ -35,6 +35,8 @@ enum class EEnemyAIState : uint8
 	Trace UMETA(DisplayName = "추적"),
 	TraceBack UMETA(DisplayName = "복귀"),
 	TraceYggdrasil UMETA(DisplayName = "이그드라실공격"),
+	DragonBreath UMETA(DisplayName = "드래곤브레스"),
+	DragonMeteor UMETA(DisplayName = "드래곤메테오"),
 	Hit UMETA(DisplayName = "피격"),
 	Death UMETA(DisplayName = "죽음"),
 	DeathFallen UMETA(DisplayName = "다운"),
