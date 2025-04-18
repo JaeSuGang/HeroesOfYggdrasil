@@ -34,9 +34,8 @@ public:
 	APawn* GetSpawnedSelectable() const;
 
 public:
-	UFUNCTION(Client, Reliable)
+	UFUNCTION()
 	void ForceMainWidget();
-	void ForceMainWidget_Implementation();
 
 	UFUNCTION(Server, Reliable)
 	void SetToPosition(int nIndex);
@@ -67,7 +66,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	UDataTable* SelectablesTable;
 
-	UPROPERTY(VisibleInstanceOnly, Category = YGG)
+	UPROPERTY(Replicated, VisibleInstanceOnly, Category = YGG)
 	APawn* SpawnedSelectable;
 
 	UPROPERTY(EditAnywhere, Category = YGG)

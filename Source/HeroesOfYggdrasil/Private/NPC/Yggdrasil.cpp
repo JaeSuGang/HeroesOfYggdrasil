@@ -10,8 +10,8 @@
 AYggdrasil::AYggdrasil()
 {
 	CharacterAttributeComponent = CreateDefaultSubobject<UCharacterAttributeComponent>("Attribute");
-	CharacterAttributeComponent->MaxHP = 1.f;
-	CharacterAttributeComponent->HP = 1.f;
+	CharacterAttributeComponent->MaxHP = 300.f;
+	CharacterAttributeComponent->HP = 100.f;
 
 
 }
@@ -23,28 +23,20 @@ void AYggdrasil::BeginPlay()
 	CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(this, &AYggdrasil::CheckHP);
 }
 
-//void AYggdrasil::Tick(float DeltaTime)
-//{
-//	if (nullptr != GetWorld()->GetAuthGameMode())
-//	{
-//		if (CharacterAttributeComponent->HP <= 0.f)
-//		{
-//			UStageSystem::Get(GetWorld())->DefeatInternal();
-//		}
-//	}
-//}
-
 void AYggdrasil::CheckHP(float _NULL)
 {
+	if (bIsLive == false)
+	{
+		return;
+	}
+
 	if (nullptr != GetWorld()->GetAuthGameMode())
 	{
 		if (CharacterAttributeComponent->HP <= 0.f)
 		{
+			bIsLive = false;
 			UStageSystem::Get(GetWorld())->DefeatInternal();
 		}
 	}
-
-	// UGameplayStatics::getactor()
-
-
+	
 }
