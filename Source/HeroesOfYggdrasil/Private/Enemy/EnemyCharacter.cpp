@@ -417,6 +417,24 @@ void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 		// 타이머로 예약
 		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, Delay, false);
 	}
+
+	if (!TickParticle.IsNull())
+	{
+		UParticleSystem* Particle = TickParticle.LoadSynchronous(); // 동기 로딩
+
+		if (Particle)
+		{
+			UGameplayStatics::SpawnEmitterAttached(
+				Particle,                         
+				GetMesh(),                    
+				FName("MOUNTAIN_DRAGON_-magiccircle"),
+				FVector::ZeroVector,              // 소켓 기준 오프셋
+				FRotator::ZeroRotator,            // 소켓 기준 회전
+				EAttachLocation::SnapToTarget,
+				true                           
+			);
+		}
+	}
 }
 
 
@@ -448,7 +466,7 @@ void AEnemyCharacter::DragonBreath()
 		);
 
 
-	}), 0.5f, false);
+	}), 3.f, false);
 }
 
 

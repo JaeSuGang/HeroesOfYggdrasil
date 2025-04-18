@@ -16,6 +16,6 @@ void UEnemyAnimNotify_DragonBreath::Notify(USkeletalMeshComponent* MeshComp, UAn
 	UAnimMontage* CurrentMontage = AnimInstance->GetCurrentActiveMontage();
 	if (CurrentMontage)
 	{
-		AnimInstance->Montage_SetPlayRate(CurrentMontage, 0.1f);
+		AnimInstance->Montage_SetPlayRate(CurrentMontage, 0.4f);
 	}
 }
