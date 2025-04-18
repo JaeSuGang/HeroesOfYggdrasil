@@ -197,6 +197,8 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AEnemyCharacter, DataKey);
 	DOREPLIFETIME(AEnemyCharacter, EnemyType);
+	DOREPLIFETIME(AEnemyCharacter, TickParticle);
+	DOREPLIFETIME(AEnemyCharacter, TickNiagaraSystem);
 }
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -379,7 +381,7 @@ void AEnemyCharacter::AttackCollisionInit()
 }
 
 
-void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
+void AEnemyCharacter::DragonRangeAttack_Implementation(AActor* _Actor)
 {
 	if (!WarningOutRangeClass || !_Actor || DataKey != FString(TEXT("Dragon"))) return;
 
@@ -439,8 +441,9 @@ void AEnemyCharacter::DragonRangeAttack(AActor* _Actor)
 
 
 
-void AEnemyCharacter::DragonBreath()
+void AEnemyCharacter::DragonBreath_Implementation()
 {
+	
 	if (DataKey != FString(TEXT("Dragon"))) return;
 
 	if (!TickNiagaraSystem.IsValid())
