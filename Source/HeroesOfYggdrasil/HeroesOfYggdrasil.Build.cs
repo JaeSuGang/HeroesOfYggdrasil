@@ -8,7 +8,7 @@ public class HeroesOfYggdrasil : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayTags", "UMG", "Paper2D", "Niagara", "Slate", "SlateCore", "RenderCore", "RHI" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayTags", "UMG", "Paper2D", "Niagara", "Slate", "SlateCore", "RenderCore", "RHI", "LevelSequence", "MovieScene" });
 
         PrivateDependencyModuleNames.AddRange(new string[] {  });
 

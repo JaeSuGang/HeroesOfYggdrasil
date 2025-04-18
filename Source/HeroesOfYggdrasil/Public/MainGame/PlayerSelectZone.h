@@ -34,7 +34,7 @@ public:
 	APawn* GetSpawnedSelectable() const;
 
 public:
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(Client, Reliable)
 	void ForceMainWidget();
 	void ForceMainWidget_Implementation();
 

@@ -34,6 +34,11 @@ bool UAttributeComponent::HasTagExact(const FName& Tag)
 	return GameplayTags.HasTagExact(FGameplayTag::RequestGameplayTag(Tag));
 }
 
+void UAttributeComponent::OnRep_Tags()
+{
+
+}
+
 void UAttributeComponent::AddTag_Implementation(const FName& Tag)
 {
 	GameplayTags.AddTag(FGameplayTag::RequestGameplayTag(Tag));
