@@ -316,7 +316,9 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 			{
 				if (FStatusTickDataRow* ExistingStatusRow = ExistingTickActor->StatusTickDataTable->FindRow<FStatusTickDataRow>(RowName, nullptr))
 				{
-					ExistingTickActor->StatusTickTime = ExistingStatusRow->TickTime;
+					ExistingTickActor->DestroyStatusTag();
+					HeroAttributeComponent->AddTag(StatusTag);
+					ExistingTickActor->StatusTickTime = TickTime;
 				}
 			}
 		}
@@ -335,7 +337,9 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 			{
 				if (FStatusTickDataRow* ExistingStatusRow = ExistingTickActor->StatusTickDataTable->FindRow<FStatusTickDataRow>(RowName, nullptr))
 				{
-					ExistingTickActor->StatusTickTime = ExistingStatusRow->TickTime;
+					ExistingTickActor->DestroyStatusTag();
+					EnemyAttributeComponent->AddTag(StatusTag);
+					ExistingTickActor->StatusTickTime = TickTime;
 				}
 			}
 
