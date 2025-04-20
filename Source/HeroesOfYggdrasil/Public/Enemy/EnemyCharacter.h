@@ -103,10 +103,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemySkillAttack(FVector _TargetLocation);
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(NetMulticast, Reliable)
 	void DragonRangeAttack(AActor* _Actor);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(NetMulticast, Reliable)
 	void DragonBreath();
 
 	UFUNCTION()

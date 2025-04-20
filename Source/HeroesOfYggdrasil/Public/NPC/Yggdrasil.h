@@ -22,4 +22,9 @@ public:
 
 	UFUNCTION()
 	void CheckHP(float _NULL);
+
+private:
+	UPROPERTY()
+	bool bIsLive = true;
+
 };

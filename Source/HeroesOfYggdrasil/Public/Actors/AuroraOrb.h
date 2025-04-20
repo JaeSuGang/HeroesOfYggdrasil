@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "AuroraOrb.generated.h"
 
+class UCapsuleComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AAuroraOrb : public AActor
 {
@@ -23,12 +25,38 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void OnOrbOverlapBegin(
+		UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+
+	void SetAttPower(float Value)
+	{
+		AttPower = Value;
+	}
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UStaticMeshComponent* MeshComp;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
-	TObjectPtr<UParticleSystem> PSTemplate;
+	UCapsuleComponent* OrbCapsule;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Particle")
+	TObjectPtr<UParticleSystem> PSTrail;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Particle")
+	TObjectPtr<UParticleSystem> PSImpact;
 
 private:
 	FVector MoveDirection = FVector::ZeroVector;
 
 	UPROPERTY()
 	float MoveSpeed = 500.0f;
+
+	float AttPower;
 };

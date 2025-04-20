@@ -14,12 +14,19 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
+	AActor* TargetActor = PlayAIData.TargetActor;
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 
 	if (IsValid(PlayAIData.SelfAnimPawn))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
+
+	
+
+
+	// 공격 상태 전환
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
 	if (IsValid(EnemyCharacter))
@@ -52,9 +59,15 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 
 			TimerDel.BindLambda([this, &_OwnerComp, EnemyCharacter]() {
 
+				if (!IsValid(EnemyCharacter))
+				{
+					return;
+				}
+
 				float HealthPercent = EnemyCharacter->GetAttributeComponent()->GetHP() / EnemyCharacter->GetAttributeComponent()->MaxHP;
 				// ex: 0.0 ~ 1.0
 				FPlayAIData& LocalData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+
 
 				if (HealthPercent <= 0.5f && !LocalData.bUsedBreathAttack)
 				{
@@ -63,8 +76,8 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 				}
 				else
 				{
-					FRandomStream RandStream;
-					RandStream.GenerateNewSeed(); 
+
+					RandStream.GenerateNewSeed();
 
 					float Rand = RandStream.FRand(); // 0.0 ~ 1.0 float
 
@@ -77,7 +90,6 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 						ChangeState(_OwnerComp, EEnemyAIState::DragonMeteor); // 범위 공격
 					}
 				}
-
 				});
 
 			PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
@@ -90,6 +102,8 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	}
 	
+	
+
 }
 
 void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -118,7 +132,6 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	{
 		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
 	}
-
 	// 거리 기반 상태 분기
 	if (IsValid(TargetCharacter))
 	{
@@ -138,8 +151,10 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 				ChangeState(_OwnerComp, EEnemyAIState::ApproachToAttack);
 				return;
 			}
-		} 
+		}
 	}
+	
+
 }
 
 void UBTTaskNode_Await::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)

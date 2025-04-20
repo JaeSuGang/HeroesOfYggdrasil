@@ -18,6 +18,13 @@ void UBTTaskNode_DragonBreath::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
+	AAIController* SelfController = SelfActor->GetController<AAIController>();
+	// 이동 중지
+	if (SelfController)
+	{
+		SelfController->StopMovement();
+	}
+
 	if (IsValid(EnemyCharacter))
 	{
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
