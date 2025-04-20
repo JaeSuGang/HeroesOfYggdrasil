@@ -70,10 +70,16 @@ private:
 	UTextBlock* Defense;
 
 	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Health;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* HealthRegen;
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* HP;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* HPRegen;
+	UTextBlock* Nickname;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* ExitButton;

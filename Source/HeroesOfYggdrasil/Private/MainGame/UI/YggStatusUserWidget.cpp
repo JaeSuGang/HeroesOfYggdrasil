@@ -11,7 +11,9 @@
 #include "Attribute/HeroAttributeComponent.h"
 #include "MainGame/UI/YggStatusEffectUserWidget.h"
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
+#include "Core/YggPlayerState.h"
 #include "Player/YggHero.h"
+
 
 
 //void UYggStatusUserWidget::UpdateDebuffUI(FOnTagsChangedParams OnTagsChangedParams)
@@ -85,7 +87,8 @@ void UYggStatusUserWidget::StatusInit()
 
 	if (IsValid(Symbol))
 	{
-		Symbol->SetBrush(MakeBrush(SetTexture(Hero->GetFName()), IconSize, 1.0f));
+		FName Name = HAC->GetName();
+		Symbol->SetBrush(MakeBrush(SetTexture(Name), IconSize, 1.0f));
 	}
 
 	if (IsValid(HPBar))
@@ -118,16 +121,38 @@ void UYggStatusUserWidget::StatusInit()
 		Defense->SetText(FText::AsNumber(HAC->DefensePoints));
 	}
 
-	if (IsValid(HP))
+	if (IsValid(Health))
 	{
-		HP->SetText(FText::AsNumber(HAC->MaxHP));
+		Health->SetText(FText::AsNumber(HAC->MaxHP));
 	}
 
-	if (IsValid(HPRegen))
+	if (IsValid(HealthRegen))
 	{
-		HPRegen->SetText(FText::AsNumber(HAC->HPGeneration));
+		HealthRegen->SetText(FText::AsNumber(HAC->HPGeneration));
 	}
 	
+	if (IsValid(HP))
+	{
+		FText HealthText = FText::Format(FText::FromString("{0} / {1}"), FText::AsNumber(HAC->HP), FText::AsNumber(HAC->MaxHP));
+
+		HP->SetText(HealthText);
+	}
+
+	if (IsValid(Nickname))
+	{
+		AYggPlayerState* PS = Hero->GetPlayerState<AYggPlayerState>();
+
+		if (nullptr == PS)
+		{
+			UE_LOG(LogTemp, Error, TEXT("%S(%u)> if (nullptr == PS)"), __FUNCTION__, __LINE__);
+			return;
+		}
+
+		FString Name = PS->GetPlayerName();
+
+		Nickname->SetText(FText::FromString(Name));
+	}
+
 }
 
 void UYggStatusUserWidget::ShowStatus()

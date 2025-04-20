@@ -103,9 +103,10 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 
 		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(StatusWidget->Slot))
 		{
-			CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f, 1.0f, 1.0f));
-			CanvasSlot->SetOffsets(FMargin(0.0f));
-			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+			//CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f));
+			//CanvasSlot->SetOffsets(FMargin(0.0f));
+			//CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+			CanvasSlot->SetPosition(FVector2D(300.0f, 300.0f));
 		}
 	}
 }
