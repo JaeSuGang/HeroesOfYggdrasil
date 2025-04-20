@@ -2,6 +2,7 @@
 
 
 #include "MainGame/UI/YggStatusUserWidget.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -63,6 +64,18 @@ void UYggStatusUserWidget::NativeDestruct()
 
 }
 
+//void UYggStatusUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+//{
+//	Super::NativeTick(MyGeometry, InDeltaTime);
+//
+//	if (true == IsDrag)
+//	{
+//		FVector2D Result = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+//
+//		SetRenderTranslation(Result + DragOffset);
+//	}
+//}
+
 FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f)
 {
 	FSlateBrush Brush;
@@ -78,6 +91,9 @@ void UYggStatusUserWidget::StatusInit()
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 
 	AYggHero* Hero = PC->GetPawn<AYggHero>();
+
+	if (!Hero)
+		return;
 
 	HAC = Hero->GetHeroAttributeComponent();
 
@@ -201,3 +217,19 @@ UTexture2D* UYggStatusUserWidget::SetTexture(FName Hero)
 
 	return Tex;
 }
+
+//void UYggStatusUserWidget::DragStart()
+//{
+//	IsDrag = true;
+//
+//	FVector2D Result = UWidgetLayoutLibrary::GetMousePositionOnViewport(GetWorld());
+//
+//	DragOffset = GetRenderTransform().Translation - Result;
+//
+//	SetRenderTranslation(DragOffset + Result);
+//}
+
+//void UYggStatusUserWidget::DragEnd()
+//{
+//	IsDrag = false;
+//}

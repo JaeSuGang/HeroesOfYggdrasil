@@ -56,7 +56,7 @@ void AYggMiniMapIconActor::SetPaperSprite(AActor* Actor)
     if (!Actor || !UIDataAsset) return;
 
     ACharacter* Character = Cast<ACharacter>(Actor);
-    if (!Character) return; // ACharacter가 아니면 함수 종료
+    if (!Character) return;
 
     TMap<FName, UPaperSprite*>& IconData = UIDataAsset->IconSetting;
 

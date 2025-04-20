@@ -41,11 +41,20 @@ public:
 
 	//UFUNCTION(BlueprintCallable, Category = "YGG")
 	//void UpdateDebuffUI(FOnTagsChangedParams OnTagsChangedParams);
+	// 
+	//UFUNCTION(BlueprintCallable, Category = "YGG")
+	//void DragStart();
+	//
+	//UFUNCTION(BlueprintCallable, Category = "YGG")
+	//void DragEnd();
+
 
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
+	//virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -100,5 +109,9 @@ private:
 	UTexture2D* AuroraSymbol;
 
 	UHeroAttributeComponent* HAC;
+
+	//bool IsDrag = false;
+	//
+	//FVector2D DragOffset;
 
 };

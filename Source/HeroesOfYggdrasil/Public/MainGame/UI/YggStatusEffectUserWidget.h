@@ -10,25 +10,6 @@ class UProgressBar;
 class UImage;
 class UTexture2D;
 
-USTRUCT()
-struct FUIStatusEffectData
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	UProgressBar* Bar = nullptr;
-
-	UPROPERTY()
-	UImage* Image = nullptr;
-
-	UPROPERTY()
-	UTexture2D* Icon = nullptr;
-
-	FTimerHandle TimerHandle;
-	float CoolTime = 0.0f;
-	float RemainingTime = 0.0f;
-};
-
 /**
  * 
  */
