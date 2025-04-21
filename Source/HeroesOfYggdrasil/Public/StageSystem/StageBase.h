@@ -27,8 +27,8 @@ struct FOnExitStageDelegateParams
 	int CurrentRound;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnterStageDelegate, FOnEnterStageDelegateParams, OnEnterStageDelegate);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnExitStageDelegate, FOnExitStageDelegateParams, OnExitStageDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnterStageDelegate, FOnEnterStageDelegateParams, OnEnterStageDelegateParams);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnExitStageDelegate, FOnExitStageDelegateParams, OnExitStageDelegateParams);
 
 /**
  * 담당 코더 : 김경민
