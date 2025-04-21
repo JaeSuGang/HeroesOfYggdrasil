@@ -22,6 +22,7 @@ void UYggDebuffUserWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
 
+	EndDebuff();
 }
 
 FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f)
@@ -34,12 +35,20 @@ FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f)
 	return Brush;
 }
 
-void UYggDebuffUserWidget::InitDebuff(EStatusEffectType StatusEffectType, float Duration)
+void UYggDebuffUserWidget::InitDebuff(EStatusEffectType StatusEffectType)
 {
-	
-	
-	
-	//Debuffbar
+	DebuffType = StatusEffectType;
+
+	FVector2D Size(32.0f, 32.0f);
+	SetTexture(StatusEffectType);
+
+	FProgressBarStyle PStyle;
+	PStyle.BackgroundImage = MakeBrush(Tex, Size, 0.6f);
+	PStyle.FillImage = MakeBrush(Tex, Size, 1.0f);
+	DebuffBar->SetWidgetStyle(PStyle);
+	DebuffBar->SetPercent(1.0f);
+
+	StartDebuff(0.0f);
 }
 
 void UYggDebuffUserWidget::StartDebuff(float Duration)
@@ -77,3 +86,26 @@ void UYggDebuffUserWidget::EndDebuff()
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	RemoveFromParent();
 }
+
+UTexture2D* UYggDebuffUserWidget::SetTexture(EStatusEffectType StatusEffectType)
+{
+	switch (StatusEffectType)
+	{
+	case EStatusEffectType::Poison:
+		return Tex = PosionTexture;
+		break;
+	case EStatusEffectType::Burn:
+		return Tex = BurnTexture;
+		break;
+	case EStatusEffectType::Slow:
+		return Tex = SlowTexture;
+		break;
+	case EStatusEffectType::Stunned:
+		return Tex = StunnedTexture;
+		break;
+	default:
+		return Tex = nullptr;
+		break;
+	}
+}
+

@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "MainGame/UI/YggUserWidget.h"
+#include "Data/YggEnumData.h"
 #include "YggStatusEffectUserWidget.generated.h"
 
-class UProgressBar;
-class UImage;
-class UTexture2D;
+class UYggDebuffUserWidget;
+class UHorizontalBox;
+class FOnTagsChangedParams;
 
 /**
  * 
@@ -20,7 +21,11 @@ class HEROESOFYGGDRASIL_API UYggStatusEffectUserWidget : public UYggUserWidget
 
 
 public:
+	UFUNCTION(BlueprintCallable)
+	void UpdateDebuff(FOnTagsChangedParams OnTagsChangedParams);
 
+	UFUNCTION(BlueprintCallable)
+	UYggDebuffUserWidget* FindDebuffWidget(EStatusEffectType StatusEffectType);
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -28,7 +33,15 @@ protected:
 	virtual void NativeDestruct() override;
 
 private:
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	TSubclassOf<UUserWidget> DebuffUserWidgetClass;
 
+	UPROPERTY(EditAnyWhere, Category = "YGG")
+	UYggDebuffUserWidget* DebuffWidget;
 
+	UPROPERTY(meta = (BindWidget))
+	UHorizontalBox* DebuffContainer;
 
+	UPROPERTY()
+	TArray<UYggDebuffUserWidget*> DebuffWidgets;
 };

@@ -4,31 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "MainGame/UI/YggUserWidget.h"
-#include "YggDebuffUserWidget.generated.h"
 #include "Data/YggEnumData.h"
+#include "YggDebuffUserWidget.generated.h"
 
 class UProgressBar;
 class UImage;
 class UTexture2D;
-
-//USTRUCT()
-//struct FDebuffData
-//{
-//	GENERATED_BODY()
-//
-//	UPROPERTY()
-//	UProgressBar* Bar = nullptr;
-//
-//	UPROPERTY()
-//	UImage* Image = nullptr;
-//
-//	UPROPERTY()
-//	UTexture2D* Icon = nullptr;
-//
-//	FTimerHandle TimerHandle;
-//	float CoolTime = 0.0f;
-//	float RemainingTime = 0.0f;
-//};
 
 /**
  * 
@@ -40,7 +21,7 @@ class HEROESOFYGGDRASIL_API UYggDebuffUserWidget : public UYggUserWidget
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "YGG")
-	void InitDebuff(EStatusEffectType StatusEffectType, float Duration);
+	void InitDebuff(EStatusEffectType StatusEffectType);
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
 	void StartDebuff(float Duration);
@@ -50,6 +31,14 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
 	void EndDebuff();
+
+	UFUNCTION(BlueprintCallable, Category = "YGG")
+	UTexture2D* SetTexture(EStatusEffectType StatusEffectType);
+
+	EStatusEffectType GetDebuffType()
+	{
+		return DebuffType;
+	}
 
 	FTimerHandle TimerHandle;
 	float DebufflTime = 0.0f;
@@ -77,4 +66,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "YGG")
 	UTexture2D* StunnedTexture;
 
+	UTexture2D* Tex;
+
+	EStatusEffectType DebuffType;
 };
