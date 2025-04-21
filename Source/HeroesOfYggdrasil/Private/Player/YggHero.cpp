@@ -191,6 +191,33 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 
 }
 
+void AYggHero::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+
+	if (HasLocalNetOwner())
+	{
+		if (APlayerController* PC = Cast<APlayerController>(GetController()))
+		{
+			if (AMainGameHUD* MGH = Cast<AMainGameHUD>(PC->GetHUD()))
+			{
+				MGH->CloseCurrentWidget();
+				MGH->ShowMainGameWidget();
+			}
+		}
+	}
+}
+
+void AYggHero::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (HasAuthority())
+	{
+		OnRep_Controller();
+	}
+}
+
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

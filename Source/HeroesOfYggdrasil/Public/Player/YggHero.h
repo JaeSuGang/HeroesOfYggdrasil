@@ -104,6 +104,8 @@ public:
 	void HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 protected:
+	virtual void OnRep_Controller() override;
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 
