@@ -61,9 +61,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DestroyAllComponents();
 
-	void DrawDebugFromCapsuleComponent(UCapsuleComponent* CapsuleComp, FColor Color = FColor::Red, float LifeTime = 0.1f);
-	
-
 	UFUNCTION(BlueprintCallable)
 	void SetDataKey(const FString& _MonsterDataKey);
 	
@@ -86,7 +83,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnAndFireArrow();
+	void SpawnAndFireArrow(AActor* _TargetActor);
 
 	UFUNCTION(BlueprintCallable)
 	void HideArrow();
@@ -101,13 +98,19 @@ public:
 	void SpawnWarningOutRange(AActor* _Actor);
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnEnemySkillAttack(FVector _TargetLocation);
+	void SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _TargetActor);
 	
+	UFUNCTION(NetMulticast, Reliable)
+	void WarpToRandomPoint(AYggCharacter* _Target);
+
 	UFUNCTION(NetMulticast, Reliable)
 	void DragonRangeAttack(AActor* _Actor);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void DragonBreath();
+
+	UFUNCTION()
+	void DragonBreathDamage(AYggCharacter* _Target);
 
 	UFUNCTION()
 	void HandleHeroEnteredRange(AYggCharacter* _Target);
@@ -168,6 +171,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Replicated, Category = "AttackCapsule")
 	UYggAttackCapsuleComponent* LeftAttackCapsule;
+
+
+	UPROPERTY(EditAnywhere, Replicated, Category = "AttackCapsule")
+	UYggAttackCapsuleComponent* DragonBreathCapsule;
 };
 
 

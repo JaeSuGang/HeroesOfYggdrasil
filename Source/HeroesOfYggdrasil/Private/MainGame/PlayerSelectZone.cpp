@@ -188,7 +188,6 @@ void APlayerSelectZone::OnStartGame(FOnGameStartParams OnGameStartParams)
 {
 	if (HasLocalNetOwner())
 	{
-		ForceMainWidget();
 		SelectCharacter();
 	}
 }

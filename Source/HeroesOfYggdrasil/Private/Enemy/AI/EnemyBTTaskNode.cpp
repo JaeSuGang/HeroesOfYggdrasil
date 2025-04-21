@@ -217,12 +217,14 @@ void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, f
 
 	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
 	AActor* TargetActor = PlayAIData.TargetActor;
+	AYggCharacter* TargetCharacter =  Cast<AYggCharacter>(TargetActor);
 
+	
 	if (!OwningPawn || !TargetActor) return;
 
 	const FString TargetName = TargetActor->GetName();
 
-	if (TargetName.StartsWith(TEXT("BP_YggHero")) || TargetName.StartsWith(TEXT("BP_Yggdrasil")))
+	if (TargetName.StartsWith(TEXT("BP_YggHero")) || TargetName.StartsWith(TEXT("BP_Yggdrasil")) || TargetCharacter->GetAttributeComponent()->HasTag(TEXT("Character")))
 	{
 		const FVector PawnLoc = OwningPawn->GetActorLocation();
 		const FVector TargetLoc = TargetActor->GetActorLocation();

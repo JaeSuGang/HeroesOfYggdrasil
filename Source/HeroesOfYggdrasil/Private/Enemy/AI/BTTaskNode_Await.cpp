@@ -1,7 +1,9 @@
-// Coded By AssortRock Unreal Engine Class Project
+// Safe Timer Binding with Valid Checks
 
 #include "Enemy/AI/BTTaskNode_Await.h"
 #include "TimerManager.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "UObject/WeakObjectPtr.h"
 
 UBTTaskNode_Await::UBTTaskNode_Await()
 {
@@ -22,117 +24,6 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
-
-	
-
-
-	// 공격 상태 전환
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
-
-	if (IsValid(EnemyCharacter))
-	{
-		FString DataKeyStr = EnemyCharacter->GetDataKey();
-
-		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
-		{
-			// 상태 전이 예약
-			float Duration = FMath::Max(PlayAIData.Data.AwaitTime, 0.1f);
-			FTimerDelegate TimerDel;
-			FTimerHandle TimerHandle;
-
-			TimerDel.BindLambda([this, &_OwnerComp]() {
-				ChangeState(_OwnerComp, EEnemyAIState::Attack);
-				});
-
-			PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
-				TimerHandle,
-				TimerDel,
-				Duration,
-				false
-			);
-		}
-		else // 드래곤일 경우
-		{
-			float Duration = FMath::Max(PlayAIData.Data.AwaitTime, 0.1f);
-			FTimerDelegate TimerDel;
-			FTimerHandle TimerHandle;
-
-			TimerDel.BindLambda([this, &_OwnerComp, EnemyCharacter]() {
-
-				if (!IsValid(EnemyCharacter))
-				{
-					return;
-				}
-
-				float HealthPercent = EnemyCharacter->GetAttributeComponent()->GetHP() / EnemyCharacter->GetAttributeComponent()->MaxHP;
-				// ex: 0.0 ~ 1.0
-				FPlayAIData& LocalData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-
-
-				if (HealthPercent <= 0.5f && !LocalData.bUsedBreathAttack)
-				{
-					LocalData.bUsedBreathAttack = true;
-					ChangeState(_OwnerComp, EEnemyAIState::DragonBreath);
-				}
-				else
-				{
-
-					RandStream.GenerateNewSeed();
-
-					float Rand = RandStream.FRand(); // 0.0 ~ 1.0 float
-
-					if (Rand <= 0.6f)
-					{
-						ChangeState(_OwnerComp, EEnemyAIState::Attack); // 일반 공격
-					}
-					else
-					{
-						ChangeState(_OwnerComp, EEnemyAIState::DragonMeteor); // 범위 공격
-					}
-				}
-				});
-
-			PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
-				TimerHandle,
-				TimerDel,
-				Duration,
-				false
-			);
-		}
-
-	}
-	
-	
-
-}
-
-void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
-{
-	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
-
-	DeathCheck(_OwnerComp);
-
-	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-	APawn* SelfActor = PlayAIData.SelfPawn;
-	AActor* TargetActor = PlayAIData.TargetActor;
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
-	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
-
-	if (IsValid(EnemyCharacter))
-	{
-		FString DataKeyStr = EnemyCharacter->GetDataKey();
-
-		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
-		{
-			RotateToTargetActor(_OwnerComp, _DeltaSeconds);
-		}
-
-	}
-	if (IsValid(EnemyCharacter))
-	{
-		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
-	}
-	// 거리 기반 상태 분기
 	if (IsValid(TargetCharacter))
 	{
 		UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
@@ -153,8 +44,89 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 			}
 		}
 	}
-	
 
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+
+	if (IsValid(EnemyCharacter))
+	{
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
+		TWeakObjectPtr<AEnemyCharacter> WeakEnemy = EnemyCharacter;
+		FWeakObjectPtr WeakOwner = &_OwnerComp;
+
+		float Duration = FMath::Max(PlayAIData.Data.AwaitTime, 0.1f);
+		FTimerDelegate TimerDel;
+		FTimerHandle TimerHandle;
+
+		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
+		{
+			TimerDel.BindLambda([this, WeakOwner]() {
+				if (UBehaviorTreeComponent* Comp = Cast<UBehaviorTreeComponent>(WeakOwner.Get()))
+				{
+					ChangeState(*Comp, EEnemyAIState::Attack);
+				}
+				});
+		}
+		else
+		{
+			TimerDel.BindLambda([this, WeakOwner, WeakEnemy]() {
+				if (!WeakOwner.IsValid() || !WeakEnemy.IsValid()) return;
+
+				AEnemyCharacter* EnemyChar = WeakEnemy.Get();
+				UBehaviorTreeComponent* Comp = Cast<UBehaviorTreeComponent>(WeakOwner.Get());
+				if (!EnemyChar || !Comp) return;
+
+				float HealthPercent = EnemyChar->GetAttributeComponent()->GetHP() / EnemyChar->GetAttributeComponent()->MaxHP;
+				FPlayAIData& LocalData = UEnemyBTTaskNode::GetPlayAIData(*Comp);
+
+				if (HealthPercent <= 0.5f && !LocalData.bUsedBreathAttack)
+				{
+					LocalData.bUsedBreathAttack = true;
+					ChangeState(*Comp, EEnemyAIState::DragonBreath);
+				}
+				else
+				{
+					FRandomStream RandStream;
+					RandStream.GenerateNewSeed();
+					float Rand = RandStream.FRand();
+
+					if (Rand <= 0.5f)
+					{
+						ChangeState(*Comp, EEnemyAIState::Attack);
+					}
+					else
+					{
+						ChangeState(*Comp, EEnemyAIState::DragonMeteor);
+					}
+				}
+				});
+		}
+
+		SelfActor->GetWorldTimerManager().SetTimer(
+			TimerHandle,
+			TimerDel,
+			Duration,
+			false
+		);
+	}
+}
+
+void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
+{
+	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
+	DeathCheck(_OwnerComp);
+
+	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	APawn* SelfActor = _OwnerComp.GetAIOwner()->GetPawn();
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+
+	if (IsValid(EnemyCharacter))
+	{
+		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(EnemyCharacter->GetDataKey()))
+		{
+			RotateToTargetActor(_OwnerComp, _DeltaSeconds);
+		}
+		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
+	}
 }
 
 void UBTTaskNode_Await::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)

@@ -1,12 +1,12 @@
-// Coded By AssortRock Unreal Engine Class Project
+// Safe Timer Binding with Valid Checks
 
 #include "Enemy/AI/BTTaskNode_Attack.h"
 #include "Enemy/EnemyWarningRange.h"
 #include "TimerManager.h"
+#include "UObject/WeakObjectPtr.h"
 
 UBTTaskNode_Attack::UBTTaskNode_Attack()
 {
-	// 기본 상태를 Attack으로 설정
 	EnemyAIStateValue = EEnemyAIState::Attack;
 }
 
@@ -18,13 +18,11 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 
-	// 타겟의 위치 저장
 	if (IsValid(TargetActor))
 	{
 		TargetRangeLocation = TargetActor->GetActorLocation();
 	}
 
-	// 애니메이션 상태 전환
 	if (IsValid(SelfActor))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
@@ -34,24 +32,23 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	if (IsValid(EnemyCharacter))
 	{
-		FString DataKeyStr = EnemyCharacter->GetDataKey();
+		RotateToTargetActor(_OwnerComp, 0.1f);
+	}
 
-		// 타입에 따라 다른 동작 수행
-		if (EEnemyType::Minion_Archer == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
+	if (IsValid(EnemyCharacter))
+	{
+		FString DataKeyStr = EnemyCharacter->GetDataKey();
+		EEnemyType EnemyType = EnemyCharacter->ConvertStringToEnemyType(DataKeyStr);
+		if (EnemyType == EEnemyType::Minion_Archer)
 		{
 			EnemyCharacter->RevealArrow();
 		}
-		else if (EEnemyType::Minion_Witch == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
+		else if (EnemyType == EEnemyType::Minion_Witch)
 		{
 			EnemyCharacter->SpawnWarningRange(TargetActor);
 		}
-		else if (EEnemyType::Dragon == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
-		{
-			RotateToTargetActor(_OwnerComp, 0.01f);
-		}
 	}
 
-	// 타겟이 사망 상태이면 상태 전환
 	if (IsValid(TargetActor))
 	{
 		AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
@@ -65,30 +62,36 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		}
 	}
 
-	// 공격 완료 후 상태 전이를 위한 타이머 설정
 	float Duration = FMath::Max(PlayAIData.Data.AttackTime, 0.1f);
 	FTimerDelegate TimerDel;
 	FTimerHandle TimerHandle;
 
-	TimerDel.BindLambda([this, &_OwnerComp, EnemyCharacter]()
-		{
-			if (IsValid(EnemyCharacter))
-			{
-				FString DataKeyStr = EnemyCharacter->GetDataKey();
-				
-				// 공격 애니메이션/이펙트 수행
-				if (EEnemyType::Minion_Archer == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
-				{
-					EnemyCharacter->SpawnAndFireArrow();
-					EnemyCharacter->HideArrow();
-				}
-				else if (EEnemyType::Minion_Witch == EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
-				{
-					EnemyCharacter->SpawnEnemySkillAttack(TargetRangeLocation);
-				}
-			}
+	TWeakObjectPtr<AEnemyCharacter> WeakEnemy = EnemyCharacter;
+	FWeakObjectPtr WeakOwner = &_OwnerComp;
+	FVector StoredTargetLocation = TargetRangeLocation;
 
-			UEnemyBTTaskNode::ChangeState(_OwnerComp, EEnemyAIState::Await);
+	TimerDel.BindLambda([this, WeakOwner, WeakEnemy, StoredTargetLocation, TargetActor]() {
+		if (!WeakOwner.IsValid() || !WeakEnemy.IsValid()) return;
+
+		AEnemyCharacter* EnemyChar = WeakEnemy.Get();
+		UBehaviorTreeComponent* Comp = Cast<UBehaviorTreeComponent>(WeakOwner.Get());
+
+		if (!EnemyChar || !Comp) return;
+
+		FString DataKeyStr = EnemyChar->GetDataKey();
+		EEnemyType Type = EnemyChar->ConvertStringToEnemyType(DataKeyStr);
+
+		if (Type == EEnemyType::Minion_Archer)
+		{
+			EnemyChar->SpawnAndFireArrow(TargetActor);
+			EnemyChar->HideArrow();
+		}
+		else if (Type == EEnemyType::Minion_Witch)
+		{
+			EnemyChar->SpawnEnemySkillAttack(StoredTargetLocation, TargetActor);
+		}
+
+		ChangeState(*Comp, EEnemyAIState::Await);
 		});
 
 	PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
@@ -102,27 +105,12 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
 {
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
-
-	// 사망 체크
 	DeathCheck(_OwnerComp);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
-	if (IsValid(EnemyCharacter))
-	{
-		FString DataKeyStr = EnemyCharacter->GetDataKey();
-
-		// 드래곤 외 몬스터는 타겟 방향으로 회전
-		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
-		{
-			RotateToTargetActor(_OwnerComp, _DeltaSeconds);
-		}
-	}
-
-	// 이동 중지
 	if (SelfController)
 	{
 		SelfController->StopMovement();

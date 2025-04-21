@@ -40,6 +40,9 @@ void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePr
 	DOREPLIFETIME(UCharacterAttributeComponent, AttackPoints);
 	DOREPLIFETIME(UCharacterAttributeComponent, MaxMoveSpeed);
 	DOREPLIFETIME(UCharacterAttributeComponent, AttackSpeedRate);
+	DOREPLIFETIME(UCharacterAttributeComponent, HPGeneration);
+	DOREPLIFETIME(UCharacterAttributeComponent, CriticalChance);
+	DOREPLIFETIME(UCharacterAttributeComponent, CriticalDamageRate);
 }
 
 void UCharacterAttributeComponent::GenerateHpInternal()

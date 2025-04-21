@@ -9,6 +9,8 @@
 #include "Player/YggHero.h"
 #include "EnemyProjectile.generated.h"
 
+
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AEnemyProjectile : public AActor
 {
@@ -26,14 +28,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	
+
+	UFUNCTION()
+	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	FName GetArrowNameByDataKey(const FString& _Datakey);
+
+	void SetAttackFloat(float _Attack);
+
 	class UProjectileMovementComponent* GetProjectileMovement()
 	{
 		return ProjectileMovement;
 	}
-	UFUNCTION()
-	void OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	void SetAttackFloat(float _Attack);
 
 	class USphereComponent* GetArrowCollision()
 	{

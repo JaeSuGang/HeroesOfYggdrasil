@@ -47,7 +47,6 @@ AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _Origi
 	AEnemyAIController* AICon = Cast<AEnemyAIController>(NewEnemyCharacter->GetController());
 	AllEnemyCharacter.Add(NewEnemyCharacter);
 
-
 	return NewEnemyCharacter;
 }
 
@@ -59,5 +58,11 @@ void AEnemyManager::NetSyncMonster_Implementation()
 		AllEnemyCharacter[i]->ChangeAnimation_Multicast(CurAnimation);
 	}
 }
+
+int AEnemyManager::GetNumOfEnemyCharacter()
+{
+	return  static_cast<int>((AllEnemyCharacter.Num()));
+}
+
 
 

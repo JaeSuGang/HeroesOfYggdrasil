@@ -65,6 +65,7 @@ public:
 	/* 이 유닛의 체력을 설정하는 함수 */
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_SetHP(float fAmount);
+	void Server_SetHP_Implementation(float fAmount);
 
 	UFUNCTION(BlueprintCallable)
 	float GetHP() const;
@@ -140,4 +141,12 @@ public:
 	/* 체력 재생 */
 	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
 	float HPGeneration;
+
+	/* 크리티컬 확률 */
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
+	float CriticalChance;
+
+	/* 크리티컬 데미지 */
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
+	float CriticalDamageRate;
 };

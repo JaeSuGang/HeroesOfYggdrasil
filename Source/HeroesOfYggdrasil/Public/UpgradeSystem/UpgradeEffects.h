@@ -37,7 +37,31 @@ public:
 	float AttackSpeedIncrement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CriticalChanceIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CriticalRateIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DefenseMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HpMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float HPGeneration;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CooldownReduction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RespawnTimeReduction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HealInstantly;
 };
 
 UCLASS(Blueprintable)
@@ -58,9 +82,6 @@ public:
 	virtual void ApplyInternal_Implementation(UAttributeComponent* TargetAttribute) override;
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bHealAllPlayers;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bHealYggdrasil;
 };

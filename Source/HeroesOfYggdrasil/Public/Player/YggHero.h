@@ -21,9 +21,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillR, FName, SkillName, float,
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRespawn, float, RespawnTime);
 
- // Unreal Engine Core
+// Unreal Engine Core
 class APlayerController;
- // Camera
+// Camera
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -63,7 +63,7 @@ public:
 	}
 
 	virtual UCharacterAttributeComponent* GetAttributeComponent() override;
-	
+
 
 	UFUNCTION(BlueprintCallable)
 	UYggHeroAnimInstance* GetHeroAnimInstance()
@@ -82,7 +82,7 @@ public:
 	{
 		return FaceCaptureComponent;
 	}
-	
+
 	bool IsAimMode() const { return bAimMode; }
 
 	UFUNCTION(BlueprintCallable)
@@ -104,6 +104,8 @@ public:
 	void HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 protected:
+	virtual void OnRep_Controller() override;
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 
@@ -183,13 +185,13 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "YggInput")
 	TMap<FName, UInputAction*> ActionMap;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly , Category = "YggAnimation")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YggAnimation")
 	UYggHeroAnimInstance* HeroAnimInstance;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UHeroAttributeComponent* HeroAttributeComponent;
 
-	
+
 
 	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "NickName")
 	//UWidgetComponent* NickNameWidgetComponent;
@@ -229,7 +231,12 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Widget Respawn")
 	FOnRespawn OnRespawn;
 
-	float RespawnTime = 3.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggHero")
+	float RespawnTime = 15.0f;
+
 
 	FTransform StartTransform;
+protected:
+	UPROPERTY(Replicated)
+	int32 DeathCount = 0;
 };
