@@ -5,12 +5,13 @@
 
 #include "Components/CapsuleComponent.h"
 #include "Components/StaticMeshComponent.h"
-
-#include "Particles/ParticleSystemComponent.h"
+#include "Engine/OverlapResult.h"
+#include "Engine/StaticMeshActor.h"
 #include "GameFramework/PlayerController.h"
-#include "Enemy/EnemyCharacter.h"
-
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+
+#include "Enemy/EnemyCharacter.h"
 
 // Sets default values
 AAuroraOrb::AAuroraOrb()
@@ -22,7 +23,11 @@ AAuroraOrb::AAuroraOrb()
     SetRootComponent(OrbCapsule);
     OrbCapsule->InitCapsuleSize(20.f, 20.f);
     OrbCapsule->AddRelativeRotation(FRotator(0.0f, 0.0f, 90.0f));
+
     OrbCapsule->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel3);
+    OrbCapsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel5, ECR_Overlap);
+    OrbCapsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel6, ECR_Overlap);
+
     OrbCapsule->SetHiddenInGame(true);
     OrbCapsule->SetVisibility(true);
 
@@ -40,18 +45,73 @@ void AAuroraOrb::BeginPlay()
     Super::BeginPlay();
 
     APlayerController* PC = GetWorld()->GetFirstPlayerController();
-    if (PC)
+    if (PC && PC->GetPawn())
     {
-        FRotator ControlRotation = PC->GetControlRotation();
-        MoveDirection = ControlRotation.Vector();
+        // 1. 카메라 위치 & 회전 획득
+        FVector CameraLoc;
+        FRotator CameraRot;
+        PC->GetPlayerViewPoint(CameraLoc, CameraRot);
+
+        // 2. 뷰포트 중앙 좌표 계산
+        int32 ViewportSizeX, ViewportSizeY;
+        PC->GetViewportSize(ViewportSizeX, ViewportSizeY);
+        FVector2D ScreenCenter = FVector2D(ViewportSizeX * 0.5f, ViewportSizeY * 0.5f);
+
+        // 3. 화면 중앙 → 월드 방향 변환
+        FVector WorldDirection;
+        FVector DummyVector;
+        PC->DeprojectScreenPositionToWorld(
+            ScreenCenter.X,
+            ScreenCenter.Y,
+            DummyVector,
+            WorldDirection
+        );
+
+        // 4. Line Trace 파라미터 설정
+        FVector TraceStart = CameraLoc;
+        FVector TraceEnd = TraceStart + (WorldDirection * 10000.f);
+        FHitResult HitResult;
+        FCollisionQueryParams TraceParams;
+        TraceParams.AddIgnoredActor(PC->GetPawn());
+        TraceParams.AddIgnoredActor(this);
+
+        // 5. Line Trace 수행
+        bool bHit = GetWorld()->LineTraceSingleByChannel(
+            HitResult,
+            TraceStart,
+            TraceEnd,
+            ECC_Visibility,
+            TraceParams
+        );
+
+        // 6. 타겟 포인트 결정
+        TargetPoint = bHit ? HitResult.Location : TraceStart + (WorldDirection * 10000.f);
+
+        // 7. 이동 방향 계산 (오브 현재 위치 → 타겟 포인트)
+        MoveDirection = (TargetPoint - GetActorLocation()).GetSafeNormal();
+        
+        if (!MoveDirection.IsNearlyZero())
+        {
+            FRotator NewRotation = FRotationMatrix::MakeFromYZ(
+                MoveDirection,
+                FVector::UpVector
+            ).Rotator();
+
+            SetActorRotation(NewRotation + FRotator(0, 0, 90.f));
+        }
+
+        // 디버그
+        // DrawDebugLine(GetWorld(), CameraLoc, TargetPoint, FColor::Green, false, 2.f);
+        // DrawDebugSphere(GetWorld(), TargetPoint, 30.f, 12, FColor::Red, false, 2.f);
     }
 
+    // 파괴 타이머
     FTimerHandle OrbTimer;
     GetWorld()->GetTimerManager().SetTimer(OrbTimer, [this]() {
         this->Destroy();
-    }
+        }
     , 3.0f, false);
-
+    
     if (PSTrail)
     {
         UGameplayStatics::SpawnEmitterAttached(
@@ -64,29 +124,128 @@ void AAuroraOrb::BeginPlay()
             true
         );
     }
+
+    // 호밍 타이머
+    GetWorld()->GetTimerManager().SetTimer(HomingTimer,[this]() { 
+        bCanHoming = true; 
+        }
+    ,HomingStartDelay, false);
 }
 
 // Called every frame
 void AAuroraOrb::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+    Super::Tick(DeltaTime);
 
     if (!MoveDirection.IsZero())
     {
         FVector NewLoc = GetActorLocation() + MoveDirection * MoveSpeed * DeltaTime;
         SetActorLocation(NewLoc);
+
+        const float DistanceThreshold = 20.f;
+        if (FVector::Dist(GetActorLocation(), TargetPoint) < DistanceThreshold)
+        {
+            if (PSImpact)
+            {
+                UGameplayStatics::SpawnEmitterAtLocation(
+                    GetWorld(),
+                    PSImpact,
+                    GetActorLocation(),
+                    GetActorRotation()
+                );
+            }
+
+            Destroy();
+            return;
+        }
+
+        if (bCanHoming)
+        {
+            if(!TargetEnemy)
+            {
+            TArray<FOverlapResult> OverlapResults;
+            FCollisionQueryParams CollisionParams;
+            CollisionParams.AddIgnoredActor(this);
+
+            FCollisionObjectQueryParams ObjectQueryParams;
+            ObjectQueryParams.AddObjectTypesToQuery(EnemyObjectType.GetValue());
+
+            // 주변 적 탐지
+            if (GetWorld()->OverlapMultiByObjectType(
+                OverlapResults,
+                GetActorLocation(),
+                FQuat::Identity,
+                ObjectQueryParams,
+                FCollisionShape::MakeSphere(HomingRadius),
+                CollisionParams))
+            {
+                float NearestDistance = BIG_NUMBER;
+
+                // 가장 가까운 적 찾기
+                for (const FOverlapResult& Result : OverlapResults)
+                {
+                    if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(Result.GetActor()))
+                    {
+                        const float Distance = FVector::DistSquared(GetActorLocation(), Enemy->GetActorLocation());
+                        if (Distance < NearestDistance)
+                        {
+                            NearestDistance = Distance;
+                            TargetEnemy = Enemy;
+                        }
+                    }
+                }
+            }
+
+                if (TargetEnemy && !TargetEnemy->IsValidLowLevel())
+                {
+                    TargetEnemy = nullptr;
+                }
+
+                // 방향 조정
+                if (TargetEnemy)
+                {
+                    const FVector TargetLocation = TargetEnemy->GetActorLocation();
+                    const FVector DesiredDirection = (TargetLocation - GetActorLocation()).GetSafeNormal();
+
+                    MoveDirection = FMath::VInterpConstantTo(
+                        MoveDirection,
+                        DesiredDirection,
+                        DeltaTime,
+                        HomingStrength
+                    );
+
+                    SetActorRotation(FRotationMatrix::MakeFromYZ(
+                        MoveDirection,
+                        FVector::UpVector
+                    ).Rotator() + FRotator(0, 0, 90));
+                }
+            }
+        }
     }
 }
 
 void AAuroraOrb::OnOrbOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    if (OtherActor && OtherActor != this && OtherComp)
+    if (!IsValid(OtherActor) || OtherActor == this || !IsValid(OtherComp)) return;
+    
+    bool bShouldDestroy = false;
+
+    ECollisionChannel Channel = OtherComp->GetCollisionObjectType();
+    if (Channel == ECC_GameTraceChannel5 || Channel == ECC_GameTraceChannel6)
     {
-        AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor);
-        if (!IsValid(Enemy)) return;
+        bShouldDestroy = true;
+    }
+    else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor))
+    {
+        if (IsValid(Enemy))
+        {
+            Enemy->GetAttributeComponent()->Server_TakeDamage(AttPower);
+            bShouldDestroy = true;
+        }
+    }
 
-        Enemy->GetAttributeComponent()->Server_TakeDamage(AttPower);
-
+    if (bShouldDestroy)
+    {
         if (PSImpact)
         {
             UGameplayStatics::SpawnEmitterAtLocation(
@@ -97,6 +256,6 @@ void AAuroraOrb::OnOrbOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
             );
         }
 
-        this->Destroy();
+        Destroy();
     }
 }
