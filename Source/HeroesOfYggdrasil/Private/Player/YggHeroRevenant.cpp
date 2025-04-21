@@ -88,15 +88,6 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 	ServerAttackRevenant(Value);
-	/*if (HasAuthority())
-	{
-		MulticastAttackRevenant(Value);
-	}
-	else
-	{
-		ServerAttackRevenant(Value);
-		return;
-	}*/
 }
 
 void AYggHeroRevenant::ServerAttackRevenant_Implementation(const FInputActionValue& Value)

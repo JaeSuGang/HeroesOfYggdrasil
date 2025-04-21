@@ -128,7 +128,7 @@ float UYggAttackCapsuleComponent::DamageLogic(UCharacterAttributeComponent* Atta
 	Damage = AttackAttributeComponent->AttackPoints* Coefficient;
 	// 방어력 계산
 	Damage = Damage * (100 / (100 + HitAttributeComponent->DefensePoints));
-	// 크리티컬 확률 계산
+	// 크리티컬 확률 계산 
 	if (FMath::FRand() <= AttackAttributeComponent->CriticalChance)
 	{
 		Damage = Damage * (1 + AttackAttributeComponent->CriticalDamageRate);
