@@ -32,11 +32,18 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastAttackRevenant(const FInputActionValue& Value);
 
+	UFUNCTION(Server, Reliable)
+	void ServerSkillERevenant(const FInputActionValue& Value);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastSkillERevenant(const FInputActionValue& Value);
+
+
+
 public:
 	UFUNCTION(Server, Reliable)
 	void Server_SetPendingAimDirection(const FVector& InAimDir);
 	UFUNCTION()
-	FVector Local_SetPendingAimDirection();
+	FVector Local_SetPendingAimDirection(FName SocketName);
 
 	UPROPERTY(Replicated)
 	FVector AimDirection;
@@ -46,7 +53,7 @@ public:
 	TSubclassOf<class AYggProjectileActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
-	TSubclassOf<class AYggProjectileActor> BombClass;
+	TSubclassOf<class AYggBombActor> BombClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
 	FName SocketName;

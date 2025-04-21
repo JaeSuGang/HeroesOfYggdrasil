@@ -21,6 +21,7 @@
 #include "Net/UnrealNetwork.h"
 
 #include "Global/YggProjectileActor.h"
+#include "Global/YggBombActor.h"
 #include "MainGame/UI/MainGameHUD.h"
 
 #include "Kismet/GameplayStatics.h"
@@ -83,34 +84,23 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 	{
 		return;
 	}
-	FVector NewAimDir = Local_SetPendingAimDirection();
+	FVector NewAimDir = Local_SetPendingAimDirection(TEXT("FX_Gun_Barrel"));
 	Server_SetPendingAimDirection(NewAimDir);
 
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	if (HasAuthority())
+	{
+		MulticastAttackRevenant(Value);
+	}
+	else
+	{
+		ServerAttackRevenant(Value);
+	}
 	ServerAttackRevenant(Value);
 }
 
 void AYggHeroRevenant::ServerAttackRevenant_Implementation(const FInputActionValue& Value)
 {
-	const FVector SpawnLocation = GetMesh()->GetSocketLocation(SocketName);
-	const FRotator AimRot = AimDirection.Rotation();
-
-	FTransform SpawnTransform(AimRot, SpawnLocation);
-
-	AYggProjectileActor* Projectile = GetWorld()->SpawnActorDeferred<AYggProjectileActor>(
-		ProjectileClass,
-		SpawnTransform,
-		nullptr,
-		nullptr,
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
-	);
-
-	if (!Projectile) return;
-
-	Projectile->SetOwnerCharacter(this);
-	Projectile->SetAimDir(AimDirection);
-
-	UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
 	MulticastAttackRevenant(Value);
 }
 
@@ -120,6 +110,7 @@ void AYggHeroRevenant::MulticastAttackRevenant_Implementation(const FInputAction
 	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
 	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);
 }
+
 
 void AYggHeroRevenant::SkillQ(const FInputActionValue& Value)
 {
@@ -132,6 +123,8 @@ void AYggHeroRevenant::SkillQ(const FInputActionValue& Value)
 	{
 		SetAimMode(true);
 	}
+	FVector NewAimDir = Local_SetPendingAimDirection(TEXT("FX_Gun_Barrel"));
+	Server_SetPendingAimDirection(NewAimDir);
 	//if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
@@ -153,19 +146,39 @@ void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
 	{
 		SetAimMode(true);
 	}
+	FVector NewAimDir = Local_SetPendingAimDirection(TEXT("FX_Trail_R_02"));
+	Server_SetPendingAimDirection(NewAimDir);
 	Super::SkillE(Value);
+	if (HasAuthority()) 
+	{
+		MulticastSkillERevenant(Value);
+	}
+	else
+	{
+		ServerSkillERevenant(Value);
+	}
 }
 
-FVector AYggHeroRevenant::Local_SetPendingAimDirection()
+void AYggHeroRevenant::ServerSkillERevenant_Implementation(const FInputActionValue& Value)
+{
+	MulticastSkillERevenant_Implementation(Value);
+}
+
+void AYggHeroRevenant::MulticastSkillERevenant_Implementation(const FInputActionValue& Value)
+{
+
+}
+
+FVector AYggHeroRevenant::Local_SetPendingAimDirection(FName _SocketName)
 {
 	APlayerController* PC = Cast<APlayerController>(GetController());
 	if (!PC) return FVector();
-
 	FVector CamLoc;
 	FRotator CamRot;
 	PC->GetPlayerViewPoint(CamLoc, CamRot);
 
-	FVector TraceEnd = CamLoc + CamRot.Vector() * 10000.f;
+	FVector StartLoc = GetMesh()->GetSocketLocation(_SocketName);
+	FVector TraceEnd = StartLoc + CamRot.Vector() * 10000.f;
 
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
