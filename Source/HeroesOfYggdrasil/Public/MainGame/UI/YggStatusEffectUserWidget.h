@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "MainGame/UI/YggUserWidget.h"
 #include "Data/YggEnumData.h"
+#include "Attribute/CharacterAttributeComponent.h"
 #include "YggStatusEffectUserWidget.generated.h"
 
 class UYggDebuffUserWidget;
 class UHorizontalBox;
-class FOnTagsChangedParams;
+
 
 /**
  * 
@@ -21,7 +22,6 @@ class HEROESOFYGGDRASIL_API UYggStatusEffectUserWidget : public UYggUserWidget
 
 
 public:
-	UFUNCTION(BlueprintCallable)
 	void UpdateDebuff(FOnTagsChangedParams OnTagsChangedParams);
 
 	UFUNCTION(BlueprintCallable)
@@ -35,9 +35,6 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "YGG")
 	TSubclassOf<UUserWidget> DebuffUserWidgetClass;
-
-	UPROPERTY(EditAnyWhere, Category = "YGG")
-	UYggDebuffUserWidget* DebuffWidget;
 
 	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox* DebuffContainer;

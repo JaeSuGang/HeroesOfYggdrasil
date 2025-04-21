@@ -5,6 +5,9 @@
 
 #include "Components/ProgressBar.h"
 
+#include "Player/YggHero.h"
+#include "Attribute/CharacterAttributeComponent.h"
+#include "Global/YggTickActor.h"
 
 void UYggDebuffUserWidget::NativeOnInitialized()
 {
@@ -16,6 +19,23 @@ void UYggDebuffUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	AYggHero* Hero = PC->GetPawn<AYggHero>();
+
+	TArray<AActor*> AttachedActors;
+	Hero->GetAttachedActors(AttachedActors);
+
+	for (AActor* Actor : AttachedActors)
+	{
+		if (AYggTickActor* TickActor = Cast<AYggTickActor>(Actor))
+		{
+			if (DebuffType == TickActor->TickEffectType)
+			{
+				DebuffTime = TickActor->StatusTickTime;
+			}
+		}
+	}
 }
 
 void UYggDebuffUserWidget::NativeDestruct()
@@ -25,7 +45,30 @@ void UYggDebuffUserWidget::NativeDestruct()
 	EndDebuff();
 }
 
-FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f)
+void UYggDebuffUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	AYggHero* Hero = PC->GetPawn<AYggHero>();
+
+	TArray<AActor*> AttachedActors;
+	Hero->GetAttachedActors(AttachedActors);
+
+	for (AActor* Actor : AttachedActors)
+	{
+		if (AYggTickActor* TickActor = Cast<AYggTickActor>(Actor))
+		{
+			if (DebuffType == TickActor->TickEffectType)
+			{
+				UpdateDebuffBar(TickActor->StatusTickTime);
+			}
+		}
+	}
+}
+
+FSlateBrush UYggDebuffUserWidget::MakeTexBrush(UTexture2D* Tex, FVector2D Size, float Brightness)
 {
 	FSlateBrush Brush;
 	Brush.SetResourceObject(Tex);
@@ -43,30 +86,29 @@ void UYggDebuffUserWidget::InitDebuff(EStatusEffectType StatusEffectType)
 	SetTexture(StatusEffectType);
 
 	FProgressBarStyle PStyle;
-	PStyle.BackgroundImage = MakeBrush(Tex, Size, 0.6f);
-	PStyle.FillImage = MakeBrush(Tex, Size, 1.0f);
+	PStyle.BackgroundImage = MakeTexBrush(Texture, Size, 0.6f);
+	PStyle.FillImage = MakeTexBrush(Texture, Size, 1.0f);
 	DebuffBar->SetWidgetStyle(PStyle);
 	DebuffBar->SetPercent(1.0f);
 
-	StartDebuff(0.0f);
+	//StartDebuff();
 }
 
-void UYggDebuffUserWidget::StartDebuff(float Duration)
+void UYggDebuffUserWidget::StartDebuff()
 {
-	DebufflTime = Duration;
-	RemainingTime = Duration;
+	RemainingTime = DebuffTime;
 
 	if (DebuffBar)
 	{
 		DebuffBar->SetPercent(1.0f);
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UYggDebuffUserWidget::UpdateDebuffBar, 0.05f, true);
+	//GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UYggDebuffUserWidget::UpdateDebuffBar, 0.05f, true);
 }
 
-void UYggDebuffUserWidget::UpdateDebuffBar()
+void UYggDebuffUserWidget::UpdateDebuffBar(float Duration)
 {
-	RemainingTime -= 0.05f;
+	RemainingTime = Duration;
 
 	if (RemainingTime <= 0.0f)
 	{
@@ -74,7 +116,7 @@ void UYggDebuffUserWidget::UpdateDebuffBar()
 		return;
 	}
 
-	float Progress = RemainingTime / DebufflTime;
+	float Progress = RemainingTime / DebuffTime;
 	if (DebuffBar)
 	{
 		DebuffBar->SetPercent(Progress);
@@ -83,7 +125,7 @@ void UYggDebuffUserWidget::UpdateDebuffBar()
 
 void UYggDebuffUserWidget::EndDebuff()
 {
-	GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
+	//GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 	RemoveFromParent();
 }
 
@@ -92,19 +134,19 @@ UTexture2D* UYggDebuffUserWidget::SetTexture(EStatusEffectType StatusEffectType)
 	switch (StatusEffectType)
 	{
 	case EStatusEffectType::Poison:
-		return Tex = PosionTexture;
+		return Texture = PosionTexture;
 		break;
 	case EStatusEffectType::Burn:
-		return Tex = BurnTexture;
+		return Texture = BurnTexture;
 		break;
 	case EStatusEffectType::Slow:
-		return Tex = SlowTexture;
+		return Texture = SlowTexture;
 		break;
 	case EStatusEffectType::Stunned:
-		return Tex = StunnedTexture;
+		return Texture = StunnedTexture;
 		break;
 	default:
-		return Tex = nullptr;
+		return Texture = nullptr;
 		break;
 	}
 }

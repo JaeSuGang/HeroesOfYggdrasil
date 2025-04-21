@@ -24,10 +24,10 @@ public:
 	void InitDebuff(EStatusEffectType StatusEffectType);
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
-	void StartDebuff(float Duration);
+	void StartDebuff();
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
-	void UpdateDebuffBar();
+	void UpdateDebuffBar(float Durtion);
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
 	void EndDebuff();
@@ -35,20 +35,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "YGG")
 	UTexture2D* SetTexture(EStatusEffectType StatusEffectType);
 
+	UFUNCTION(BlueprintCallable, Category = "YGG")
+	FSlateBrush MakeTexBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f);
+
 	EStatusEffectType GetDebuffType()
 	{
 		return DebuffType;
 	}
 
 	FTimerHandle TimerHandle;
-	float DebufflTime = 0.0f;
+	float DebuffTime = 0.0f;
 	float RemainingTime = 0.0f;
 
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
 	virtual void NativeDestruct() override;
-
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 private:
 	UPROPERTY(meta = (BindeWidget))
@@ -66,7 +69,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "YGG")
 	UTexture2D* StunnedTexture;
 
-	UTexture2D* Tex;
+	UTexture2D* Texture;
 
 	EStatusEffectType DebuffType;
 };
