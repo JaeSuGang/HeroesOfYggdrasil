@@ -73,7 +73,7 @@ void UYggAttackCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedCom
 	UCharacterAttributeComponent* DamageCharacterAttributeComponent = DamageCharacter->GetAttributeComponent();
 	UCharacterAttributeComponent* AttackCharacterAttributeComponent = OwnerCharacter->GetAttributeComponent();
 
-	if (!AttackCharacterAttributeComponent|| DamageCharacterAttributeComponent) { return; }
+	if (!AttackCharacterAttributeComponent|| !DamageCharacterAttributeComponent) { return; }
 
 	float Damage = DamageLogic(AttackCharacterAttributeComponent, DamageCharacterAttributeComponent);
 
