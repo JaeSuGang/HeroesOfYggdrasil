@@ -28,6 +28,31 @@ void UUpgradeEffect_Stats::ApplyInternal_Implementation(UAttributeComponent* Tar
 			CastedTargetAttribute->Server_SetMaxHP(CastedTargetAttribute->MaxHP + HPIncrement);
 			CastedTargetAttribute->Server_SetHP(CastedTargetAttribute->HP + HPIncrement);
 		}
+		
+		if (CriticalChanceIncrement != 0.0f)
+		{
+			CastedTargetAttribute->CriticalChance += CriticalChanceIncrement;
+		}
+
+		if (CriticalRateIncrement != 0.0f)
+		{
+			CastedTargetAttribute->CriticalDamageRate += CriticalRateIncrement;
+		}
+
+		if (AttackMultiplier != 0.0f)
+		{
+			CastedTargetAttribute->Server_SetAttackPoints(CastedTargetAttribute->AttackPoints * AttackMultiplier);
+		}
+
+		if (DefenseMultiplier != 0.0f)
+		{
+			CastedTargetAttribute->Server_SetDefensePoints(CastedTargetAttribute->DefensePoints * DefenseMultiplier);
+		}
+
+		if (HpMultiplier != 0.0f)
+		{
+			CastedTargetAttribute->Server_SetHP(CastedTargetAttribute->HP * HpMultiplier);
+		}
 
 		if (MoveSpeedIncrement != 0.0f)
 		{
