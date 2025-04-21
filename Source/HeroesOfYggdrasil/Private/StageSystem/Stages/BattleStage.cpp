@@ -15,7 +15,7 @@ void UBattleStage::BeginPlay(UStageSystem* NewStageSystem)
 
 	if (StageSystem->GetOwner()->HasAuthority())
 	{
-		OnEnterStageInternal.AddDynamic(this, &UBattleStage::SpawnWave);
+		OnEnterStageDelegate.AddDynamic(this, &UBattleStage::SpawnWave);
 	}
 }
 
@@ -25,14 +25,14 @@ void UBattleStage::TickLogic(float DeltaTime)
 
 	if (AEnemyManager* EM = AEnemyManager::Get(StageSystem->GetWorld()))
 	{
-		if (EM->AllEnemyCharacter.Num() <= 0)
+		if (HasEverSpawnedMonster && EM->AllEnemyCharacter.Num() <= 0)
 		{
 			EnterNextStage();
 		}
 	}
 }
 
-void UBattleStage::SpawnWave(FOnEnterStageParams OnEnterStageParams)
+void UBattleStage::SpawnWave(FOnEnterStageDelegateParams OnEnterStageParams)
 {
 	LoadTables();
 
@@ -48,7 +48,7 @@ void UBattleStage::SpawnWave(FOnEnterStageParams OnEnterStageParams)
 					// EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation);
 					int ab = i;
 					FTimerHandle TH{};
-					StageSystem->GetWorld()->GetTimerManager().SetTimer(TH, [EnemyManager, SpawnInfo, ab]() {EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation); }, (float)i + SpawnInfo.SpawnDelay, false);
+					StageSystem->GetWorld()->GetTimerManager().SetTimer(TH, [this, EnemyManager, SpawnInfo, ab]() { HasEverSpawnedMonster = true; EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation); }, (float)i + SpawnInfo.SpawnDelay, false);
 				}
 			}
 		}
@@ -69,4 +69,16 @@ void UBattleStage::LoadTables()
 	{
 		WaveTable->GetAllRows<FWaveTableRow>(TEXT(""), WaveTableAsArray);
 	}
+}
+
+void UBattleStage::Local_OnExitStage(int CurrentRound)
+{
+	Super::Local_OnExitStage(CurrentRound);
+}
+
+void UBattleStage::Local_OnEnterStage(int NewRound)
+{
+	Super::Local_OnEnterStage(NewRound);
+
+	HasEverSpawnedMonster = false;
 }

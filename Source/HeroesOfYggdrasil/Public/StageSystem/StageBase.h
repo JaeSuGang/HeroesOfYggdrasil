@@ -10,7 +10,7 @@ class UStageSystem;
 class UStageDataAsset;
 
 USTRUCT()
-struct FOnEnterStageParams
+struct FOnEnterStageDelegateParams
 {
 	GENERATED_BODY()
 
@@ -19,16 +19,16 @@ struct FOnEnterStageParams
 };
 
 USTRUCT()
-struct FOnExitStageParams
+struct FOnExitStageDelegateParams
 {
 	GENERATED_BODY()
 
 	UPROPERTY()
-	int NewRound;
+	int CurrentRound;
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnterStageInternal, FOnEnterStageParams, OnEnterStageParams);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnExitStageInternal, FOnExitStageParams, OnExitStageParams);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnterStageDelegate, FOnEnterStageDelegateParams, OnEnterStageDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnExitStageDelegate, FOnExitStageDelegateParams, OnExitStageDelegate);
 
 /**
  * 담당 코더 : 김경민
@@ -53,6 +53,12 @@ public:
 	UFUNCTION()
 	virtual void TickLogic(float fDeltaTime);
 
+	UFUNCTION()
+	virtual void Local_OnEnterStage(int NewRound);
+
+	UFUNCTION()
+	virtual void Local_OnExitStage(int CurrentRound);
+
 public:
 	UFUNCTION()
 	void EnterNextStage();
@@ -69,10 +75,10 @@ public:
 	* 클라이언트가 Bind할 시 자기 클라이언트에 영향
 	*/
 	UPROPERTY(BlueprintAssignable)
-	FOnEnterStageInternal OnEnterStageInternal;
+	FOnEnterStageDelegate OnEnterStageDelegate;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnExitStageInternal OnExitStageInternal;
+	FOnExitStageDelegate OnExitStageDelegate;
 
 public:
 	UPROPERTY(VisibleInstanceOnly)
