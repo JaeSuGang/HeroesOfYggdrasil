@@ -64,3 +64,11 @@ enum class EEnemyType : uint8
 	Dragon			UMETA(DisplayName = "Dragon"),
 	MAX UMETA(DisplayName = "MAX")
 };
+
+UENUM(BlueprintType)
+enum class EArrowType: uint8
+{
+	ArrowBlue		UMETA(DisplayName = "ArrowBlue"),
+	ArrowYellow		UMETA(DisplayName = "ArrowYellow"),
+	MAX UMETA(DisplayName = "MAX")
+};

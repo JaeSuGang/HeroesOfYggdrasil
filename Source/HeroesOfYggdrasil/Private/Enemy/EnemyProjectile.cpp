@@ -11,6 +11,8 @@
 #include "Components/SphereComponent.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
+#include "Enemy/EnemyCharacter.h"
+
 // Sets default values
 AEnemyProjectile::AEnemyProjectile()
 {
@@ -29,13 +31,11 @@ AEnemyProjectile::AEnemyProjectile()
     ArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ArrowMesh"));
     ArrowMesh->SetupAttachment(DefualtSceneRoot);
 
-    //ArrowCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
     {
         ArrowSphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
         ArrowSphereCollision->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
         ArrowSphereCollision->SetupAttachment(DefualtSceneRoot);
         ArrowSphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyProjectile::OverLap);
-       //AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), ArrowCollision);
     }
     DestroyTime = 5.0f;
     ArrowAttack = 0.0f;
@@ -46,7 +46,18 @@ void AEnemyProjectile::BeginPlay()
 {
     Super::BeginPlay();
 
-    FProjectileDataRow* ProjectileDataRow = EnemyProjectileData->FindRow<FProjectileDataRow>(FName("Arrow"), nullptr);
+
+    AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOwner());
+    
+    FString EnemyDataKey = EnemyCharacter->GetDataKey();
+    if (!EnemyDataKey.StartsWith("Minion_Archer"))
+    {
+        return;
+    }
+    
+    FName RowName = GetArrowNameByDataKey(EnemyDataKey);
+
+    FProjectileDataRow* ProjectileDataRow = EnemyProjectileData->FindRow<FProjectileDataRow>(RowName, nullptr);
 
     ProjectileMovement->InitialSpeed = ProjectileDataRow->ProjectileData.InitialSpeed;
     ProjectileMovement->MaxSpeed = ProjectileDataRow->ProjectileData.MaxSpeed;
@@ -104,4 +115,24 @@ void AEnemyProjectile::OverLap(UPrimitiveComponent* OverlappedComponent, AActor*
 void AEnemyProjectile::SetAttackFloat(float _Attack)
 {
     ArrowAttack = _Attack;
+}
+
+
+FName AEnemyProjectile::GetArrowNameByDataKey(const FString& _Datakey)
+{
+    static const TMap<FString, FName> ArrowData =
+    {
+        {TEXT("Minion_Archer_0"), FName("Arrow_0")},
+        {TEXT("Minion_Archer_1"), FName("Arrow_1")},
+        {TEXT("Minion_Archer_2"), FName("Arrow_2")},
+        {TEXT("Minion_Archer_3"), FName("Arrow_2")}
+    };
+
+
+    if (const FName* FindName = ArrowData.Find(_Datakey))
+    {
+        return *FindName;
+    }
+
+    return FName("Arrow_0");
 }
