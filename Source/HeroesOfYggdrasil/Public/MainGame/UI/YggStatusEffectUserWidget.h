@@ -4,30 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "MainGame/UI/YggUserWidget.h"
+#include "Data/YggEnumData.h"
+#include "Attribute/CharacterAttributeComponent.h"
 #include "YggStatusEffectUserWidget.generated.h"
 
-class UProgressBar;
-class UImage;
-class UTexture2D;
+class UYggDebuffUserWidget;
+class UHorizontalBox;
 
-USTRUCT()
-struct FUIStatusEffectData
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	UProgressBar* Bar = nullptr;
-
-	UPROPERTY()
-	UImage* Image = nullptr;
-
-	UPROPERTY()
-	UTexture2D* Icon = nullptr;
-
-	FTimerHandle TimerHandle;
-	float CoolTime = 0.0f;
-	float RemainingTime = 0.0f;
-};
 
 /**
  * 
@@ -39,7 +22,11 @@ class HEROESOFYGGDRASIL_API UYggStatusEffectUserWidget : public UYggUserWidget
 
 
 public:
+	UFUNCTION()
+	void UpdateDebuff(FOnTagsChangedParams OnTagsChangedParams);
 
+	UFUNCTION(BlueprintCallable)
+	UYggDebuffUserWidget* FindDebuffWidget(EStatusEffectType StatusEffectType);
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -47,7 +34,12 @@ protected:
 	virtual void NativeDestruct() override;
 
 private:
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	TSubclassOf<UUserWidget> DebuffUserWidgetClass;
 
+	UPROPERTY(meta = (BindWidget))
+	UHorizontalBox* DebuffContainer;
 
-
+	UPROPERTY()
+	TArray<UYggDebuffUserWidget*> DebuffWidgets;
 };

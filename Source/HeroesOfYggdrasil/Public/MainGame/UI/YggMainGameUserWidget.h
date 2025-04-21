@@ -20,6 +20,7 @@ class UYggSelectAbilityUserWidget;
 class UYggCastingBarUserWidget;
 class UYggSkillBarUserWidget;
 class UYggDeathPopupUserWidget;
+class UYggStatusUserWidget;
 
 /**
  * 
@@ -57,6 +58,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void DelSelectAbility();
 
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void TempFunc();
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -90,6 +93,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> DeathPopupWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> StatusWidgetClass;
+
 	UPROPERTY()
 	UYggPlayerStatusUserWidget* PlayerStatusWidget;
 
@@ -111,5 +117,6 @@ private:
 	UPROPERTY()
 	UYggDeathPopupUserWidget* DeathPopupWidget;
 
-	
+	UPROPERTY()
+	UYggStatusUserWidget* StatusWidget;
 };
