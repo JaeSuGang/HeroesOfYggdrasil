@@ -110,7 +110,7 @@ void UYggDebuffUserWidget::UpdateDebuffBar(float Duration)
 {
 	RemainingTime = Duration;
 
-	if (RemainingTime <= 0.0f)
+	if (RemainingTime <= 0.1f)
 	{
 		EndDebuff();
 		return;

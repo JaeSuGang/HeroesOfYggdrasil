@@ -39,15 +39,15 @@ void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChanged
 	AYggHero* Hero = PC->GetPawn<AYggHero>();
 	UCharacterAttributeComponent* HAC = Hero->GetAttributeComponent();
 
-	if (HAC->HasTag("Character.DeBuff.Poison"))
+	if (HAC->HasTag("Character.DeBuff.Poison") || !FindDebuffWidget(EStatusEffectType::Poison))
 	{
 		//if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Poison))
 		//{
 		//	DebuffContainer->RemoveChild(Existing);
 		//	DebuffWidgets.Remove(Existing);
 		//}
-		if (FindDebuffWidget(EStatusEffectType::Poison))
-			return;
+		//if (FindDebuffWidget(EStatusEffectType::Poison))
+		//	return;
 
 		UYggDebuffUserWidget* NewDebuff = CreateWidget<UYggDebuffUserWidget>(this, DebuffUserWidgetClass);
 		NewDebuff->InitDebuff(EStatusEffectType::Poison);
@@ -61,10 +61,10 @@ void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChanged
 		DebuffWidgets.Remove(Existing);
 	}
 	
-	if (HAC->HasTag("Character.DeBuff.Burn"))
+	if (HAC->HasTag("Character.DeBuff.Burn") || !FindDebuffWidget(EStatusEffectType::Burn))
 	{
-		if (FindDebuffWidget(EStatusEffectType::Burn))
-			return;
+		//if (FindDebuffWidget(EStatusEffectType::Burn))
+		//	return;
 
 		UYggDebuffUserWidget* NewDebuff = CreateWidget<UYggDebuffUserWidget>(this, DebuffUserWidgetClass);
 		NewDebuff->InitDebuff(EStatusEffectType::Burn);
@@ -78,10 +78,10 @@ void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChanged
 		DebuffWidgets.Remove(Existing);
 	}
 	
-	if (HAC->HasTag("Character.DeBuff.Slow"))
+	if (HAC->HasTag("Character.DeBuff.Slow") || !!FindDebuffWidget(EStatusEffectType::Slow))
 	{
-		if (FindDebuffWidget(EStatusEffectType::Slow))
-			return;
+		//if (FindDebuffWidget(EStatusEffectType::Slow))
+		//	return;
 
 		UYggDebuffUserWidget* NewDebuff = CreateWidget<UYggDebuffUserWidget>(this, DebuffUserWidgetClass);
 		NewDebuff->InitDebuff(EStatusEffectType::Slow);
@@ -95,10 +95,10 @@ void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChanged
 		DebuffWidgets.Remove(Existing);
 	}
 
-	if (HAC->HasTag("Character.DeBuff.Stunned"))
+	if (HAC->HasTag("Character.DeBuff.Stunned") || !FindDebuffWidget(EStatusEffectType::Stunned))
 	{
-		if (FindDebuffWidget(EStatusEffectType::Stunned))
-			return;
+		//if (FindDebuffWidget(EStatusEffectType::Stunned))
+		//	return;
 
 		UYggDebuffUserWidget* NewDebuff = CreateWidget<UYggDebuffUserWidget>(this, DebuffUserWidgetClass);
 		NewDebuff->InitDebuff(EStatusEffectType::Stunned);
