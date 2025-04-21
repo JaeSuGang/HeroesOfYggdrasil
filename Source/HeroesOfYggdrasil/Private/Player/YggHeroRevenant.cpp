@@ -120,7 +120,6 @@ void AYggHeroRevenant::ServerAttackRevenant_Implementation(const FInputActionVal
 	Projectile->SetAimDir(AimDirection);
 
 	UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SpawnProjectile"));
 	MulticastAttackRevenant(Value);
 }
 

@@ -46,7 +46,13 @@ public:
 	TSubclassOf<class AYggProjectileActor> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
+	TSubclassOf<class AYggProjectileActor> BombClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
 	FName SocketName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
+	FName BombSocketName;
 	
 
 

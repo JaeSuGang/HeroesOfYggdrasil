@@ -449,10 +449,6 @@ void AYggHero::ServerAttack_Implementation(const FInputActionValue& Value)
 
 void AYggHero::MulticastAttack_Implementation(const FInputActionValue& Value)
 {
-	if (HasAuthority()) 
-	{
-		return;
-	}
 	FName MontageName = *FString::Printf(TEXT("Attack"));
 	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
 	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);

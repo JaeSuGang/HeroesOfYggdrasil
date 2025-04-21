@@ -141,4 +141,12 @@ public:
 	/* 체력 재생 */
 	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
 	float HPGeneration;
+
+	/* 크리티컬 확률 */
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
+	float CriticalChance;
+
+	/* 크리티컬 데미지 */
+	UPROPERTY(ReplicatedUsing = OnRep_Status, EditAnywhere, BlueprintReadOnly)
+	float CriticalDamageRate;
 };
