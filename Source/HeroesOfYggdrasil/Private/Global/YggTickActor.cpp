@@ -299,7 +299,8 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 	{
 		AYggCharacter* HeroTarget = Cast<AYggHero>(ExistingTickActor->TickDamageComponent->TargetActor);
 		AEnemyCharacter* EnemyTarget = Cast<AEnemyCharacter>(ExistingTickActor->TickDamageComponent->TargetActor);
-		FName RowName = ExistingTickActor->StatusRowName;
+		
+		FName ExistingRowName = ConvertStatusEnumToRowName(EffectType);
 
 		if (IsValid(HeroTarget))
 		{
@@ -310,15 +311,16 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 				return nullptr;
 			}
 
-			FName StatusTag = FName(*("Character.DeBuff." + RowName.ToString()));
+			FName StatusTag = FName(*("Character.DeBuff." + ExistingRowName.ToString()));
 
 			if (HeroAttributeComponent->HasTag(StatusTag))
 			{
-				if (FStatusTickDataRow* ExistingStatusRow = ExistingTickActor->StatusTickDataTable->FindRow<FStatusTickDataRow>(RowName, nullptr))
+				if (FStatusTickDataRow* ExistingStatusRow = ExistingTickActor->StatusTickDataTable->FindRow<FStatusTickDataRow>(ExistingRowName, nullptr))
 				{
-					ExistingTickActor->DestroyStatusTag();
+					//ExistingTickActor->DestroyStatusTag();
 					HeroAttributeComponent->AddTag(StatusTag);
 					ExistingTickActor->StatusTickTime = TickTime;
+					return nullptr;
 				}
 			}
 		}
@@ -331,15 +333,16 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 				return nullptr;
 			}
 
-			FName StatusTag = FName(*("Enemy.DeBuff." + RowName.ToString()));
+			FName StatusTag = FName(*("Enemy.DeBuff." + ExistingRowName.ToString()));
 
 			if (EnemyAttributeComponent->HasTag(StatusTag))
 			{
-				if (FStatusTickDataRow* ExistingStatusRow = ExistingTickActor->StatusTickDataTable->FindRow<FStatusTickDataRow>(RowName, nullptr))
+				if (FStatusTickDataRow* ExistingStatusRow = ExistingTickActor->StatusTickDataTable->FindRow<FStatusTickDataRow>(ExistingRowName, nullptr))
 				{
-					ExistingTickActor->DestroyStatusTag();
+					//ExistingTickActor->DestroyStatusTag();
 					EnemyAttributeComponent->AddTag(StatusTag);
 					ExistingTickActor->StatusTickTime = TickTime;
+					return nullptr;
 				}
 			}
 
@@ -347,7 +350,7 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 
 
 
-		return nullptr;
+		
 	}
 
 
@@ -369,6 +372,9 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 
 	UGameplayStatics::FinishSpawningActor(TickActor, SpawnTransform);
 
+
+	TickActor->AttachToComponent(Target->GetMesh(), FAttachmentTransformRules::KeepRelativeTransform);
+
 	if (AYggCharacter* Hero = Cast<AYggHero>(TickActor->TickDamageComponent->TargetActor))
 	{
 		if (IsValid(Hero))
@@ -385,7 +391,10 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 			Enemy->GetAttributeComponent()->AddTag(TickActor->Tag);
 		}
 	}
-
+	
 	return TickActor;
+
+
+	
 }
 

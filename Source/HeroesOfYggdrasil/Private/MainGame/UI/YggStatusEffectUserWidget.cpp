@@ -23,7 +23,7 @@ void UYggStatusEffectUserWidget::NativeConstruct()
 	AYggHero* Hero = PC->GetPawn<AYggHero>();
 	UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent();
 
-	//HAC->OnTagsChanged.AddDynamic(this, &UYggStatusEffectUserWidget::UpdateDebuff);
+	HAC->OnTagsChanged.AddDynamic(this, &UYggStatusEffectUserWidget::UpdateDebuff);
 
 }
 
@@ -37,9 +37,9 @@ void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChanged
 {
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	AYggHero* Hero = PC->GetPawn<AYggHero>();
-	UHeroAttributeComponent* HAC = Hero->GetHeroAttributeComponent();
+	UCharacterAttributeComponent* HAC = Hero->GetAttributeComponent();
 
-	if (HAC->HasTag("Characetr.Debuff.Poison"))
+	if (HAC->HasTag("Character.DeBuff.Poison"))
 	{
 		//if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Poison))
 		//{
@@ -61,7 +61,7 @@ void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChanged
 		DebuffWidgets.Remove(Existing);
 	}
 	
-	if (HAC->HasTag("Characetr.Debuff.Burn"))
+	if (HAC->HasTag("Character.DeBuff.Burn"))
 	{
 		if (FindDebuffWidget(EStatusEffectType::Burn))
 			return;
@@ -78,7 +78,7 @@ void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChanged
 		DebuffWidgets.Remove(Existing);
 	}
 	
-	if (HAC->HasTag("Character.Debuff.Slow"))
+	if (HAC->HasTag("Character.DeBuff.Slow"))
 	{
 		if (FindDebuffWidget(EStatusEffectType::Slow))
 			return;
@@ -95,7 +95,7 @@ void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChanged
 		DebuffWidgets.Remove(Existing);
 	}
 
-	if (HAC->HasTag("Debuff.Stunned"))
+	if (HAC->HasTag("Character.DeBuff.Stunned"))
 	{
 		if (FindDebuffWidget(EStatusEffectType::Stunned))
 			return;

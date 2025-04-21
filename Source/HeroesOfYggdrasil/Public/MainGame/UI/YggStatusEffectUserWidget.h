@@ -22,6 +22,7 @@ class HEROESOFYGGDRASIL_API UYggStatusEffectUserWidget : public UYggUserWidget
 
 
 public:
+	UFUNCTION()
 	void UpdateDebuff(FOnTagsChangedParams OnTagsChangedParams);
 
 	UFUNCTION(BlueprintCallable)
