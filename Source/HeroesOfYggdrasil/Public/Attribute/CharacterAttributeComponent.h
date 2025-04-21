@@ -65,6 +65,7 @@ public:
 	/* 이 유닛의 체력을 설정하는 함수 */
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void Server_SetHP(float fAmount);
+	void Server_SetHP_Implementation(float fAmount);
 
 	UFUNCTION(BlueprintCallable)
 	float GetHP() const;
