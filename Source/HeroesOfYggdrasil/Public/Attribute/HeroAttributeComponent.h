@@ -48,6 +48,9 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float CooldownReduction;
 
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float RespawnTimeReduction;
+
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float JumpPower;

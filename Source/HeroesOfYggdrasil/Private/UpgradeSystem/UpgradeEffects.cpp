@@ -49,6 +49,11 @@ void UUpgradeEffect_Stats::ApplyInternal_Implementation(UAttributeComponent* Tar
 			CastedTargetAttribute->CooldownReduction += CooldownReduction;
 		}
 
+		if (RespawnTimeReduction != 0.0f)
+		{
+			CastedTargetAttribute->RespawnTimeReduction += RespawnTimeReduction;
+		}
+
 		if (HealInstantly != 0.0f)
 		{
 			float _NewHp = CastedTargetAttribute->HP + HealInstantly < CastedTargetAttribute->MaxHP ? CastedTargetAttribute->HP + HealInstantly : CastedTargetAttribute->MaxHP;

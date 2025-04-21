@@ -43,6 +43,9 @@ public:
 	float CooldownReduction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RespawnTimeReduction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float HealInstantly;
 };
 
