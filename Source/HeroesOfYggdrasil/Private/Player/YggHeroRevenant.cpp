@@ -23,6 +23,8 @@
 #include "Global/YggProjectileActor.h"
 #include "MainGame/UI/MainGameHUD.h"
 
+#include "Kismet/GameplayStatics.h"
+
 AYggHeroRevenant::AYggHeroRevenant()
 {
 
@@ -49,6 +51,12 @@ void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
+void AYggHeroRevenant::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AYggHeroRevenant, AimDirection);
+}
+
 
 
 void AYggHeroRevenant::BeginPlay()
@@ -63,7 +71,7 @@ void AYggHeroRevenant::BeginPlay()
 
 void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 {
-	if (bAimMode == false) 
+	if (bAimMode == false)
 	{
 		SetAimMode(true);
 	}
@@ -75,50 +83,49 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 	{
 		return;
 	}
-	
-	APlayerController* PC = Cast<APlayerController>(GetController());
-	if (!PC) return;
+	FVector NewAimDir = Local_SetPendingAimDirection();
+	Server_SetPendingAimDirection(NewAimDir);
 
-	FVector CamLoc;
-	FRotator CamRot;
-	PC->GetPlayerViewPoint(CamLoc, CamRot);
-
-	FVector TraceEnd = CamLoc + CamRot.Vector() * 10000.f;
-
-	FHitResult HitResult;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, CamLoc, TraceEnd, ECC_Visibility, QueryParams);
-
-	FVector TargetLocation = bHit ? HitResult.ImpactPoint : TraceEnd;
-	FVector AimDir = (TargetLocation - GetActorLocation()).GetSafeNormal();
-
-	Server_SetPendingAimDirection(AimDir);
-	
-	if (HasAuthority())
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	ServerAttackRevenant(Value);
+	/*if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastAttackRevenant(Value);
 	}
 	else
 	{
 		ServerAttackRevenant(Value);
 		return;
-	}
+	}*/
 }
 
 void AYggHeroRevenant::ServerAttackRevenant_Implementation(const FInputActionValue& Value)
 {
-	Attack(Value);
+	const FVector SpawnLocation = GetMesh()->GetSocketLocation(SocketName);
+	const FRotator AimRot = AimDirection.Rotation();
+
+	FTransform SpawnTransform(AimRot, SpawnLocation);
+
+	AYggProjectileActor* Projectile = GetWorld()->SpawnActorDeferred<AYggProjectileActor>(
+		ProjectileClass,
+		SpawnTransform,
+		nullptr,
+		nullptr,
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+	);
+
+	if (!Projectile) return;
+
+	Projectile->SetOwnerCharacter(this);
+	Projectile->SetAimDir(AimDirection);
+
+	UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SpawnProjectile"));
+	MulticastAttackRevenant(Value);
 }
 
 void AYggHeroRevenant::MulticastAttackRevenant_Implementation(const FInputActionValue& Value)
 {
-	if (HasAuthority())
-	{
-		return;
-	}
 	FName MontageName = *FString::Printf(TEXT("Attack"));
 	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
 	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);
@@ -157,6 +164,28 @@ void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	Super::SkillE(Value);
+}
+
+FVector AYggHeroRevenant::Local_SetPendingAimDirection()
+{
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return FVector();
+
+	FVector CamLoc;
+	FRotator CamRot;
+	PC->GetPlayerViewPoint(CamLoc, CamRot);
+
+	FVector TraceEnd = CamLoc + CamRot.Vector() * 10000.f;
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, CamLoc, TraceEnd, ECC_Visibility, QueryParams);
+
+	FVector TargetLocation = bHit ? HitResult.ImpactPoint : TraceEnd;
+	FVector AimDir = (TargetLocation - GetActorLocation()).GetSafeNormal();
+	return AimDir;
 }
 
 

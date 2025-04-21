@@ -18,6 +18,7 @@ public:
 	AYggHeroRevenant();
 protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void BeginPlay() override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
@@ -34,10 +35,18 @@ protected:
 public:
 	UFUNCTION(Server, Reliable)
 	void Server_SetPendingAimDirection(const FVector& InAimDir);
+	UFUNCTION()
+	FVector Local_SetPendingAimDirection();
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	FVector AimDirection;
 	/*virtual void SkillR(const FInputActionValue& Value) override;*/
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
+	TSubclassOf<class AYggProjectileActor> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
+	FName SocketName;
 	
 
 
