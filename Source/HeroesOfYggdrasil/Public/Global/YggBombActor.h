@@ -23,6 +23,8 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UYggAttackCapsuleComponent> ExplosionAttackCapsuleComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UParticleSystemComponent> ExplosionParticle;
 
 
 	

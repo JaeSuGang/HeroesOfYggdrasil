@@ -2,19 +2,24 @@
 
 
 #include "Global/YggBombActor.h"
+
+#include "Particles/ParticleSystemComponent.h"
+
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
 AYggBombActor::AYggBombActor()
 {
 	ExplosionAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("ExplosionAttackCapsuleComponent"));
 	ExplosionAttackCapsuleComponent->SetupAttachment(RootComponent);
-	ProjectileType = EProjectileType::TargetParabola;
-
+	ExplosionParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ExplosionParticle"));
+	ExplosionParticle->SetupAttachment(RootComponent);
+	ExplosionParticle->bAutoActivate = false;
 }
 
 void AYggBombActor::ExplosionOn()
 {
 	ExplosionAttackCapsuleComponent->CollisionOn();
+	ExplosionParticle->Activate(true);
 }
 
 void AYggBombActor::BeginPlay()
