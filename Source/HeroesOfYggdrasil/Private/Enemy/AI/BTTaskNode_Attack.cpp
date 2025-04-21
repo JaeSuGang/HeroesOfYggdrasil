@@ -70,7 +70,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	FWeakObjectPtr WeakOwner = &_OwnerComp;
 	FVector StoredTargetLocation = TargetRangeLocation;
 
-	TimerDel.BindLambda([this, WeakOwner, WeakEnemy, StoredTargetLocation]() {
+	TimerDel.BindLambda([this, WeakOwner, WeakEnemy, StoredTargetLocation, TargetActor]() {
 		if (!WeakOwner.IsValid() || !WeakEnemy.IsValid()) return;
 
 		AEnemyCharacter* EnemyChar = WeakEnemy.Get();
@@ -88,7 +88,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		}
 		else if (Type == EEnemyType::Minion_Witch)
 		{
-			EnemyChar->SpawnEnemySkillAttack(StoredTargetLocation);
+			EnemyChar->SpawnEnemySkillAttack(StoredTargetLocation, TargetActor);
 		}
 
 		ChangeState(*Comp, EEnemyAIState::Await);
