@@ -21,8 +21,15 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Attack(const FInputActionValue& Value) override;
+
+
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	virtual void SkillE(const FInputActionValue& Value) override;
+
+	UFUNCTION(Server, Reliable)
+	void ServerAttackRevenant(const FInputActionValue& Value);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastAttackRevenant(const FInputActionValue& Value);
 
 public:
 	UFUNCTION(Server, Reliable)

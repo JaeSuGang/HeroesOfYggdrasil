@@ -67,8 +67,15 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 	{
 		SetAimMode(true);
 	}
+	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
+	}
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
 	
-
 	APlayerController* PC = Cast<APlayerController>(GetController());
 	if (!PC) return;
 
@@ -88,7 +95,33 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 	FVector AimDir = (TargetLocation - GetActorLocation()).GetSafeNormal();
 
 	Server_SetPendingAimDirection(AimDir);
-	Super::Attack(Value);
+	
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		MulticastAttackRevenant(Value);
+	}
+	else
+	{
+		ServerAttackRevenant(Value);
+		return;
+	}
+}
+
+void AYggHeroRevenant::ServerAttackRevenant_Implementation(const FInputActionValue& Value)
+{
+	Attack(Value);
+}
+
+void AYggHeroRevenant::MulticastAttackRevenant_Implementation(const FInputActionValue& Value)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+	FName MontageName = *FString::Printf(TEXT("Attack"));
+	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
+	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);
 }
 
 void AYggHeroRevenant::SkillQ(const FInputActionValue& Value)
@@ -125,6 +158,8 @@ void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
 	}
 	Super::SkillE(Value);
 }
+
+
 
 void AYggHeroRevenant::Server_SetPendingAimDirection_Implementation(const FVector& InAimDir)
 {

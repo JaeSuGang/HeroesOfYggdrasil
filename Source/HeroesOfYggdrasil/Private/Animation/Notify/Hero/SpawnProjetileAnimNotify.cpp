@@ -13,8 +13,11 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 
 	AYggCharacter* Actor = Cast<AYggCharacter>(MeshComp->GetOwner());
 	if (!IsValid(Actor)) return;
-
-	if (!Actor->HasAuthority()) return;	
+	if (Actor->IsLocallyControlled() && !Actor->HasAuthority())
+	{
+		return;
+	}
+	if (!(Actor->HasAuthority())) return;	
 
 	const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(SocketName);
 	const FVector AimDirection = Cast<AYggHeroRevenant>(Actor)->AimDirection;
@@ -36,5 +39,6 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 	Projectile->SetAimDir(AimDirection);
 
 	UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SpawnProjectile"));
 }
 
