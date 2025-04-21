@@ -61,9 +61,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void DestroyAllComponents();
 
-	void DrawDebugFromCapsuleComponent(UCapsuleComponent* CapsuleComp, FColor Color = FColor::Red, float LifeTime = 0.1f);
-	
-
 	UFUNCTION(BlueprintCallable)
 	void SetDataKey(const FString& _MonsterDataKey);
 	
@@ -103,6 +100,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemySkillAttack(FVector _TargetLocation);
 	
+	UFUNCTION(NetMulticast, Reliable)
+	void WarpToRandomPoint(AYggCharacter* _Target);
+
 	UFUNCTION(NetMulticast, Reliable)
 	void DragonRangeAttack(AActor* _Actor);
 

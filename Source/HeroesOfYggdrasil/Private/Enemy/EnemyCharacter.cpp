@@ -206,6 +206,62 @@ void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* 
 
 }
 
+
+void AEnemyCharacter::AttackCollisionInit()
+{
+	// 콜리전 설정
+	RightAttackCapsule->SetOwnerCharacter(this);
+	RightAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
+	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), RightAttackCapsule);
+
+	LeftAttackCapsule->SetOwnerCharacter(this);
+	LeftAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
+	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), LeftAttackCapsule);
+
+	// 오른손 소켓에 부착
+	if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("MOUNTAIN_DRAGON_-R-Hand")))
+	{
+		RightAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("MOUNTAIN_DRAGON_-R-Hand")
+		);
+		RightAttackCapsule->SetCapsuleSize(300.0f, 200.0f); 
+	}
+	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r_head")))
+	{
+		RightAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("weapon_r_head")
+		);
+		RightAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
+	}
+
+
+	// 왼손 소켓에 부착
+	if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("MOUNTAIN_DRAGON_-L-Hand")))
+	{
+		LeftAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("MOUNTAIN_DRAGON_-L-Hand")
+		);
+		LeftAttackCapsule->SetCapsuleSize(300.0f, 200.0f);
+	}
+	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l_head")))
+	{
+		LeftAttackCapsule->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+			TEXT("weapon_l_head")
+		);
+		LeftAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
+	}
+
+}
+
+
 void AEnemyCharacter::AttackStart()
 {
 	GetMesh()->SetCollisionProfileName(UEnemyConst::Collision::ProfileName_MonsterAttack);
@@ -242,9 +298,14 @@ void AEnemyCharacter::SetDataKey(const FString& _MonsterDataKey)
 	DataKey = _MonsterDataKey;
 }
 
+
+// Enemy_Archer
+// -----------------------------------------------------------------------------------------------------------------------------------------------------
+
 void AEnemyCharacter::SpawnAndFireArrow()
 {
 	if (!ProjectileClass) return;
+	if (!DataKey.StartsWith(FString("Minion_Archer"))) return;
 
 	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
 	FRotator SpawnRotation = GetActorRotation();
@@ -261,11 +322,13 @@ void AEnemyCharacter::SpawnAndFireArrow()
 
 void AEnemyCharacter::HideArrow()
 {
+	if (!DataKey.StartsWith(FString("Minion_Archer"))) return;
 	GetMesh()->HideBoneByName(FName("arrow_nock"), EPhysBodyOp::PBO_None);
 }
 
 void AEnemyCharacter::RevealArrow()
 {
+	if (!DataKey.StartsWith(FString("Minion_Archer"))) return;
 	GetMesh()->UnHideBoneByName(FName("arrow_nock"));
 }
 
@@ -273,205 +336,6 @@ void AEnemyCharacter::SpawnWarningRange(AActor* _Actor)
 {
 	SpawnWarningOutRange(_Actor);
 }
-
-void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
-{
-	if (!WarningOutRangeClass || !_Actor) return;
-
-	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
-	FVector SpawnLocation = _Actor->GetActorLocation();
-
-	if (Capsule)
-	{
-		SpawnLocation -= FVector(0, 0, Capsule->GetScaledCapsuleHalfHeight());
-	}
-
-	FRotator SpawnRotation = _Actor->GetActorRotation();
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-
-	GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
-}
-
-void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
-{
-	if (!RangeAttackClass) return;
-
-	FVector SpawnLocation = GetActorLocation() + GetActorRightVector() * -50.0f + GetActorUpVector() * 50.0f;
-	FRotator SpawnRotation = GetActorRotation();
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-
-	AEnemyRangeAttack* RangeAttack = GetWorld()->SpawnActor<AEnemyRangeAttack>(RangeAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
-	if (RangeAttack)
-	{
-		RangeAttack->SetOwner(this);
-		RangeAttack->GetProjectileMovement()->Velocity = (_TargetLocation - SpawnLocation).GetSafeNormal() * 2000.f;
-	}
-}
-
-void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
-{
-	if (!HasAuthority()) return;
-
-	AYggHero* Hero = Cast<AYggHero>(_Target);
-
-	if (!IsValid(Hero)) return;
-
-	float Att = CharacterAttributeComponent->GetAttackPoints();
-
-	Att /= 10.f;
-
-	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
-	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect, Att);
-}
-
-void AEnemyCharacter::AttackCollisionInit()
-{
-	// 콜리전 설정
-	RightAttackCapsule->SetOwnerCharacter(this);
-	RightAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
-	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), RightAttackCapsule);
-
-	LeftAttackCapsule->SetOwnerCharacter(this);
-	LeftAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
-	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), LeftAttackCapsule);
-
-	// 오른손 소켓에 부착
-	if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("MOUNTAIN_DRAGON_-R-Hand")))
-	{
-		RightAttackCapsule->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			TEXT("MOUNTAIN_DRAGON_-R-Hand")
-		);
-		RightAttackCapsule->SetCapsuleSize(300.0f, 200.0f); // (Radius, HalfHeight)
-	}
-	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r_head")))
-	{
-		RightAttackCapsule->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			TEXT("weapon_r_head")
-		);
-		RightAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
-	}
-	
-
-	// 왼손 소켓에 부착
-	if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("MOUNTAIN_DRAGON_-L-Hand")))
-	{
-		LeftAttackCapsule->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			TEXT("MOUNTAIN_DRAGON_-L-Hand")
-		);
-		LeftAttackCapsule->SetCapsuleSize(300.0f, 200.0f);
-	}
-	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l_head")))
-	{
-		LeftAttackCapsule->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			TEXT("weapon_l_head")
-		);
-		LeftAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
-	}
-
-}
-
-
-void AEnemyCharacter::DragonRangeAttack_Implementation(AActor* _Actor)
-{
-	if (!WarningOutRangeClass || !_Actor || DataKey != FString(TEXT("Dragon"))) return;
-
-
-
-	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
-	FVector BaseLocation = GetActorLocation();
-	float ZOffset = Capsule ? Capsule->GetScaledCapsuleHalfHeight() : 0.f;
-	ZOffset *= 2.0f;
-	const int NumToSpawn = 10;
-	const float Radius = 1500.f;
-
-	for (int i = 0; i < NumToSpawn; ++i)
-	{
-		// 각 위치값 미리 계산
-		float Angle = FMath::RandRange(0.f, 360.f);
-		float Distance = FMath::RandRange(Radius * 0.5f, Radius);
-		float X = FMath::Cos(FMath::DegreesToRadians(Angle)) * Distance;
-		float Y = FMath::Sin(FMath::DegreesToRadians(Angle)) * Distance;
-		FVector SpawnLocation = BaseLocation + FVector(X, Y, -ZOffset);
-
-		// 랜덤한 딜레이 시간 (0~3초)
-		float Delay = FMath::FRandRange(0.f, 3.f);
-
-		// 타이머 바인딩용 로컬 복사 변수
-		FTimerHandle TimerHandle;
-		FTimerDelegate TimerDelegate;
-		TimerDelegate.BindLambda([this, SpawnLocation, _Actor]()
-			{
-				FActorSpawnParameters SpawnParams;
-				SpawnParams.Owner = this;
-				GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, _Actor->GetActorRotation(), SpawnParams);
-			});
-
-		// 타이머로 예약
-		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, Delay, false);
-	}
-
-	if (!TickParticle.IsNull())
-	{
-		UParticleSystem* Particle = TickParticle.LoadSynchronous(); // 동기 로딩
-
-		if (Particle)
-		{
-			UGameplayStatics::SpawnEmitterAttached(
-				Particle,                         
-				GetMesh(),                    
-				FName("MOUNTAIN_DRAGON_-magiccircle"),
-				FVector::ZeroVector,              // 소켓 기준 오프셋
-				FRotator::ZeroRotator,            // 소켓 기준 회전
-				EAttachLocation::SnapToTarget,
-				true                           
-			);
-		}
-	}
-}
-
-
-
-void AEnemyCharacter::DragonBreath_Implementation()
-{
-	
-	if (DataKey != FString(TEXT("Dragon"))) return;
-
-	if (!TickNiagaraSystem.IsValid())
-	{
-		TickNiagaraSystem.LoadSynchronous();
-	}
-
-	if (!TickNiagaraSystem.IsValid()) return;
-
-	FTimerHandle SpawnTimerHandle;
-
-	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this]()
-	{
-		UNiagaraComponent* FireBreathComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
-			TickNiagaraSystem.Get(),
-			GetMesh(),
-			FName("MOUNTAIN_DRAGON_-Breath"),
-			FVector::ZeroVector,
-			FRotator::ZeroRotator,
-			EAttachLocation::SnapToTarget,
-			true,
-			true
-		);
-
-
-	}), 3.f, false);
-}
-
 
 
 EEnemyType AEnemyCharacter::ConvertStringToEnemyType(const FString& EnemyKey)
@@ -497,25 +361,208 @@ EEnemyType AEnemyCharacter::ConvertStringToEnemyType(const FString& EnemyKey)
 }
 
 
-void AEnemyCharacter::DrawDebugFromCapsuleComponent(UCapsuleComponent* CapsuleComp, FColor Color, float LifeTime)
+
+// Enemy_Witch
+// -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 {
-	if (!CapsuleComp || !CapsuleComp->GetWorld()) return;
+	if (!WarningOutRangeClass || !_Actor) return;
+	if (!DataKey.StartsWith(FString("Minion_Witch")) && !DataKey.StartsWith(FString("Dragon"))) return;
 
-	FVector Center = CapsuleComp->GetComponentLocation();
-	float Radius = CapsuleComp->GetScaledCapsuleRadius();
-	float HalfHeight = CapsuleComp->GetScaledCapsuleHalfHeight();
-	FQuat Rotation = CapsuleComp->GetComponentQuat();
+	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
+	FVector SpawnLocation = _Actor->GetActorLocation();
 
-	DrawDebugCapsule(
-		CapsuleComp->GetWorld(),
-		Center,
-		HalfHeight,
-		Radius,
-		Rotation,
-		Color,
-		false,
-		LifeTime,
-		0,
-		1.5f
-	);
+	if (Capsule)
+	{
+		SpawnLocation -= FVector(0, 0, Capsule->GetScaledCapsuleHalfHeight());
+	}
+
+	FRotator SpawnRotation = _Actor->GetActorRotation();
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
 }
+
+void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
+{
+	if (!RangeAttackClass) return;
+	if (!DataKey.StartsWith(FString("Minion_Witch")) && !DataKey.StartsWith(FString("Dragon"))) return;
+
+	FVector SpawnLocation = GetActorLocation() + GetActorRightVector() * -50.0f + GetActorUpVector() * 50.0f;
+	FRotator SpawnRotation = GetActorRotation();
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+
+	AEnemyRangeAttack* RangeAttack = GetWorld()->SpawnActor<AEnemyRangeAttack>(RangeAttackClass, SpawnLocation, SpawnRotation, SpawnParams);
+	if (RangeAttack)
+	{
+		RangeAttack->SetOwner(this);
+		RangeAttack->GetProjectileMovement()->Velocity = (_TargetLocation - SpawnLocation).GetSafeNormal() * 2000.f;
+	}
+}
+
+void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
+{
+	if (!HasAuthority()) return;
+
+	if (!DataKey.StartsWith(FString("Minion_Witch")) && !DataKey.StartsWith(FString("Dragon"))) return;
+
+	AYggHero* Hero = Cast<AYggHero>(_Target);
+
+	if (!IsValid(Hero)) return;
+
+	float Att = CharacterAttributeComponent->GetAttackPoints();
+
+	Att /= 10.f;
+
+	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
+	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect, Att);
+}
+
+void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
+{
+	if (!DataKey.StartsWith("Minion_Witch")) return;
+
+	if (!TickNiagaraSystem.IsValid())
+	{
+		TickNiagaraSystem.LoadSynchronous();
+	}
+
+	if (!TickNiagaraSystem.IsValid()) return;
+
+	SetActorHiddenInGame(true);
+
+	TWeakObjectPtr<AEnemyCharacter> WeakEnemey = this;
+
+	if (!IsValid(WeakEnemey.Get())) return;
+
+	FTimerHandle SpawnTimerHandle;
+
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemey]()
+		{
+			UNiagaraComponent* TeleprotComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+				WeakEnemey->TickNiagaraSystem.Get(),
+				WeakEnemey->GetMesh(),
+				FName("Chest"),
+				FVector::ZeroVector,
+				FRotator::ZeroRotator,
+				EAttachLocation::SnapToTarget,
+				true,
+				true
+			);
+
+
+		}), 0.1f, false);
+
+
+
+}
+
+
+
+// Enemy Dragon
+// -----------------------------------------------------------------------------------------------------------------------------------------------------
+
+void AEnemyCharacter::DragonRangeAttack_Implementation(AActor* _Actor)
+{
+	if (!WarningOutRangeClass || !_Actor || DataKey != FString(TEXT("Dragon"))) return;
+
+	TWeakObjectPtr<AEnemyCharacter> WeakEnemey = this;
+
+	if (!IsValid(WeakEnemey.Get())) return;
+
+	UCapsuleComponent* Capsule = _Actor->FindComponentByClass<UCapsuleComponent>();
+	FVector BaseLocation = GetActorLocation();
+	float ZOffset = Capsule ? Capsule->GetScaledCapsuleHalfHeight() : 0.f;
+	ZOffset *= 2.0f;
+	const int NumToSpawn = 10;
+	const float Radius = 1500.f;
+
+	for (int i = 0; i < NumToSpawn; ++i)
+	{
+		// 각 위치값 미리 계산
+		float Angle = FMath::RandRange(0.f, 360.f);
+		float Distance = FMath::RandRange(Radius * 0.5f, Radius);
+		float X = FMath::Cos(FMath::DegreesToRadians(Angle)) * Distance;
+		float Y = FMath::Sin(FMath::DegreesToRadians(Angle)) * Distance;
+		FVector SpawnLocation = BaseLocation + FVector(X, Y, -ZOffset);
+
+		// 랜덤한 딜레이 시간 (0~3초)
+		float Delay = FMath::FRandRange(0.f, 3.f);
+
+
+		
+
+		// 타이머 바인딩용 로컬 복사 변수
+		FTimerHandle TimerHandle;
+		FTimerDelegate TimerDelegate;
+		TimerDelegate.BindLambda([this, SpawnLocation, _Actor, WeakEnemey]()
+			{
+				FActorSpawnParameters SpawnParams;
+				SpawnParams.Owner = WeakEnemey.Get();
+				WeakEnemey ->GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, _Actor->GetActorRotation(), SpawnParams);
+			});
+
+		// 타이머로 예약
+		GetWorldTimerManager().SetTimer(TimerHandle, TimerDelegate, Delay, false);
+	}
+
+	if (!WeakEnemey->TickParticle.IsNull())
+	{
+		UParticleSystem* Particle = WeakEnemey->TickParticle.LoadSynchronous(); // 동기 로딩
+
+		if (Particle)
+		{
+			UGameplayStatics::SpawnEmitterAttached(
+				Particle,                         
+				WeakEnemey->GetMesh(),
+				FName("MOUNTAIN_DRAGON_-magiccircle"),
+				FVector::ZeroVector,              // 소켓 기준 오프셋
+				FRotator::ZeroRotator,            // 소켓 기준 회전
+				EAttachLocation::SnapToTarget,
+				true                           
+			);
+		}
+	}
+}
+
+
+
+void AEnemyCharacter::DragonBreath_Implementation()
+{
+	
+	if (DataKey != FString(TEXT("Dragon"))) return;
+
+	if (!TickNiagaraSystem.IsValid())
+	{
+		TickNiagaraSystem.LoadSynchronous();
+	}
+
+	if (!TickNiagaraSystem.IsValid()) return;
+
+	TWeakObjectPtr<AEnemyCharacter> WeakEnemey = this;
+
+	if (!IsValid(WeakEnemey.Get())) return;
+
+	FTimerHandle SpawnTimerHandle;
+
+	WeakEnemey->GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemey]()
+	{
+		UNiagaraComponent* FireBreathComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
+			WeakEnemey->TickNiagaraSystem.Get(),
+			WeakEnemey->GetMesh(),
+			FName("MOUNTAIN_DRAGON_-Breath"),
+			FVector::ZeroVector,
+			FRotator::ZeroRotator,
+			EAttachLocation::SnapToTarget,
+			true,
+			true
+		);
+
+
+	}), 3.f, false);
+}
+
+
