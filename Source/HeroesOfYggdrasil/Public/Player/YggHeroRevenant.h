@@ -23,46 +23,30 @@ protected:
 
 	virtual void Attack(const FInputActionValue& Value) override;
 
-
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	virtual void SkillE(const FInputActionValue& Value) override;
-
-	UFUNCTION(Server, Reliable)
-	void ServerAttackRevenant(const FInputActionValue& Value);
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastAttackRevenant(const FInputActionValue& Value);
-
-	UFUNCTION(Server, Reliable)
-	void ServerSkillERevenant(const FInputActionValue& Value);
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastSkillERevenant(const FInputActionValue& Value);
-
 
 
 public:
 	UFUNCTION(Server, Reliable)
-	void Server_SetPendingAimDirection(const FVector& InAimDir);
-	UFUNCTION()
-	FVector Local_SetPendingAimDirection(FName SocketName);
+	void Server_SetAimDirection(const FVector& InAimDir);
 
+	UFUNCTION()
+	FVector Local_GetAimDirection(FName SocketName);
+
+	UFUNCTION()
+	FVector GetAimDirection() const { return AimDirection; }
+
+protected:
 	UPROPERTY(Replicated)
 	FVector AimDirection;
-	/*virtual void SkillR(const FInputActionValue& Value) override;*/
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
-	TSubclassOf<class AYggProjectileActor> ProjectileClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName LeftSocketName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
-	TSubclassOf<class AYggBombActor> BombClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName RightSocketName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
-	FName SocketName;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
-	FName BombSocketName;
 	
-
-
-
-
 };

@@ -67,7 +67,6 @@ void AYggHeroRevenant::BeginPlay()
 	{
 		HeroAttributeComponent->ServerSetBaseData_Implementation(TEXT("Revenant"));
 	}
-
 }
 
 void AYggHeroRevenant::Attack(const FInputActionValue& Value)
@@ -76,59 +75,29 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 	{
 		SetAimMode(true);
 	}
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
-	}
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
-	{
-		return;
-	}
-	FVector NewAimDir = Local_SetPendingAimDirection(TEXT("FX_Gun_Barrel"));
-	Server_SetPendingAimDirection(NewAimDir);
-
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-	if (HasAuthority())
-	{
-		MulticastAttackRevenant(Value);
-	}
-	else
-	{
-		ServerAttackRevenant(Value);
-	}
-	ServerAttackRevenant(Value);
+	FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
+	Server_SetAimDirection(NewAimDir);
+	Super::Attack(Value);
 }
 
-void AYggHeroRevenant::ServerAttackRevenant_Implementation(const FInputActionValue& Value)
-{
-	MulticastAttackRevenant(Value);
-}
 
-void AYggHeroRevenant::MulticastAttackRevenant_Implementation(const FInputActionValue& Value)
-{
-	FName MontageName = *FString::Printf(TEXT("Attack"));
-	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
-	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);
-}
 
 
 void AYggHeroRevenant::SkillQ(const FInputActionValue& Value)
 {
-
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
-	{
-		return;
-	}
 	if (bAimMode == false)
 	{
 		SetAimMode(true);
 	}
-	FVector NewAimDir = Local_SetPendingAimDirection(TEXT("FX_Gun_Barrel"));
-	Server_SetPendingAimDirection(NewAimDir);
-	//if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+	FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
+	Server_SetAimDirection(NewAimDir);
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastHeroSkillQ(Value);
 	}
 	else
@@ -146,54 +115,48 @@ void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
 	{
 		SetAimMode(true);
 	}
-	FVector NewAimDir = Local_SetPendingAimDirection(TEXT("FX_Trail_R_02"));
-	Server_SetPendingAimDirection(NewAimDir);
+	FVector NewAimDir = Local_GetAimDirection(RightSocketName);
+	Server_SetAimDirection(NewAimDir);
 	Super::SkillE(Value);
-	if (HasAuthority()) 
-	{
-		MulticastSkillERevenant(Value);
-	}
-	else
-	{
-		ServerSkillERevenant(Value);
-	}
 }
 
-void AYggHeroRevenant::ServerSkillERevenant_Implementation(const FInputActionValue& Value)
-{
-	MulticastSkillERevenant_Implementation(Value);
-}
 
-void AYggHeroRevenant::MulticastSkillERevenant_Implementation(const FInputActionValue& Value)
-{
 
-}
-
-FVector AYggHeroRevenant::Local_SetPendingAimDirection(FName _SocketName)
+FVector AYggHeroRevenant::Local_GetAimDirection(FName _SocketName)
 {
+	// 1. 카메라 위치 · 회전
 	APlayerController* PC = Cast<APlayerController>(GetController());
-	if (!PC) return FVector();
+	if (!PC) return FVector::ZeroVector;
+
 	FVector CamLoc;
 	FRotator CamRot;
 	PC->GetPlayerViewPoint(CamLoc, CamRot);
 
-	FVector StartLoc = GetMesh()->GetSocketLocation(_SocketName);
-	FVector TraceEnd = StartLoc + CamRot.Vector() * 10000.f;
+	// 2. 1차 라인트레이스 : 카메라 → 조준 지점
+	const float TraceRange = 10000.f;
+	FVector TraceEnd = CamLoc + CamRot.Vector() * TraceRange;
 
-	FHitResult HitResult;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
 
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, CamLoc, TraceEnd, ECC_Visibility, QueryParams);
+	GetWorld()->LineTraceSingleByChannel(
+		Hit, CamLoc, TraceEnd, ECC_Visibility, Params);
 
-	FVector TargetLocation = bHit ? HitResult.ImpactPoint : TraceEnd;
-	FVector AimDir = (TargetLocation - GetActorLocation()).GetSafeNormal();
+	const FVector TargetLoc = Hit.bBlockingHit ? Hit.ImpactPoint : TraceEnd;
+
+	// 3. 총구 위치
+	const FVector MuzzleLoc = GetMesh()->GetSocketLocation(_SocketName);
+
+	// 4. 정확한 발사 방향 = (목표 - 총구). 정규화
+	FVector AimDir = (TargetLoc - MuzzleLoc).GetSafeNormal();
+
 	return AimDir;
 }
 
 
 
-void AYggHeroRevenant::Server_SetPendingAimDirection_Implementation(const FVector& InAimDir)
+void AYggHeroRevenant::Server_SetAimDirection_Implementation(const FVector& InAimDir)
 {
 	AimDirection = InAimDir;
 }
