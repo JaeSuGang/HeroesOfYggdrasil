@@ -252,7 +252,7 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		}
 		if (ActionMap.Contains(FName("Attack")))
 		{
-			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHero::Attack);
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Started, this, &AYggHero::Attack);
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHero::EndAttack);
 		}
 		if (ActionMap.Contains(FName("Roll")))
@@ -365,7 +365,6 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Death"));
 
 			if (!HeroAttributeComponent) return;
-			/*HeroAttributeComponent->ServerSetBaseData_Implementation(GetHeroName());*/
 			HeroAttributeComponent->Server_SetHP(HeroAttributeComponent->MaxHP);
 			
 		}
@@ -422,17 +421,17 @@ void AYggHero::MulticastRoll_Implementation(const FInputActionValue& Value)
 
 void AYggHero::Attack(const FInputActionValue& Value)
 {
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
-	}
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
 	{
 		return;
 	}
+	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
+	}
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastAttack(Value);
 	}
 	else
@@ -444,7 +443,7 @@ void AYggHero::Attack(const FInputActionValue& Value)
 
 void AYggHero::ServerAttack_Implementation(const FInputActionValue& Value)
 {
-	Attack(FInputActionValue());
+	MulticastAttack(Value);
 }
 
 void AYggHero::MulticastAttack_Implementation(const FInputActionValue& Value)
@@ -482,7 +481,7 @@ void AYggHero::SkillQ(const FInputActionValue& Value)
 }
 void AYggHero::ServerHeroSkillQ_Implementation(const FInputActionValue& Value)
 {
-	SkillQ(Value);
+	MulticastHeroSkillQ(Value);
 }
 void AYggHero::MulticastHeroSkillQ_Implementation(const FInputActionValue& Value)
 {
@@ -515,7 +514,7 @@ void AYggHero::SkillE(const FInputActionValue& Value)
 
 void AYggHero::ServerHeroSkillE_Implementation(const FInputActionValue& Value)
 {
-	SkillE(Value);
+	MulticastHeroSkillE(Value);
 }
 
 void AYggHero::MulticastHeroSkillE_Implementation(const FInputActionValue& Value)
@@ -549,7 +548,7 @@ void AYggHero::SkillR(const FInputActionValue& Value)
 
 void AYggHero::ServerHeroSkillR_Implementation(const FInputActionValue& Value)
 {
-	SkillR(Value);
+	MulticastHeroSkillR(Value);
 }
 
 void AYggHero::MulticastHeroSkillR_Implementation(const FInputActionValue& Value)
@@ -582,12 +581,11 @@ void AYggHero::Die(float Delegate)
 
 void AYggHero::ServerDie_Implementation(float Delegate)
 {
-	Die(Delegate);
+	MulticastDie(Delegate);
 }
 
 void AYggHero::MulticastDie_Implementation(float Delegate)
 {
-	
 	FName MontageName = TEXT("Death");
 	HeroAnimInstance->PlayMontage(MontageName);
 }
