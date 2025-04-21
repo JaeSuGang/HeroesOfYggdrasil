@@ -56,6 +56,7 @@ AEnemyCharacter::AEnemyCharacter()
 
 	RightAttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("RightAttackCapsule"));
 	LeftAttackCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("LeftAttackCapsule"));
+	DragonBreathCapsule = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("DragonBreath"));
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -203,6 +204,12 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(OtherActor);
+	if (!IsValid(TargetCharacter)) return;
+
+
+	DragonBreathDamage(TargetCharacter);
+
 
 }
 
@@ -259,6 +266,14 @@ void AEnemyCharacter::AttackCollisionInit()
 		LeftAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
 	}
 
+
+	if (!DataKey.StartsWith(TEXT("Dragon"))) return;
+
+	DragonBreathCapsule->SetOwnerCharacter(this);
+	DragonBreathCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
+	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), DragonBreathCapsule);
+	DragonBreathCapsule->SetCapsuleSize(600.0f, 200.0f);
+	DragonBreathCapsule->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 }
 
 
@@ -385,7 +400,7 @@ void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 	GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
 }
 
-void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
+void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _TargetActor)
 {
 	if (!RangeAttackClass) return;
 	if (!DataKey.StartsWith(FString("Minion_Witch")) && !DataKey.StartsWith(FString("Dragon"))) return;
@@ -399,7 +414,14 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation)
 	if (RangeAttack)
 	{
 		RangeAttack->SetOwner(this);
-		RangeAttack->GetProjectileMovement()->Velocity = (_TargetLocation - SpawnLocation).GetSafeNormal() * 2000.f;
+		if (_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+		{
+			RangeAttack->GetProjectileMovement()->Velocity = ((_TargetLocation - SpawnLocation).GetSafeNormal()) * 2000.f + _TargetActor->GetActorUpVector() * 50.0f;
+		}
+		else
+		{
+			RangeAttack->GetProjectileMovement()->Velocity = (_TargetLocation - SpawnLocation).GetSafeNormal() * 2000.f;
+		}
 	}
 }
 
@@ -415,7 +437,11 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 
 	float Att = CharacterAttributeComponent->GetAttackPoints();
 
-	Att /= 10.f;
+	
+	if (DataKey.StartsWith(FString("Minion_Witch")))
+	{
+		Att /= 10.f;
+	}
 
 	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
 	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect, Att);
@@ -563,6 +589,15 @@ void AEnemyCharacter::DragonBreath_Implementation()
 
 
 	}), 3.f, false);
+
+
+
+
 }
 
+void AEnemyCharacter::DragonBreathDamage(AYggCharacter*_Target)
+{
+	if (DataKey != FString(TEXT("Dragon"))) return;
 
+	HandleHeroEnteredRange(_Target);
+}

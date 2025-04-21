@@ -47,7 +47,6 @@ AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _Origi
 	AEnemyAIController* AICon = Cast<AEnemyAIController>(NewEnemyCharacter->GetController());
 	AllEnemyCharacter.Add(NewEnemyCharacter);
 
-
 	return NewEnemyCharacter;
 }
 

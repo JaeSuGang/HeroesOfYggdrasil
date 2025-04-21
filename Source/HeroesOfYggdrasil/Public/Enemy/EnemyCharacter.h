@@ -98,7 +98,7 @@ public:
 	void SpawnWarningOutRange(AActor* _Actor);
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnEnemySkillAttack(FVector _TargetLocation);
+	void SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _TargetActor);
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void WarpToRandomPoint(AYggCharacter* _Target);
@@ -108,6 +108,9 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void DragonBreath();
+
+	UFUNCTION()
+	void DragonBreathDamage(AYggCharacter* _Target);
 
 	UFUNCTION()
 	void HandleHeroEnteredRange(AYggCharacter* _Target);
@@ -168,6 +171,10 @@ private:
 
 	UPROPERTY(EditAnywhere, Replicated, Category = "AttackCapsule")
 	UYggAttackCapsuleComponent* LeftAttackCapsule;
+
+
+	UPROPERTY(EditAnywhere, Replicated, Category = "AttackCapsule")
+	UYggAttackCapsuleComponent* DragonBreathCapsule;
 };
 
 
