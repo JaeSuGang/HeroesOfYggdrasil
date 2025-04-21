@@ -16,24 +16,9 @@
 #include "Player/YggHero.h"
 
 
-
-//void UYggStatusUserWidget::UpdateDebuffUI(FOnTagsChangedParams OnTagsChangedParams)
-//{
-//	if (HAC->HasTagExact("Character.DeBuff.Poison"))
-//	{
-//
-//	}
-//	if (HAC->HasTagExact("Character.DeBuff.Poison"))
-//	{
-//
-//	}
-//}
-
 void UYggStatusUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-
-
 
 	if (IsValid(ExitButton))
 	{
@@ -99,8 +84,6 @@ void UYggStatusUserWidget::StatusInit()
 
 	FVector2D IconSize(64.0f, 64.0f);
 
-	//HAC->OnTagsChanged.AddDynamic(this, &UYggStatusUserWidget::UpdateDebuffUI);
-
 	if (IsValid(Symbol))
 	{
 		FName Name = HAC->GetName();
@@ -119,7 +102,10 @@ void UYggStatusUserWidget::StatusInit()
 
 	if (IsValid(CriticalChance))
 	{
-		CriticalChance->SetText(FText::AsNumber(HAC->CriticalChance));
+		float CritPercent = HAC->CriticalChance * 100.f;
+		FString String = FString::Printf(TEXT("%.1f%%"), CritPercent);
+
+		CriticalChance->SetText(FText::FromString(String));
 	}
 
 	if (IsValid(CriticalDamage))

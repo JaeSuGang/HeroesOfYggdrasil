@@ -39,77 +39,64 @@ void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChanged
 	AYggHero* Hero = PC->GetPawn<AYggHero>();
 	UCharacterAttributeComponent* HAC = Hero->GetAttributeComponent();
 
-	if (HAC->HasTag("Character.DeBuff.Poison") || !FindDebuffWidget(EStatusEffectType::Poison))
+	if (HAC->HasTag("Character.DeBuff.Poison"))
 	{
-		//if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Poison))
-		//{
-		//	DebuffContainer->RemoveChild(Existing);
-		//	DebuffWidgets.Remove(Existing);
-		//}
-		//if (FindDebuffWidget(EStatusEffectType::Poison))
-		//	return;
-
-		UYggDebuffUserWidget* NewDebuff = CreateWidget<UYggDebuffUserWidget>(this, DebuffUserWidgetClass);
-		NewDebuff->InitDebuff(EStatusEffectType::Poison);
-
-		DebuffContainer->AddChild(NewDebuff);
-		DebuffWidgets.Add(NewDebuff);
+		if (!FindDebuffWidget(EStatusEffectType::Poison))
+		{
+			AddDebuff(EStatusEffectType::Poison);
+		}
 	}
-	else if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Poison))
+	else
 	{
-		DebuffContainer->RemoveChild(Existing);
-		DebuffWidgets.Remove(Existing);
+		if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Poison))
+		{
+			RemoveDebuff(Existing);
+		}
 	}
 	
-	if (HAC->HasTag("Character.DeBuff.Burn") || !FindDebuffWidget(EStatusEffectType::Burn))
+	if (HAC->HasTag("Character.DeBuff.Burn"))
 	{
-		//if (FindDebuffWidget(EStatusEffectType::Burn))
-		//	return;
-
-		UYggDebuffUserWidget* NewDebuff = CreateWidget<UYggDebuffUserWidget>(this, DebuffUserWidgetClass);
-		NewDebuff->InitDebuff(EStatusEffectType::Burn);
-
-		DebuffContainer->AddChild(NewDebuff);
-		DebuffWidgets.Add(NewDebuff);
+		if (!FindDebuffWidget(EStatusEffectType::Burn))
+		{
+			AddDebuff(EStatusEffectType::Burn);
+		}
 	}
-	else if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Burn))
+	else
 	{
-		DebuffContainer->RemoveChild(Existing);
-		DebuffWidgets.Remove(Existing);
-	}
-	
-	if (HAC->HasTag("Character.DeBuff.Slow") || !!FindDebuffWidget(EStatusEffectType::Slow))
-	{
-		//if (FindDebuffWidget(EStatusEffectType::Slow))
-		//	return;
-
-		UYggDebuffUserWidget* NewDebuff = CreateWidget<UYggDebuffUserWidget>(this, DebuffUserWidgetClass);
-		NewDebuff->InitDebuff(EStatusEffectType::Slow);
-
-		DebuffContainer->AddChild(NewDebuff);
-		DebuffWidgets.Add(NewDebuff);
-	}
-	else if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Slow))
-	{
-		DebuffContainer->RemoveChild(Existing);
-		DebuffWidgets.Remove(Existing);
+		if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Burn))
+		{
+			RemoveDebuff(Existing);
+		}
 	}
 
-	if (HAC->HasTag("Character.DeBuff.Stunned") || !FindDebuffWidget(EStatusEffectType::Stunned))
+	if (HAC->HasTag("Character.DeBuff.Slow"))
 	{
-		//if (FindDebuffWidget(EStatusEffectType::Stunned))
-		//	return;
-
-		UYggDebuffUserWidget* NewDebuff = CreateWidget<UYggDebuffUserWidget>(this, DebuffUserWidgetClass);
-		NewDebuff->InitDebuff(EStatusEffectType::Stunned);
-
-		DebuffContainer->AddChild(NewDebuff);
-		DebuffWidgets.Add(NewDebuff);
+		if (!FindDebuffWidget(EStatusEffectType::Slow))
+		{
+			AddDebuff(EStatusEffectType::Slow);
+		}
 	}
-	else if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Stunned))
+	else
 	{
-		DebuffContainer->RemoveChild(Existing);
-		DebuffWidgets.Remove(Existing);
+		if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Slow))
+		{
+			RemoveDebuff(Existing);
+		}
+	}
+
+	if (HAC->HasTag("Character.DeBuff.Stunned"))
+	{
+		if (!FindDebuffWidget(EStatusEffectType::Stunned))
+		{
+			AddDebuff(EStatusEffectType::Stunned);
+		}
+	}
+	else
+	{
+		if (UYggDebuffUserWidget* Existing = FindDebuffWidget(EStatusEffectType::Stunned))
+		{
+			RemoveDebuff(Existing);
+		}
 	}
 }
 
@@ -124,4 +111,19 @@ UYggDebuffUserWidget* UYggStatusEffectUserWidget::FindDebuffWidget(EStatusEffect
 	}
 
 	return nullptr;
+}
+
+void UYggStatusEffectUserWidget::AddDebuff(EStatusEffectType StatusEffectType)
+{
+	UYggDebuffUserWidget* NewDebuff = CreateWidget<UYggDebuffUserWidget>(this, DebuffUserWidgetClass);
+	NewDebuff->InitDebuff(StatusEffectType);
+
+	DebuffContainer->AddChild(NewDebuff);
+	DebuffWidgets.Add(NewDebuff);
+}
+
+void UYggStatusEffectUserWidget::RemoveDebuff(UYggDebuffUserWidget* Debuff)
+{
+	DebuffContainer->RemoveChild(Debuff);
+	DebuffWidgets.Remove(Debuff);
 }

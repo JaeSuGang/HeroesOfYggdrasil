@@ -59,7 +59,7 @@ public:
 	void DelSelectAbility();
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
-	void TempFunc();
+	void StatusVisibility();
 
 protected:
 	virtual void NativeOnInitialized() override;
