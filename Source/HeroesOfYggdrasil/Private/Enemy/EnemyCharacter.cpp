@@ -317,7 +317,7 @@ void AEnemyCharacter::SetDataKey(const FString& _MonsterDataKey)
 // Enemy_Archer
 // -----------------------------------------------------------------------------------------------------------------------------------------------------
 
-void AEnemyCharacter::SpawnAndFireArrow()
+void AEnemyCharacter::SpawnAndFireArrow(AActor* _TargetActor)
 {
 	if (!ProjectileClass) return;
 	if (!DataKey.StartsWith(FString("Minion_Archer"))) return;
@@ -331,7 +331,16 @@ void AEnemyCharacter::SpawnAndFireArrow()
 	if (Arrow)
 	{
 		Arrow->SetAttackFloat(CharacterAttributeComponent->AttackPoints);
-		Arrow->GetProjectileMovement()->Velocity = GetActorForwardVector() * 2000.f;
+		if (_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+		{
+			Arrow->GetProjectileMovement()->Velocity = (GetActorForwardVector() * 2000.f).RotateAngleAxis(30.0f, FVector::RightVector);
+			
+		}
+		else
+		{
+			Arrow->GetProjectileMovement()->Velocity = GetActorForwardVector() * 2000.f;
+		}
+		
 	}
 }
 
@@ -416,7 +425,7 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 		RangeAttack->SetOwner(this);
 		if (_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
 		{
-			RangeAttack->GetProjectileMovement()->Velocity = ((_TargetLocation - SpawnLocation).GetSafeNormal()) * 2000.f + _TargetActor->GetActorUpVector() * 50.0f;
+			RangeAttack->GetProjectileMovement()->Velocity = (((_TargetLocation - SpawnLocation).GetSafeNormal()) * 2000.f).RotateAngleAxis(40.0f, FVector::LeftVector);;
 		}
 		else
 		{

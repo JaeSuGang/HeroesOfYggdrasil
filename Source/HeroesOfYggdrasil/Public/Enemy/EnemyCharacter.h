@@ -83,7 +83,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnAndFireArrow();
+	void SpawnAndFireArrow(AActor* _TargetActor);
 
 	UFUNCTION(BlueprintCallable)
 	void HideArrow();

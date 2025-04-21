@@ -83,7 +83,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 
 		if (Type == EEnemyType::Minion_Archer)
 		{
-			EnemyChar->SpawnAndFireArrow();
+			EnemyChar->SpawnAndFireArrow(TargetActor);
 			EnemyChar->HideArrow();
 		}
 		else if (Type == EEnemyType::Minion_Witch)
