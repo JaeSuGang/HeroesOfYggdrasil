@@ -24,6 +24,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void NetSyncMonster();
 
+	UFUNCTION(BlueprintCallable)
+	int GetNumOfEnemyCharacter();
+
 protected:
 	virtual void BeginPlay() override;
 

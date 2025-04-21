@@ -5,6 +5,7 @@
 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "MainGame/MainGameState.h"
 
 #include "Attribute/AttributeComponent.h"
 #include "Attribute/CharacterAttributeComponent.h"
@@ -36,6 +37,7 @@
 #include "Enemy/EnemyProjectile.h"
 #include "Enemy/EnemyRangeAttack.h"
 #include "Enemy/EnemyWarningRange.h"
+#include "MainGame/EnemyManager.h"
 
 #include "Global/YggTickActor.h"
 
@@ -67,6 +69,9 @@ void AEnemyCharacter::BeginPlay()
 		return;
 	}
 
+	
+
+	
 	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
 	MonsterData = &FindData;
 	EnemyType = ConvertStringToEnemyType(DataKey);
@@ -181,6 +186,14 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	// Enemy 정리
+	AEnemyManager* EnemyManager = AEnemyManager::Get(GetWorld());
+	
+	if (IsValid(EnemyManager) && EnemyManager->AllEnemyCharacter.Contains(this))
+	{
+		EnemyManager->AllEnemyCharacter.Remove(this);
+	}
+	
 	Super::EndPlay(EndPlayReason);
 
 	// 타이머 정리

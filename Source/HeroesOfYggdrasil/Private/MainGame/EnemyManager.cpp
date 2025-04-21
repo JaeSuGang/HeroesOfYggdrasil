@@ -59,4 +59,10 @@ void AEnemyManager::NetSyncMonster_Implementation()
 	}
 }
 
+int AEnemyManager::GetNumOfEnemyCharacter()
+{
+	return  static_cast<int>((AllEnemyCharacter.Num()));
+}
+
+
 
