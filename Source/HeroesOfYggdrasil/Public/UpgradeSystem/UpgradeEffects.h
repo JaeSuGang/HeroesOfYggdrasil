@@ -37,6 +37,21 @@ public:
 	float AttackSpeedIncrement;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CriticalChanceIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CriticalRateIncrement;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DefenseMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float HpMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float HPGeneration;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

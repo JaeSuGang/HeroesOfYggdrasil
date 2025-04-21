@@ -45,10 +45,14 @@ void UYggAttackCapsuleComponent::TickComponent(float DeltaTime, ELevelTick TickT
 						UCharacterAttributeComponent* CharacterAttributeComponent = OwnerCharacter->GetAttributeComponent();
 						if (!DamageCharacterAttributeComponent) { continue; }
 						if (!CharacterAttributeComponent) { continue; }
-						DamageCharacterAttributeComponent->Server_TakeDamage(CharacterAttributeComponent->AttackPoints * Coefficient);
+						
+						float Damage = DamageLogic(CharacterAttributeComponent, DamageCharacterAttributeComponent);
+						
+
+						DamageCharacterAttributeComponent->Server_TakeDamage(Damage);
 						// 지워도됨
-						FString Damage = FString::Printf(TEXT("TickDamage : %f"), CharacterAttributeComponent->AttackPoints * Coefficient);
-						GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Red, Damage);
+						FString DamageStr = FString::Printf(TEXT("TickDamage : %f"), Damage);
+						GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Green, DamageStr);
 					}
 				}
 			}
@@ -67,10 +71,17 @@ void UYggAttackCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedCom
 	AYggCharacter* DamageCharacter = Cast<AYggCharacter>(OtherActor);
 	if (!DamageCharacter) return;
 	UCharacterAttributeComponent* DamageCharacterAttributeComponent = DamageCharacter->GetAttributeComponent();
-	if (!DamageCharacterAttributeComponent) { return; }
 	UCharacterAttributeComponent* AttackCharacterAttributeComponent = OwnerCharacter->GetAttributeComponent();
-	if (!AttackCharacterAttributeComponent) { return; }
-	DamageCharacterAttributeComponent->Server_TakeDamage(AttackCharacterAttributeComponent->GetAttackPoints() * Coefficient);
+
+	if (!AttackCharacterAttributeComponent|| !DamageCharacterAttributeComponent) { return; }
+
+	float Damage = DamageLogic(AttackCharacterAttributeComponent, DamageCharacterAttributeComponent);
+
+
+
+	DamageCharacterAttributeComponent->Server_TakeDamage(Damage);
+	FString DamageStr = FString::Printf(TEXT("Damage : %f"), Damage);
+	GEngine->AddOnScreenDebugMessage(2, 1.0f, FColor::Green, DamageStr);
 
 	PlusLogic.Broadcast();
 }
@@ -106,6 +117,23 @@ void UYggAttackCapsuleComponent::CollisionOn()
 			break;
 		}
 	}
+}
+
+float UYggAttackCapsuleComponent::DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit)
+{
+	UCharacterAttributeComponent* AttackAttributeComponent = Attack;
+	UCharacterAttributeComponent* HitAttributeComponent = Hit;
+	float Damage;
+	// 공격력 계산
+	Damage = AttackAttributeComponent->AttackPoints* Coefficient;
+	// 방어력 계산
+	Damage = Damage * (100 / (100 + HitAttributeComponent->DefensePoints));
+	// 크리티컬 확률 계산 
+	if (FMath::FRand() <= AttackAttributeComponent->CriticalChance)
+	{
+		Damage = Damage * (1 + AttackAttributeComponent->CriticalDamageRate);
+	}
+	return Damage;
 }
 
 void UYggAttackCapsuleComponent::OverLapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)

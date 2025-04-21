@@ -56,7 +56,7 @@ void UGetTargetActorAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 			QueryParams.bTraceComplex = true;
 
 			FCollisionObjectQueryParams ObjectQueryParams;
-			ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel1); // 적 캐릭터가 이 채널이어야 함
+			ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel1); 
 
 			FVector BoxHalfSize(50.f, 50.f, 50.f);
 			FRotator Orientation = (EndLocation - SpawnLocation).Rotation();
@@ -76,9 +76,9 @@ void UGetTargetActorAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 			// Bomb에 전달
 			Bomb->SetActorRotation(AimRot);
 			Bomb->SetAimDir(AimDirection);
-			Bomb->SetTargetLocation(TargetLocation); // 필요 시 함수로 전달
+			Bomb->SetTargetLocation(TargetLocation); 
 
-			// 이제 BeginPlay 등 초기화가 실행됨
+			
 			UGameplayStatics::FinishSpawningActor(Bomb, SpawnTransform);
 		}
 	}

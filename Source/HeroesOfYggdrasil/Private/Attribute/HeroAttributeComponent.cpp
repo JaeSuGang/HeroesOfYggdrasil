@@ -47,8 +47,6 @@ void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 {
     Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UHeroAttributeComponent, JumpPower);
-	DOREPLIFETIME(UHeroAttributeComponent, CriticalChance);
-	DOREPLIFETIME(UHeroAttributeComponent, CriticalDamageRate);
 }
 
 void UHeroAttributeComponent::UpdateStatus()

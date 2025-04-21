@@ -37,15 +37,6 @@ struct FSpawnProjectileDataRow : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
 	float MaxSpeed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
-	TSoftObjectPtr<UStaticMesh> StaticMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
-	TSoftObjectPtr<class UNiagaraSystem> NiagaraSystem;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectileData")
-	TSoftObjectPtr<class UParticleSystem> Particle;
 };
 
 
@@ -67,8 +58,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	UFUNCTION()
 	void SetAimDir(FVector _AimDirection);
+
+	UFUNCTION(Reliable, Server)
+	void Server_SetAimDir(FVector _AimDirection);
+
+	UFUNCTION(Reliable, NetMulticast)
+	void MultiCast_SetAimDir(FVector _AimDirection);
+
 
 	UFUNCTION()
 	void SetOwnerCharacter(class AYggCharacter* _OwnerCharacter) { OwnerCharacter = _OwnerCharacter; }
@@ -100,13 +100,9 @@ protected:
 
 	FSpawnProjectileDataRow ProjectileDataRow;
 
+	UPROPERTY(Replicated)
 	FVector AimDirection;
 
-	UPROPERTY(EditDefaultsOnly, Category = "AYggProjectileActor")
-	TObjectPtr<class UNiagaraComponent> NiagaraSystemComponent;
-
-	UPROPERTY(EditDefaultsOnly, Category = "AYggProjectileActor")
-	TObjectPtr<class UParticleSystemComponent> ParticleSystemComponent;
 
 	void LineMode();
 	void ParabolaMode();

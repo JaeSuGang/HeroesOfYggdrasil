@@ -221,6 +221,7 @@ void AYggHero::PossessedBy(AController* NewController)
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AYggHero, DeathCount);
 }
 
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -379,6 +380,10 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 void AYggHero::Roll(const FInputActionValue& Value)
 {
+	if (bAimMode)
+	{
+		SetAimMode(false);
+	}
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
 	if (HeroAttributeComponent->CurRollCount <= 0) return;
 
@@ -565,14 +570,14 @@ void AYggHero::Die(float Delegate)
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.Death"));
+		DeathCount++;
 		MulticastDie(Delegate);
 	}
 	else
 	{
 		ServerDie(Delegate);
 	}
-
-	OnRespawn.Broadcast(RespawnTime);
+	OnRespawn.Broadcast(RespawnTime+DeathCount*5.0f);
 }
 
 void AYggHero::ServerDie_Implementation(float Delegate)
@@ -582,6 +587,7 @@ void AYggHero::ServerDie_Implementation(float Delegate)
 
 void AYggHero::MulticastDie_Implementation(float Delegate)
 {
+	
 	FName MontageName = TEXT("Death");
 	HeroAnimInstance->PlayMontage(MontageName);
 }

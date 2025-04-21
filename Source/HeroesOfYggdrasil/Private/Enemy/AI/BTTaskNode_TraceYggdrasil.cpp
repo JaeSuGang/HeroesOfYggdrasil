@@ -94,6 +94,7 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	if (IsValid(SelfController) && IsValid(TargetActor))
 	{
 		FVector TargetVector = TargetActor->GetActorLocation();
+		TargetVector.Z = 0.0f;
 		FVector SelfLocation = SelfActor->GetActorLocation();
 
 		FVector Location = TargetVector - SelfLocation;

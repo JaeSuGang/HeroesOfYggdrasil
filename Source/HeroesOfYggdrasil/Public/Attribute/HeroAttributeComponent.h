@@ -55,11 +55,7 @@ public:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float JumpPower;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float CriticalChance;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
-	float CriticalDamageRate;
 	
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float SkillQCurCoolTime;

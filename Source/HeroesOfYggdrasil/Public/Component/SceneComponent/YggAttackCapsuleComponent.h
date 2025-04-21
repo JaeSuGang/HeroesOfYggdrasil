@@ -61,6 +61,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<AActor*> OverlappedActors;
 
+	UFUNCTION()
+	float DamageLogic(class UCharacterAttributeComponent* Attack, class UCharacterAttributeComponent* Hit);
+
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

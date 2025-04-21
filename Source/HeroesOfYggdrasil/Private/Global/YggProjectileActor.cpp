@@ -2,11 +2,11 @@
 
 
 #include "Global/YggProjectileActor.h"
+
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
-#include "NiagaraComponent.h"
-#include "Particles/ParticleSystemComponent.h"
+#include "Net/UnrealNetwork.h"
 
 #include "Core/YggCharacter.h"
 #include "Kismet/GameplayStatics.h"
@@ -16,6 +16,7 @@ AYggProjectileActor::AYggProjectileActor()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
@@ -25,11 +26,6 @@ AYggProjectileActor::AYggProjectileActor()
 	AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("AttackCapsuleComponent"));
 	AttackCapsuleComponent->SetupAttachment(RootComponent);
 
-	NiagaraSystemComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraSystem"));
-	NiagaraSystemComponent->SetupAttachment(RootComponent);
-
-	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystem"));
-	ParticleSystemComponent->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -46,16 +42,7 @@ void AYggProjectileActor::BeginPlay()
 	ProjectileMovement->InitialSpeed = ProjectileDataRow.InitialSpeed;
 	ProjectileMovement->MaxSpeed = ProjectileDataRow.MaxSpeed;
 	ProjectileMovement->Velocity = AimDirection * ProjectileDataRow.InitialSpeed;
-	if (ProjectileDataRow.NiagaraSystem.IsValid())
-	{
-		NiagaraSystemComponent->SetAsset(ProjectileDataRow.NiagaraSystem.LoadSynchronous());
-		NiagaraSystemComponent->Activate(true);
-	}
-	else
-	{
-		ParticleSystemComponent->SetTemplate(ProjectileDataRow.Particle.LoadSynchronous());
-		ParticleSystemComponent->Activate(true);
-	}
+	
 
 
 
@@ -91,7 +78,31 @@ void AYggProjectileActor::Tick(float DeltaTime)
 	DrawDebugSphere(GetWorld(), GetActorLocation(), 10.f, 12, FColor::Red);
 }
 
+void AYggProjectileActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AYggProjectileActor, AimDirection);
+}
+
 void AYggProjectileActor::SetAimDir(FVector _AimDirection)
+{
+	
+	if (HasAuthority())
+	{
+		AimDirection = _AimDirection;
+	}
+	else
+	{
+		Server_SetAimDir(_AimDirection);
+	}
+}
+
+void AYggProjectileActor::Server_SetAimDir_Implementation(FVector _AimDirection)
+{
+	MultiCast_SetAimDir(_AimDirection);
+}
+
+void AYggProjectileActor::MultiCast_SetAimDir_Implementation(FVector _AimDirection)
 {
 	AimDirection = _AimDirection;
 }
@@ -127,7 +138,7 @@ void AYggProjectileActor::TargetParabolaMode()
 
 	if (bHasSolution)
 	{
-		ProjectileMovement->Velocity = TossVelocity;
+		ProjectileMovement->Velocity += TossVelocity;
 	}
 }
 
