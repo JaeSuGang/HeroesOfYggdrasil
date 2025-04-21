@@ -46,6 +46,10 @@ public:
 	FName HeroName;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	float CooldownReduction;
+
+
+	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
 	float JumpPower;
 
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
