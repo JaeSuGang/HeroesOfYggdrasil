@@ -59,7 +59,7 @@ private:
 	FVector TargetPoint;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Orb")
-	float MoveSpeed = 500.0f;
+	float MoveSpeed = 1000.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Orb")
 	float MaxTraceDistance = 10000.f; // Line Trace 최대 거리
@@ -71,16 +71,18 @@ private:
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Orb|Homing")
-	float HomingRadius = 1000.f;    // 적 탐지 반경
+	float HomingRadius = 300.f;    // 적 탐지 반경
 
 	UPROPERTY(EditDefaultsOnly, Category = "Orb|Homing")
-	float HomingStrength = 5.f;     // 유도 강도 (클수록 빠름)
+	float HomingStrength = 0.5f;     // 유도 강도 (클수록 빠름)
 
 	UPROPERTY(EditDefaultsOnly, Category = "Orb|Homing")
 	float HomingStartDelay = 0.5f;  // 유도 시작 전 초기 직진 시간
 
 	UPROPERTY(EditDefaultsOnly, Category = "Orb|Homing")
 	TEnumAsByte<ECollisionChannel> EnemyObjectType = ECC_GameTraceChannel1;
+
+	float LastHomingDistance;
 
 private:
 	FTimerHandle HomingTimer;
