@@ -71,11 +71,10 @@ int AEnemyManager::GetNumOfEnemyCharacter()
 
 void AEnemyManager::AddEnemyCharacter(AEnemyCharacter* NewEnemy)
 {
-	if (!AllEnemyCharacter.Contains(NewEnemy))
-	{
-		AllEnemyCharacter.Add(NewEnemy);
-		OnEnemyCountDelegate.Broadcast(this);
-	}
+	if (!AllEnemyCharacter.Contains(NewEnemy)) return;
+
+	AllEnemyCharacter.Add(NewEnemy);
+	OnEnemyCountDelegate.Broadcast(this);
 }
 
 void AEnemyManager::RemoveEnemyCharacter(AEnemyCharacter* Enemy)
