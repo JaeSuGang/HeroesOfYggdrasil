@@ -263,4 +263,7 @@ public:
 protected:
 	UPROPERTY(Replicated)
 	int32 DeathCount = 0;
+
+public:
+	void ApplyStun();
 };
