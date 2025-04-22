@@ -17,6 +17,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Player/YggHero.h"
+#include "NPC/Yggdrasil.h"
 
 #include "MainGame/UI/YggMHPBarUserWidget.h"
 #include "MainGame/UI/YggCastingBarUserWidget.h"
@@ -29,6 +30,8 @@
 
 #include "UpgradeSystem/UpgradeSystem.h"
 #include "UpgradeSystem/UpgradeDataAsset.h"
+
+#include "EngineUtils.h"
 
 
 void AMainGameHUD::BeginPlay()
@@ -61,6 +64,10 @@ void AMainGameHUD::BeginPlay()
 	this->PlayerOwner->SetInputMode(FInputModeUIOnly{});
 
 	this->PlayerOwner->bShowMouseCursor = true;
+
+	TActorIterator<AYggdrasil> iter(GetWorld());
+
+	Yggdrasil = *iter;
 }
 
 void AMainGameHUD::OnStartGame(FOnGameStartParams OnGameStarted)

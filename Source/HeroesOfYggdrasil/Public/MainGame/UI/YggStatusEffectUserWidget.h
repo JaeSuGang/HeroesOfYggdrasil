@@ -28,6 +28,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UYggDebuffUserWidget* FindDebuffWidget(EStatusEffectType StatusEffectType);
 
+	UFUNCTION(BlueprintCallable)
+	void AddDebuff(EStatusEffectType StatusEffectType);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveDebuff(UYggDebuffUserWidget* Debuff);
+
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
