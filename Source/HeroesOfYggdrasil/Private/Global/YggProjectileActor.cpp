@@ -38,12 +38,16 @@ void AYggProjectileActor::BeginPlay()
 		AttackCapsuleComponent->SetOwnerCharacter(OwnerCharacter);
 		AttackCapsuleComponent->CollisionOn();
 	}
-	ProjectileDataRow = *ProjectileData->FindRow<FSpawnProjectileDataRow>(RowName, nullptr);
-	ProjectileType = ProjectileDataRow.ProjectileType;
-	ProjectileMovement->InitialSpeed = ProjectileDataRow.InitialSpeed;
-	ProjectileMovement->MaxSpeed = ProjectileDataRow.MaxSpeed;
-	ProjectileMovement->Velocity = AimDirection * ProjectileDataRow.InitialSpeed;
-	
+	if (ProjectileMovement)
+	{
+
+		ProjectileDataRow = *ProjectileData->FindRow<FSpawnProjectileDataRow>(RowName, nullptr);
+		ProjectileType = ProjectileDataRow.ProjectileType;
+		ProjectileMovement->MaxSpeed = ProjectileDataRow.MaxSpeed;
+		ProjectileMovement->Velocity = AimDirection * ProjectileDataRow.InitialSpeed;
+		ProjectileMovement->InitialSpeed = ProjectileDataRow.InitialSpeed;
+	}
+
 
 
 
@@ -64,7 +68,7 @@ void AYggProjectileActor::BeginPlay()
 	default:
 		break;
 	}
-	
+
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 		{
@@ -88,7 +92,7 @@ void AYggProjectileActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 void AYggProjectileActor::SetAimDir(FVector _AimDirection)
 {
-	
+
 	if (HasAuthority())
 	{
 		AimDirection = _AimDirection;
@@ -125,7 +129,7 @@ void AYggProjectileActor::MultiCast_SetAimDir_Implementation(FVector _AimDirecti
 void AYggProjectileActor::LineMode()
 {
 	// 이동 방향으로 Velocity 설정
-	
+
 	ProjectileMovement->ProjectileGravityScale = 0.f;
 }
 
