@@ -249,10 +249,6 @@ void AEnemyCharacter::AttackCollisionInit()
 		RightAttackCapsule->SetCapsuleSize(300.0f, 600.0f); 
 		RightAttackCapsule->SetWorldRotation(FRotator(45.f, 0.f, 0.f));
 		RightAttackCapsule->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
-
-		RightAttackCapsule->bHiddenInGame = false;
-		RightAttackCapsule->SetVisibility(true, true);
-		RightAttackCapsule->SetHiddenInGame(false, true);
 	}
 	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r_head")))
 	{
@@ -276,10 +272,6 @@ void AEnemyCharacter::AttackCollisionInit()
 		LeftAttackCapsule->SetCapsuleSize(300.0f, 600.0f);
 		LeftAttackCapsule->SetWorldRotation(FRotator(45.f, 0.f, 0.f));
 		LeftAttackCapsule->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
-
-		LeftAttackCapsule->bHiddenInGame = false;
-		LeftAttackCapsule->SetVisibility(true, true);
-		LeftAttackCapsule->SetHiddenInGame(false, true);
 	}
 	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l_head")))
 	{
