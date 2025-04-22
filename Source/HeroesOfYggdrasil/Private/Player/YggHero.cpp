@@ -505,7 +505,7 @@ void AYggHero::SkillQ(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -537,7 +537,7 @@ void AYggHero::SkillE(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -571,7 +571,7 @@ void AYggHero::SkillR(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
