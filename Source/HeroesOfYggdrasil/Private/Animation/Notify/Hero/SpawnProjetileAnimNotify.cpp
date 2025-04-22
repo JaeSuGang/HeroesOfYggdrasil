@@ -5,7 +5,7 @@
 
 #include "Core/YggCharacter.h"
 #include "Global/YggProjectileActor.h"
-#include "Player/YggHeroRevenant.h"
+#include "Player/YggHero.h"
 #include "Kismet/GameplayStatics.h"
 void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
@@ -16,7 +16,7 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 	if ((Actor->HasAuthority()))
 	{
 		const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(SocketName);
-		const FVector AimDirection = Cast<AYggHeroRevenant>(Actor)->GetAimDirection();
+		const FVector AimDirection = Cast<AYggHero>(Actor)->GetAimDirection();
 		const FRotator AimRot = AimDirection.Rotation();
 
 		FTransform SpawnTransform(AimRot, SpawnLocation);
