@@ -31,7 +31,7 @@ void AEnemyManager::BeginPlay()
 
 	NetSyncMonster();
 
-	OnEnemyCountDelegate.AddDynamic(this, &AEnemyManager::GetNumOfEnemyCharacter);
+	
 }
 
 AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _OriginPos)
