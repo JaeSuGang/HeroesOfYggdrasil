@@ -57,7 +57,7 @@ protected:
 	class UProjectileMovementComponent* ProjectileMovement;
 
 	UPROPERTY(VisibleAnywhere, Category = "Poison", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class USphereComponent> SphereCollision;
+	TObjectPtr<class USphereComponent> SphereObjectCollision;
 
 	UPROPERTY(EditAnywhere)
 	float DestroyTime;
