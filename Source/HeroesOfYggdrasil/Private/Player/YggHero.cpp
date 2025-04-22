@@ -251,7 +251,6 @@ FVector AYggHero::Local_GetAimDirection(FName _SocketName)
 }
 
 
-
 void AYggHero::Server_SetAimDirection_Implementation(const FVector& InAimDir)
 {
 	AimDirection = InAimDir;
@@ -645,3 +644,16 @@ void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
 	CameraBoom->TargetArmLength = NewLength;
 }
 
+void AYggHero::ApplyStun()
+{
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+}
+
+void AYggHero::ClearStun()
+{
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotRollable"));
+}
