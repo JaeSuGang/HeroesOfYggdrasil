@@ -266,4 +266,5 @@ protected:
 
 public:
 	void ApplyStun();
+	void ClearStun();
 };
