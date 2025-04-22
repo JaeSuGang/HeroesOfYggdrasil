@@ -10,6 +10,8 @@
 
 AEnemyManager::AEnemyManager()
 {
+
+
 }
 
 AEnemyManager* AEnemyManager::Get(UWorld* WorldContext)
@@ -28,6 +30,8 @@ void AEnemyManager::BeginPlay()
 	Super::BeginPlay();
 
 	NetSyncMonster();
+
+	
 }
 
 AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _OriginPos)
@@ -45,7 +49,8 @@ AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _Origi
 	Trans.SetLocation(_OriginPos);
 	NewEnemyCharacter->FinishSpawning(Trans);
 	AEnemyAIController* AICon = Cast<AEnemyAIController>(NewEnemyCharacter->GetController());
-	AllEnemyCharacter.Add(NewEnemyCharacter);
+	AddEnemyCharacter(NewEnemyCharacter);
+	//AllEnemyCharacter.Add(NewEnemyCharacter);
 
 	return NewEnemyCharacter;
 }
@@ -64,5 +69,22 @@ int AEnemyManager::GetNumOfEnemyCharacter()
 	return  static_cast<int>((AllEnemyCharacter.Num()));
 }
 
+void AEnemyManager::AddEnemyCharacter(AEnemyCharacter* NewEnemy)
+{
+	if (!AllEnemyCharacter.Contains(NewEnemy))
+	{
+		AllEnemyCharacter.Add(NewEnemy);
+		OnEnemyCountDelegate.Broadcast(this);
+	}
+}
+
+void AEnemyManager::RemoveEnemyCharacter(AEnemyCharacter* Enemy)
+{
+	if (!AllEnemyCharacter.Contains(Enemy))
+	{
+		AllEnemyCharacter.Remove(Enemy);
+		OnEnemyCountDelegate.Broadcast(this);
+	}
+}
 
 
