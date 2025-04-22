@@ -161,7 +161,7 @@ void AEnemyCharacter::BeginPlay()
 	MHPBarWidgetComponent->Init(this);
 
 	// 충돌 설정
-	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
+	//GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 
 	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
@@ -232,7 +232,7 @@ void AEnemyCharacter::AttackCollisionInit()
 	// 콜리전 설정
 	RightAttackCapsule->SetOwnerCharacter(this);
 	RightAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
-	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), RightAttackCapsule);
+	AttackCapsuleComponentMap.Add(TEXT("NormalRightAttack"), RightAttackCapsule);
 
 	LeftAttackCapsule->SetOwnerCharacter(this);
 	LeftAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
@@ -246,7 +246,9 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("MOUNTAIN_DRAGON_-R-Hand")
 		);
-		RightAttackCapsule->SetCapsuleSize(300.0f, 200.0f); 
+		RightAttackCapsule->SetCapsuleSize(300.0f, 600.0f); 
+		RightAttackCapsule->SetWorldRotation(FRotator(45.f, 0.f, 0.f));
+		RightAttackCapsule->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
 	}
 	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r_head")))
 	{
@@ -267,7 +269,9 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("MOUNTAIN_DRAGON_-L-Hand")
 		);
-		LeftAttackCapsule->SetCapsuleSize(300.0f, 200.0f);
+		LeftAttackCapsule->SetCapsuleSize(300.0f, 600.0f);
+		LeftAttackCapsule->SetWorldRotation(FRotator(45.f, 0.f, 0.f));
+		LeftAttackCapsule->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
 	}
 	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l_head")))
 	{
@@ -277,6 +281,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			TEXT("weapon_l_head")
 		);
 		LeftAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
+
 	}
 
 
@@ -284,8 +289,16 @@ void AEnemyCharacter::AttackCollisionInit()
 
 	DragonBreathCapsule->SetOwnerCharacter(this);
 	DragonBreathCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
-	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), DragonBreathCapsule);
-	DragonBreathCapsule->SetCapsuleSize(600.0f, 200.0f);
+	AttackCapsuleComponentMap.Add(TEXT("DragonBreathAttack"), DragonBreathCapsule);
+	DragonBreathCapsule->AttachToComponent(
+		GetMesh(),
+		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+		TEXT("MOUNTAIN_DRAGON_-Breath")
+	);
+
+	DragonBreathCapsule->SetCapsuleSize(80.0f, 1500.0f);
+	DragonBreathCapsule->SetWorldRotation(FRotator(90.f, 0.f, 0.f));
+	DragonBreathCapsule->SetRelativeLocation(FVector(700.f, 380.f, 0.f)); 
 	DragonBreathCapsule->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 }
 
