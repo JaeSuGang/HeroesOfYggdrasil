@@ -8,7 +8,7 @@
 
 void UCharacterAttributeComponent::Server_TakeDamage_Implementation(float fAmount)
 {
-	HP -= fAmount;
+	Server_SetHP(HP - fAmount);
 
 	ServerDelegate_OnTakeDamage.Broadcast(fAmount);
 	Client_TakeDamage(fAmount);
