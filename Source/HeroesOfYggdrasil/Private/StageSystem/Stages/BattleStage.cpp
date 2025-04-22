@@ -13,19 +13,16 @@ void UBattleStage::BeginPlay(UStageSystem* NewStageSystem)
 {
 	Super::BeginPlay(NewStageSystem);
 
+	if (AEnemyManager* EM = AEnemyManager::Get(GetWorld()))
+	{
+		EM->OnEnemyCountDelegate.AddDynamic(this, &UBattleStage::Local_OnEnemyCountChanged);
+	}
 }
 
 void UBattleStage::TickLogic(float DeltaTime)
 {
 	Super::TickLogic(DeltaTime);
 
-	if (AEnemyManager* EM = AEnemyManager::Get(StageSystem->GetWorld()))
-	{
-		if (HasEverSpawnedMonster && EM->AllEnemyCharacter.Num() <= 0)
-		{
-			EnterNextStage();
-		}
-	}
 }
 
 void UBattleStage::SpawnWave()
@@ -81,5 +78,19 @@ void UBattleStage::Local_OnEnterStage(int NewRound)
 	if (StageSystem->GetOwner()->HasAuthority())
 	{
 		SpawnWave();
+	}
+}
+
+void UBattleStage::Local_OnEnemyCountChanged(AEnemyManager* EnemyManager)
+{
+	if (StageSystem->StageCycle[StageSystem->CurrentStageIndex] != this)
+		return;
+
+	if (StageSystem->GetOwner()->HasAuthority())
+	{
+		if (EnemyManager->AllEnemyCharacter.Num() <= 0)
+		{
+			EnterNextStage();
+		}
 	}
 }
