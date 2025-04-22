@@ -9,6 +9,9 @@
 /**
  * 
  */
+class UNiagaraSystem;
+class UNiagaraComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroAurora : public AYggHero
 {
@@ -36,5 +39,20 @@ protected:
 	virtual void Roll(const FInputActionValue& Value) override;
 
 private:
+	UPROPERTY()
 	bool bIsSkillE = false;
+
+	UPROPERTY(EditAnywhere)
+	UMaterialInterface* SkillRDecalMaterial;
+
+	UPROPERTY()
+	UDecalComponent* SkillRDecal;
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> SkillQAttackCapsuleComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> SkillEAttackCapsuleComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> SkillRAttackCapsuleComponent;
 };

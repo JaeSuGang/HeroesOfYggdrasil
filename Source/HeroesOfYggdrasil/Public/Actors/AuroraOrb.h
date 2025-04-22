@@ -59,7 +59,7 @@ private:
 	FVector TargetPoint;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Orb")
-	float MoveSpeed = 1000.0f;
+	float MoveSpeed = 1500.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Orb")
 	float MaxTraceDistance = 10000.f; // Line Trace 최대 거리

@@ -36,30 +36,28 @@
 
 AYggHeroGreystone::AYggHeroGreystone()
 {
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Attack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("sword_bottom"));
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("Attack"), AttackCapsuleComponent);
-	} 
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), AttackCapsuleComponent);
-	}
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), AttackCapsuleComponent);
-	}
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), AttackCapsuleComponent);
-	}
+	AttackCapsuleComponentMap.Reset();
+
+	NormalAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("Attack"));
+	NormalAttackCapsuleComponent->SetupAttachment(GetMesh());
+	NormalAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("Attack"), NormalAttackCapsuleComponent);
+	
+	SkillQAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
+	SkillQAttackCapsuleComponent->SetupAttachment(GetMesh());
+	SkillQAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), SkillQAttackCapsuleComponent);
+		
+	SkillEAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
+	SkillEAttackCapsuleComponent->SetupAttachment(GetMesh());
+	SkillEAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), SkillEAttackCapsuleComponent);
+	
+	SkillRAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
+	SkillRAttackCapsuleComponent->SetupAttachment(GetMesh());
+	SkillRAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), SkillRAttackCapsuleComponent);
+	
 
 	SkillRBuffCapsule = CreateDefaultSubobject<UYggCapsuleComponent>(TEXT("SkillRRecover"));
 	SkillRBuffCapsule->SetupAttachment(GetMesh());
@@ -172,7 +170,7 @@ void AYggHeroGreystone::Attack(const FInputActionValue& Value)
 		return;
 	}
 
-	Super::Attack(Value);		
+	Super::Attack(Value);
 }
 
 void AYggHeroGreystone::EndAttack(const FInputActionValue& Value)
@@ -293,8 +291,7 @@ void AYggHeroGreystone::SkillR(const FInputActionValue& Value)
 
 	if (HasAuthority())
 	{
-		// HeroAttributeComponent->Status.GroundSpeedRate = 4.0f;
-		// GetCharacterMovement()->MaxWalkSpeed *= HeroAttributeComponent->Status.GroundSpeedRate;
+		// HeroAttributeComponent->Server_SetMaxMoveSpeed(HeroAttributeComponent->MaxMoveSpeed * 3.0f);
 		
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -435,8 +432,7 @@ void AYggHeroGreystone::MagicCircleOff()
 	}
 
 	if (HasAuthority())
-	{	
-		// GetCharacterMovement()->MaxWalkSpeed /= HeroAttributeComponent->Status.GroundSpeedRate;
-		// HeroAttributeComponent->Status.GroundSpeedRate /= 4.0f;
+	{
+		// HeroAttributeComponent->Server_SetMaxMoveSpeed(HeroAttributeComponent->MaxMoveSpeed / 3.0f);
 	}
 }

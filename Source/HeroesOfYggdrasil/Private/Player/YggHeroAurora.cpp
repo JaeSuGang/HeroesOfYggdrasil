@@ -13,24 +13,22 @@
 
 AYggHeroAurora::AYggHeroAurora()
 {
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), AttackCapsuleComponent);
-	}
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), AttackCapsuleComponent);
-	}
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), AttackCapsuleComponent);
-	}
+	AttackCapsuleComponentMap.Reset();
+		
+	SkillQAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
+	SkillQAttackCapsuleComponent->SetupAttachment(GetMesh());
+	SkillQAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), SkillQAttackCapsuleComponent);
+		
+	SkillEAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
+	SkillEAttackCapsuleComponent->SetupAttachment(GetMesh());
+	SkillEAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), SkillEAttackCapsuleComponent);
+		
+	SkillRAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
+	SkillRAttackCapsuleComponent->SetupAttachment(GetMesh());
+	SkillRAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), SkillRAttackCapsuleComponent);
 }
 
 void AYggHeroAurora::BeginPlay()
