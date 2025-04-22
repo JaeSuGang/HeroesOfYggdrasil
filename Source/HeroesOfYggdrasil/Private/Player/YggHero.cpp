@@ -218,10 +218,51 @@ void AYggHero::PossessedBy(AController* NewController)
 	}
 }
 
+FVector AYggHero::Local_GetAimDirection(FName _SocketName)
+{
+	// 1. 카메라 위치 · 회전
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return FVector::ZeroVector;
+
+	FVector CamLoc;
+	FRotator CamRot;
+	PC->GetPlayerViewPoint(CamLoc, CamRot);
+
+	// 2. 1차 라인트레이스 : 카메라 → 조준 지점
+	const float TraceRange = 10000.f;
+	FVector TraceEnd = CamLoc + CamRot.Vector() * TraceRange;
+
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	GetWorld()->LineTraceSingleByChannel(
+		Hit, CamLoc, TraceEnd, ECC_Visibility, Params);
+
+	const FVector TargetLoc = Hit.bBlockingHit ? Hit.ImpactPoint : TraceEnd;
+
+	// 3. 총구 위치
+	const FVector MuzzleLoc = GetMesh()->GetSocketLocation(_SocketName);
+
+	// 4. 정확한 발사 방향 = (목표 - 총구). 정규화
+	FVector AimDir = (TargetLoc - MuzzleLoc).GetSafeNormal();
+
+	return AimDir;
+}
+
+
+
+void AYggHero::Server_SetAimDirection_Implementation(const FVector& InAimDir)
+{
+	AimDirection = InAimDir;
+}
+
+
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AYggHero, DeathCount);
+	DOREPLIFETIME(AYggHero, AimDirection);
 }
 
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
