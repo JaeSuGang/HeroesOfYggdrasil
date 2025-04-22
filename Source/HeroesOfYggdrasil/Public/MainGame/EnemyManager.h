@@ -6,6 +6,9 @@
 #include "GameFramework/Info.h"
 #include "EnemyManager.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyCountDelegate, AEnemyManager*, _Manager);
+
 /**
  * 담당 : 김경민, 장시혁
  */
@@ -26,6 +29,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int GetNumOfEnemyCharacter();
+	
+	UFUNCTION(BlueprintCallable)
+	void AddEnemyCharacter(AEnemyCharacter* NewEnemy);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveEnemyCharacter(AEnemyCharacter* Enemy);
 
 protected:
 	virtual void BeginPlay() override;
@@ -34,4 +43,8 @@ public:
 	AActor* CreateMonster(const FString& _MonsterName, FVector _OriginPos);
 
 	TArray<class AEnemyCharacter*> AllEnemyCharacter;
+
+
+	UPROPERTY(BlueprintAssignable, Category = "EnemyManager")
+	FOnEnemyCountDelegate OnEnemyCountDelegate;
 };

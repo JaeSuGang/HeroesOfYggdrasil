@@ -191,7 +191,7 @@ void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	
 	if (IsValid(EnemyManager) && EnemyManager->AllEnemyCharacter.Contains(this))
 	{
-		EnemyManager->AllEnemyCharacter.Remove(this);
+		EnemyManager->RemoveEnemyCharacter(this);
 	}
 	
 	Super::EndPlay(EndPlayReason);
