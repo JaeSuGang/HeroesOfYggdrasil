@@ -232,7 +232,7 @@ void AEnemyCharacter::AttackCollisionInit()
 	// 콜리전 설정
 	RightAttackCapsule->SetOwnerCharacter(this);
 	RightAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
-	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), RightAttackCapsule);
+	AttackCapsuleComponentMap.Add(TEXT("NormalRightAttack"), RightAttackCapsule);
 
 	LeftAttackCapsule->SetOwnerCharacter(this);
 	LeftAttackCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
@@ -246,7 +246,13 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("MOUNTAIN_DRAGON_-R-Hand")
 		);
-		RightAttackCapsule->SetCapsuleSize(300.0f, 200.0f); 
+		RightAttackCapsule->SetCapsuleSize(300.0f, 600.0f); 
+		RightAttackCapsule->SetWorldRotation(FRotator(45.f, 0.f, 0.f));
+		RightAttackCapsule->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
+
+		RightAttackCapsule->bHiddenInGame = false;
+		RightAttackCapsule->SetVisibility(true, true);
+		RightAttackCapsule->SetHiddenInGame(false, true);
 	}
 	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_r_head")))
 	{
@@ -267,7 +273,13 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("MOUNTAIN_DRAGON_-L-Hand")
 		);
-		LeftAttackCapsule->SetCapsuleSize(300.0f, 200.0f);
+		LeftAttackCapsule->SetCapsuleSize(300.0f, 600.0f);
+		LeftAttackCapsule->SetWorldRotation(FRotator(45.f, 0.f, 0.f));
+		LeftAttackCapsule->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
+
+		LeftAttackCapsule->bHiddenInGame = false;
+		LeftAttackCapsule->SetVisibility(true, true);
+		LeftAttackCapsule->SetHiddenInGame(false, true);
 	}
 	else if (GetMesh() && GetMesh()->DoesSocketExist(TEXT("weapon_l_head")))
 	{
@@ -277,6 +289,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			TEXT("weapon_l_head")
 		);
 		LeftAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
+
 	}
 
 
@@ -284,7 +297,7 @@ void AEnemyCharacter::AttackCollisionInit()
 
 	DragonBreathCapsule->SetOwnerCharacter(this);
 	DragonBreathCapsule->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
-	AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), DragonBreathCapsule);
+	AttackCapsuleComponentMap.Add(TEXT("DragonBreathAttack"), DragonBreathCapsule);
 	DragonBreathCapsule->AttachToComponent(
 		GetMesh(),
 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
