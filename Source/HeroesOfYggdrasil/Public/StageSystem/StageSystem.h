@@ -36,6 +36,7 @@ struct FOnDefeatedParams
 
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStageStartedDelegate, UStageBase*, NewStage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameStarted, FOnGameStartParams, OnGameStartParams);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnVictory, FOnVictoryParams, OnVictoryParams);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDefeated, FOnDefeatedParams, OnDefeatedParams);
@@ -69,6 +70,10 @@ public:
 
 	UFUNCTION()
 	void DefeatInternal();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_BroadcastStageStart(UStageBase* NewStage);
+	void Multicast_BroadcastStageStart_Implementation(UStageBase* NewStage);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastDefeated(FOnDefeatedParams OnDefeatedParams);
@@ -109,6 +114,9 @@ protected:
 	void PlayDefeatLevelSequence(FOnDefeatedParams OnDefeatedParams);
 
 public:
+	UPROPERTY(BlueprintAssignable)
+	FOnStageStartedDelegate OnStageStartedDelegate;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnGameStarted OnGameStarted;
 

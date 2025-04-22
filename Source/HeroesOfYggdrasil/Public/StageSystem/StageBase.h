@@ -9,27 +9,6 @@
 class UStageSystem;
 class UStageDataAsset;
 
-USTRUCT()
-struct FOnEnterStageDelegateParams
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	int NewRound;
-};
-
-USTRUCT()
-struct FOnExitStageDelegateParams
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	int CurrentRound;
-};
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnterStageDelegate, FOnEnterStageDelegateParams, OnEnterStageDelegateParams);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnExitStageDelegate, FOnExitStageDelegateParams, OnExitStageDelegateParams);
-
 /**
  * 담당 코더 : 김경민
  */
@@ -74,12 +53,6 @@ public:
 	* 서버가 Bind할 시 서버 로직에 영향
 	* 클라이언트가 Bind할 시 자기 클라이언트에 영향
 	*/
-	UPROPERTY(BlueprintAssignable)
-	FOnEnterStageDelegate OnEnterStageDelegate;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnExitStageDelegate OnExitStageDelegate;
-
 public:
 	UPROPERTY(VisibleInstanceOnly)
 	UStageSystem* StageSystem;

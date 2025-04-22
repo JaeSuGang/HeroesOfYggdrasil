@@ -54,7 +54,7 @@ public:
 
 public:
 	UFUNCTION()
-	void SpawnWave(FOnEnterStageDelegateParams OnEnterStageParams);
+	void SpawnWave();
 
 	UFUNCTION()
 	void LoadTables();
