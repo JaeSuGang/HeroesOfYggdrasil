@@ -3,6 +3,8 @@
 
 #include "MainGame/UI/YggMiniMapIconActor.h"
 #include "MainGame/UI/YggUIDataAsset.h"
+#include "MainGame/UI/MainGameHUD.h"
+#include "MainGame/UI/YggMiniMapManager.h"
 #include "Core/YggGameInstance.h"
 #include "GameFramework/Character.h"
 #include "Player/YggHero.h"
@@ -23,7 +25,7 @@ AYggMiniMapIconActor::AYggMiniMapIconActor()
 	PaperSpriteComponent->SetRelativeRotation(FQuat::MakeFromEuler({ -90.0f, 0.0f, 90.0f }));
 	PaperSpriteComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	PaperSpriteComponent->bVisibleInSceneCaptureOnly = true;
-
+    
 	RootComponent = DefaultScene;
 }
 
@@ -33,7 +35,23 @@ void AYggMiniMapIconActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+    TryAddMiniMap();
+}
+
+void AYggMiniMapIconActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    Super::EndPlay(EndPlayReason);
+
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    {
+        if (AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD()))
+        {
+            if (HUD->MiniMapManager)
+            {
+                HUD->MiniMapManager->RemoveMiniMapIcon(this);
+            }
+        }
+    }
 }
 
 // Called every frame
@@ -51,28 +69,6 @@ void AYggMiniMapIconActor::Tick(float DeltaTime)
     }
 }
 
-void AYggMiniMapIconActor::SetPaperSprite(AActor* Actor)
-{
-    if (!Actor || !UIDataAsset) return;
-
-    ACharacter* Character = Cast<ACharacter>(Actor);
-    if (!Character) return;
-
-    TMap<FName, UPaperSprite*>& IconData = UIDataAsset->IconSetting;
-
-    for (TPair<FName, UPaperSprite*>& Icon : IconData)
-    {
-        AYggHero* Hero = Cast<AYggHero>(Character);
-        if (!IsValid(Hero)) continue;
-
-        if (Hero->GetHeroAttributeComponent()->HasTagExact(Icon.Key))
-        {
-            PaperSpriteComponent->SetSprite(Icon.Value);
-            break;
-        }
-    }
-}
-
 void AYggMiniMapIconActor::SetPaperSprite(FName IConName)
 {
     TMap<FName, UPaperSprite*>& IconData = UIDataAsset->IconSetting;
@@ -81,6 +77,23 @@ void AYggMiniMapIconActor::SetPaperSprite(FName IConName)
     {
         PaperSpriteComponent->SetSprite(IconData[IConName]);
     }
+}
+
+void AYggMiniMapIconActor::TryAddMiniMap()
+{
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    {
+        if (AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD()))
+        {
+            if (HUD->MiniMapManager)
+            {
+                HUD->MiniMapManager->AddMiniMapIcon(this);
+                return;
+            }
+        }
+    }
+
+    GetWorldTimerManager().SetTimerForNextTick(this, &AYggMiniMapIconActor::TryAddMiniMap);
 }
 
 void AYggMiniMapIconActor::SetAttachedCharacter(AActor* Character)
