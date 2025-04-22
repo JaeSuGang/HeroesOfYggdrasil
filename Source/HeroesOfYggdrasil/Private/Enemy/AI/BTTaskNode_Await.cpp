@@ -24,6 +24,8 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
+	
+
 	if (IsValid(TargetCharacter))
 	{
 		UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
@@ -47,11 +49,20 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
+
+
 	if (IsValid(EnemyCharacter))
 	{
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 		TWeakObjectPtr<AEnemyCharacter> WeakEnemy = EnemyCharacter;
 		FWeakObjectPtr WeakOwner = &_OwnerComp;
+
+		float HeroDefense = TargetCharacter->GetAttributeComponent()->DefensePoints;
+
+		double HeroDefenseRate = (HeroDefense / (HeroDefense + 100.f));
+		float HeroDamageAmount = WeakEnemy->GetAttributeComponent()->AttackPoints;
+		HeroDamageAmount *= (1.f - HeroDefenseRate);
+		WeakEnemy->GetAttributeComponent()->AttackPoints = HeroDamageAmount;
 
 		float Duration = FMath::Max(PlayAIData.Data.AwaitTime, 0.1f);
 		FTimerDelegate TimerDel;
