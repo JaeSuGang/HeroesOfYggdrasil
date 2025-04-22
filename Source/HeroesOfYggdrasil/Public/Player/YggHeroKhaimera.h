@@ -34,6 +34,8 @@ protected:
 	virtual FName GetHeroName() const override { return FName(TEXT("Khaimera")); };
 
 protected:
-	
+	/*UPROPERTY(meta = (DeprecatedProperty, ReplaceWith = "NewComponent"))
+	class UYggAttackCapsuleComponent* DeleteAttackCapsuleComponent;*/
+
 
 };
