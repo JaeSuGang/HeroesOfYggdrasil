@@ -34,6 +34,4 @@ protected:
 	virtual FName GetHeroName() const override { return FName(TEXT("Khaimera")); };
 
 protected:
-	
-
 };

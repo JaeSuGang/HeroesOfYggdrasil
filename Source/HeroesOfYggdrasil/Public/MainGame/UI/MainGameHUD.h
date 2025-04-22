@@ -14,6 +14,7 @@ class UYggLobbyUserWidget;
 class UYggMainGameUserWidget;
 class UYggMHPBarUserWidget;
 class AEnemyCharacter;
+class AYggdrasil;
 
 /**
  * 
@@ -64,6 +65,11 @@ public:
 		return MainGameUserWidget;
 	}
 
+	AYggdrasil* GetYggdrasil()
+	{
+		return Yggdrasil;
+	}
+
 public:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> MainWidgetClass;
@@ -98,5 +104,6 @@ public:
 	UPROPERTY()
 	APlayerController* PC;
 
-
+	UPROPERTY()
+	AYggdrasil* Yggdrasil;
 };
