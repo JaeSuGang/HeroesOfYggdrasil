@@ -218,10 +218,51 @@ void AYggHero::PossessedBy(AController* NewController)
 	}
 }
 
+FVector AYggHero::Local_GetAimDirection(FName _SocketName)
+{
+	// 1. 카메라 위치 · 회전
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (!PC) return FVector::ZeroVector;
+
+	FVector CamLoc;
+	FRotator CamRot;
+	PC->GetPlayerViewPoint(CamLoc, CamRot);
+
+	// 2. 1차 라인트레이스 : 카메라 → 조준 지점
+	const float TraceRange = 10000.f;
+	FVector TraceEnd = CamLoc + CamRot.Vector() * TraceRange;
+
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	GetWorld()->LineTraceSingleByChannel(
+		Hit, CamLoc, TraceEnd, ECC_Visibility, Params);
+
+	const FVector TargetLoc = Hit.bBlockingHit ? Hit.ImpactPoint : TraceEnd;
+
+	// 3. 총구 위치
+	const FVector MuzzleLoc = GetMesh()->GetSocketLocation(_SocketName);
+
+	// 4. 정확한 발사 방향 = (목표 - 총구). 정규화
+	FVector AimDir = (TargetLoc - MuzzleLoc).GetSafeNormal();
+
+	return AimDir;
+}
+
+
+
+void AYggHero::Server_SetAimDirection_Implementation(const FVector& InAimDir)
+{
+	AimDirection = InAimDir;
+}
+
+
 void AYggHero::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AYggHero, DeathCount);
+	DOREPLIFETIME(AYggHero, AimDirection);
 }
 
 void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -252,7 +293,7 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		}
 		if (ActionMap.Contains(FName("Attack")))
 		{
-			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHero::Attack);
+			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Started, this, &AYggHero::Attack);
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHero::EndAttack);
 		}
 		if (ActionMap.Contains(FName("Roll")))
@@ -365,7 +406,6 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 			HeroAttributeComponent->RemoveTag(TEXT("Character.State.Death"));
 
 			if (!HeroAttributeComponent) return;
-			/*HeroAttributeComponent->ServerSetBaseData_Implementation(GetHeroName());*/
 			HeroAttributeComponent->Server_SetHP(HeroAttributeComponent->MaxHP);
 			
 		}
@@ -422,17 +462,17 @@ void AYggHero::MulticastRoll_Implementation(const FInputActionValue& Value)
 
 void AYggHero::Attack(const FInputActionValue& Value)
 {
-	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
-	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
-	}
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
 	{
 		return;
 	}
+	if (!HeroAttributeComponent->HasTagExact(TEXT("Character.State.PressedAttack")))
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.PressedAttack"));
+	}
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 		MulticastAttack(Value);
 	}
 	else
@@ -444,7 +484,7 @@ void AYggHero::Attack(const FInputActionValue& Value)
 
 void AYggHero::ServerAttack_Implementation(const FInputActionValue& Value)
 {
-	Attack(FInputActionValue());
+	MulticastAttack(Value);
 }
 
 void AYggHero::MulticastAttack_Implementation(const FInputActionValue& Value)
@@ -465,7 +505,7 @@ void AYggHero::SkillQ(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -477,18 +517,18 @@ void AYggHero::SkillQ(const FInputActionValue& Value)
 		ServerHeroSkillQ(Value);
 	}
 
-	float CoolTime = HeroAttributeComponent->SkillQMaxCoolTime;
+	float CoolTime = HeroAttributeComponent->SkillQMaxCoolTime*(1- HeroAttributeComponent->CooldownReduction);
 	OnSkillQ.Broadcast(FName("SkillQ"), CoolTime);
 }
 void AYggHero::ServerHeroSkillQ_Implementation(const FInputActionValue& Value)
 {
-	SkillQ(Value);
+	MulticastHeroSkillQ(Value);
 }
 void AYggHero::MulticastHeroSkillQ_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillQ");
 	HeroAnimInstance->PlayMontage(MontageName);
-	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime;
+	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime* (1 - HeroAttributeComponent->CooldownReduction);
 }
 
 void AYggHero::SkillE(const FInputActionValue& Value)
@@ -497,7 +537,7 @@ void AYggHero::SkillE(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -509,20 +549,20 @@ void AYggHero::SkillE(const FInputActionValue& Value)
 		ServerHeroSkillE(Value);
 	}
 
-	float CoolTime = HeroAttributeComponent->SkillEMaxCoolTime;
+	float CoolTime = HeroAttributeComponent->SkillEMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 	OnSkillE.Broadcast(FName("SkillE"), CoolTime);
 }
 
 void AYggHero::ServerHeroSkillE_Implementation(const FInputActionValue& Value)
 {
-	SkillE(Value);
+	MulticastHeroSkillE(Value);
 }
 
 void AYggHero::MulticastHeroSkillE_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillE");
 	HeroAnimInstance->PlayMontage(MontageName);
-	HeroAttributeComponent->SkillECurCoolTime = HeroAttributeComponent->SkillEMaxCoolTime;
+	HeroAttributeComponent->SkillECurCoolTime = HeroAttributeComponent->SkillEMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 }
 
 void AYggHero::SkillR(const FInputActionValue& Value)
@@ -531,7 +571,7 @@ void AYggHero::SkillR(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -543,20 +583,20 @@ void AYggHero::SkillR(const FInputActionValue& Value)
 		ServerHeroSkillR(Value);
 	}
 
-	float CoolTime = HeroAttributeComponent->SkillRMaxCoolTime;
+	float CoolTime = HeroAttributeComponent->SkillRMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 	OnSkillR.Broadcast(FName("SkillR"), CoolTime);
 }
 
 void AYggHero::ServerHeroSkillR_Implementation(const FInputActionValue& Value)
 {
-	SkillR(Value);
+	MulticastHeroSkillR(Value);
 }
 
 void AYggHero::MulticastHeroSkillR_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillR");
 	HeroAnimInstance->PlayMontage(MontageName);
-	HeroAttributeComponent->SkillRCurCoolTime = HeroAttributeComponent->SkillRMaxCoolTime;
+	HeroAttributeComponent->SkillRCurCoolTime = HeroAttributeComponent->SkillRMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 }
 
 void AYggHero::Die(float Delegate)
@@ -582,12 +622,11 @@ void AYggHero::Die(float Delegate)
 
 void AYggHero::ServerDie_Implementation(float Delegate)
 {
-	Die(Delegate);
+	MulticastDie(Delegate);
 }
 
 void AYggHero::MulticastDie_Implementation(float Delegate)
 {
-	
 	FName MontageName = TEXT("Death");
 	HeroAnimInstance->PlayMontage(MontageName);
 }

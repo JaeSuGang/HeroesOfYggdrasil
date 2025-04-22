@@ -5,40 +5,39 @@
 
 #include "Core/YggCharacter.h"
 #include "Global/YggProjectileActor.h"
-#include "Player/YggHeroRevenant.h"
+#include "Player/YggHero.h"
 #include "Kismet/GameplayStatics.h"
-void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
+void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	if (!MeshComp || !ProjectileClass) return;
 
 	AYggCharacter* Actor = Cast<AYggCharacter>(MeshComp->GetOwner());
 	if (!IsValid(Actor)) return;
-	if (Actor->IsLocallyControlled() && !Actor->HasAuthority())
+	if ((Actor->HasAuthority()))
 	{
-		return;
+		const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(SocketName);
+		const FVector AimDirection = Cast<AYggHero>(Actor)->GetAimDirection();
+		const FRotator AimRot = AimDirection.Rotation();
+
+		FTransform SpawnTransform(AimRot, SpawnLocation);
+
+		AYggProjectileActor* Projectile = MeshComp->GetWorld()->SpawnActorDeferred<AYggProjectileActor>(
+			ProjectileClass,
+			SpawnTransform,
+			Actor,
+			nullptr,
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+		);
+
+		if (!Projectile) return;
+
+		Projectile->SetOwnerCharacter(Actor);
+		Projectile->SetAimDir(AimDirection);
+
+		UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Spawn_Projectile"));
 	}
-	if (!(Actor->HasAuthority())) return;	
 
-	const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(SocketName);
-	const FVector AimDirection = Cast<AYggHeroRevenant>(Actor)->AimDirection;
-	const FRotator AimRot = AimDirection.Rotation();
-
-	FTransform SpawnTransform(AimRot, SpawnLocation);
-
-	AYggProjectileActor* Projectile = GetWorld()->SpawnActorDeferred<AYggProjectileActor>(
-		ProjectileClass,
-		SpawnTransform,
-		Actor,
-		nullptr,
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
-	);
-
-	if (!Projectile) return;
-
-	Projectile->SetOwnerCharacter(Actor);
-	Projectile->SetAimDir(AimDirection);
-
-	UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("SpawnProjectile"));
+	
 }
 

@@ -20,7 +20,7 @@ void UReinforceStage::BeginPlay(UStageSystem* NewStageSystem)
 {
 	Super::BeginPlay(NewStageSystem);
 
-	OnEnterStageInternal.AddDynamic(this, &UReinforceStage::OnReinforceStageEnter);
+	OnEnterStageDelegate.AddDynamic(this, &UReinforceStage::OnReinforceStageEnter);
 	// OnEnterStageInternal.AddDynamic(UUpgradeSystem::Get(NewStageSystem->GetWorld()), &UUpgradeSystem::OnReinforceStageEnter);
 }
 
@@ -37,7 +37,7 @@ void UReinforceStage::TickLogic(float fDeltaTime)
 	}
 }
 
-void UReinforceStage::OnReinforceStageEnter(FOnEnterStageParams OnEnterStageParams)
+void UReinforceStage::OnReinforceStageEnter(FOnEnterStageDelegateParams OnEnterStageParams)
 {
 	if (StageSystem->GetOwner()->HasAuthority())
 	{
@@ -54,4 +54,16 @@ void UReinforceStage::OnReinforceStageEnter(FOnEnterStageParams OnEnterStagePara
 			}
 		}
 	}
+}
+
+void UReinforceStage::Local_OnExitStage(int CurrentRound)
+{
+	Super::Local_OnExitStage(CurrentRound);
+}
+
+void UReinforceStage::Local_OnEnterStage(int NewRound)
+{
+	Super::Local_OnEnterStage(NewRound);
+
+
 }

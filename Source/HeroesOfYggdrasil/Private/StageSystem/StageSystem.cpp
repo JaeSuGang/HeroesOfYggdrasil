@@ -157,27 +157,20 @@ void UStageSystem::RequestEnterStage_Implementation(int NewStageIndex)
 
 void UStageSystem::EnterStageInternal(int NewStageIndex)
 {
-	int OldStageIndex = CurrentStageIndex;
+	/* 스테이지 종료 */
+	UStageBase* OldStage = StageCycle[CurrentStageIndex];
+	OldStage->Local_OnExitStage(CurrentRound);
 
+	/* 라운드 증가 판단 */
 	CurrentStageIndex = NewStageIndex % StageCycle.Num();
 	if (CurrentStageIndex == 0)
 	{
 		CurrentRound++;
 	}
 
-	/* Delegate 인자 설정 */
-	FOnExitStageParams OnExitStageParams{};
-	OnExitStageParams.NewRound = CurrentRound;
-
-	FOnEnterStageParams OnEnterStageParams{};
-	OnEnterStageParams.NewRound = CurrentRound;
-
-	/* 스테이지 진입과 Delegate 호출 */
-	UStageBase* OldStage = StageCycle[OldStageIndex];
-	OldStage->OnExitStageInternal.Broadcast(OnExitStageParams);
-
+	/* 스테이지 진입 */
 	UStageBase* NewStage = StageCycle[CurrentStageIndex];
-	NewStage->OnEnterStageInternal.Broadcast(OnEnterStageParams);
+	NewStage->Local_OnEnterStage(CurrentRound);
 }
 
 UBattleStage* UStageSystem::GetBattleStage() const

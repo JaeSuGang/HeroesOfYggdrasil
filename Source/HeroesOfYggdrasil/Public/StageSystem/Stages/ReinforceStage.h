@@ -7,7 +7,7 @@
 #include "ReinforceStage.generated.h"
 
 /**
- * 
+ * 담당 프로그래머 : 김경민
  */
 UCLASS()
 class HEROESOFYGGDRASIL_API UReinforceStage : public UStageBase
@@ -24,7 +24,11 @@ public:
 
 public:
 	UFUNCTION()
-	void OnReinforceStageEnter(FOnEnterStageParams OnEnterStageParams);
+	void OnReinforceStageEnter(FOnEnterStageDelegateParams OnEnterStageParams);
+
+	virtual void Local_OnExitStage(int CurrentRound) override;
+
+	virtual void Local_OnEnterStage(int NewRound) override;
 
 public:
 	UPROPERTY(EditAnywhere)

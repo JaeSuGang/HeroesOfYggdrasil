@@ -103,6 +103,8 @@ public:
 	UFUNCTION()
 	void HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
+	int GetDeathCount() const { return DeathCount; }
+
 protected:
 	virtual void OnRep_Controller() override;
 	virtual void PossessedBy(AController* NewController) override;
@@ -214,7 +216,29 @@ protected:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	bool bIsUIMode = false;
 
+
+	UPROPERTY(Replicated)
+	FVector AimDirection;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName LeftSocketName;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FName RightSocketName;
+
+
 public:
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetAimDirection(const FVector& InAimDir);
+
+	UFUNCTION()
+	FVector Local_GetAimDirection(FName SocketName);
+
+	UFUNCTION()
+	FVector GetAimDirection() const { return AimDirection; }
+
+
 	UPROPERTY(BlueprintAssignable, Category = "Widget")
 	FOnSkillCast OnSkillCast;
 

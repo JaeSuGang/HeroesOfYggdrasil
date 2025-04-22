@@ -15,7 +15,7 @@ class HEROESOFYGGDRASIL_API USpawnProjetileAnimNotify : public UAnimNotify
 	GENERATED_BODY()
 
 public:
-	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
 	TSubclassOf<class AYggProjectileActor> ProjectileClass;

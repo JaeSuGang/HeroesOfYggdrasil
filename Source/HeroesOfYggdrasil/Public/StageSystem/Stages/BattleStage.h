@@ -54,14 +54,21 @@ public:
 
 public:
 	UFUNCTION()
-	void SpawnWave(FOnEnterStageParams OnEnterStageParams);
+	void SpawnWave(FOnEnterStageDelegateParams OnEnterStageParams);
 
 	UFUNCTION()
 	void LoadTables();
+
+	virtual void Local_OnExitStage(int CurrentRound) override;
+
+	virtual void Local_OnEnterStage(int NewRound) override;
 
 public:
 	UPROPERTY(EditAnywhere)
 	UDataTable* WaveTable;
 
+	UPROPERTY(EditAnywhere)
+	bool HasEverSpawnedMonster;
+	
 	TArray<FWaveTableRow*> WaveTableAsArray;
 };

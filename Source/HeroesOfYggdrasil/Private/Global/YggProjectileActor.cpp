@@ -17,6 +17,7 @@ AYggProjectileActor::AYggProjectileActor()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+	SetReplicateMovement(true);
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
@@ -82,6 +83,7 @@ void AYggProjectileActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AYggProjectileActor, AimDirection);
+	DOREPLIFETIME(AYggProjectileActor, HomingTargetActor);
 }
 
 void AYggProjectileActor::SetAimDir(FVector _AimDirection)
@@ -94,6 +96,19 @@ void AYggProjectileActor::SetAimDir(FVector _AimDirection)
 	else
 	{
 		Server_SetAimDir(_AimDirection);
+	}
+}
+
+void AYggProjectileActor::SetHomingTarget(AActor* Target)
+{
+	if (!HasAuthority())            // 서버 전용
+		return;
+
+	HomingTargetActor = Target;
+
+	if (ProjectileMovement && Target)
+	{
+		ProjectileMovement->HomingTargetComponent = Target->GetRootComponent();
 	}
 }
 
@@ -144,6 +159,38 @@ void AYggProjectileActor::TargetParabolaMode()
 
 void AYggProjectileActor::HomingMode()
 {
+	// 중력은 대부분 끄지만 필요하면 DataRow에 따로 넣어도 됨
+	ProjectileMovement->ProjectileGravityScale = 0.f;
+
+	// 호밍 활성화
+	ProjectileMovement->bIsHomingProjectile = true;
+
+	// 가속도 크기: 데이터 테이블에 없으면 임의 상수나 MaxSpeed 기반으로 산출
+	ProjectileMovement->HomingAccelerationMagnitude = FMath::Max(
+		ProjectileDataRow.MaxSpeed * 10.f,               // 예시: 속도의 10배
+		3000.f                                           // 최소값 보장
+	);
+
+	// ❶ 스폰 전에 SetHomingTarget()이 호출되어 타깃이 이미 정해진 경우
+	if (HomingTargetActor.IsValid())
+	{
+		ProjectileMovement->HomingTargetComponent = HomingTargetActor->GetRootComponent();
+		return;
+	}
+
+	// ❷ 타깃 액터가 아직 없지만 TargetLocation(월드 좌표)은 정해져 있는 경우
+	//    – 임시 SceneComponent를 만들어 해당 좌표로 호밍
+	if (!TargetLocation.IsNearlyZero())
+	{
+		USceneComponent* Dummy = NewObject<USceneComponent>(this, TEXT("DummyHomingTarget"));
+		Dummy->RegisterComponent();
+		Dummy->SetWorldLocation(TargetLocation);
+		ProjectileMovement->HomingTargetComponent = Dummy;
+		return;
+	}
+
+	// ❸ 둘 다 없으면 그냥 직진(또는 원하는 대로 처리)
+	ProjectileMovement->bIsHomingProjectile = false;
 }
 
 
