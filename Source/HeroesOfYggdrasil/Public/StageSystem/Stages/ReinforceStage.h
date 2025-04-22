@@ -24,7 +24,7 @@ public:
 
 public:
 	UFUNCTION()
-	void OnReinforceStageEnter(FOnEnterStageDelegateParams OnEnterStageParams);
+	void Authority_AddUpgradePoints();
 
 	virtual void Local_OnExitStage(int CurrentRound) override;
 

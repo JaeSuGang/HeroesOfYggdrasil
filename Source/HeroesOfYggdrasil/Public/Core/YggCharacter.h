@@ -33,8 +33,8 @@ protected:
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite)
 	UCharacterAttributeComponent* CharacterAttributeComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TMap<FName, UYggAttackCapsuleComponent*> AttackCapsuleComponentMap;
+	UPROPERTY(Transient)
+	TMap<FName, TObjectPtr<UYggAttackCapsuleComponent>> AttackCapsuleComponentMap;
 
 	
 };

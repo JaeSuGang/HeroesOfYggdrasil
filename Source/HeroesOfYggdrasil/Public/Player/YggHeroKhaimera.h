@@ -34,4 +34,15 @@ protected:
 	virtual FName GetHeroName() const override { return FName(TEXT("Khaimera")); };
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> NormalAttackCapsuleComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> SkillQAttackAttackCapsuleComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> SkillEAttackAttackCapsuleComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> SkillRAttackAttackCapsuleComponent;
+
+
+
 };
