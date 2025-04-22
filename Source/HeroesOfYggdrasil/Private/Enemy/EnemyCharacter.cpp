@@ -359,8 +359,13 @@ void AEnemyCharacter::SpawnAndFireArrow(AActor* _TargetActor)
 		Arrow->SetAttackFloat(CharacterAttributeComponent->AttackPoints);
 		if (_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
 		{
-			Arrow->GetProjectileMovement()->Velocity = (GetActorForwardVector() * 2000.f).RotateAngleAxis(30.0f, FVector::RightVector);
-			
+			//Arrow->GetProjectileMovement()->Velocity = (GetActorForwardVector() * 2000.f).RotateAngleAxis(30.0f, FVector::RightVector);
+			FVector Direction = (_TargetActor->GetActorLocation() - SpawnLocation).GetSafeNormal();
+			FVector Axis = FVector::CrossProduct(Direction, FVector::UpVector).GetSafeNormal();
+
+			FVector FinalVelocity = Direction.RotateAngleAxis(10.f, Axis) * 2000.f;
+
+			Arrow->GetProjectileMovement()->Velocity = FinalVelocity;
 		}
 		else
 		{
@@ -451,7 +456,12 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 		RangeAttack->SetOwner(this);
 		if (_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
 		{
-			RangeAttack->GetProjectileMovement()->Velocity = (((_TargetLocation - SpawnLocation).GetSafeNormal()) * 2000.f).RotateAngleAxis(40.0f, FVector::LeftVector);;
+			FVector Direction = (_TargetLocation - SpawnLocation).GetSafeNormal();
+			FVector Axis = FVector::CrossProduct(Direction, FVector::UpVector).GetSafeNormal();
+
+			FVector FinalVelocity = Direction.RotateAngleAxis(10.f, Axis) * 2000.f;
+
+			RangeAttack->GetProjectileMovement()->Velocity = FinalVelocity;
 		}
 		else
 		{

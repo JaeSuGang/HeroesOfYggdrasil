@@ -23,12 +23,15 @@ AEnemyRangeAttack::AEnemyRangeAttack()
 
     ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("EnemyProjectileMovement"));
 
-    ObjectMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PoisonMesh"));
+    ObjectMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ObjectMesh"));
     ObjectMesh->SetupAttachment(DefualtSceneRoot);
 
-    SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
-    SphereCollision->SetupAttachment(DefualtSceneRoot);
-    SphereCollision->SetCollisionProfileName(TEXT("MonsterAttack"));
+    SphereObjectCollision = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionMesh"));
+    SphereObjectCollision->SetupAttachment(DefualtSceneRoot);
+    SphereObjectCollision->SetCollisionProfileName(TEXT("MonsterAttackCollision"));
+
+    SphereObjectCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyRangeAttack::OverLap);
+    SphereObjectCollision->OnComponentHit.AddDynamic(this, &AEnemyRangeAttack::OnHit);
 }
 
 // Called when the game starts or when spawned
@@ -36,8 +39,6 @@ void AEnemyRangeAttack::BeginPlay()
 {
 	Super::BeginPlay();
 
-    SphereCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyRangeAttack::OverLap);
-    SphereCollision->OnComponentHit.AddDynamic(this, &AEnemyRangeAttack::OnHit);
 
     DestroyTime = 3.0f;
 
@@ -91,12 +92,12 @@ void AEnemyRangeAttack::Tick(float DeltaTime)
 
 void AEnemyRangeAttack::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
+    ObjectMesh->SetVisibility(false);
 }
 
 void AEnemyRangeAttack::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-
+    ObjectMesh->SetVisibility(false);
 }
 
 
