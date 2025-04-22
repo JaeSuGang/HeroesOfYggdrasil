@@ -10,8 +10,8 @@
 AYggdrasil::AYggdrasil()
 {
 	CharacterAttributeComponent = CreateDefaultSubobject<UCharacterAttributeComponent>("Attribute");
-	CharacterAttributeComponent->MaxHP = 300.f;
-	CharacterAttributeComponent->HP = 100.f;
+	CharacterAttributeComponent->MaxHP = 500.f;
+	CharacterAttributeComponent->HP = 500.f;
 
 
 }
