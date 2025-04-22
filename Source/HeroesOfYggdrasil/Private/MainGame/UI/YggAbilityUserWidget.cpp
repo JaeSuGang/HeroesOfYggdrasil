@@ -51,7 +51,7 @@ void UYggAbilityUserWidget::NativeDestruct()
 	}
 }
 
-FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size)
+FSlateBrush UYggAbilityUserWidget::MakeBrush(UTexture2D* Tex, FVector2D Size)
 {
 	FSlateBrush Brush;
 	Brush.SetResourceObject(Tex);
@@ -91,6 +91,7 @@ void UYggAbilityUserWidget::AbilityInit(FPrimaryAssetId& AssetId)
 		AbilityImage->SetBrush(MakeBrush(UpgradeDataAsset->UpgradeImage, Size));
 		AbilityName->SetText(FText::FromName(UpgradeDataAsset->UpgradeName));
 		AbilityInfo->SetText(FText::FromName(UpgradeDataAsset->UpgradeDescription));
+		AbilityInfo->SetAutoWrapText(true);
 	}
 }
 

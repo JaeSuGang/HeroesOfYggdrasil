@@ -75,6 +75,8 @@ public:
 
 	UFUNCTION()
 	void SetTargetLocation(FVector _TargetLocation) { TargetLocation = _TargetLocation; }
+	UFUNCTION(BlueprintCallable)
+	void SetHomingTarget(AActor* Target);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
@@ -95,8 +97,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor")
 	class AYggCharacter* OwnerCharacter;
 	
+	
 	FVector TargetLocation;
 
+	UPROPERTY(Replicated)
+	TWeakObjectPtr<AActor> HomingTargetActor;
 
 	FSpawnProjectileDataRow ProjectileDataRow;
 

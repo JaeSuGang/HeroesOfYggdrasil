@@ -35,18 +35,12 @@ void UStageBase::TickLogic(float fDeltaTime)
 
 void UStageBase::Local_OnEnterStage(int NewRound)
 {
-	FOnEnterStageDelegateParams OnEnterStageDelegateParams{};
-	OnEnterStageDelegateParams.NewRound = NewRound;
 
-	OnEnterStageDelegate.Broadcast(OnEnterStageDelegateParams);
 }
 
 void UStageBase::Local_OnExitStage(int CurrentRound)
 {
-	FOnExitStageDelegateParams OnExitStageDelegateParams{};
-	OnExitStageDelegateParams.CurrentRound = CurrentRound;
 
-	OnExitStageDelegate.Broadcast(OnExitStageDelegateParams);
 }
 
 void UStageBase::EnterNextStage()

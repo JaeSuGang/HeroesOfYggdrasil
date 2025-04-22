@@ -110,7 +110,7 @@ void UYggDebuffUserWidget::UpdateDebuffBar(float Duration)
 {
 	RemainingTime = Duration;
 
-	if (RemainingTime <= 0.0f)
+	if (RemainingTime <= 0.1f)
 	{
 		EndDebuff();
 		return;
@@ -135,19 +135,14 @@ UTexture2D* UYggDebuffUserWidget::SetTexture(EStatusEffectType StatusEffectType)
 	{
 	case EStatusEffectType::Poison:
 		return Texture = PosionTexture;
-		break;
 	case EStatusEffectType::Burn:
 		return Texture = BurnTexture;
-		break;
 	case EStatusEffectType::Slow:
 		return Texture = SlowTexture;
-		break;
 	case EStatusEffectType::Stunned:
 		return Texture = StunnedTexture;
-		break;
 	default:
 		return Texture = nullptr;
-		break;
 	}
 }
 

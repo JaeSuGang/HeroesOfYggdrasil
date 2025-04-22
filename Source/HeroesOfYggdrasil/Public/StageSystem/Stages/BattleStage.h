@@ -9,6 +9,8 @@
 
 struct FMonsterDataRow;
 
+class AEnemyManager;
+
 USTRUCT()
 struct HEROESOFYGGDRASIL_API FMonsterSpawnInfo
 {
@@ -54,7 +56,7 @@ public:
 
 public:
 	UFUNCTION()
-	void SpawnWave(FOnEnterStageDelegateParams OnEnterStageParams);
+	void SpawnWave();
 
 	UFUNCTION()
 	void LoadTables();
@@ -62,6 +64,10 @@ public:
 	virtual void Local_OnExitStage(int CurrentRound) override;
 
 	virtual void Local_OnEnterStage(int NewRound) override;
+
+public:
+	UFUNCTION()
+	void Local_OnEnemyCountChanged(AEnemyManager* EnemyManager);
 
 public:
 	UPROPERTY(EditAnywhere)

@@ -161,63 +161,84 @@ void AAuroraOrb::Tick(float DeltaTime)
 
         if (bCanHoming)
         {
-            if(!TargetEnemy)
+            if (!TargetEnemy)
             {
-            TArray<FOverlapResult> OverlapResults;
-            FCollisionQueryParams CollisionParams;
-            CollisionParams.AddIgnoredActor(this);
+                LastHomingDistance = FLT_MAX;
+                TArray<FOverlapResult> OverlapResults;
+                FCollisionQueryParams CollisionParams;
+                CollisionParams.AddIgnoredActor(this);
 
-            FCollisionObjectQueryParams ObjectQueryParams;
-            ObjectQueryParams.AddObjectTypesToQuery(EnemyObjectType.GetValue());
+                FCollisionObjectQueryParams ObjectQueryParams;
+                ObjectQueryParams.AddObjectTypesToQuery(EnemyObjectType.GetValue());
 
-            // 주변 적 탐지
-            if (GetWorld()->OverlapMultiByObjectType(
-                OverlapResults,
-                GetActorLocation(),
-                FQuat::Identity,
-                ObjectQueryParams,
-                FCollisionShape::MakeSphere(HomingRadius),
-                CollisionParams))
-            {
-                float NearestDistance = BIG_NUMBER;
-
-                // 가장 가까운 적 찾기
-                for (const FOverlapResult& Result : OverlapResults)
+                // 주변 적 탐지
+                if (GetWorld()->OverlapMultiByObjectType(
+                    OverlapResults,
+                    GetActorLocation(),
+                    FQuat::Identity,
+                    ObjectQueryParams,
+                    FCollisionShape::MakeSphere(HomingRadius),
+                    CollisionParams))
                 {
-                    if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(Result.GetActor()))
+                    float NearestDistance = BIG_NUMBER;
+
+                    // 가장 가까운 적 찾기
+                    for (const FOverlapResult& Result : OverlapResults)
                     {
-                        const float Distance = FVector::DistSquared(GetActorLocation(), Enemy->GetActorLocation());
-                        if (Distance < NearestDistance)
+                        if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(Result.GetActor()))
                         {
-                            NearestDistance = Distance;
-                            TargetEnemy = Enemy;
+                            const float Distance = FVector::DistSquared(GetActorLocation(), Enemy->GetActorLocation());
+                            if (Distance < NearestDistance)
+                            {
+                                NearestDistance = Distance;
+                                TargetEnemy = Enemy;
+                            }
                         }
                     }
                 }
             }
 
-                if (TargetEnemy && !TargetEnemy->IsValidLowLevel())
+            if (TargetEnemy && !IsValid(TargetEnemy))
+            {
+                TargetEnemy = nullptr;
+            }
+
+            // 방향 조정
+            if (TargetEnemy)
+            {
+                /*const FVector TargetLocation = TargetEnemy->GetActorLocation();
+                const FVector DesiredDirection = (TargetLocation - GetActorLocation()).GetSafeNormal();
+
+                MoveDirection = FMath::VInterpConstantTo(
+                    MoveDirection,
+                    DesiredDirection,
+                    DeltaTime,
+                    HomingStrength
+                );
+
+                SetActorRotation(FRotationMatrix::MakeFromYZ(
+                    MoveDirection,
+                    FVector::UpVector
+                ).Rotator() + FRotator(0, 0, 90));*/
+
+                float CurrentDist = FVector::DistSquared(GetActorLocation(), TargetEnemy->GetActorLocation());
+                if (CurrentDist > LastHomingDistance)
                 {
-                    TargetEnemy = nullptr;
+                    bCanHoming = false;
                 }
-
-                // 방향 조정
-                if (TargetEnemy)
+                else
                 {
-                    const FVector TargetLocation = TargetEnemy->GetActorLocation();
-                    const FVector DesiredDirection = (TargetLocation - GetActorLocation()).GetSafeNormal();
+                    LastHomingDistance = CurrentDist;
 
+                    // 호밍 방향 조정
+                    FVector DesiredDir = (TargetEnemy->GetActorLocation() - GetActorLocation()).GetSafeNormal();
                     MoveDirection = FMath::VInterpConstantTo(
-                        MoveDirection,
-                        DesiredDirection,
-                        DeltaTime,
-                        HomingStrength
+                        MoveDirection, DesiredDir, DeltaTime, HomingStrength
                     );
-
-                    SetActorRotation(FRotationMatrix::MakeFromYZ(
-                        MoveDirection,
-                        FVector::UpVector
-                    ).Rotator() + FRotator(0, 0, 90));
+                    SetActorRotation(
+                        (FRotationMatrix::MakeFromYZ(MoveDirection, FVector::UpVector).Rotator())
+                        + FRotator(0, 0, 90)
+                    );
                 }
             }
         }

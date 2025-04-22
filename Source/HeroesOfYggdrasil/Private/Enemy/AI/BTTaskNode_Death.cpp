@@ -35,7 +35,14 @@ void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 
 	if (DeathTime < 0.0f)
 	{
+		if (!IsValid(EnemyCharacter)) return;
+		
 		EnemyCharacter->DestroyAllComponents();
 	}
 
+
+	if (IsValid(EnemyCharacter))
+	{
+		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
+	}
 }

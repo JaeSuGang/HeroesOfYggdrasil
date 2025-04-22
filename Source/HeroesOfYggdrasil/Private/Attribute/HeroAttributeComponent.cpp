@@ -69,6 +69,7 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			HeroName = Name;
 			MaxHP = Data->MaxHP;
 			HP = MaxHP;
+			HPGeneration = Data->HPRegen;
 			MaxMoveSpeed = Data->MaxMoveSpeed;
 			JumpPower = Data->JumpRate;
 			AttackPoints = Data->AttPower;

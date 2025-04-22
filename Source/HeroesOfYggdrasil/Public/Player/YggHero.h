@@ -103,6 +103,8 @@ public:
 	UFUNCTION()
 	void HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
+	int GetDeathCount() const { return DeathCount; }
+
 protected:
 	virtual void OnRep_Controller() override;
 	virtual void PossessedBy(AController* NewController) override;
@@ -261,4 +263,8 @@ public:
 protected:
 	UPROPERTY(Replicated)
 	int32 DeathCount = 0;
+
+public:
+	void ApplyStun();
+	void ClearStun();
 };

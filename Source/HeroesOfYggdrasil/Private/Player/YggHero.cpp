@@ -251,7 +251,6 @@ FVector AYggHero::Local_GetAimDirection(FName _SocketName)
 }
 
 
-
 void AYggHero::Server_SetAimDirection_Implementation(const FVector& InAimDir)
 {
 	AimDirection = InAimDir;
@@ -505,7 +504,7 @@ void AYggHero::SkillQ(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -517,7 +516,7 @@ void AYggHero::SkillQ(const FInputActionValue& Value)
 		ServerHeroSkillQ(Value);
 	}
 
-	float CoolTime = HeroAttributeComponent->SkillQMaxCoolTime;
+	float CoolTime = HeroAttributeComponent->SkillQMaxCoolTime*(1- HeroAttributeComponent->CooldownReduction);
 	OnSkillQ.Broadcast(FName("SkillQ"), CoolTime);
 }
 void AYggHero::ServerHeroSkillQ_Implementation(const FInputActionValue& Value)
@@ -528,7 +527,7 @@ void AYggHero::MulticastHeroSkillQ_Implementation(const FInputActionValue& Value
 {
 	FName MontageName = TEXT("SkillQ");
 	HeroAnimInstance->PlayMontage(MontageName);
-	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime;
+	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime* (1 - HeroAttributeComponent->CooldownReduction);
 }
 
 void AYggHero::SkillE(const FInputActionValue& Value)
@@ -537,7 +536,7 @@ void AYggHero::SkillE(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -549,7 +548,7 @@ void AYggHero::SkillE(const FInputActionValue& Value)
 		ServerHeroSkillE(Value);
 	}
 
-	float CoolTime = HeroAttributeComponent->SkillEMaxCoolTime;
+	float CoolTime = HeroAttributeComponent->SkillEMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 	OnSkillE.Broadcast(FName("SkillE"), CoolTime);
 }
 
@@ -562,7 +561,7 @@ void AYggHero::MulticastHeroSkillE_Implementation(const FInputActionValue& Value
 {
 	FName MontageName = TEXT("SkillE");
 	HeroAnimInstance->PlayMontage(MontageName);
-	HeroAttributeComponent->SkillECurCoolTime = HeroAttributeComponent->SkillEMaxCoolTime;
+	HeroAttributeComponent->SkillECurCoolTime = HeroAttributeComponent->SkillEMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 }
 
 void AYggHero::SkillR(const FInputActionValue& Value)
@@ -571,7 +570,7 @@ void AYggHero::SkillR(const FInputActionValue& Value)
 	{
 		return;
 	}
-	//if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
+	if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -583,7 +582,7 @@ void AYggHero::SkillR(const FInputActionValue& Value)
 		ServerHeroSkillR(Value);
 	}
 
-	float CoolTime = HeroAttributeComponent->SkillRMaxCoolTime;
+	float CoolTime = HeroAttributeComponent->SkillRMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 	OnSkillR.Broadcast(FName("SkillR"), CoolTime);
 }
 
@@ -596,7 +595,7 @@ void AYggHero::MulticastHeroSkillR_Implementation(const FInputActionValue& Value
 {
 	FName MontageName = TEXT("SkillR");
 	HeroAnimInstance->PlayMontage(MontageName);
-	HeroAttributeComponent->SkillRCurCoolTime = HeroAttributeComponent->SkillRMaxCoolTime;
+	HeroAttributeComponent->SkillRCurCoolTime = HeroAttributeComponent->SkillRMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 }
 
 void AYggHero::Die(float Delegate)
@@ -645,3 +644,16 @@ void AYggHero::CameraZoomInOut(const FInputActionValue& Value)
 	CameraBoom->TargetArmLength = NewLength;
 }
 
+void AYggHero::ApplyStun()
+{
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+}
+
+void AYggHero::ClearStun()
+{
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotRollable"));
+}

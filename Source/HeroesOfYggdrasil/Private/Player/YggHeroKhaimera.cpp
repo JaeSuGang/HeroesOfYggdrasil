@@ -28,35 +28,31 @@
 
 AYggHeroKhaimera::AYggHeroKhaimera()
 {
+	AttackCapsuleComponentMap.Reset();
 	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("LeftAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("weapon_l"));
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("LeftAttack"), AttackCapsuleComponent);
+		NormalAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("NormalAttack"));
+		NormalAttackCapsuleComponent->SetupAttachment(GetMesh());
+		NormalAttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("NormalAttack"), NormalAttackCapsuleComponent);
+	}
+	
+	{
+		SkillQAttackAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
+		SkillQAttackAttackCapsuleComponent->SetupAttachment(GetMesh());
+		SkillQAttackAttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), SkillQAttackAttackCapsuleComponent);
 	}
 	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("RightAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh(), TEXT("weapon_r"));
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("RightAttack"), AttackCapsuleComponent);
+		SkillEAttackAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
+		SkillEAttackAttackCapsuleComponent->SetupAttachment(GetMesh());
+		SkillEAttackAttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), SkillEAttackAttackCapsuleComponent);
 	}
 	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), AttackCapsuleComponent);
-	}
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), AttackCapsuleComponent);
-	}
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), AttackCapsuleComponent);
+		SkillRAttackAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
+		SkillRAttackAttackCapsuleComponent->SetupAttachment(GetMesh());
+		SkillRAttackAttackCapsuleComponent->SetOwnerCharacter(this);
+		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), SkillRAttackAttackCapsuleComponent);
 	}
 }
 
