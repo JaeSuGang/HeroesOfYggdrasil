@@ -21,8 +21,8 @@ void UYggDeathNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
 	if (Hero)
 	{
-		float RespawnTime = Hero->RespawnTime;
-
+		float RespawnTime = Hero->RespawnTime + Hero->GetDeathCount() * 5.0f;
+		
 		MeshComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [Hero]()
 		{
 			Hero->Respawn();

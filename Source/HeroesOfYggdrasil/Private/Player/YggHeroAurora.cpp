@@ -170,6 +170,8 @@ void AYggHeroAurora::SkillE(const FInputActionValue& Value)
 void AYggHeroAurora::SkillR(const FInputActionValue& Value)
 {
 	Super::SkillR(Value);
+
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
 }
 
 void AYggHeroAurora::Roll(const FInputActionValue& Value)
