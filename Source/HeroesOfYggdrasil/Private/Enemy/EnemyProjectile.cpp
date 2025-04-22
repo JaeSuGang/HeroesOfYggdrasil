@@ -11,6 +11,7 @@
 #include "Components/SphereComponent.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 
+#include "NPC/Yggdrasil.h"
 #include "Enemy/EnemyCharacter.h"
 
 // Sets default values
@@ -96,7 +97,7 @@ void AEnemyProjectile::OverLap(UPrimitiveComponent* OverlappedComponent, AActor*
     {
         AYggHero* Hero = Cast<AYggHero>(OtherActor);
         
-        if (Hero != nullptr)
+        if (IsValid(Hero))
         {
 
             Hero->GetAttributeComponent()->Server_TakeDamage(ArrowAttack);
@@ -108,6 +109,33 @@ void AEnemyProjectile::OverLap(UPrimitiveComponent* OverlappedComponent, AActor*
             ArrowSphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             ArrowSphereCollision->Deactivate();
         }
+
+        AYggdrasil* Yggdrasil = Cast<AYggdrasil>(OtherActor);
+        
+        if (IsValid(Yggdrasil))
+        {
+            TWeakObjectPtr<AYggdrasil> WeakYggdrasil = Yggdrasil;
+
+            FTimerHandle SpawnTimerHandle;
+
+            GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakYggdrasil]()
+                {
+                    if (WeakYggdrasil.IsValid())
+                    {
+                        WeakYggdrasil->GetAttributeComponent()->Server_TakeDamage(ArrowAttack);
+                        ArrowMesh->AttachToComponent(WeakYggdrasil->GetMesh(), FAttachmentTransformRules::KeepWorldTransform);
+                        ArrowMesh->SetSimulatePhysics(false);
+
+                        ProjectileMovement->StopMovementImmediately();
+
+                        ArrowSphereCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+                        ArrowSphereCollision->Deactivate();
+                    }
+                }), 0.1f, false);
+            
+            
+        }
+
     }
 }
 
