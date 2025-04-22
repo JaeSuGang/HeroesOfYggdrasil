@@ -163,8 +163,14 @@ void UYggMainGameUserWidget::DelSelectAbility()
 	}
 }
 
-void UYggMainGameUserWidget::TempFunc()
+void UYggMainGameUserWidget::StatusVisibility()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Cyan, FString("zzzzzzzzzzz"));
-	StatusWidget->SetVisibility(ESlateVisibility::Visible);
+	if (ESlateVisibility::Hidden == StatusWidget->GetVisibility())
+	{
+		StatusWidget->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		StatusWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
 }

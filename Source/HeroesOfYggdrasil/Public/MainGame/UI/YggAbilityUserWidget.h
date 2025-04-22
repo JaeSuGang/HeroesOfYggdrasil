@@ -27,6 +27,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AbilitySelectEvent();
 
+	FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size);
+
 	UUpgradeDataAsset* GetUpgradeDataAsset()
 	{
 		return UpgradeDataAsset;

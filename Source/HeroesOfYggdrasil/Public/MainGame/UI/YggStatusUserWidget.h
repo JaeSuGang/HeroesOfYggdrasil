@@ -25,6 +25,9 @@ public:
 	void StatusInit();
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
+	void UpdateStatus();
+
+	UFUNCTION(BlueprintCallable, Category = "YGG")
 	void ShowStatus();
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
@@ -35,6 +38,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
 	UTexture2D* SetTexture(FName Hero);
+
+	UFUNCTION(BlueprintCallable, Category = "YGG")
+	FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f);
 
 	//UFUNCTION(BlueprintCallable, Category = "YGG")
 	//void EndAbility();
