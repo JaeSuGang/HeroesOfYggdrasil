@@ -67,6 +67,11 @@ void AYggMiniMapIconActor::Tick(float DeltaTime)
         NewRotation.Yaw;
         SetActorRotation(FRotator(0.0f, NewRotation.Yaw, 0.0f));
     }
+    else
+    {
+        FRotator CamRot = GetWorld()->GetFirstPlayerController()->GetControlRotation();
+        SetActorRotation(FRotator(0.f, CamRot.Yaw, 0.f));
+    }
 }
 
 void AYggMiniMapIconActor::SetPaperSprite(FName IConName)

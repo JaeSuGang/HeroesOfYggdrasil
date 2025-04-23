@@ -91,6 +91,11 @@ public:
 		return MiniMapCaptureComponent;
 	}
 
+	AYggMiniMapIconActor* GetMiniMapIcon()
+	{
+		return MiniMapIcon;
+	}
+
 	UFUNCTION(NetMulticast, Reliable)
 	void TakeDamageEffect(float Att);
 
@@ -112,6 +117,7 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
 
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Look(const FInputActionValue& Value);
@@ -226,6 +232,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FName RightSocketName;
 
+	UPROPERTY()
+	AYggMiniMapIconActor* MiniMapIcon;
 
 public:
 

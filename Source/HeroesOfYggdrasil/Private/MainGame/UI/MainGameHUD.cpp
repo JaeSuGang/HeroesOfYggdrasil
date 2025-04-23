@@ -23,6 +23,7 @@
 #include "MainGame/UI/YggCastingBarUserWidget.h"
 #include "MainGame/UI/YggSkillBarUserWidget.h"
 #include "MainGame/UI/YggMiniMapManager.h"
+#include "MainGame/UI/YggMiniMapIconActor.h"
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/CharacterAttributeComponent.h"
 #include "StageSystem/StageSystem.h"
