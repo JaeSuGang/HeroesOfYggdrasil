@@ -15,6 +15,7 @@ class UYggMainGameUserWidget;
 class UYggMHPBarUserWidget;
 class AEnemyCharacter;
 class AYggdrasil;
+class UYggMiniMapManager;
 
 /**
  * 
@@ -106,4 +107,7 @@ public:
 
 	UPROPERTY()
 	AYggdrasil* Yggdrasil;
+
+	UPROPERTY()
+	UYggMiniMapManager* MiniMapManager;
 };

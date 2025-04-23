@@ -166,8 +166,8 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
-	MiniMapIcon->SetAttachedCharacter(this);
-	MiniMapIcon->AddToCaptureComponent();
+	//MiniMapIcon->SetAttachedCharacter(this);
+	//MiniMapIcon->AddToCaptureComponent();
 	
 	
 

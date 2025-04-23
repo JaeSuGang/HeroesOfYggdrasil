@@ -6,6 +6,9 @@
 #include "NPC/YggNPC.h"
 #include "Yggdrasil.generated.h"
 
+class AYggMiniMapIconActor;
+class UPaperSprite;
+
 /**
  * 
  */
@@ -27,4 +30,9 @@ private:
 	UPROPERTY()
 	bool bIsLive = true;
 
+	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
+	TSubclassOf<AYggMiniMapIconActor> MiniMapIconClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "YggMiniMapIcon")
+	UPaperSprite* Sprite;
 };
