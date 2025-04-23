@@ -22,11 +22,12 @@
 #include "MainGame/UI/YggMHPBarUserWidget.h"
 #include "MainGame/UI/YggCastingBarUserWidget.h"
 #include "MainGame/UI/YggSkillBarUserWidget.h"
+#include "MainGame/UI/YggMiniMapManager.h"
+#include "MainGame/UI/YggMiniMapIconActor.h"
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/CharacterAttributeComponent.h"
 #include "StageSystem/StageSystem.h"
 
-#include "MainGame/MainGamePlayerState.h"
 
 #include "UpgradeSystem/UpgradeSystem.h"
 #include "UpgradeSystem/UpgradeDataAsset.h"
@@ -68,6 +69,9 @@ void AMainGameHUD::BeginPlay()
 	TActorIterator<AYggdrasil> iter(GetWorld());
 
 	Yggdrasil = *iter;
+
+	MiniMapManager = NewObject<UYggMiniMapManager>(this);
+	MiniMapManager->RegisterComponent();
 }
 
 void AMainGameHUD::OnStartGame(FOnGameStartParams OnGameStarted)
@@ -144,10 +148,11 @@ void AMainGameHUD::ShowMainGameWidget()
 		CurrentWidget->AddToViewport();
 	}
 
+	MiniMapManager->UpdateShowOnlyActors();
+
 	this->PlayerOwner->SetInputMode(FInputModeGameOnly{});
 
 	this->PlayerOwner->bShowMouseCursor = false;
-
 }
 
 void AMainGameHUD::CloseCurrentWidget()

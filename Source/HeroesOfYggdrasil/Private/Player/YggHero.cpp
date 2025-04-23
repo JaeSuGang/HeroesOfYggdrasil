@@ -80,8 +80,8 @@ AYggHero::AYggHero()
 	MiniMapCaptureComponent = CreateDefaultSubobject<UCaptureComponent>(TEXT("MiniMapCamera"));
 	MiniMapCaptureComponent->SetupAttachment(RootComponent);
 	MiniMapCaptureComponent->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
-	MiniMapCaptureComponent->AddRelativeLocation(FVector(0.0f, 0.0f, 1000.0f));
-	MiniMapCaptureComponent->OrthoWidth = 1000.0f;
+	MiniMapCaptureComponent->AddRelativeLocation(FVector(0.0f, 0.0f, 5000.0f));
+	MiniMapCaptureComponent->OrthoWidth = 5000.0f;
 
 	// 폰 입력 UEnhancedInputComponent 으로 변경
 	OverrideInputComponentClass = UEnhancedInputComponent::StaticClass();
@@ -129,11 +129,11 @@ void AYggHero::BeginPlay()
 
 	HeroAttributeComponent->AddTag(TEXT("Character"));
 
-	AYggMiniMapIconActor* MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	MiniMapIcon->SetPaperSprite(FName("Character"));
 	MiniMapIcon->SetAttachedCharacter(this);
-	MiniMapCaptureComponent->SetupMiniMapCapture(MiniMapIcon);
+	//MiniMapCaptureComponent->SetupMiniMapCapture(MiniMapIcon);
 	MiniMapCaptureComponent->SetWorldRotation(FRotator(-90.f, 0.0f, 0.0f));
 
 	CameraBoom->TargetArmLength = 700.0f;
@@ -145,12 +145,22 @@ void AYggHero::BeginPlay()
 	StartTransform = GetActorTransform();
 }
 
+void AYggHero::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (MiniMapIcon)
+	{
+		MiniMapIcon->Destroy();
+	}
+}
+
 void AYggHero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 	FVector PlayerLoc = GetActorLocation();
-	FRotator CamRot = GetControlRotation(); // 또는 원하는 카메라 방향
+	FRotator CamRot = GetControlRotation();
 
 	MiniMapCaptureComponent->SetWorldRotation(FRotator(-90.f, CamRot.Yaw, 0.0f));
 }

@@ -18,10 +18,8 @@ class HEROESOFYGGDRASIL_API UYggMiniMapUserWidget : public UYggUserWidget
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void SetMiniMapCam(UTexture2D* Texture);
-
-	UTexture2D* ConvertRenderTargetToTexture2D(UTextureRenderTarget2D* RenderTarget);
-
+	void SetMiniMapCam();
+	
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -29,6 +27,15 @@ protected:
 private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* MiniMap;
+
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	UMaterialInterface* MaskedMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "YGG")
+	UTexture2D* CircleMaskTexture;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* MiniMapMatInst;
 
 	UTexture2D* Texture2D;
 };
