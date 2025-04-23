@@ -71,7 +71,7 @@ int AEnemyManager::GetNumOfEnemyCharacter()
 
 void AEnemyManager::AddEnemyCharacter(AEnemyCharacter* NewEnemy)
 {
-	if (!AllEnemyCharacter.Contains(NewEnemy)) return;
+	if (AllEnemyCharacter.Contains(NewEnemy)) return;
 
 	AllEnemyCharacter.Add(NewEnemy);
 	OnEnemyCountDelegate.Broadcast(this);
@@ -79,11 +79,10 @@ void AEnemyManager::AddEnemyCharacter(AEnemyCharacter* NewEnemy)
 
 void AEnemyManager::RemoveEnemyCharacter(AEnemyCharacter* Enemy)
 {
-	if (!AllEnemyCharacter.Contains(Enemy))
-	{
-		AllEnemyCharacter.Remove(Enemy);
-		OnEnemyCountDelegate.Broadcast(this);
-	}
+	if (!AllEnemyCharacter.Contains(Enemy)) return;
+
+	AllEnemyCharacter.Remove(Enemy);
+	OnEnemyCountDelegate.Broadcast(this);
 }
 
 

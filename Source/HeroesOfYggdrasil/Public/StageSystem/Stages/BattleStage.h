@@ -9,6 +9,8 @@
 
 struct FMonsterDataRow;
 
+class AEnemyManager;
+
 USTRUCT()
 struct HEROESOFYGGDRASIL_API FMonsterSpawnInfo
 {
@@ -64,10 +66,17 @@ public:
 	virtual void Local_OnEnterStage(int NewRound) override;
 
 public:
+	UFUNCTION()
+	void Local_OnEnemyCountChanged(AEnemyManager* EnemyManager);
+
+public:
 	UPROPERTY(EditAnywhere)
 	UDataTable* WaveTable;
 
 	UPROPERTY(EditAnywhere)
+	TArray<USoundWave*> BackgroundMusics;
+
+	UPROPERTY(VisibleInstanceOnly)
 	bool HasEverSpawnedMonster;
 	
 	TArray<FWaveTableRow*> WaveTableAsArray;

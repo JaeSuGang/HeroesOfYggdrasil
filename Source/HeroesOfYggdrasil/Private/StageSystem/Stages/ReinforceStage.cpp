@@ -63,7 +63,7 @@ void UReinforceStage::Local_OnEnterStage(int NewRound)
 {
 	Super::Local_OnEnterStage(NewRound);
 
-	if (StageSystem->GetOwner()->GetOwner())
+	if (StageSystem->GetOwner()->HasAuthority())
 	{
 		Authority_AddUpgradePoints();
 	}
