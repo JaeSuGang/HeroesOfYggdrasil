@@ -58,7 +58,7 @@ public:
 
 	EEnemyType ConvertStringToEnemyType(const FString& EnemyKey);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable)
 	void DestroyAllComponents();
 
 	UFUNCTION(BlueprintCallable)
@@ -136,7 +136,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyAOE")
 	TSubclassOf<class AEnemyWarningRange> WarningOutRangeClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Minimap")
+	UPROPERTY(EditDefaultsOnly, Replicated, Category = "Minimap")
 	class AYggMiniMapIconActor* MiniMapIcon;
 
 	UPROPERTY(BlueprintAssignable, Category = "EnemyEvent")
