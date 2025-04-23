@@ -339,6 +339,15 @@ void AEnemyCharacter::SetDataKey(const FString& _MonsterDataKey)
 	DataKey = _MonsterDataKey;
 }
 
+void AEnemyCharacter::ApplyStun()
+{
+	CharacterAttributeComponent->AddTag(TEXT("Enemy.DeBuff.Stunned"));
+}
+
+void AEnemyCharacter::ClearStun()
+{
+	CharacterAttributeComponent->RemoveTag(TEXT("Enemy.DeBuff.Stunned"));
+}
 
 // Enemy_Archer
 // -----------------------------------------------------------------------------------------------------------------------------------------------------

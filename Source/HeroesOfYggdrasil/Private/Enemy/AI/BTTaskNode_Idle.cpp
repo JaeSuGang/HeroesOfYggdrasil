@@ -31,23 +31,24 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 	DeathCheck(_OwnerComp);
 
 	FPlayAIData& AIData = GetPlayAIData(_OwnerComp);
-
+	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
+	AYggCharacter* Enemy = Cast<AYggCharacter>(OwningPawn);
 
 	APawn* SelfActor = AIData.SelfPawn;
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
 	
+
+	if (!Enemy->GetAttributeComponent()->HasTag("Enemy.DeBuff.Stunned"))
+	{
+		ChangeState(_OwnerComp, EEnemyAIState::TraceYggdrasil);
+	}
+
 	if (SelfController)
 	{
 		SelfController->StopMovement();
 	}
 
 	TargetCheck(_OwnerComp);
-
-	if (nullptr != AIData.TargetActor)
-	{
-		//ChangeState(_OwnerComp, EEnemyAIState::Trace);
-		return;
-	}
 }
 
 

@@ -61,6 +61,13 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
 	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.TraceSpeed;
 
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
+		ChangeState(_OwnerComp, EEnemyAIState::Idle);
+		return;
+	}
+
 	// 공격준비
 	if (TargetDir.Size() <= PlayAIData.Data.StrafeRange)
 	{

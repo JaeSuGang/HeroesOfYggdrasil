@@ -48,6 +48,8 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
+	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OwningPawn);
 
 	DeathCheckTime -= _DeltaSeconds;
 
@@ -63,6 +65,14 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 		if (PC->IsInputKeyDown(EKeys::L))
 		{
 			ChangeState(_OwnerComp, EEnemyAIState::TraceYggdrasil);
+		}
+		if (PC->IsInputKeyDown(EKeys::P))
+		{
+			Enemy->GetAttributeComponent()->AddTag(TEXT("Enemy.DeBuff.Stunned"));
+		}
+		if (PC->IsInputKeyDown(EKeys::U))
+		{
+			Enemy->GetAttributeComponent()->RemoveTag(TEXT("Enemy.DeBuff.Stunned"));
 		}
 	}
 }
