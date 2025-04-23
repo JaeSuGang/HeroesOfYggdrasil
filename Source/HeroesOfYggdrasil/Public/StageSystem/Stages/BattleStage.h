@@ -74,6 +74,9 @@ public:
 	UDataTable* WaveTable;
 
 	UPROPERTY(EditAnywhere)
+	TArray<USoundWave*> BackgroundMusics;
+
+	UPROPERTY(VisibleInstanceOnly)
 	bool HasEverSpawnedMonster;
 	
 	TArray<FWaveTableRow*> WaveTableAsArray;
