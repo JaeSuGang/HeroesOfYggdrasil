@@ -36,6 +36,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RemoveEnemyCharacter(AEnemyCharacter* Enemy);
 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_RequestEnemyCount();
+
+	UFUNCTION()
+	void OnEnemyCountReady(int Count);
+
+	UFUNCTION()
+	void OnRep_EnemyCount();
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -43,6 +52,11 @@ public:
 	AActor* CreateMonster(const FString& _MonsterName, FVector _OriginPos);
 
 	TArray<class AEnemyCharacter*> AllEnemyCharacter;
+
+	UPROPERTY(ReplicatedUsing = OnRep_EnemyCount)
+	int32 CachedEnemyCount;
+
+	
 
 
 	UPROPERTY(BlueprintAssignable, Category = "EnemyManager")
