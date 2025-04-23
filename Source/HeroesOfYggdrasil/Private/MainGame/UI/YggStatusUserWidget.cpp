@@ -16,6 +16,7 @@
 #include "Core/YggPlayerState.h"
 #include "Player/YggHero.h"
 
+#include "MainGame/EnemyManager.h"
 
 void UYggStatusUserWidget::NativeOnInitialized()
 {
@@ -36,6 +37,8 @@ void UYggStatusUserWidget::NativeOnInitialized()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
+
+
 void UYggStatusUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -51,13 +54,17 @@ void UYggStatusUserWidget::NativeConstruct()
 	
 	HAC->ClientDelegate_OnStatusChanged.AddDynamic(this, &UYggStatusUserWidget::UpdateStatus);
 
+	AEnemyManager* EManager = AEnemyManager::Get(GetWorld());
+
+	if (!IsValid(EManager)) return;
+
 	
+	EManager->OnEnemyCountDelegate.AddDynamic(this, &UYggStatusUserWidget::Update);
 }
 
 void UYggStatusUserWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
-
 
 }
 
@@ -81,6 +88,13 @@ FSlateBrush UYggStatusUserWidget::MakeBrush(UTexture2D* Tex, FVector2D Size, flo
 	Brush.TintColor = FLinearColor(Brightness, Brightness, Brightness, 1.0f);
 	Brush.DrawAs = ESlateBrushDrawType::Image;
 	return Brush;
+}
+
+void UYggStatusUserWidget::Update(AEnemyManager* EnemyManager)
+{
+	FString String = FString::Printf(TEXT("%d"), EnemyManager->CachedEnemyCount);
+
+	MonsterCount->SetText(FText::FromString(String));
 }
 
 void UYggStatusUserWidget::StatusInit()

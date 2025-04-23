@@ -120,14 +120,11 @@ void UYggMainGameUserWidget::NativeConstruct()
 
 	AbilityPlusButton->OnClicked.AddDynamic(this, &UYggMainGameUserWidget::CreateAbility);
 
-	AEnemyManager* EManager = AEnemyManager::Get(GetWorld());
-
+	//AEnemyManager* EManager = AEnemyManager::Get(GetWorld());
+	//
 	//if (!IsValid(EManager)) return;
 	//
-	//if (EManager->HasAuthority())
-	//{
-	//	EManager->OnEnemyCountDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateCount);
-	//}
+	//EManager->OnEnemyCountDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateCount);
 	
 	
 }
@@ -191,7 +188,7 @@ void UYggMainGameUserWidget::StatusVisibility()
 
 void UYggMainGameUserWidget::UpdateCount(AEnemyManager* Enemymanager)
 {
-	FString String = FString::Printf(TEXT("%d"), Enemymanager->GetNumOfEnemyCharacter());
+	FString String = FString::Printf(TEXT("%d"), Enemymanager->CachedEnemyCount);
 
 	MonsterCount->SetText(FText::FromString(String));
 }
