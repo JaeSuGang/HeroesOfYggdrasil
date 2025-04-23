@@ -10,8 +10,9 @@
 
 AEnemyManager::AEnemyManager()
 {
-
-
+	bReplicates = true;
+	bAlwaysRelevant = true;
+	NetDormancy = DORM_Never;
 }
 
 AEnemyManager* AEnemyManager::Get(UWorld* WorldContext)
