@@ -192,9 +192,15 @@ void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	
 	if (IsValid(EnemyManager) && EnemyManager->AllEnemyCharacter.Contains(this))
 	{
-		EnemyManager->RemoveEnemyCharacter(this);
+		if (HasAuthority())
+		{
+			EnemyManager->RemoveEnemyCharacter(this);
+		}
+		
 	}
-	
+
+	MiniMapIcon->Destroy();
+
 	Super::EndPlay(EndPlayReason);
 
 	// 타이머 정리
@@ -214,6 +220,7 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AEnemyCharacter, EnemyType);
 	DOREPLIFETIME(AEnemyCharacter, TickParticle);
 	DOREPLIFETIME(AEnemyCharacter, TickNiagaraSystem);
+	DOREPLIFETIME(AEnemyCharacter, MiniMapIcon);
 }
 
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -311,7 +318,7 @@ void AEnemyCharacter::AttackEnd()
 	GetMesh()->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 }
 
-void AEnemyCharacter::DestroyAllComponents()
+void AEnemyCharacter::DestroyAllComponents_Implementation()
 {
 	TArray<UActorComponent*> Components;
 	GetComponents(Components);
@@ -324,10 +331,10 @@ void AEnemyCharacter::DestroyAllComponents()
 		}
 	}
 
-	if (MiniMapIcon)
-	{
-		MiniMapIcon->Destroy();
-	}
+	//if (MiniMapIcon)
+	//{
+	//	MiniMapIcon->Destroy();
+	//}
 
 	Destroy();
 }
