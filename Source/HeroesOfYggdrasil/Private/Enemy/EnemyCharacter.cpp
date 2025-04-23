@@ -219,12 +219,10 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(OtherActor);
+
 	if (!IsValid(TargetCharacter)) return;
 
-
 	DragonBreathDamage(TargetCharacter);
-
-
 }
 
 
@@ -282,7 +280,6 @@ void AEnemyCharacter::AttackCollisionInit()
 			TEXT("weapon_l_head")
 		);
 		LeftAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
-
 	}
 
 
@@ -542,7 +539,8 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 	}
 	if (!TickParticle.IsValid()) return;
 
-	const FVector Center = _Target->GetActorLocation();
+	FVector Center = _Target->GetActorLocation();
+	Center.Z = GetActorLocation().Z;
 	const float Radius = 1300.0f;
 
 	// 정확히 원형 테두리 위의 지점 계산
