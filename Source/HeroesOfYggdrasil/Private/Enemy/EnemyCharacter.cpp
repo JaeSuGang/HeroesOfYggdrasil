@@ -454,8 +454,22 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 	if (!RangeAttackClass) return;
 	if (!DataKey.StartsWith(FString("Minion_Witch")) && !DataKey.StartsWith(FString("Dragon"))) return;
 
-	FVector SpawnLocation = GetActorLocation() + GetActorRightVector() * -50.0f + GetActorUpVector() * 50.0f;
-	FRotator SpawnRotation = GetActorRotation();
+
+	FVector SpawnLocation = FVector::ZeroVector;
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+
+	if (DataKey.StartsWith(FString("Minion_Witch_2")) || DataKey.StartsWith(FString("Minion_Witch_1")))
+	{
+		SpawnLocation = _TargetActor->GetActorLocation() + GetActorUpVector() * 500.0f;
+		SpawnRotation = _TargetActor->GetActorRotation();
+	}
+	else
+	{
+		SpawnLocation = GetActorLocation() + GetActorRightVector() * -50.0f + GetActorUpVector() * 50.0f;
+		SpawnRotation = GetActorRotation();
+	}
+
+
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
@@ -465,10 +479,24 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 		RangeAttack->SetOwner(this);
 		if (_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
 		{
-			FVector Direction = (_TargetLocation - SpawnLocation).GetSafeNormal();
-			FVector Axis = FVector::CrossProduct(Direction, FVector::UpVector).GetSafeNormal();
+			FVector Direction = FVector::ZeroVector;
+			FVector Axis = FVector::ZeroVector;
+			FVector FinalVelocity = FVector::ZeroVector;
 
-			FVector FinalVelocity = Direction.RotateAngleAxis(10.f, Axis) * 2000.f;
+			if (DataKey.StartsWith(FString("Minion_Witch_2")) || DataKey.StartsWith(FString("Minion_Witch_1")))
+			{
+				Direction = FVector::DownVector;
+				Axis = FVector::CrossProduct(Direction, FVector::UpVector).GetSafeNormal();
+				FinalVelocity = Direction.RotateAngleAxis(10.f, Axis) * 500.f;
+			}
+			else
+			{
+				Direction = (_TargetLocation - SpawnLocation).GetSafeNormal();
+				Axis = FVector::CrossProduct(Direction, FVector::UpVector).GetSafeNormal();
+				FinalVelocity = Direction.RotateAngleAxis(10.f, Axis) * 2000.f;
+			}
+
+			
 
 			RangeAttack->GetProjectileMovement()->Velocity = FinalVelocity;
 		}
