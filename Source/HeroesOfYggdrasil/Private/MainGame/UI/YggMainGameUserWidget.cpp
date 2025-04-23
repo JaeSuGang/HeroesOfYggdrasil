@@ -120,9 +120,9 @@ void UYggMainGameUserWidget::NativeConstruct()
 
 	AbilityPlusButton->OnClicked.AddDynamic(this, &UYggMainGameUserWidget::CreateAbility);
 
-	AEnemyManager* EManager = AEnemyManager::Get(GetWorld());
+	/*AEnemyManager* EManager = AEnemyManager::Get(GetWorld());
 
-	EManager->OnEnemyCountDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateCount);
+	EManager->OnEnemyCountDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateCount);*/
 }
 
 void UYggMainGameUserWidget::StartAbilityPlus()
