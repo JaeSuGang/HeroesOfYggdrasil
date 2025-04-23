@@ -43,6 +43,7 @@ void AEnemyManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AEnemyManager, CachedEnemyCount);
+	DOREPLIFETIME(AEnemyManager, AllEnemyCharacter);
 }
 
 AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _OriginPos)
@@ -80,13 +81,21 @@ int AEnemyManager::GetNumOfEnemyCharacter()
 	return  static_cast<int>((AllEnemyCharacter.Num()));
 }
 
+void AEnemyManager::OnRep_AllEnemyCharacter()
+{
+	OnEnemyCountDelegate.Broadcast(this);
+}
+
 void AEnemyManager::AddEnemyCharacter(AEnemyCharacter* NewEnemy)
 {
 	if (AllEnemyCharacter.Contains(NewEnemy)) return;
 
 	AllEnemyCharacter.Add(NewEnemy);
 	Server_RequestEnemyCount();
-	OnEnemyCountDelegate.Broadcast(this);
+	/*if (HasAuthority())*/
+	{
+		OnRep_AllEnemyCharacter();
+	}
 }
 
 void AEnemyManager::RemoveEnemyCharacter(AEnemyCharacter* Enemy)
@@ -95,7 +104,10 @@ void AEnemyManager::RemoveEnemyCharacter(AEnemyCharacter* Enemy)
 
 	AllEnemyCharacter.Remove(Enemy);
 	Server_RequestEnemyCount();
-	OnEnemyCountDelegate.Broadcast(this);
+	if (HasAuthority())
+	{
+		OnRep_AllEnemyCharacter();
+	}
 }
 
 void AEnemyManager::Server_RequestEnemyCount_Implementation()

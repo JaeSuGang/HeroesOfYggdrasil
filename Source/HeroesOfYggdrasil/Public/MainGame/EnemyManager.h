@@ -42,6 +42,10 @@ public:
 	UFUNCTION()
 	void OnEnemyCountReady(int Count);
 
+	
+	UFUNCTION()
+	void OnRep_AllEnemyCharacter();
+
 	UFUNCTION()
 	void OnRep_EnemyCount();
 
@@ -51,6 +55,7 @@ protected:
 public:
 	AActor* CreateMonster(const FString& _MonsterName, FVector _OriginPos);
 
+	UPROPERTY(ReplicatedUsing = OnRep_AllEnemyCharacter, VisibleAnywhere)
 	TArray<class AEnemyCharacter*> AllEnemyCharacter;
 
 	UPROPERTY(ReplicatedUsing = OnRep_EnemyCount)

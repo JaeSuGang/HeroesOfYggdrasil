@@ -92,9 +92,19 @@ FSlateBrush UYggStatusUserWidget::MakeBrush(UTexture2D* Tex, FVector2D Size, flo
 
 void UYggStatusUserWidget::Update(AEnemyManager* EnemyManager)
 {
-	FString String = FString::Printf(TEXT("%d"), EnemyManager->CachedEnemyCount);
+	if (IsValid(EnemyManager))
+	{
+		FString String = FString::Printf(TEXT("%d"), EnemyManager->AllEnemyCharacter.Num());
 
-	MonsterCount->SetText(FText::FromString(String));
+		MonsterCount->SetText(FText::FromString(String));
+	}
+	else
+	{
+		FString String = FString::Printf(TEXT("%d"), EnemyManager->AllEnemyCharacter.Num());
+
+		MonsterCount->SetText(FText::FromString(String));
+	}
+
 }
 
 void UYggStatusUserWidget::StatusInit()
