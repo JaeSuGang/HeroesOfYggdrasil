@@ -64,6 +64,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetDataKey(const FString& _MonsterDataKey);
 	
+	UFUNCTION(BlueprintCallable)
+	void ApplyStun();
+
+	UFUNCTION(BlueprintCallable)
+	void ClearStun();
 
 	UFUNCTION(BlueprintCallable)
 	double GetCurHp()

@@ -49,6 +49,12 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		}
 	}
 
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
+		ChangeState(_OwnerComp, EEnemyAIState::Idle);
+		return;
+	}
+
+
 	if (IsValid(TargetActor))
 	{
 		AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
@@ -81,6 +87,11 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		FString DataKeyStr = EnemyChar->GetDataKey();
 		EEnemyType Type = EnemyChar->ConvertStringToEnemyType(DataKeyStr);
 
+		if (EnemyChar->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
+			ChangeState(*Comp, EEnemyAIState::Idle);
+			return;
+		}
+
 		if (Type == EEnemyType::Minion_Archer)
 		{
 			EnemyChar->SpawnAndFireArrow(TargetActor);
@@ -110,6 +121,15 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+
+
+	if (!IsValid(EnemyCharacter)) return;
+
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.DeBuff.Stunned"))) // ✅ 스턴 상태면 무시
+	{
+		ChangeState(_OwnerComp, EEnemyAIState::Idle);
+	}
 
 	if (SelfController)
 	{

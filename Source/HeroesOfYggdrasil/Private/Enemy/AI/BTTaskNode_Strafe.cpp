@@ -69,6 +69,14 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 		SelfActor->AddMovementInput(TargetDir.RotateAngleAxis(-90.0f, TargetAxis));
 	}
 	
+
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
+		ChangeState(_OwnerComp, EEnemyAIState::Idle);
+		return;
+
+	}
 	
 	Time -= _DeltaSeconds;
 
