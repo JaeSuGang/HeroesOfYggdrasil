@@ -1,6 +1,7 @@
 #include "Enemy/EnemyCharacter.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
@@ -505,6 +506,8 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 			RangeAttack->GetProjectileMovement()->Velocity = (_TargetLocation - SpawnLocation).GetSafeNormal() * 2000.f;
 		}
 	}
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(_TargetActor);
+	WarpToRandomPoint(TargetCharacter);
 }
 
 void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
@@ -531,41 +534,71 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 
 void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 {
-	if (!DataKey.StartsWith("Minion_Witch")) return;
+	if (!IsValid(_Target) || !DataKey.StartsWith("Minion_Witch")) return;
 
-	if (!TickNiagaraSystem.IsValid())
+	if (!TickParticle.IsValid())
 	{
-		TickNiagaraSystem.LoadSynchronous();
+		TickParticle.LoadSynchronous();
+	}
+	if (!TickParticle.IsValid()) return;
+
+	const FVector Center = _Target->GetActorLocation();
+	const float Radius = 1300.0f;
+
+	// 정확히 원형 테두리 위의 지점 계산
+	const FVector RandUnitDir = UKismetMathLibrary::RandomUnitVector();
+	const FVector Offset = FVector(RandUnitDir.X, RandUnitDir.Y, 0.f) * Radius;
+	const FVector Destination = Center + Offset;
+
+	// Niagara 이펙트
+	UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
+	if (IsValid(ParticleComp))
+	{
+		ParticleComp->SetTemplate(TickParticle.Get());
+		ParticleComp->bAutoActivate = true;
+		ParticleComp->SetRelativeScale3D(FVector(1.0f));
+		ParticleComp->RegisterComponent();
+		ParticleComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	}
 
-	if (!TickNiagaraSystem.IsValid()) return;
+	// 숨기기 & Niagara 준비
+	
 
-	SetActorHiddenInGame(true);
+	TWeakObjectPtr<AEnemyCharacter> WeakEnemy = this;
+	if (!WeakEnemy.IsValid()) return;
 
-	TWeakObjectPtr<AEnemyCharacter> WeakEnemey = this;
-
-	if (!IsValid(WeakEnemey.Get())) return;
-
+	// Niagara 이후 실제 워프
 	FTimerHandle SpawnTimerHandle;
 
-	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemey]()
+
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemy, Destination]()
 		{
-			UNiagaraComponent* TeleprotComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(
-				WeakEnemey->TickNiagaraSystem.Get(),
-				WeakEnemey->GetMesh(),
-				FName("Chest"),
-				FVector::ZeroVector,
-				FRotator::ZeroRotator,
-				EAttachLocation::SnapToTarget,
-				true,
-				true
-			);
+			if (!WeakEnemy.IsValid()) return;
 
+			SetActorHiddenInGame(true);
 
-		}), 0.1f, false);
+		}), 0.5f, false);
 
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemy, Destination]()
+		{
+			if (!WeakEnemy.IsValid()) return;
 
+			// Niagara 이펙트
+			UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
+			if (IsValid(ParticleComp))
+			{
+				ParticleComp->SetTemplate(TickParticle.Get());
+				ParticleComp->bAutoActivate = true;
+				ParticleComp->SetRelativeScale3D(FVector(1.0f));
+				ParticleComp->RegisterComponent();
+				ParticleComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+			}
 
+			// 실제 텔레포트
+			WeakEnemy->SetActorLocation(Destination);
+			WeakEnemy->SetActorHiddenInGame(false);
+
+		}), 1.0f, false);
 }
 
 
@@ -599,9 +632,6 @@ void AEnemyCharacter::DragonRangeAttack_Implementation(AActor* _Actor)
 
 		// 랜덤한 딜레이 시간 (0~3초)
 		float Delay = FMath::FRandRange(0.f, 3.f);
-
-
-		
 
 		// 타이머 바인딩용 로컬 복사 변수
 		FTimerHandle TimerHandle;
