@@ -122,7 +122,14 @@ void UYggMainGameUserWidget::NativeConstruct()
 
 	AEnemyManager* EManager = AEnemyManager::Get(GetWorld());
 
-	EManager->OnEnemyCountDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateCount);
+	//if (!IsValid(EManager)) return;
+	//
+	//if (EManager->HasAuthority())
+	//{
+	//	EManager->OnEnemyCountDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateCount);
+	//}
+	
+	
 }
 
 void UYggMainGameUserWidget::StartAbilityPlus()
