@@ -20,12 +20,6 @@ struct HEROESOFYGGDRASIL_API FMonsterSpawnInfo
 	FDataTableRowHandle MonsterData;
 
 	UPROPERTY(EditAnywhere)
-	FVector SpawnLocation;
-
-	UPROPERTY(EditAnywhere)
-	float SpawnDelay;
-
-	UPROPERTY(EditAnywhere)
 	int Count;
 };
 
@@ -74,7 +68,7 @@ public:
 	UDataTable* WaveTable;
 
 	UPROPERTY(EditAnywhere)
-	TArray<USoundWave*> BackgroundMusics;
+	TArray<FVector> SpawnLocations;
 
 	UPROPERTY(VisibleInstanceOnly)
 	bool HasEverSpawnedMonster;
