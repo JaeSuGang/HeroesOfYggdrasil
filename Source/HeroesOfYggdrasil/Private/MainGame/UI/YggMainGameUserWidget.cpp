@@ -12,6 +12,7 @@
 #include "MainGame/UI/YggSelectAbilityUserWidget.h"
 #include "MainGame/UI/YggStatusUserWidget.h"
 #include "MainGame/UI/YggStatusEffectUserWidget.h"
+#include "MainGame/UI/YggFuelBarUserWidget.h"
 #include "MainGame/EnemyManager.h"
 
 #include "Components/CanvasPanel.h"
@@ -19,6 +20,8 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Blueprint/WidgetTree.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
 
 #include "Attribute/HeroAttributeComponent.h"
 #include "UpgradeSystem/UpgradeSystem.h"
@@ -131,6 +134,8 @@ void UYggMainGameUserWidget::NativeConstruct()
 	StageSystem->OnStageStartedDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateWaveCount);
 
 	StageSystem->OnDefeated.AddDynamic(this, &UYggMainGameUserWidget::ChildWidgetHidden);
+
+	//StageSystem->LevelSequenceActor->GetSequencePlayer()->OnFinished.AddDynamic(this, &UYggMainGameUserWidget::StatusVisibility);
 }
 
 void UYggMainGameUserWidget::StartAbilityPlus()
