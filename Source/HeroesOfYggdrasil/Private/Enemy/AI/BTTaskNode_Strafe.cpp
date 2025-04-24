@@ -79,7 +79,7 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	}
 
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
-		EnemyCharacter->ClearHitState();
+		
 		ChangeState(_OwnerComp, EEnemyAIState::Hit);
 		return;
 	}
