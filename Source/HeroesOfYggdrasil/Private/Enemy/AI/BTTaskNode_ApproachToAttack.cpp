@@ -68,8 +68,16 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
 		ChangeState(_OwnerComp, EEnemyAIState::Idle);
 		return;
-
 	}
+
+
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+		
+		ChangeState(_OwnerComp, EEnemyAIState::Hit);
+		return;
+	}
+
+
 	EnemyCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.ApproachSpeed;
 	
 

@@ -30,6 +30,11 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 		return;
 	}
 	
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+		
+		ChangeState(_OwnerComp, EEnemyAIState::Hit);
+		return;
+	}
 
 	if (IsValid(TargetCharacter))
 	{
@@ -85,6 +90,12 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 
 				if (EnemyChar->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
 					ChangeState(*Comp, EEnemyAIState::Idle);
+					return;
+				}
+
+				if (EnemyChar->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+					EnemyChar->ClearHitState();
+					ChangeState(*Comp, EEnemyAIState::Hit);
 					return;
 				}
 				if (Comp)
@@ -156,6 +167,12 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.DeBuff.Stunned"))) // ✅ 스턴 상태면 무시
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Idle);
+	}
+
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+		
+		ChangeState(_OwnerComp, EEnemyAIState::Hit);
+		return;
 	}
 
 	if (IsValid(EnemyCharacter))

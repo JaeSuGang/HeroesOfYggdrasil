@@ -86,6 +86,14 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 		return;
 	}
 
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+		
+		ChangeState(_OwnerComp, EEnemyAIState::Hit);
+		return;
+	}
+
+
+
 	// 공격준비
 	if (ReturnSize <= (PlayAIData.Data.YggAttackRange) * 1.1f )
 	{

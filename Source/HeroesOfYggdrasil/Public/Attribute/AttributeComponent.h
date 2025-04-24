@@ -62,7 +62,7 @@ public:
 	UFUNCTION()
 	void OnRep_Tags();
 
-protected:
+//protected:
 	UPROPERTY(ReplicatedUsing=OnRep_Tags, EditAnywhere)
 	FGameplayTagContainer GameplayTags;
 };

@@ -173,6 +173,8 @@ void AEnemyCharacter::BeginPlay()
 	
 	PreviousHp = CharacterAttributeComponent->HP;
 
+
+
 }
 
 void AEnemyCharacter::Tick(float DeltaTime)

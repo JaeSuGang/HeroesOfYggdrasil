@@ -5,6 +5,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
+#include "Attribute/HeroAttributeComponent.h"
+
+
 UYggHeroAnimInstance::UYggHeroAnimInstance()
 {
 	MontageMap.Add(TEXT("Attack"), NewObject<UAnimMontage>());
@@ -89,6 +92,13 @@ void UYggHeroAnimInstance::JumpMontage(FName MontageName, FName SectionName)
 void UYggHeroAnimInstance::StopMontage()
 {
 	Montage_Stop(0.5f);
+}
+
+void UYggHeroAnimInstance::EndMontageEvent()
+{
+	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotRollable"));
+	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
+	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
 }
 
 // 에임 오프셋을 계산하는 함수

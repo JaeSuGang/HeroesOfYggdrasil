@@ -149,6 +149,8 @@ void UCharacterAttributeComponent::Server_SetAttackPoints_Implementation(float f
 void UCharacterAttributeComponent::Server_SetMaxHP_Implementation(float fAmount)
 {
 	MaxHP = fAmount;
+	if (MaxHP < 1)
+		MaxHP = 1;
 
 	ServerDelegate_OnStatusChanged.Broadcast();
 	if (GetOwner() && GetOwner()->HasAuthority())

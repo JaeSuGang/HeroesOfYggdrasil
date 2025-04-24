@@ -19,7 +19,7 @@ UYggAttackCapsuleComponent::UYggAttackCapsuleComponent()
 void UYggAttackCapsuleComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	OnComponentBeginOverlap.AddDynamic(this, &UYggAttackCapsuleComponent::OverLapBegin);
 	OnComponentEndOverlap.AddDynamic(this, &UYggAttackCapsuleComponent::OverLapEnd);
 	CollisionOff();
@@ -88,7 +88,6 @@ void UYggAttackCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedCom
 
 void UYggAttackCapsuleComponent::CollisionOn()
 {
-	Super::CollisionOn();
 	OverlappedActors.Reset();
 	SetComponentTickEnabled(true);
 	if (OwnerCharacter == nullptr)
@@ -104,7 +103,7 @@ void UYggAttackCapsuleComponent::CollisionOn()
 		switch (AttackType)
 		{
 		case EAttackType::Normal:
-			Coefficient = 1.0f;
+			Coefficient = HeroAttributeComponent->AttackInfo.SkillCoefficient;
 			break;
 		case EAttackType::SkillQ:
 			Coefficient = HeroAttributeComponent->SkillQInfo.SkillCoefficient;
@@ -117,6 +116,7 @@ void UYggAttackCapsuleComponent::CollisionOn()
 			break;
 		}
 	}
+	Super::CollisionOn();
 }
 
 float UYggAttackCapsuleComponent::DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit)

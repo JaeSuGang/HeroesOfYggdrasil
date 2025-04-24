@@ -3,6 +3,9 @@
 
 #include "Enemy/AI/BTTaskNode_Hit.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 UBTTaskNode_Hit::UBTTaskNode_Hit()
 {
@@ -14,11 +17,62 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 	Super::Start(_OwnerComp);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
+	APawn* SelfActor = PlayAIData.SelfPawn;
+	AActor* TargetActor = PlayAIData.TargetActor;
+	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OwningPawn);
+	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
 
 	if (nullptr != PlayAIData.SelfAnimPawn)
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
+
+	const float KnockBackDistance = 100.0f; 
+	FVector KnockBackDirection = (SelfActor->GetActorLocation() - TargetActor->GetActorLocation());
+	KnockBackDirection.Z = 0.0f;
+	KnockBackDirection.Normalize();
+
+	FVector KnockBackLocation = SelfActor->GetActorLocation() + KnockBackDirection * KnockBackDistance;
+
+	if (IsValid(Enemy))
+	{
+		Enemy->GetMovementComponent()->StopMovementImmediately();
+		SelfController->MoveToLocation(KnockBackLocation);
+	}
+
+
+	if (Enemy->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")))
+	{
+		
+		float Duration = FMath::Max(0.3f, 0.1f);
+		FTimerDelegate TimerDel;
+		FTimerHandle TimerHandle;
+
+		TWeakObjectPtr<AEnemyCharacter> WeakEnemy = Enemy;
+		FWeakObjectPtr WeakOwner = &_OwnerComp;
+
+		TimerDel.BindLambda([this, WeakOwner, WeakEnemy]() {
+			if (!WeakOwner.IsValid() || !WeakEnemy.IsValid()) return;
+
+			AEnemyCharacter* EnemyChar = WeakEnemy.Get();
+			UBehaviorTreeComponent* Comp = Cast<UBehaviorTreeComponent>(WeakOwner.Get());
+
+			if (!EnemyChar || !Comp) return;
+
+			ChangeState(*Comp, EEnemyAIState::Idle);
+			});
+
+		PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
+			TimerHandle,
+			TimerDel,
+			Duration,
+			false
+		);
+	}
+	
+
+
 }
 
 void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
@@ -27,27 +81,15 @@ void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNode
 
 	DeathCheck(_OwnerComp);
 
+
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
-
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
-	if (EnemyCharacter != nullptr)
-	{
-		UCharacterAttributeComponent* SelfAttributeComponent = EnemyCharacter->GetAttributeComponent();
-		if (SelfAttributeComponent != nullptr)
-		{
-			SelfAttributeComponent->HP;
-		}
-	}
-	
 
-	// 죽음 체크
-	
-	/*UAttributeComponent* TargetAttributeComponent = TargetActor->FindComponentByClass<UAttributeComponent>();
-	TargetAttributeComponent->HasTag("Character");*/
-	
+	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
+
 }
 
 

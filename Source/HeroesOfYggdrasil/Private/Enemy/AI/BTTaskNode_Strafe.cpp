@@ -77,6 +77,12 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 		return;
 
 	}
+
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+		
+		ChangeState(_OwnerComp, EEnemyAIState::Hit);
+		return;
+	}
 	
 	Time -= _DeltaSeconds;
 
