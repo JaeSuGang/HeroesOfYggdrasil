@@ -28,7 +28,7 @@ void UBTTaskNode_Idle::Start(UBehaviorTreeComponent& _OwnerComp)
 	if (Enemy->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")))
 	{
 
-		float Duration = FMath::Max(3.0f, 0.1f);
+		float Duration = FMath::Max(0.5f, 0.1f);
 		FTimerDelegate TimerDel;
 		FTimerHandle TimerHandle;
 

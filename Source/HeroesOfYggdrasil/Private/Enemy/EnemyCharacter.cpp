@@ -389,7 +389,8 @@ void AEnemyCharacter::SpawnAndFireArrow(AActor* _TargetActor)
 {
 	if (!ProjectileClass) return;
 	if (!DataKey.StartsWith(FString("Minion_Archer"))) return;
-
+	if (!IsValid(_TargetActor)) return;
+	
 	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
 	FRotator SpawnRotation = GetActorRotation();
 	FActorSpawnParameters SpawnParams;
@@ -486,7 +487,7 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 {
 	if (!RangeAttackClass) return;
 	if (!DataKey.StartsWith(FString("Minion_Witch")) && !DataKey.StartsWith(FString("Dragon"))) return;
-
+	if (!IsValid(_TargetActor)) return;
 
 	FVector SpawnLocation = FVector::ZeroVector;
 	FRotator SpawnRotation = FRotator::ZeroRotator;
@@ -545,6 +546,7 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 {
 	if (!HasAuthority()) return;
+	if (!IsValid(_Target)) return;
 
 	if (!DataKey.StartsWith(FString("Minion_Witch")) && !DataKey.StartsWith(FString("Dragon"))) return;
 
@@ -733,6 +735,8 @@ void AEnemyCharacter::DragonBreath_Implementation()
 
 void AEnemyCharacter::DragonBreathDamage(AYggCharacter*_Target)
 {
+	if (!IsValid(_Target)) return;
+
 	if (DataKey != FString(TEXT("Dragon"))) return;
 
 	HandleHeroEnteredRange(_Target);
