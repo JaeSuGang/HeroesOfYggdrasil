@@ -31,7 +31,7 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 	}
 	
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
-		EnemyCharacter->ClearHitState();
+		
 		ChangeState(_OwnerComp, EEnemyAIState::Hit);
 		return;
 	}
@@ -170,7 +170,7 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	}
 
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
-		EnemyCharacter->ClearHitState();
+		
 		ChangeState(_OwnerComp, EEnemyAIState::Hit);
 		return;
 	}

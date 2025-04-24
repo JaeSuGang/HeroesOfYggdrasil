@@ -87,7 +87,7 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	}
 
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
-		EnemyCharacter->ClearHitState();
+		
 		ChangeState(_OwnerComp, EEnemyAIState::Hit);
 		return;
 	}
