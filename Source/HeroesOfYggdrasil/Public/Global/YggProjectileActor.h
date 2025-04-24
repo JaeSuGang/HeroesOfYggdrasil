@@ -87,6 +87,14 @@ public:
 	UFUNCTION()
 	void SetMaxSpeed(float _MaxSpeed);
 
+	UFUNCTION()
+	void DelayShoot(float _DelayTime);
+
+	UFUNCTION()
+	bool ComputeAndLaunch();
+	UFUNCTION()
+	void LaunchTo();
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	EProjectileType ProjectileType;
@@ -106,6 +114,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor")
 	class AYggCharacter* OwnerCharacter;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parabola")
+	float ApexOffsetZ = 800.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parabola")
+	bool bAbsoluteApexZ = false;
 	
 	FVector TargetLocation;
 
@@ -116,6 +129,10 @@ protected:
 
 	UPROPERTY(Replicated)
 	FVector AimDirection;
+
+	
+
+
 
 
 

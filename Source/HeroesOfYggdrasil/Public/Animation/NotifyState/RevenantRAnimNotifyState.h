@@ -27,8 +27,7 @@ protected:
 
 	float Delay = 0.1f;
 	float ElapsedTime = 0.0f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float CastingTime;
 
-	UPROPERTY(Transient)
-	TArray<TObjectPtr<AYggProjectileActor>> ProjectileList;
-	
 };

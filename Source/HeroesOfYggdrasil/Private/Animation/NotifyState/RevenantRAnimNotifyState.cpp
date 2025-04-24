@@ -10,6 +10,7 @@
 void URevenantRAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
+	CurCount = 0;
 }
 
 void URevenantRAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
@@ -42,14 +43,16 @@ void URevenantRAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAn
 				);
 
 				if (!Projectile) return;
-
+				Projectile->SetTargetLocation(Actor->GetTargetLocation());
+				Projectile->DelayShoot(CastingTime);
 				Projectile->SetOwnerCharacter(Actor);
 				Projectile->SetAimDir(AimDirection);
 
 				UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
-				ProjectileList.Add(Projectile);
+				
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Spawn_Projectile"));
 				CurCount++;
+				
 			}
 			ElapsedTime = 0.0f;
 		}
@@ -61,18 +64,6 @@ void URevenantRAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAn
 void URevenantRAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
-	FTimerHandle TimerHandle;
-	MeshComp->GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
-		{
-			for (AYggProjectileActor* Projectile : ProjectileList)
-			{
-				if (IsValid(Projectile))
-				{
-					Projectile->SetInitialSpeed(5000.0f);
-					Projectile->SetMaxSpeed(5000.0f);
-				}
-			}
-			ProjectileList.Empty();
-			CurCount = 0;
-		}, 0.3f, false);
+	CurCount = 0;
+	
 }
