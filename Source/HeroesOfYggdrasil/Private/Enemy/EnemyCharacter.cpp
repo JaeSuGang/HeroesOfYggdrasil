@@ -226,12 +226,10 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 void AEnemyCharacter::OverLap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(OtherActor);
+
 	if (!IsValid(TargetCharacter)) return;
 
-
 	DragonBreathDamage(TargetCharacter);
-
-
 }
 
 
@@ -265,7 +263,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("weapon_r_head")
 		);
-		RightAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
+		RightAttackCapsule->SetCapsuleSize(200.0f, 200.0f);
 	}
 
 
@@ -288,8 +286,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("weapon_l_head")
 		);
-		LeftAttackCapsule->SetCapsuleSize(150.0f, 150.0f);
-
+		LeftAttackCapsule->SetCapsuleSize(150.0f, 200.0f);
 	}
 
 
@@ -549,7 +546,10 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 	}
 	if (!TickParticle.IsValid()) return;
 
-	const FVector Center = _Target->GetActorLocation();
+	if (_Target->GetName().StartsWith(TEXT("BP_Yggdrasil"))) return;
+
+	FVector Center = _Target->GetActorLocation();
+	Center.Z = GetActorLocation().Z;
 	const float Radius = 1300.0f;
 
 	// 정확히 원형 테두리 위의 지점 계산
@@ -589,18 +589,7 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemy, Destination]()
 		{
 			if (!WeakEnemy.IsValid()) return;
-
-			// Niagara 이펙트
-			UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
-			if (IsValid(ParticleComp))
-			{
-				ParticleComp->SetTemplate(TickParticle.Get());
-				ParticleComp->bAutoActivate = true;
-				ParticleComp->SetRelativeScale3D(FVector(1.0f));
-				ParticleComp->RegisterComponent();
-				ParticleComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
-			}
-
+			
 			// 실제 텔레포트
 			WeakEnemy->SetActorLocation(Destination);
 			WeakEnemy->SetActorHiddenInGame(false);
