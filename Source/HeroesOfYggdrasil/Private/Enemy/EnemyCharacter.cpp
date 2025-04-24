@@ -76,6 +76,8 @@ void AEnemyCharacter::BeginPlay()
 
 	
 	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
+
+
 	MonsterData = &FindData;
 	EnemyType = ConvertStringToEnemyType(DataKey);
 
@@ -595,7 +597,7 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect, Att);
 }
 
-void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
+void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter * _Target)
 {
 	if (!IsValid(_Target) || !DataKey.StartsWith("Minion_Witch")) return;
 
@@ -611,12 +613,31 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 	Center.Z = GetActorLocation().Z;
 	const float Radius = 1300.0f;
 
-	// 정확히 원형 테두리 위의 지점 계산
 	const FVector RandUnitDir = UKismetMathLibrary::RandomUnitVector();
 	const FVector Offset = FVector(RandUnitDir.X, RandUnitDir.Y, 0.f) * Radius;
-	const FVector Destination = Center + Offset;
+	FVector Destination = Center + Offset;
 
-	// Particle 이펙트
+	// 지면 체크용 라인트레이스
+	FHitResult HitResult;
+	const FVector TraceStart = Destination + FVector(0, 0, 1000.f);
+	const FVector TraceEnd = Destination + FVector(0, 0, -1000.f);
+	FCollisionQueryParams TraceParams;
+	TraceParams.bTraceComplex = false;
+	TraceParams.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, TraceParams);
+
+	if (bHit)
+	{
+		Destination.Z = HitResult.ImpactPoint.Z;
+	}
+	else
+	{
+		// 안전장치: 너무 낮은 곳으로 워프 방지
+		const float MinZ = -500.f;
+		Destination.Z = FMath::Max(Destination.Z, MinZ);
+	}
+
 	UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
 	if (IsValid(ParticleComp))
 	{
@@ -627,17 +648,12 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 		ParticleComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	}
 
-	// 숨기기 & Niagara 준비
-	
-
 	TWeakObjectPtr<AEnemyCharacter> WeakEnemy = this;
 	if (!WeakEnemy.IsValid()) return;
 
-	// Niagara 이후 실제 워프
 	FTimerHandle SpawnTimerHandle;
 
-
-	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemy, Destination]()
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemy]()
 		{
 			if (!WeakEnemy.IsValid()) return;
 
@@ -648,13 +664,13 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemy, Destination]()
 		{
 			if (!WeakEnemy.IsValid()) return;
-			
-			// 실제 텔레포트
+
 			WeakEnemy->SetActorLocation(Destination);
 			WeakEnemy->SetActorHiddenInGame(false);
 
 		}), 1.0f, false);
 }
+
 
 
 

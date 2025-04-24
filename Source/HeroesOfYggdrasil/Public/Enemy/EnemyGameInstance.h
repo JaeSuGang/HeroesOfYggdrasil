@@ -6,6 +6,9 @@
 #include "Core/YggGameInstance.h"
 #include "EnemyGameInstance.generated.h"
 
+class UDataTable;
+
+
 /**
  * 
  */
@@ -28,9 +31,10 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "YggData")
-	class UDataTable* DataTables = nullptr;
+	UDataTable* DataTables = nullptr;
 	
-	class UDataTable* MonsterDataTable = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = "YggData")
+	UDataTable* MonsterDataTable = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "YggData")
 	FRandomStream Random;

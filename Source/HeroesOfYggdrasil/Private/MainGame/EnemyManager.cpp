@@ -52,17 +52,18 @@ AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _Origi
 	
 	FTransform Trans;
 	AEnemyCharacter* NewEnemyCharacter = GetWorld()->SpawnActorDeferred<AEnemyCharacter>(SubClass, Trans);
+	
 	if (nullptr == NewEnemyCharacter)
 	{
 		UE_LOG(LogTemp, Fatal, TEXT("%S(%u)> if (nullptr == EnemyActor) Enemy Spawn Is Nullptr"), __FUNCTION__, __LINE__);
 		return nullptr;
 	}
+
 	NewEnemyCharacter->SetDataKey(_MonsterName);
 	Trans.SetLocation(_OriginPos);
 	NewEnemyCharacter->FinishSpawning(Trans);
 	AEnemyAIController* AICon = Cast<AEnemyAIController>(NewEnemyCharacter->GetController());
 	AddEnemyCharacter(NewEnemyCharacter);
-	//AllEnemyCharacter.Add(NewEnemyCharacter);
 
 	return NewEnemyCharacter;
 }
