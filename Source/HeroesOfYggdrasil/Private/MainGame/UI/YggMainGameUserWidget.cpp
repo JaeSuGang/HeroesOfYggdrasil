@@ -18,6 +18,7 @@
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Blueprint/WidgetTree.h"
 
 #include "Attribute/HeroAttributeComponent.h"
 #include "UpgradeSystem/UpgradeSystem.h"
@@ -26,6 +27,7 @@
 #include "StageSystem/StageSystem.h"
 #include "StageSystem/StageBase.h"
 #include "StageSystem/Stages/BattleStage.h"
+
 
 void UYggMainGameUserWidget::NativeOnInitialized()
 {
@@ -60,9 +62,9 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 
 		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(CastingBarWidget->Slot))
 		{
-			//CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
-			//CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f));
-			CanvasSlot->SetPosition(FVector2D(850.0f, 850.0f));
+			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+			CanvasSlot->SetPosition(FVector2D(0.0f, 300.0f));
 		}
 	}
 
@@ -79,7 +81,6 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 			CanvasSlot->SetAnchors(FAnchors(0.5f, 1.0f));
 			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
 			CanvasSlot->SetPosition(FVector2D(-296.0f, -183.0f));
-			
 		}
 	}
 
@@ -125,8 +126,11 @@ void UYggMainGameUserWidget::NativeConstruct()
 	AbilityPlusButton->OnClicked.AddDynamic(this, &UYggMainGameUserWidget::CreateAbility);
 
 	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
+	UpdateWaveCount(StageSystem->GetBattleStage());
 
 	StageSystem->OnStageStartedDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateWaveCount);
+
+	StageSystem->OnDefeated.AddDynamic(this, &UYggMainGameUserWidget::ChildWidgetHidden);
 }
 
 void UYggMainGameUserWidget::StartAbilityPlus()
@@ -193,4 +197,18 @@ void UYggMainGameUserWidget::UpdateWaveCount(UStageBase* NewStage)
 	FString String = FString::Printf(TEXT("WAVE %d / %d"), NewStage->StageSystem->CurrentStageIndex, BattleStage->WaveTableAsArray.Num());
 
 	WaveCount->SetText(FText::FromString(String));
+}
+
+void UYggMainGameUserWidget::ChildWidgetHidden(FOnDefeatedParams OnDefeatedParams)
+{
+	TArray<UWidget*> children;
+	WidgetTree->GetAllWidgets(children);
+
+	for (UWidget* widget : children)
+	{
+		if (widget)
+		{
+			widget->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
 }

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 
 #include "MainGame/MainGamePlayerState.h"
+#include "StageSystem/StageSystem.h"
 
 #include "YggMainGameUserWidget.generated.h"
 
@@ -66,6 +67,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void UpdateWaveCount(UStageBase* NewStage);
 
+	UFUNCTION()
+	void ChildWidgetHidden(FOnDefeatedParams OnDefeatedParams);
 
 protected:
 	virtual void NativeOnInitialized() override;
