@@ -56,9 +56,9 @@ void UHeroRollNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequ
 	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
 	if (!Hero) return;
 
-	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotRollable"));
-	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
-	Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
+	//Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotRollable"));
+	//Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
+	//Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
 
 	if (Hero->GetHeroAttributeComponent()->HasTagExact(TEXT("Character.State.PressedAttack")))
 		Hero->Attack(FInputActionValue());

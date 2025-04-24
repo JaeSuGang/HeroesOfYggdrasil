@@ -112,15 +112,15 @@ public:
 	FHeroSkillInfoRow SkillRInfo;
 
 	// 수정 필요.
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(/*Replicated,*/EditAnywhere, BlueprintReadOnly)
 	int CurRollCount = 3;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadOnly)
 	int MaxRollCount = 3;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadOnly)
 	float RollCurCoolTime = 0.0f;
 
-	UPROPERTY(Replicated, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(/*Replicated,*/ EditAnywhere, BlueprintReadOnly)
 	float RollMaxCoolTime = 5.0f;
 };

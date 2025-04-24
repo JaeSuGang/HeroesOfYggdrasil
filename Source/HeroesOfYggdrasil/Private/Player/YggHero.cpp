@@ -173,6 +173,8 @@ void AYggHero::Tick(float DeltaTime)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, Tag.GetTagName().ToString());
 		}
+		int RollCount = HeroAttributeComponent->CurRollCount;
+		GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("RollCount : %d"), RollCount));
 	}
 
 }
@@ -453,9 +455,6 @@ void AYggHero::Roll(const FInputActionValue& Value)
 	{
 		return;
 	}
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
-	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 	HeroAttributeComponent->CurRollCount -= 1;
 	if (HasAuthority())
 	{
@@ -471,11 +470,15 @@ void AYggHero::Roll(const FInputActionValue& Value)
 
 void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)
 {
+	
 	MulticastRoll(Value);
 }
 
 void AYggHero::MulticastRoll_Implementation(const FInputActionValue& Value)
 {
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 	FName MontageName = *FString::Printf(TEXT("Roll"));
 	HeroAnimInstance->PlayMontage(MontageName);
 	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("Roll"));
