@@ -18,8 +18,9 @@ void UBTTaskNode_Death::Start(UBehaviorTreeComponent& _OwnerComp)
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
+	RotateToTargetActor(_OwnerComp, 0.1f);
 
-	DeathTime = 3.0f;
+	DeathTime = 2.0f;
 	
 }
 
@@ -46,3 +47,5 @@ void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
 	}
 }
+
+
