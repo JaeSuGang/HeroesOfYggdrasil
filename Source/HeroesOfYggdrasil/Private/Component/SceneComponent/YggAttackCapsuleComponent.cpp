@@ -104,7 +104,7 @@ void UYggAttackCapsuleComponent::CollisionOn()
 		switch (AttackType)
 		{
 		case EAttackType::Normal:
-			Coefficient = 1.0f;
+			Coefficient = HeroAttributeComponent->AttackInfo.SkillCoefficient;
 			break;
 		case EAttackType::SkillQ:
 			Coefficient = HeroAttributeComponent->SkillQInfo.SkillCoefficient;
