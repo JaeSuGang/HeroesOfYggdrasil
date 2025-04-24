@@ -28,7 +28,7 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
-	const float KnockBackDistance = 30.0f; 
+	const float KnockBackDistance = 100.0f; 
 	FVector KnockBackDirection = (SelfActor->GetActorLocation() - TargetActor->GetActorLocation());
 	KnockBackDirection.Z = 0.0f;
 	KnockBackDirection.Normalize();
@@ -45,7 +45,7 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 	if (Enemy->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")))
 	{
 		
-		float Duration = FMath::Max(0.15f, 0.1f);
+		float Duration = FMath::Max(0.3f, 0.1f);
 		FTimerDelegate TimerDel;
 		FTimerHandle TimerHandle;
 
@@ -60,8 +60,7 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 
 			if (!EnemyChar || !Comp) return;
 
-			WeakEnemy->ClearHitState();
-			ChangeState(*Comp, EEnemyAIState::TraceYggdrasil);
+			ChangeState(*Comp, EEnemyAIState::Idle);
 			});
 
 		PlayAIData.SelfPawn->GetWorldTimerManager().SetTimer(
@@ -81,6 +80,7 @@ void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNode
 	Super::TickTask(_OwnerComp, _pNodeMemory, _DeltaSeconds);
 
 	DeathCheck(_OwnerComp);
+
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
