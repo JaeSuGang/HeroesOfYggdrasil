@@ -68,6 +68,12 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 		return;
 	}
 
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+		EnemyCharacter->ClearHitState();
+		ChangeState(_OwnerComp, EEnemyAIState::Hit);
+		return;
+	}
+
 	// 공격준비
 	if (TargetDir.Size() <= PlayAIData.Data.StrafeRange)
 	{

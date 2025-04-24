@@ -3,6 +3,9 @@
 
 #include "Enemy/AI/BTTaskNode_Hit.h"
 #include "GameFramework/Actor.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 
 UBTTaskNode_Hit::UBTTaskNode_Hit()
 {
@@ -14,6 +17,8 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 	Super::Start(_OwnerComp);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	APawn* SelfActor = PlayAIData.SelfPawn;
+	AActor* TargetActor = PlayAIData.TargetActor;
 
 	if (nullptr != PlayAIData.SelfAnimPawn)
 	{
