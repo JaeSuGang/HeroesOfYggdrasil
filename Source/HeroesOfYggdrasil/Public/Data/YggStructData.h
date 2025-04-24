@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
+#include "Sound/SoundCue.h"
 #include "YggEnumData.h"
 #include "Attribute/EnemyAttributeComponent.h"
 #include "NiagaraSystem.h"
@@ -307,6 +308,21 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	USoundCue* AttackSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	USoundCue* HitSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	USoundCue* DeathSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	USoundCue* DragonBreathSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	USoundCue* DragonRangeAttackSound;
 };
 
 

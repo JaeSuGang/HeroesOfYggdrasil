@@ -4,6 +4,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
+#include "Sound/SoundCue.h"
+
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "MainGame/MainGameState.h"
@@ -142,6 +144,13 @@ void AEnemyCharacter::BeginPlay()
 	TickParticle = FindData.TickParticle;
 	TickNiagaraSystem = FindData.TickNiagaraSystem;
 	BloodParticle = FindData.BloodParticle;
+
+	AttackSound = FindData.AttackSound;
+	HitSound = FindData.HitSound;
+	DeathSound = FindData.DeathSound;
+	DragonBreathSound = FindData.DragonBreathSound;
+	DragonRangeAttackSound = FindData.DragonRangeAttackSound;
+
 
 	// AttributeComponent 세팅
 	if (CharacterAttributeComponent != nullptr)
@@ -756,4 +765,44 @@ void AEnemyCharacter::DragonBreathDamage(AYggCharacter*_Target)
 	if (DataKey != FString(TEXT("Dragon"))) return;
 
 	HandleHeroEnteredRange(_Target);
+}
+
+void AEnemyCharacter::AttackPlaySound_Implementation()
+{
+	if (AttackSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
+	}
+}
+
+void AEnemyCharacter::HitPlaySound_Implementation()
+{
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
+	}
+}
+
+void AEnemyCharacter::DeathPlaySound_Implementation()
+{
+	if (DeathSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	}
+}
+
+void AEnemyCharacter::DragonRangeAttackPlaySound_Implementation()
+{
+	if (DragonRangeAttackSound && DataKey.StartsWith(TEXT("Dragon")))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DragonRangeAttackSound, GetActorLocation());
+	}
+}
+
+void AEnemyCharacter::DragonBreathPlaySound_Implementation()
+{
+	if (DragonBreathSound && DataKey.StartsWith(TEXT("Dragon")))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DragonBreathSound, GetActorLocation());
+	}
 }

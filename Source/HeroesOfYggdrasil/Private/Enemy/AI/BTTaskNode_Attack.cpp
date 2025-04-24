@@ -115,6 +115,8 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 			EnemyChar->SpawnEnemySkillAttack(StoredTargetLocation, TargetActor);
 		}
 
+		EnemyChar->AttackPlaySound();
+
 		ChangeState(*Comp, EEnemyAIState::Await);
 		});
 

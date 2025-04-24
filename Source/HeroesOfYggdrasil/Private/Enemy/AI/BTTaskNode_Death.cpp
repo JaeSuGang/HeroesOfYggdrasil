@@ -13,6 +13,8 @@ void UBTTaskNode_Death::Start(UBehaviorTreeComponent& _OwnerComp)
 	Super::Start(_OwnerComp);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	APawn* SelfPawn = PlayAIData.SelfPawn;
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfPawn);
 
 	if (nullptr != PlayAIData.SelfAnimPawn)
 	{
@@ -21,6 +23,11 @@ void UBTTaskNode_Death::Start(UBehaviorTreeComponent& _OwnerComp)
 	RotateToTargetActor(_OwnerComp, 0.1f);
 
 	DeathTime = 2.0f;
+	if (IsValid(EnemyCharacter))
+	{
+		EnemyCharacter->DeathPlaySound();
+	}
+	
 	
 }
 
