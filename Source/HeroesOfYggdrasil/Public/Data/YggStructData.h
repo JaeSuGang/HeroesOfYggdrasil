@@ -303,6 +303,9 @@ public:
 	TSoftObjectPtr<UParticleSystem> TickParticle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
+	TSoftObjectPtr<UParticleSystem> BloodParticle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggData")
 	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 };
 

@@ -148,9 +148,8 @@ void UCharacterAttributeComponent::Server_SetAttackPoints_Implementation(float f
 
 void UCharacterAttributeComponent::Server_SetMaxHP_Implementation(float fAmount)
 {
-	MaxHP = fAmount;
-	if (MaxHP < 1)
-		MaxHP = 1;
+
+	MaxHP = FMath::Clamp(fAmount, 1.0f, fAmount);
 
 	ServerDelegate_OnStatusChanged.Broadcast();
 	if (GetOwner() && GetOwner()->HasAuthority())
@@ -173,5 +172,3 @@ void UCharacterAttributeComponent::Client_TakeDamage_Implementation(float fAmoun
 {
 	ClientDelegate_OnTakeDamage.Broadcast(fAmount);
 }
-
-

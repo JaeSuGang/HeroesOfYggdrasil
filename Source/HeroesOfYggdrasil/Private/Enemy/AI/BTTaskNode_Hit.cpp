@@ -23,6 +23,7 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OwningPawn);
 	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
 
+	TargetCheck(_OwnerComp);
 	if (nullptr != PlayAIData.SelfAnimPawn)
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));

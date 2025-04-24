@@ -83,20 +83,8 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 
 	if (TargetDir.Size() <= PlayAIData.Data.AttackRange)
 	{
-		FString DataKeyStr = EnemyCharacter->GetDataKey();
-
-		// 저주술사인 경우
-		if (DataKeyStr.StartsWith(FString("Minion_Witch")))
-		{
-			ChangeState(_OwnerComp, EEnemyAIState::Await);
-			return;
-		}
-		// 일반적인 캐릭터인 경우
-		else
-		{
-			ChangeState(_OwnerComp, EEnemyAIState::Attack);
-			return;
-		}
+		ChangeState(_OwnerComp, EEnemyAIState::Await);
+		return;
 		
 	}
 

@@ -141,7 +141,7 @@ void AEnemyCharacter::BeginPlay()
 
 	TickParticle = FindData.TickParticle;
 	TickNiagaraSystem = FindData.TickNiagaraSystem;
-
+	BloodParticle = FindData.BloodParticle;
 
 	// AttributeComponent 세팅
 	if (CharacterAttributeComponent != nullptr)
@@ -226,6 +226,7 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	DOREPLIFETIME(AEnemyCharacter, EnemyType);
 	DOREPLIFETIME(AEnemyCharacter, TickParticle);
 	DOREPLIFETIME(AEnemyCharacter, TickNiagaraSystem);
+	DOREPLIFETIME(AEnemyCharacter, BloodParticle);
 	DOREPLIFETIME(AEnemyCharacter, MiniMapIcon);
 }
 
@@ -364,6 +365,21 @@ void AEnemyCharacter::ClearStun()
 void AEnemyCharacter::ApplyHitState()
 {
 	CharacterAttributeComponent->AddTag(TEXT("Enemy.State.Hit"));
+
+	if (!BloodParticle.IsValid())
+	{
+		BloodParticle.LoadSynchronous();
+	}
+
+	UParticleSystemComponent* BloodParticleComp = NewObject<UParticleSystemComponent>(this);
+	if (IsValid(BloodParticleComp))
+	{
+		BloodParticleComp->SetTemplate(BloodParticle.Get());
+		BloodParticleComp->bAutoActivate = true;
+		BloodParticleComp->SetRelativeScale3D(FVector(1.0f));
+		BloodParticleComp->RegisterComponent();
+		BloodParticleComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
+	}
 }
 
 void AEnemyCharacter::ClearHitState()
@@ -389,7 +405,8 @@ void AEnemyCharacter::SpawnAndFireArrow(AActor* _TargetActor)
 {
 	if (!ProjectileClass) return;
 	if (!DataKey.StartsWith(FString("Minion_Archer"))) return;
-
+	if (!IsValid(_TargetActor)) return;
+	
 	FVector SpawnLocation = GetActorLocation() + GetActorForwardVector() * 150.0f + GetActorUpVector() * 50.0f;
 	FRotator SpawnRotation = GetActorRotation();
 	FActorSpawnParameters SpawnParams;
@@ -486,7 +503,7 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 {
 	if (!RangeAttackClass) return;
 	if (!DataKey.StartsWith(FString("Minion_Witch")) && !DataKey.StartsWith(FString("Dragon"))) return;
-
+	if (!IsValid(_TargetActor)) return;
 
 	FVector SpawnLocation = FVector::ZeroVector;
 	FRotator SpawnRotation = FRotator::ZeroRotator;
@@ -545,6 +562,7 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 {
 	if (!HasAuthority()) return;
+	if (!IsValid(_Target)) return;
 
 	if (!DataKey.StartsWith(FString("Minion_Witch")) && !DataKey.StartsWith(FString("Dragon"))) return;
 
@@ -585,7 +603,7 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 	const FVector Offset = FVector(RandUnitDir.X, RandUnitDir.Y, 0.f) * Radius;
 	const FVector Destination = Center + Offset;
 
-	// Niagara 이펙트
+	// Particle 이펙트
 	UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
 	if (IsValid(ParticleComp))
 	{
@@ -733,6 +751,8 @@ void AEnemyCharacter::DragonBreath_Implementation()
 
 void AEnemyCharacter::DragonBreathDamage(AYggCharacter*_Target)
 {
+	if (!IsValid(_Target)) return;
+
 	if (DataKey != FString(TEXT("Dragon"))) return;
 
 	HandleHeroEnteredRange(_Target);
