@@ -33,6 +33,10 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
 	void PlayMontageEvent(UAnimMontage* Montage,float PlayRate);
 
+	UFUNCTION(BlueprintCallable)
+	void EndMontageEvent();
+	
+
 protected:
 
 public:

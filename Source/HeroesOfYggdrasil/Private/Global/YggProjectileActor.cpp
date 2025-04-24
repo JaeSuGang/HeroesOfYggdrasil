@@ -116,6 +116,30 @@ void AYggProjectileActor::SetHomingTarget(AActor* Target)
 	}
 }
 
+void AYggProjectileActor::SetVelocity(FVector _Velocity)
+{
+	if (ProjectileMovement)
+	{
+		ProjectileMovement->Velocity = _Velocity;
+	}
+}
+
+void AYggProjectileActor::SetInitialSpeed(float _InitialSpeed)
+{
+	if (ProjectileMovement)
+	{
+		ProjectileMovement->InitialSpeed = _InitialSpeed;
+	}
+}
+
+void AYggProjectileActor::SetMaxSpeed(float _MaxSpeed)
+{
+	if (ProjectileMovement)
+	{
+		ProjectileMovement->MaxSpeed = _MaxSpeed;
+	}
+}
+
 void AYggProjectileActor::Server_SetAimDir_Implementation(FVector _AimDirection)
 {
 	MultiCast_SetAimDir(_AimDirection);
