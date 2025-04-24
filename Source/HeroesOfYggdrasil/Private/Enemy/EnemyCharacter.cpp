@@ -505,7 +505,8 @@ void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
-	GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
+	AEnemyWarningRange* Range = GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
+	Range->SetOwner(this);
 }
 
 void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _TargetActor)

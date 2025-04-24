@@ -88,15 +88,15 @@ void UYggAttackCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedCom
 
 void UYggAttackCapsuleComponent::CollisionOn()
 {
-	OverlappedActors.Reset();
-	SetComponentTickEnabled(true);
-	if (OwnerCharacter == nullptr)
-	{
-		return;
-	}
-
 	if (CharacterType == ECharacterType::Hero)
 	{
+		OverlappedActors.Reset();
+		SetComponentTickEnabled(true);
+		if (OwnerCharacter == nullptr)
+		{
+			return;
+		}
+
 		UHeroAttributeComponent* HeroAttributeComponent = Cast<UHeroAttributeComponent>(OwnerCharacter->GetAttributeComponent());
 		if (!HeroAttributeComponent) return;
 		
@@ -115,8 +115,23 @@ void UYggAttackCapsuleComponent::CollisionOn()
 			Coefficient = HeroAttributeComponent->SkillRInfo.SkillCoefficient;
 			break;
 		}
+
+		Super::CollisionOn();
 	}
-	Super::CollisionOn();
+	else if (CharacterType == ECharacterType::Enemy)
+	{
+		Super::CollisionOn();
+		
+		OverlappedActors.Reset();
+		SetComponentTickEnabled(true);
+		if (OwnerCharacter == nullptr)
+		{
+			return;
+		}
+
+		Coefficient = 1.f;
+	}
+	
 }
 
 float UYggAttackCapsuleComponent::DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit)
