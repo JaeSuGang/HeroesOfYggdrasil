@@ -1,19 +1,14 @@
 // Coded By AssortRock Unreal Engine Class Project
 
-
 #include "Enemy/AI/EnemyBTTaskNode.h"
 
 #include "BehaviorTree/BTTaskNode.h"
-
 #include "Kismet/KismetMathLibrary.h"
 #include <Kismet/GameplayStatics.h>
 
 #include "Attribute/CharacterAttributeComponent.h"
-
 #include "BehaviorTree/BlackboardComponent.h"
-
 #include "AIController.h"
-
 
 UEnemyBTTaskNode::UEnemyBTTaskNode()
 {
@@ -53,14 +48,11 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 
 	DeathCheckTime -= _DeltaSeconds;
 
-
 	if (APlayerController* PC = UGameplayStatics::GetPlayerController(PlayAIData.SelfPawn, 0))
 	{
-		
 		if (PC->IsInputKeyDown(EKeys::O))
 		{
 			ChangeState(_OwnerComp, EEnemyAIState::Idle);
-
 		}
 		if (PC->IsInputKeyDown(EKeys::L))
 		{
@@ -97,18 +89,14 @@ FPlayAIData& UEnemyBTTaskNode::GetPlayAIData(UBehaviorTreeComponent& _OwnerComp)
 	return Cast<UAIDataObject>(AIData)->PlayData;
 }
 
-TArray<AActor*> OutActors;
-
 void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 {
 	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
-
 	const float MaxDistance = PlayAIData.Data.TraceRange;
 
-	// 현재 타겟이 유효한지 확인
 	if (IsValid(TargetActor))
 	{
 		AYggCharacter* CurrentTarget = Cast<AYggCharacter>(TargetActor);
@@ -120,14 +108,12 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 				float Distance = FVector::Dist(SelfActor->GetActorLocation(), CurrentTarget->GetActorLocation());
 				if (Distance < MaxDistance)
 				{
-					// 현재 타겟이 유효하고 범위 내면 유지
 					return;
 				}
 			}
 		}
 	}
 
-	// 유효하지 않으면 새 타겟 찾기
 	TArray<AActor*> AllActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
 
@@ -158,8 +144,6 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 	}
 }
 
-
-
 void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 {
 	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
@@ -167,55 +151,18 @@ void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AYggCharacter* YggCharacter = Cast<AYggCharacter>(TargetActor);
-	
-	// 시작시점에 TargetActor가 nullptr 인 경우
-	if (!IsValid(TargetActor))
+
+	if (!IsValid(TargetActor) || (IsValid(YggCharacter) && YggCharacter->GetAttributeComponent()->HasTag(TEXT("Character.State.Death"))))
 	{
 		TArray<AActor*> AllActors;
-
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
 
-		AActor* CheckActor = nullptr;
-
-		for (size_t i = 0; i < AllActors.Num(); i++)
+		for (AActor* Actor : AllActors)
 		{
-			if (AllActors[i]->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+			if (Actor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
 			{
-				CheckActor = AllActors[i];
-				TargetActor = CheckActor;
-			}
-		}
-
-		if (nullptr != TargetActor)
-		{
-			PlayAIData.TargetActor = TargetActor;
-		}
-	}
-	// TargetCharacter의 태그가 "Character.State.Death" 인 경우
-	else if (IsValid(YggCharacter))
-	{
-		UCharacterAttributeComponent* YggCharacterAttributecomponent = YggCharacter->GetAttributeComponent();
-		
-		if (YggCharacterAttributecomponent->HasTag(TEXT("Character.State.Death")))
-		{
-			TArray<AActor*> AllActors;
-
-			UGameplayStatics::GetAllActorsOfClass(GetWorld(), AActor::StaticClass(), AllActors);
-
-			AActor* CheckActor = nullptr;
-
-			for (size_t i = 0; i < AllActors.Num(); i++)
-			{
-				if (AllActors[i]->GetName().StartsWith(TEXT("BP_Yggdrasil")))
-				{
-					CheckActor = AllActors[i];
-					TargetActor = CheckActor;
-				}
-			}
-
-			if (nullptr != TargetActor)
-			{
-				PlayAIData.TargetActor = TargetActor;
+				PlayAIData.TargetActor = Actor;
+				break;
 			}
 		}
 	}
@@ -227,9 +174,8 @@ void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, f
 
 	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
 	AActor* TargetActor = PlayAIData.TargetActor;
-	AYggCharacter* TargetCharacter =  Cast<AYggCharacter>(TargetActor);
+	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 
-	
 	if (!OwningPawn || !TargetActor) return;
 
 	const FString TargetName = TargetActor->GetName();
@@ -247,11 +193,9 @@ void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, f
 		TargetRot.Pitch = 0.f;
 		TargetRot.Roll = 0.f;
 
-		OwningPawn->SetActorRotation(TargetRot); 
+		OwningPawn->SetActorRotation(TargetRot);
 	}
 }
-
-
 
 void UEnemyBTTaskNode::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
 {
@@ -259,8 +203,8 @@ void UEnemyBTTaskNode::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfPawn = PlayAIData.SelfPawn;
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfPawn);
 
-	UCharacterAttributeComponent* EnemyAttributeComponent =  EnemyCharacter->GetAttributeComponent();
-	
+	UCharacterAttributeComponent* EnemyAttributeComponent = EnemyCharacter->GetAttributeComponent();
+
 	if (EnemyAttributeComponent->HP <= 0.0f)
 	{
 		if (EnemyCharacter != nullptr)
@@ -269,6 +213,4 @@ void UEnemyBTTaskNode::DeathCheck(UBehaviorTreeComponent& _OwnerComp)
 			return;
 		}
 	}
-
-
 }

@@ -536,7 +536,8 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 	if (RangeAttack)
 	{
 		RangeAttack->SetOwner(this);
-		if (_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+
+		if (!_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
 		{
 			FVector Direction = FVector::ZeroVector;
 			FVector Axis = FVector::ZeroVector;
@@ -558,14 +559,16 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 			
 
 			RangeAttack->GetProjectileMovement()->Velocity = FinalVelocity;
+
+			AYggCharacter* TargetCharacter = Cast<AYggCharacter>(_TargetActor);
+			WarpToRandomPoint(TargetCharacter);
 		}
 		else
 		{
 			RangeAttack->GetProjectileMovement()->Velocity = (_TargetLocation - SpawnLocation).GetSafeNormal() * 2000.f;
 		}
 	}
-	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(_TargetActor);
-	WarpToRandomPoint(TargetCharacter);
+	
 }
 
 void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
