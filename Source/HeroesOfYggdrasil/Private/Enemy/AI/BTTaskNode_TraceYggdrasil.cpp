@@ -47,7 +47,7 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	TargetDir.Z = 0.0f;
 	
 	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
-	
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
 	float ReturnSize = TargetDir.Size() - 100.0f;
 
@@ -81,7 +81,10 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 		
 	}
 
-	
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
+		ChangeState(_OwnerComp, EEnemyAIState::Idle);
+		return;
+	}
 
 	// 공격준비
 	if (ReturnSize <= (PlayAIData.Data.YggAttackRange) * 1.1f )

@@ -21,27 +21,6 @@ void UYggPlayerStatusUserWidget::NativeOnInitialized()
 
     SetFaceCam();
 
-    /*APlayerController* PC = GetWorld()->GetFirstPlayerController();
-    AYggHero* Pawn = PC->GetPawn<AYggHero>();
-
-    UCharacterAttributeComponent* CAC =  Pawn->GetAttributeComponent();*/
-
-    //CAC->HasTag(TEXT("DeBuff.Poison"));
-
-
-    //HPBarUserWidget = CreateWidget<UYggHPBarUserWidget>(GetWorld(), HPBarWidgetClass);
-    //if (!HPBarUserWidget)
-    //    UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
-    //
-    //if (!VerticalBox)
-    //    UE_LOG(LogTemp, Warning, TEXT("%S (%u) VerticalBox가 nullptr임"), __FUNCTION__, __LINE__);
-    //
-    //
-    //UVerticalBoxSlot* HPBarSlot = VerticalBox->AddChildToVerticalBox(HPBarUserWidget);
-    //
-    //HPBarSlot->SetHorizontalAlignment(EHorizontalAlignment::HAlign_Fill);
-    //HPBarSlot->SetVerticalAlignment(EVerticalAlignment::VAlign_Fill);
-    
 }
 
 void UYggPlayerStatusUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

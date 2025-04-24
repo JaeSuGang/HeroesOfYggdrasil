@@ -16,8 +16,9 @@ public:
 	// Sets default values for this actor's properties
 	AYggMiniMapIconActor();
 
-	void SetPaperSprite(AActor* Actor);
 	void SetPaperSprite(FName IConName);
+
+	void TryAddMiniMap();
 
 	class UPaperSpriteComponent* GetPaperSpriteComponent()
 	{
@@ -31,7 +32,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:	
 	// Called every frame

@@ -21,6 +21,8 @@ class UYggCastingBarUserWidget;
 class UYggSkillBarUserWidget;
 class UYggDeathPopupUserWidget;
 class UYggStatusUserWidget;
+class UTextBlock;
+class AEnemyManager;
 
 /**
  * 
@@ -61,6 +63,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void StatusVisibility();
 
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void UpdateCount(AEnemyManager* Enemymanager);
+
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
@@ -71,6 +76,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* AbilityPlusButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* MonsterCount;
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> PlayerStatusUserWidgetClass;

@@ -209,7 +209,10 @@ void UStageSystem::PlayDefeatLevelSequence(FOnDefeatedParams OnDefeatedParams)
 {
 	if (LevelSequenceActor)
 	{
-		LevelSequenceActor->GetSequencePlayer()->Play();
+		if (ULevelSequencePlayer* USP = LevelSequenceActor->GetSequencePlayer())
+		{
+			USP->Play();
+		}
 	}
 	else
 	{

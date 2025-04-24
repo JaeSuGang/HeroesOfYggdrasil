@@ -58,12 +58,26 @@ public:
 
 	EEnemyType ConvertStringToEnemyType(const FString& EnemyKey);
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(Server, Reliable)
 	void DestroyAllComponents();
 
 	UFUNCTION(BlueprintCallable)
 	void SetDataKey(const FString& _MonsterDataKey);
 	
+	UFUNCTION(BlueprintCallable)
+	void ApplyStun();
+
+	UFUNCTION(BlueprintCallable)
+	void ClearStun();
+
+	UFUNCTION(BlueprintCallable)
+	void ApplyHitState();
+
+	UFUNCTION(BlueprintCallable)
+	void ClearHitState();
+
+	UFUNCTION(BlueprintCallable)
+	void CheckHpChanged();
 
 	UFUNCTION(BlueprintCallable)
 	double GetCurHp()
@@ -131,7 +145,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "EnemyAOE")
 	TSubclassOf<class AEnemyWarningRange> WarningOutRangeClass;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Minimap")
+	UPROPERTY(EditDefaultsOnly, Replicated, Category = "Minimap")
 	class AYggMiniMapIconActor* MiniMapIcon;
 
 	UPROPERTY(BlueprintAssignable, Category = "EnemyEvent")
@@ -155,6 +169,9 @@ private:
 
 	UPROPERTY(Category = "YggData", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAIDataObject* AIData = nullptr;
+
+	UPROPERTY(Category = "YggData", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int PreviousHp;
 
 	// 애니메이션
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "YggData", meta = (AllowPrivateAccess = "true"))

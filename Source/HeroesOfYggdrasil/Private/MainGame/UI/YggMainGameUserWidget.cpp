@@ -12,10 +12,12 @@
 #include "MainGame/UI/YggSelectAbilityUserWidget.h"
 #include "MainGame/UI/YggStatusUserWidget.h"
 #include "MainGame/UI/YggStatusEffectUserWidget.h"
+#include "MainGame/EnemyManager.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
 
 #include "Attribute/HeroAttributeComponent.h"
 #include "UpgradeSystem/UpgradeSystem.h"
@@ -109,6 +111,7 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 			CanvasSlot->SetPosition(FVector2D(300.0f, 300.0f));
 		}
 	}
+	
 }
 
 void UYggMainGameUserWidget::NativeConstruct()
@@ -116,6 +119,14 @@ void UYggMainGameUserWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	AbilityPlusButton->OnClicked.AddDynamic(this, &UYggMainGameUserWidget::CreateAbility);
+
+	//AEnemyManager* EManager = AEnemyManager::Get(GetWorld());
+	//
+	//if (!IsValid(EManager)) return;
+	//
+	//EManager->OnEnemyCountDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateCount);
+	
+	
 }
 
 void UYggMainGameUserWidget::StartAbilityPlus()
@@ -173,4 +184,11 @@ void UYggMainGameUserWidget::StatusVisibility()
 	{
 		StatusWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void UYggMainGameUserWidget::UpdateCount(AEnemyManager* Enemymanager)
+{
+	FString String = FString::Printf(TEXT("%d"), Enemymanager->CachedEnemyCount);
+
+	MonsterCount->SetText(FText::FromString(String));
 }

@@ -34,15 +34,21 @@ void UBattleStage::SpawnWave()
 		TArray<FMonsterSpawnInfo>& SpawnInfos = WaveTableAsArray[StageSystem->CurrentRound - 1]->SpawnInfos;
 		if (AEnemyManager* EnemyManager = AEnemyManager::Get(StageSystem->GetOwner()->GetWorld()))
 		{
+			int j = 0;
 			for (FMonsterSpawnInfo& SpawnInfo : SpawnInfos)
 			{
 				for (int i = 0; i < SpawnInfo.Count; ++i)
 				{
 					// EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation);
-					int ab = i;
 					FTimerHandle TH{};
-					StageSystem->GetWorld()->GetTimerManager().SetTimer(TH, [this, EnemyManager, SpawnInfo, ab]() { HasEverSpawnedMonster = true; EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), SpawnInfo.SpawnLocation); }, (float)i + SpawnInfo.SpawnDelay, false);
+					StageSystem->GetWorld()->GetTimerManager().SetTimer(TH, [i, j, this, EnemyManager, SpawnInfo]()
+						{
+							FVector LocationToSpawn = SpawnLocations[(i+j) % SpawnLocations.Num()] + FVector(FMath::FRandRange(-150.0f, 150.0f), FMath::FRandRange(-150.0f, 150.0f), 0.0f);
+							HasEverSpawnedMonster = true; EnemyManager->CreateMonster(SpawnInfo.MonsterData.RowName.ToString(), LocationToSpawn);
+						},
+						(float)((i + j) / SpawnLocations.Num()), false);
 				}
+				j += SpawnInfo.Count;
 			}
 		}
 		else

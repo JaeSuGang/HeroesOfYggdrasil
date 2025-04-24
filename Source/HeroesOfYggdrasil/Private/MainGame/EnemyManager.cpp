@@ -3,15 +3,19 @@
 
 #include "MainGame/EnemyManager.h"
 
-#include "Data/YggStructData.h"
-#include "Enemy/EnemyCharacter.h"
+#include "Net/UnrealNetwork.h"
+
 #include "MainGame/MainGameState.h"
+#include "Data/YggStructData.h"
+
+#include "Enemy/EnemyCharacter.h"
 #include "Enemy/EnemyAIController.h"
 
 AEnemyManager::AEnemyManager()
 {
-
-
+	bReplicates = true;
+	bAlwaysRelevant = true;
+	NetDormancy = DORM_Never;
 }
 
 AEnemyManager* AEnemyManager::Get(UWorld* WorldContext)
@@ -32,6 +36,14 @@ void AEnemyManager::BeginPlay()
 	NetSyncMonster();
 
 	
+}
+
+void AEnemyManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AEnemyManager, CachedEnemyCount);
+	DOREPLIFETIME(AEnemyManager, AllEnemyCharacter);
 }
 
 AActor* AEnemyManager::CreateMonster(const FString& _MonsterName, FVector _OriginPos)
@@ -69,22 +81,55 @@ int AEnemyManager::GetNumOfEnemyCharacter()
 	return  static_cast<int>((AllEnemyCharacter.Num()));
 }
 
+void AEnemyManager::OnRep_AllEnemyCharacter()
+{
+	OnEnemyCountDelegate.Broadcast(this);
+}
+
 void AEnemyManager::AddEnemyCharacter(AEnemyCharacter* NewEnemy)
 {
-	if (!AllEnemyCharacter.Contains(NewEnemy))
+	if (AllEnemyCharacter.Contains(NewEnemy)) return;
+
+	AllEnemyCharacter.Add(NewEnemy);
+	Server_RequestEnemyCount();
+	/*if (HasAuthority())*/
 	{
-		AllEnemyCharacter.Add(NewEnemy);
-		OnEnemyCountDelegate.Broadcast(this);
+		OnRep_AllEnemyCharacter();
 	}
 }
 
 void AEnemyManager::RemoveEnemyCharacter(AEnemyCharacter* Enemy)
 {
-	if (!AllEnemyCharacter.Contains(Enemy))
+	if (!AllEnemyCharacter.Contains(Enemy)) return;
+
+	AllEnemyCharacter.Remove(Enemy);
+	Server_RequestEnemyCount();
+	if (HasAuthority())
 	{
-		AllEnemyCharacter.Remove(Enemy);
-		OnEnemyCountDelegate.Broadcast(this);
+		OnRep_AllEnemyCharacter();
 	}
 }
 
+void AEnemyManager::Server_RequestEnemyCount_Implementation()
+{
+	CachedEnemyCount = AllEnemyCharacter.Num();
 
+	// 또는 OnEnemyCountReady 직접 호출
+	OnEnemyCountReady(CachedEnemyCount);
+}
+
+bool AEnemyManager::Server_RequestEnemyCount_Validate()
+{
+	return true;
+}
+
+void AEnemyManager::OnEnemyCountReady(int Count)
+{
+	// 블루프린트로 전달되거나 UI 반영
+	UE_LOG(LogTemp, Log, TEXT("Enemy Count = %d"), Count);
+}
+
+void AEnemyManager::OnRep_EnemyCount()
+{
+	OnEnemyCountReady(CachedEnemyCount);
+}

@@ -11,6 +11,7 @@ class UProgressBar;
 class UTextBlock;
 class UButton;
 class UHeroAttributeComponent;
+class AEnemyManager;
 
 /**
  * 
@@ -41,6 +42,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
 	FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f);
+
+	UFUNCTION(BlueprintCallable, Category = "YGG")
+	void Update(AEnemyManager* EnemyManager);
 
 	//UFUNCTION(BlueprintCallable, Category = "YGG")
 	//void EndAbility();
@@ -97,10 +101,16 @@ private:
 	UTextBlock* Nickname;
 
 	UPROPERTY(meta = (BindWidget))
+	UTextBlock* MonsterCount;
+
+	UPROPERTY(meta = (BindWidget))
 	UButton* ExitButton;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* AbilityShowButton;
+	
+	UPROPERTY()
+	int EnemyCount;
 
 	UPROPERTY(EditAnywhere, Category = "Symbol")
 	UTexture2D* GreystoneSymbol;

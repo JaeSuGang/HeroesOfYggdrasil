@@ -18,11 +18,18 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
 	if (IsValid(PlayAIData.SelfAnimPawn))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
+
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
+		ChangeState(_OwnerComp, EEnemyAIState::Idle);
+		return;
+	}
+	
 
 	if (IsValid(TargetCharacter))
 	{
@@ -45,7 +52,9 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 		}
 	}
 
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	
+
+
 
 	if (IsValid(EnemyCharacter))
 	{
@@ -53,14 +62,32 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 		TWeakObjectPtr<AEnemyCharacter> WeakEnemy = EnemyCharacter;
 		FWeakObjectPtr WeakOwner = &_OwnerComp;
 
+		float HeroDefense = TargetCharacter->GetAttributeComponent()->DefensePoints;
+
+		double HeroDefenseRate = (HeroDefense / (HeroDefense + 100.f));
+		float HeroDamageAmount = WeakEnemy->GetAttributeComponent()->AttackPoints;
+		HeroDamageAmount *= (1.f - HeroDefenseRate);
+		WeakEnemy->GetAttributeComponent()->AttackPoints = HeroDamageAmount;
+
 		float Duration = FMath::Max(PlayAIData.Data.AwaitTime, 0.1f);
 		FTimerDelegate TimerDel;
 		FTimerHandle TimerHandle;
 
 		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(DataKeyStr))
 		{
-			TimerDel.BindLambda([this, WeakOwner]() {
-				if (UBehaviorTreeComponent* Comp = Cast<UBehaviorTreeComponent>(WeakOwner.Get()))
+			TimerDel.BindLambda([this, WeakOwner, WeakEnemy]() {
+				if (!WeakOwner.IsValid() || !WeakEnemy.IsValid()) return;
+
+				AEnemyCharacter* EnemyChar = WeakEnemy.Get();
+				UBehaviorTreeComponent* Comp = Cast<UBehaviorTreeComponent>(WeakOwner.Get());
+
+				if (!EnemyChar || !Comp) return;
+
+				if (EnemyChar->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
+					ChangeState(*Comp, EEnemyAIState::Idle);
+					return;
+				}
+				if (Comp)
 				{
 					ChangeState(*Comp, EEnemyAIState::Attack);
 				}
@@ -77,6 +104,11 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 
 				float HealthPercent = EnemyChar->GetAttributeComponent()->GetHP() / EnemyChar->GetAttributeComponent()->MaxHP;
 				FPlayAIData& LocalData = UEnemyBTTaskNode::GetPlayAIData(*Comp);
+
+				if (EnemyChar->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
+					ChangeState(*Comp, EEnemyAIState::Idle);
+					return;
+				}
 
 				if (HealthPercent <= 0.5f && !LocalData.bUsedBreathAttack)
 				{
@@ -119,6 +151,13 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	APawn* SelfActor = _OwnerComp.GetAIOwner()->GetPawn();
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
+	if (!IsValid(EnemyCharacter)) return;
+
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.DeBuff.Stunned"))) // ✅ 스턴 상태면 무시
+	{
+		ChangeState(_OwnerComp, EEnemyAIState::Idle);
+	}
+
 	if (IsValid(EnemyCharacter))
 	{
 		if (EEnemyType::Dragon != EnemyCharacter->ConvertStringToEnemyType(EnemyCharacter->GetDataKey()))
@@ -127,6 +166,8 @@ void UBTTaskNode_Await::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 		}
 		EnemyCharacter->GetMovementComponent()->StopMovementImmediately();
 	}
+
+
 }
 
 void UBTTaskNode_Await::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
