@@ -15,4 +15,6 @@ class HEROESOFYGGDRASIL_API UAuroraSkillRNotify : public UAnimNotify
 	GENERATED_BODY()
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
+
+	FTimerHandle FreezeTimerHandle;
 };
