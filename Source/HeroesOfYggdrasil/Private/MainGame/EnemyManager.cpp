@@ -38,10 +38,10 @@ void AEnemyManager::BeginPlay()
 	
 }
 
-
 void AEnemyManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
 	DOREPLIFETIME(AEnemyManager, CachedEnemyCount);
 	DOREPLIFETIME(AEnemyManager, AllEnemyCharacter);
 }
