@@ -71,6 +71,15 @@ public:
 	void ClearStun();
 
 	UFUNCTION(BlueprintCallable)
+	void ApplyHitState();
+
+	UFUNCTION(BlueprintCallable)
+	void ClearHitState();
+
+	UFUNCTION(BlueprintCallable)
+	void CheckHpChanged();
+
+	UFUNCTION(BlueprintCallable)
 	double GetCurHp()
 	{
 		return CharacterAttributeComponent->HP;
@@ -160,6 +169,9 @@ private:
 
 	UPROPERTY(Category = "YggData", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UAIDataObject* AIData = nullptr;
+
+	UPROPERTY(Category = "YggData", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	int PreviousHp;
 
 	// 애니메이션
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "YggData", meta = (AllowPrivateAccess = "true"))

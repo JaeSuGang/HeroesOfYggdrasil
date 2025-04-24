@@ -171,6 +171,7 @@ void AEnemyCharacter::BeginPlay()
 	//MiniMapIcon->AddToCaptureComponent();
 	
 	
+	PreviousHp = CharacterAttributeComponent->HP;
 
 }
 
@@ -183,6 +184,9 @@ void AEnemyCharacter::Tick(float DeltaTime)
 	{
 		AIData->PlayData.CurHP = CharacterAttributeComponent->HP;
 	}
+
+	CheckHpChanged();
+
 }
 
 void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -354,6 +358,28 @@ void AEnemyCharacter::ClearStun()
 	CharacterAttributeComponent->RemoveTag(TEXT("Enemy.DeBuff.Stunned"));
 }
 
+
+void AEnemyCharacter::ApplyHitState()
+{
+	CharacterAttributeComponent->AddTag(TEXT("Enemy.State.Hit"));
+}
+
+void AEnemyCharacter::ClearHitState()
+{
+	CharacterAttributeComponent->RemoveTag(TEXT("Enemy.State.Hit"));
+}
+
+void AEnemyCharacter::CheckHpChanged()
+{
+	int CurrentHp = CharacterAttributeComponent->HP;
+
+	if (CurrentHp < PreviousHp)
+	{
+		ApplyHitState(); // 데미지를 받았을 때 실행
+	}
+
+	PreviousHp = CurrentHp;
+}
 // Enemy_Archer
 // -----------------------------------------------------------------------------------------------------------------------------------------------------
 
