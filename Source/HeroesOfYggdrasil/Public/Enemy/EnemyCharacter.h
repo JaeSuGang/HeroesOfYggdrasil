@@ -157,6 +157,9 @@ public:
 	UPROPERTY(EditAnywhere, Replicated, Category = "TickEffects")
 	TSoftObjectPtr<UNiagaraSystem> TickNiagaraSystem;
 
+	UPROPERTY(EditAnywhere, Replicated, Category = "Effects")
+	TSoftObjectPtr<UParticleSystem> BloodParticle;
+
 private:
 	// 몬스터 이름 데이터
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
