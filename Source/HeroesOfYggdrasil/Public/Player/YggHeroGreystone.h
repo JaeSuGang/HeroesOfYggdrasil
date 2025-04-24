@@ -84,4 +84,14 @@ private:
 	bool bIsAttacking = false;
 
 	FTimerHandle AttackStopCheckHandle;
+
+public:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> NormalAttackCapsuleComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> SkillQAttackCapsuleComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> SkillEAttackCapsuleComponent;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
+	TObjectPtr<class UYggAttackCapsuleComponent> SkillRAttackCapsuleComponent;
 };

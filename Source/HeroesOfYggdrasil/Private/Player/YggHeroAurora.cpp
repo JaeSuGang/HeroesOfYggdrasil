@@ -4,6 +4,8 @@
 #include "Player/YggHeroAurora.h"
 #include "Attribute/HeroAttributeComponent.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
+#include "Components/DecalComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Input System Modules
 #include "EnhancedInputComponent.h"
@@ -11,26 +13,31 @@
 
 #include "Animation/YggHeroAnimInstance.h"
 
+#include "Kismet/GameplayStatics.h"
+
 AYggHeroAurora::AYggHeroAurora()
 {
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), AttackCapsuleComponent);
-	}
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), AttackCapsuleComponent);
-	}
-	{
-		UYggAttackCapsuleComponent* AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
-		AttackCapsuleComponent->SetupAttachment(GetMesh());
-		AttackCapsuleComponent->SetOwnerCharacter(this);
-		AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), AttackCapsuleComponent);
-	}
+	AttackCapsuleComponentMap.Reset();
+		
+	SkillQAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
+	SkillQAttackCapsuleComponent->SetupAttachment(GetMesh());
+	SkillQAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), SkillQAttackCapsuleComponent);
+		
+	SkillEAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
+	SkillEAttackCapsuleComponent->SetupAttachment(GetMesh());
+	SkillEAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), SkillEAttackCapsuleComponent);
+		
+	SkillRAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
+	SkillRAttackCapsuleComponent->SetupAttachment(GetMesh());
+	SkillRAttackCapsuleComponent->SetOwnerCharacter(this);
+	AttackCapsuleComponentMap.Add(TEXT("SkillRAttack"), SkillRAttackCapsuleComponent);
+
+	GetCharacterMovement()->JumpZVelocity = 600.f;
+	GetCharacterMovement()->AirControl = 0.8f;
+	GetCharacterMovement()->GravityScale = 1.2f;
+	GetCharacterMovement()->BrakingDecelerationFlying = 1000.f;
 }
 
 void AYggHeroAurora::BeginPlay()
@@ -49,6 +56,30 @@ void AYggHeroAurora::BeginPlay()
 void AYggHeroAurora::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bIsSkillE)
+	{
+		MagicCircleOn();
+	}
+
+	if (bIsJetpacking && CurrentFuel > 0.0f)
+	{
+		FVector JetForce = FVector::UpVector * JetpackThrust;
+		GetCharacterMovement()->AddForce(JetForce * GetCharacterMovement()->Mass);
+
+		// 연료 소모
+		CurrentFuel = FMath::Max(CurrentFuel - (FuelConsumptionRate * DeltaTime), 0.0f);
+
+		// 연료 소진 시 강제 종료
+		if (CurrentFuel <= 0.0f)
+		{
+			JetpackOff(FInputActionValue(false));
+		}
+	}
+	else if (!bIsJetpacking && (GetCharacterMovement()->IsMovingOnGround() || CurrentFuel > 0.0f))
+	{
+		CurrentFuel = FMath::Min(CurrentFuel + (FuelRechargeRate * DeltaTime), MaxJetpackFuel);
+	}
 }
 
 void AYggHeroAurora::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -71,23 +102,24 @@ void AYggHeroAurora::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroAurora::Attack);
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Completed, this, &AYggHeroAurora::EndAttack);
 		}
-		if (ActionMap.Find(FName("Fly")))
+		if (ActionMap.Contains(FName("Jump")))
 		{
-			EnhancedInput->BindAction(*ActionMap.Find(FName("Fly")), ETriggerEvent::Triggered, this, &AYggHeroAurora::Fly);
+			EnhancedInput->BindAction(ActionMap[TEXT("Jump")], ETriggerEvent::Triggered, this, &AYggHeroAurora::JetpackOn);
+			EnhancedInput->BindAction(ActionMap[TEXT("Jump")], ETriggerEvent::Completed, this, &AYggHeroAurora::JetpackOff);
 		}
-		if (ActionMap.Find(FName("SkillQ")))
+		if (ActionMap.Contains(FName("SkillQ")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillQ")), ETriggerEvent::Triggered, this, &AYggHeroAurora::SkillQ);
 		}
-		if (ActionMap.Find(FName("SkillE")))
+		if (ActionMap.Contains(FName("SkillE")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillE")), ETriggerEvent::Triggered, this, &AYggHeroAurora::SkillE);
 		}
-		if (ActionMap.Find(FName("SkillR")))
+		if (ActionMap.Contains(FName("SkillR")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("SkillR")), ETriggerEvent::Triggered, this, &AYggHeroAurora::SkillR);
 		}
-		if (ActionMap.Find(FName("Roll")))
+		if (ActionMap.Contains(FName("Roll")))
 		{
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Roll")), ETriggerEvent::Triggered, this, &AYggHeroAurora::Roll);
 		}
@@ -111,7 +143,8 @@ void AYggHeroAurora::Attack(const FInputActionValue& Value)
 	{
 		bIsSkillE = false;
 
-		OnSkillCastEnd.Broadcast();
+		MagicCircleOff();
+
 		return;
 	}
 
@@ -121,11 +154,6 @@ void AYggHeroAurora::Attack(const FInputActionValue& Value)
 void AYggHeroAurora::EndAttack(const FInputActionValue& Value)
 {
 	HeroAttributeComponent->RemoveTag(TEXT("Character.State.PressedAttack"));
-}
-
-void AYggHeroAurora::Fly(const FInputActionValue& Value)
-{
-	// GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Black, FString("dddd"));
 }
 
 void AYggHeroAurora::SkillQ(const FInputActionValue& Value)
@@ -179,4 +207,116 @@ void AYggHeroAurora::Roll(const FInputActionValue& Value)
 	Super::Roll(Value);
 
 
+}
+
+void AYggHeroAurora::Jump()
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable"))) return;
+
+	Super::Jump();
+
+	if (GetCharacterMovement()->IsFalling())
+	{
+		JetpackOn(FInputActionValue(true));
+	}
+}
+
+void AYggHeroAurora::MagicCircleOn()
+{
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (!PC || !PC->GetPawn())
+		return;
+
+	// 1. 카메라 위치 & 회전 획득
+	FVector CameraLoc;
+	FRotator CameraRot;
+	PC->GetPlayerViewPoint(CameraLoc, CameraRot);
+
+	// 2. 뷰포트 중앙 좌표 계산
+	int32 ViewportSizeX, ViewportSizeY;
+	PC->GetViewportSize(ViewportSizeX, ViewportSizeY);
+	FVector2D ScreenCenter(ViewportSizeX * 0.5f, ViewportSizeY * 0.5f);
+
+	// 3. 화면 중앙 → 월드 언디파인된 위치 & 방향 변환
+	FVector WorldOrigin, WorldDirection;
+	PC->DeprojectScreenPositionToWorld(
+		ScreenCenter.X,
+		ScreenCenter.Y,
+		WorldOrigin,
+		WorldDirection
+	);
+
+	// 4. Line Trace 수행
+	const float TraceDistance = 3000.f;
+	FVector TraceStart = CameraLoc;
+	FVector TraceEnd = TraceStart + WorldDirection * TraceDistance;
+
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(
+		Hit,
+		TraceStart,
+		TraceEnd,
+		ECC_Visibility,
+		Params
+	);
+
+	// 5. TargetPoint 결정
+	FVector TargetPoint = bHit ? Hit.ImpactPoint : TraceEnd;
+
+	// 6. 데칼 스폰 또는 위치 갱신
+	if (!IsValid(SkillEDecal))
+	{
+		SkillEDecal = UGameplayStatics::SpawnDecalAtLocation(
+			GetWorld(),
+			SkillEDecalMaterial,
+			FVector(512.0f),
+			TargetPoint,
+			FRotator(-90.0f, 0.0f, 0.0f),
+			0.f
+		);
+	}
+	else
+	{
+		SkillEDecal->SetWorldLocation(TargetPoint);
+	}
+}
+
+void AYggHeroAurora::MagicCircleOff()
+{
+	bIsSkillE = false;
+
+	OnSkillCastEnd.Broadcast();
+
+	if (IsValid(SkillEDecal))
+	{
+		SkillEDecal->DestroyComponent();
+		SkillEDecal = nullptr;
+	}
+}
+
+void AYggHeroAurora::JetpackOn(const FInputActionValue& Value)
+{
+	// 공중에 있고 연료가 남았을 때만 작동
+	if (GetCharacterMovement()->IsFalling() && CurrentFuel > 0.0f)
+	{
+		bIsJetpacking = true;
+		GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	}
+	// 지면에서 첫 점프
+	else if (GetCharacterMovement()->IsMovingOnGround())
+	{
+		Super::Jump();
+	}
+}
+
+void AYggHeroAurora::JetpackOff(const FInputActionValue& Value)
+{
+	bIsJetpacking = false;
+	if (GetCharacterMovement()->MovementMode == MOVE_Flying)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+	}
 }

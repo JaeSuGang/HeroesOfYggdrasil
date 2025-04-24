@@ -78,6 +78,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetHomingTarget(AActor* Target);
 
+	UFUNCTION()
+	void SetVelocity(FVector _Velocity);
+
+	UFUNCTION()
+	void SetInitialSpeed(float _InitialSpeed);
+
+	UFUNCTION()
+	void SetMaxSpeed(float _MaxSpeed);
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	EProjectileType ProjectileType;
@@ -107,6 +116,8 @@ protected:
 
 	UPROPERTY(Replicated)
 	FVector AimDirection;
+
+
 
 
 	void LineMode();

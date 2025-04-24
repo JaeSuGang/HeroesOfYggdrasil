@@ -15,4 +15,5 @@ void USkillEndNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase
 
     Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotMoveable"));
     Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotAttackable"));
+    Hero->GetHeroAttributeComponent()->RemoveTag(TEXT("Character.State.NotRollable"));
 }

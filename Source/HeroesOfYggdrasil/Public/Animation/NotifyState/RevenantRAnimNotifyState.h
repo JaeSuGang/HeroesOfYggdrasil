@@ -29,6 +29,6 @@ protected:
 	float ElapsedTime = 0.0f;
 
 	UPROPERTY(Transient)
-	TArray< TObjectPtr<AYggProjectileActor>> ProjectileList;
+	TArray<TObjectPtr<AYggProjectileActor>> ProjectileList;
 	
 };

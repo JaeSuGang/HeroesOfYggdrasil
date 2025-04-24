@@ -45,6 +45,8 @@
 
 #include "Data/YggStructData.h"
 
+#include "Attribute/AttributeComponent.h"
+
 
 
 
@@ -143,6 +145,7 @@ void AYggHero::BeginPlay()
 	HeroAnimInstance->PlayMontage(MontageName);
 
 	StartTransform = GetActorTransform();
+	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotRollable"));
 }
 
 void AYggHero::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -163,6 +166,17 @@ void AYggHero::Tick(float DeltaTime)
 	FRotator CamRot = GetControlRotation();
 
 	MiniMapCaptureComponent->SetWorldRotation(FRotator(-90.f, CamRot.Yaw, 0.0f));
+	HeroAttributeComponent;
+	if (HeroAttributeComponent)
+	{
+		for (auto& Tag : HeroAttributeComponent->GameplayTags)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, Tag.GetTagName().ToString());
+		}
+		int RollCount = HeroAttributeComponent->CurRollCount;
+		GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("RollCount : %d"), RollCount));
+	}
+
 }
 
 void AYggHero::ToggleAimMode()
@@ -307,7 +321,7 @@ void AYggHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		}
 		if (ActionMap.Contains(FName("Roll")))
 		{
-			EnhancedInput->BindAction(ActionMap[TEXT("Roll")], ETriggerEvent::Triggered, this, &AYggHero::Roll);
+			EnhancedInput->BindAction(ActionMap[TEXT("Roll")], ETriggerEvent::Started, this, &AYggHero::Roll);
 		}
 		if (ActionMap.Contains(FName("SkillQ")))
 		{
@@ -393,7 +407,7 @@ void AYggHero::Respawn()
 	FName MontageName = TEXT("LevelStart");
 	if (HeroAnimInstance)
 	{
-		HeroAnimInstance->OnMontageEnded.AddDynamic(this,&AYggHero::HandleMontageEnded);
+		HeroAnimInstance->OnMontageEnded.AddDynamic(this, &AYggHero::HandleMontageEnded);
 		HeroAnimInstance->PlayMontage(MontageName);
 	}
 }
@@ -416,7 +430,7 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 			if (!HeroAttributeComponent) return;
 			HeroAttributeComponent->Server_SetHP(HeroAttributeComponent->MaxHP);
-			
+
 		}
 
 		HeroAnimInstance->OnMontageEnded.RemoveDynamic(this, &AYggHero::HandleMontageEnded);
@@ -429,44 +443,45 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 void AYggHero::Roll(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->CurRollCount <= 0)
+	{
+		return;
+	}
 	if (bAimMode)
 	{
 		SetAimMode(false);
 	}
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
-	if (HeroAttributeComponent->CurRollCount <= 0) return;
-
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable")))
+	{
+		return;
+	}
+	HeroAttributeComponent->CurRollCount -= 1;
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->CurRollCount -= 1;
 		MulticastRoll(Value);
+		return;
 	}
 	else
 	{
 		ServerRoll(Value);
+		return;
 	}
 }
 
 void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)
 {
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
-	if (HeroAttributeComponent->CurRollCount <= 0) return;
-	HeroAttributeComponent->CurRollCount -= 1;
-
+	
 	MulticastRoll(Value);
 }
 
 void AYggHero::MulticastRoll_Implementation(const FInputActionValue& Value)
 {
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotMoveable"))) return;
-	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable"))) return;
-
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-
 	FName MontageName = *FString::Printf(TEXT("Roll"));
 	HeroAnimInstance->PlayMontage(MontageName);
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, TEXT("Roll"));
 }
 
 void AYggHero::Attack(const FInputActionValue& Value)
@@ -526,7 +541,7 @@ void AYggHero::SkillQ(const FInputActionValue& Value)
 		ServerHeroSkillQ(Value);
 	}
 
-	float CoolTime = HeroAttributeComponent->SkillQMaxCoolTime*(1- HeroAttributeComponent->CooldownReduction);
+	float CoolTime = HeroAttributeComponent->SkillQMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 	OnSkillQ.Broadcast(FName("SkillQ"), CoolTime);
 }
 void AYggHero::ServerHeroSkillQ_Implementation(const FInputActionValue& Value)
@@ -537,7 +552,7 @@ void AYggHero::MulticastHeroSkillQ_Implementation(const FInputActionValue& Value
 {
 	FName MontageName = TEXT("SkillQ");
 	HeroAnimInstance->PlayMontage(MontageName);
-	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime* (1 - HeroAttributeComponent->CooldownReduction);
+	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 }
 
 void AYggHero::SkillE(const FInputActionValue& Value)
@@ -612,7 +627,7 @@ void AYggHero::Die(float Delegate)
 {
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.Death"))) return;
 	if (HeroAttributeComponent->HP > 0.0f) return;
-		
+
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
@@ -626,7 +641,7 @@ void AYggHero::Die(float Delegate)
 	{
 		ServerDie(Delegate);
 	}
-	OnRespawn.Broadcast(RespawnTime+DeathCount*5.0f);
+	OnRespawn.Broadcast(RespawnTime + DeathCount * 5.0f);
 }
 
 void AYggHero::ServerDie_Implementation(float Delegate)
