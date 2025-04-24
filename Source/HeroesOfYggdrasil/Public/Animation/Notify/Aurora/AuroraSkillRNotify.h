@@ -19,4 +19,8 @@ class HEROESOFYGGDRASIL_API UAuroraSkillRNotify : public UAnimNotify
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
 	TMap<TWeakObjectPtr<AEnemyCharacter>, FTimerHandle> ActiveStunTimers;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "YggParticleSystem", meta = (DisplayName = "Particle System"))
+	TObjectPtr<UParticleSystem> PSTemplate;
 };

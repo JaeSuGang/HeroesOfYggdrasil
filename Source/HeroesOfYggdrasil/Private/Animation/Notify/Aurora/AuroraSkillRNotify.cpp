@@ -6,6 +6,7 @@
 #include "Enemy/EnemyCharacter.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 #include "Attribute/HeroAttributeComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 void UAuroraSkillRNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
@@ -28,28 +29,48 @@ void UAuroraSkillRNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
         AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(EnemyActor);
         if (Enemy)
         {
+            // Freeze 적용.
             Enemy->ApplyStun();
 
-            if (FTimerHandle* ExistingHandle = ActiveStunTimers.Find(Enemy))
+            TWeakObjectPtr<AEnemyCharacter> WeakEnemy = Enemy;
+
+            if (FTimerHandle* ExistingHandle = ActiveStunTimers.Find(WeakEnemy))
             {
                 GetWorld()->GetTimerManager().ClearTimer(*ExistingHandle);
-                ActiveStunTimers.Remove(Enemy);
+                ActiveStunTimers.Remove(WeakEnemy);
             }
 
+            // Freeze 파티클 추가.
+            if (PSTemplate)
+            {
+                UParticleSystemComponent* PSComp = UGameplayStatics::SpawnEmitterAttached(
+                    PSTemplate,
+                    Enemy->GetMesh(),
+                    NAME_None,
+                    FVector::ZeroVector,
+                    FRotator::ZeroRotator,
+                    EAttachLocation::SnapToTarget,
+                    true,
+                    EPSCPoolMethod::AutoRelease
+                );
+            }
+
+
+            // Freeze 해제.
             float ContinueTime = Aurora->GetHeroAttributeComponent()->SkillRMaxContinueTime;
 
             FTimerHandle NewHandle;
             FTimerDelegate Delegate;
-            Delegate.BindWeakLambda(this, [Enemy]()
+            Delegate.BindWeakLambda(this, [WeakEnemy]()
             {
-                if (Enemy && Enemy->IsValidLowLevel())
+                if (WeakEnemy.IsValid())
                 {
-                    Enemy->ClearStun();
+                    WeakEnemy->ClearStun();
                 }
             });
 
             GetWorld()->GetTimerManager().SetTimer(NewHandle, Delegate, ContinueTime, false);
-            ActiveStunTimers.Add(Enemy, NewHandle);
+            ActiveStunTimers.Add(WeakEnemy, NewHandle);
         }
     }
 }
