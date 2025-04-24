@@ -22,7 +22,7 @@ class UYggSkillBarUserWidget;
 class UYggDeathPopupUserWidget;
 class UYggStatusUserWidget;
 class UTextBlock;
-class AEnemyManager;
+class UStageBase;
 
 /**
  * 
@@ -64,7 +64,8 @@ public:
 	void StatusVisibility();
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
-	void UpdateCount(AEnemyManager* Enemymanager);
+	void UpdateWaveCount(UStageBase* NewStage);
+
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -78,7 +79,7 @@ private:
 	UButton* AbilityPlusButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* MonsterCount;
+	UTextBlock* WaveCount;
 
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> PlayerStatusUserWidgetClass;
