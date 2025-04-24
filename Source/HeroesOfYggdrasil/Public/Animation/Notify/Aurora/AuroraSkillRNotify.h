@@ -9,6 +9,8 @@
 /**
  * 
  */
+class AEnemyCharacter;
+
 UCLASS(meta = (DisplayName = "Aurora | SkillR"))
 class HEROESOFYGGDRASIL_API UAuroraSkillRNotify : public UAnimNotify
 {
@@ -16,5 +18,5 @@ class HEROESOFYGGDRASIL_API UAuroraSkillRNotify : public UAnimNotify
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation) override;
 
-	FTimerHandle FreezeTimerHandle;
+	TMap<TWeakObjectPtr<AEnemyCharacter>, FTimerHandle> ActiveStunTimers;
 };

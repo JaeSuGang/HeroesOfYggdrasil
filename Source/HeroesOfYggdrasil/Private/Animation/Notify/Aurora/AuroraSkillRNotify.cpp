@@ -30,12 +30,26 @@ void UAuroraSkillRNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
         {
             Enemy->ApplyStun();
 
-            float ContinueTime = Aurora->GetHeroAttributeComponent()->SkillQMaxContinueTime;
-
-            MeshComp->GetWorld()->GetTimerManager().SetTimer(FreezeTimerHandle, [Enemy]()
+            if (FTimerHandle* ExistingHandle = ActiveStunTimers.Find(Enemy))
             {
-                Enemy->ClearStun();
-            }, ContinueTime, false);
+                GetWorld()->GetTimerManager().ClearTimer(*ExistingHandle);
+                ActiveStunTimers.Remove(Enemy);
+            }
+
+            float ContinueTime = Aurora->GetHeroAttributeComponent()->SkillRMaxContinueTime;
+
+            FTimerHandle NewHandle;
+            FTimerDelegate Delegate;
+            Delegate.BindWeakLambda(this, [Enemy]()
+            {
+                if (Enemy && Enemy->IsValidLowLevel())
+                {
+                    Enemy->ClearStun();
+                }
+            });
+
+            GetWorld()->GetTimerManager().SetTimer(NewHandle, Delegate, ContinueTime, false);
+            ActiveStunTimers.Add(Enemy, NewHandle);
         }
     }
 }
