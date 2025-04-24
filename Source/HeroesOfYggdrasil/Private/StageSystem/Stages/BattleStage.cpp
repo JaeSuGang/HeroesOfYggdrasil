@@ -13,6 +13,8 @@ void UBattleStage::BeginPlay(UStageSystem* NewStageSystem)
 {
 	Super::BeginPlay(NewStageSystem);
 
+	LoadTables();
+
 	if (AEnemyManager* EM = AEnemyManager::Get(GetWorld()))
 	{
 		EM->OnEnemyCountDelegate.AddDynamic(this, &UBattleStage::Local_OnEnemyCountChanged);
