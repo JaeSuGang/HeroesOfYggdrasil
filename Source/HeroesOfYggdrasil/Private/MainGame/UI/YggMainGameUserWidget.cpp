@@ -12,16 +12,25 @@
 #include "MainGame/UI/YggSelectAbilityUserWidget.h"
 #include "MainGame/UI/YggStatusUserWidget.h"
 #include "MainGame/UI/YggStatusEffectUserWidget.h"
+#include "MainGame/UI/YggFuelBarUserWidget.h"
 #include "MainGame/EnemyManager.h"
 
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
+#include "Blueprint/WidgetTree.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
 
 #include "Attribute/HeroAttributeComponent.h"
 #include "UpgradeSystem/UpgradeSystem.h"
 #include "UpgradeSystem/UpgradeDataAsset.h"
+
+#include "StageSystem/StageSystem.h"
+#include "StageSystem/StageBase.h"
+#include "StageSystem/Stages/BattleStage.h"
+
 
 void UYggMainGameUserWidget::NativeOnInitialized()
 {
@@ -56,9 +65,9 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 
 		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(CastingBarWidget->Slot))
 		{
-			//CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
-			//CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f));
-			CanvasSlot->SetPosition(FVector2D(850.0f, 850.0f));
+			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+			CanvasSlot->SetPosition(FVector2D(0.0f, 300.0f));
 		}
 	}
 
@@ -75,7 +84,6 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 			CanvasSlot->SetAnchors(FAnchors(0.5f, 1.0f));
 			CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
 			CanvasSlot->SetPosition(FVector2D(-296.0f, -183.0f));
-			
 		}
 	}
 
@@ -108,7 +116,7 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 			//CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f));
 			//CanvasSlot->SetOffsets(FMargin(0.0f));
 			//CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
-			CanvasSlot->SetPosition(FVector2D(300.0f, 300.0f));
+			CanvasSlot->SetPosition(FVector2D(-50.0f, 700.0f));
 		}
 	}
 	
@@ -120,13 +128,14 @@ void UYggMainGameUserWidget::NativeConstruct()
 
 	AbilityPlusButton->OnClicked.AddDynamic(this, &UYggMainGameUserWidget::CreateAbility);
 
-	//AEnemyManager* EManager = AEnemyManager::Get(GetWorld());
-	//
-	//if (!IsValid(EManager)) return;
-	//
-	//EManager->OnEnemyCountDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateCount);
-	
-	
+	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
+	UpdateWaveCount(StageSystem->GetBattleStage());
+
+	StageSystem->OnStageStartedDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateWaveCount);
+
+	StageSystem->OnDefeated.AddDynamic(this, &UYggMainGameUserWidget::ChildWidgetHidden);
+
+	//StageSystem->LevelSequenceActor->GetSequencePlayer()->OnFinished.AddDynamic(this, &UYggMainGameUserWidget::StatusVisibility);
 }
 
 void UYggMainGameUserWidget::StartAbilityPlus()
@@ -176,19 +185,35 @@ void UYggMainGameUserWidget::DelSelectAbility()
 
 void UYggMainGameUserWidget::StatusVisibility()
 {
-	if (ESlateVisibility::Hidden == StatusWidget->GetVisibility())
+	if (ESlateVisibility::Visible != StatusWidget->GetVisibility())
 	{
-		StatusWidget->SetVisibility(ESlateVisibility::Visible);
+		StatusWidget->ShowStatus();
 	}
 	else
 	{
-		StatusWidget->SetVisibility(ESlateVisibility::Hidden);
+		StatusWidget->EndStatus();
 	}
 }
 
-void UYggMainGameUserWidget::UpdateCount(AEnemyManager* Enemymanager)
+void UYggMainGameUserWidget::UpdateWaveCount(UStageBase* NewStage)
 {
-	FString String = FString::Printf(TEXT("%d"), Enemymanager->CachedEnemyCount);
+	UBattleStage* BattleStage = NewStage->StageSystem->GetBattleStage();
+	
+	FString String = FString::Printf(TEXT("WAVE %d / %d"), NewStage->StageSystem->CurrentStageIndex, BattleStage->WaveTableAsArray.Num());
 
-	MonsterCount->SetText(FText::FromString(String));
+	WaveCount->SetText(FText::FromString(String));
+}
+
+void UYggMainGameUserWidget::ChildWidgetHidden(FOnDefeatedParams OnDefeatedParams)
+{
+	TArray<UWidget*> children;
+	WidgetTree->GetAllWidgets(children);
+
+	for (UWidget* widget : children)
+	{
+		if (widget)
+		{
+			widget->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
 }

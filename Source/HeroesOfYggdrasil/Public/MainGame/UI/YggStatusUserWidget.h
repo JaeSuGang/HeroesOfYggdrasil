@@ -12,6 +12,7 @@ class UTextBlock;
 class UButton;
 class UHeroAttributeComponent;
 class AEnemyManager;
+class UWidgetAnimation;
 
 /**
  * 
@@ -42,9 +43,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "YGG")
 	FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f);
-
-	UFUNCTION(BlueprintCallable, Category = "YGG")
-	void Update(AEnemyManager* EnemyManager);
 
 	//UFUNCTION(BlueprintCallable, Category = "YGG")
 	//void EndAbility();
@@ -108,9 +106,6 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* AbilityShowButton;
-	
-	UPROPERTY()
-	int EnemyCount;
 
 	UPROPERTY(EditAnywhere, Category = "Symbol")
 	UTexture2D* GreystoneSymbol;
@@ -123,6 +118,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Symbol")
 	UTexture2D* AuroraSymbol;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* PopupAnim;
 
 	UHeroAttributeComponent* HAC;
 

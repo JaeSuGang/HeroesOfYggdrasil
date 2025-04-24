@@ -15,8 +15,7 @@ void UYggStageTimerUserWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	SetVisibility(ESlateVisibility::Visible);
-	//SetVisibility(ESlateVisibility::Hidden);
-
+	
 	if (StageTimer)
 	{
 		GetStageTimer();
@@ -59,5 +58,7 @@ void UYggStageTimerUserWidget::GetStageTimer()
 		return;
 	}
 
-	StageTimer->SetText(FText::AsNumber(StageSystem->Timer));
+	FString String = FString::Printf(TEXT("%.1f s"), StageSystem->Timer);
+
+	StageTimer->SetText(FText::FromString(String));
 }
