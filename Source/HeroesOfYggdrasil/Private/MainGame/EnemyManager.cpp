@@ -146,5 +146,5 @@ void AEnemyManager::OnRep_EnemyCount()
 
 void AEnemyManager::OnRep_DeadEnemyCount()
 {
-	OnEnemyRemovedDelegate.Broadcast(this);;
+	OnEnemyRemovedDelegate.Broadcast(this);
 }
