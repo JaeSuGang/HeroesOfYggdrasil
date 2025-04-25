@@ -32,6 +32,7 @@ protected:
 	virtual void Tick(float DeltaTime)override;
 
 	virtual FName GetHeroName() const override { return FName(TEXT("Khaimera")); };
+	virtual void SkillQ(const FInputActionValue& Value);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")

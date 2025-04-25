@@ -65,6 +65,7 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 
 					UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
 				}
+
 				{
 					const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(TEXT("R_Pos_Right"));
 					const FVector AimDirection = Cast<AYggHero>(Actor)->GetAimDirection();
