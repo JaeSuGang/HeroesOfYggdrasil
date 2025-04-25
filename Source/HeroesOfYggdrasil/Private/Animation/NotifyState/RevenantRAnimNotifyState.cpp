@@ -5,58 +5,94 @@
 #include "Kismet/GameplayStatics.h"
 #include "Core/YggCharacter.h"
 #include "Global/YggProjectileActor.h"
+#include "Player/YggHeroRevenant.h"
 #include "Player/YggHero.h"
 
 void URevenantRAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
-	CurCount = 0;
+	if (!MeshComp || !ActorClass) {
+		return;
+	}
+	AYggCharacter* Actor = Cast<AYggCharacter>(MeshComp->GetOwner());
+	if (!IsValid(Actor)) return;
+	if ((Actor->HasAuthority())) 
+	{
+		{
+			const FVector  SpawnLocation = Actor->GetMesh()->GetSocketLocation(TEXT("R_Pos_Left"));
+			const FRotator SpawnRotation = FRotator::ZeroRotator;   // 필요-없으면 0 으로
+
+			FActorSpawnParameters Params;
+			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+			
+
+			AActor* Spawned =
+				MeshComp->GetWorld()->SpawnActor<AActor>(ActorClass,
+					SpawnLocation,
+					SpawnRotation,
+					Params);
+			Spawned->AttachToActor(Actor, FAttachmentTransformRules::KeepWorldTransform);
+
+			FTimerHandle TimerHandle;
+			TWeakObjectPtr<AActor> WeakSpawned = Spawned;          
+			Actor->GetWorld()->GetTimerManager().SetTimer(
+				TimerHandle,                                       
+				[WeakSpawned, Actor]()
+				{
+					if (WeakSpawned.IsValid())
+					{
+						WeakSpawned->Destroy();
+					}
+					if (AYggHeroRevenant* Revenant = Cast<AYggHeroRevenant>(Actor)) 
+					{
+						Revenant->SetIsUsingSkillR(false);
+					}
+					
+				},
+				15.0f,                                              
+				false                                              
+			);
+
+		}
+		{
+			const FVector  SpawnLocation = Actor->GetMesh()->GetSocketLocation(TEXT("R_Pos_Right"));
+			const FRotator SpawnRotation = FRotator::ZeroRotator;   // 필요-없으면 0 으로
+
+			FActorSpawnParameters Params;
+			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+
+
+			AActor* Spawned =
+				MeshComp->GetWorld()->SpawnActor<AActor>(ActorClass,
+					SpawnLocation,
+					SpawnRotation,
+					Params);
+			Spawned->AttachToActor(Actor, FAttachmentTransformRules::KeepWorldTransform);
+			FTimerHandle TimerHandle;
+			TWeakObjectPtr<AActor> WeakSpawned = Spawned;
+			Actor->GetWorld()->GetTimerManager().SetTimer(
+				TimerHandle,
+				[WeakSpawned]()
+				{
+					if (WeakSpawned.IsValid())
+					{
+						WeakSpawned->Destroy();
+					}
+				},
+				15.0f,
+				false
+			);
+		}
+	}
+
+	
 }
 
 void URevenantRAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyTick(MeshComp, Animation, FrameDeltaTime, EventReference);
-	if (CurCount < Count)
-	{
-		ElapsedTime += FrameDeltaTime;
-		if (ElapsedTime >= Delay)
-		{
-			if (!MeshComp || !ProjectileClass) return;
-
-			AYggCharacter* Actor = Cast<AYggCharacter>(MeshComp->GetOwner());
-			if (!IsValid(Actor)) return;
-			if ((Actor->HasAuthority()))
-			{
-				FString SocketStr = FString::Printf(TEXT("FX_R_%d"), CurCount);
-				const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(*SocketStr);
-				const FVector AimDirection = Cast<AYggHero>(Actor)->GetAimDirection();
-				const FRotator AimRot = AimDirection.Rotation();
-
-				FTransform SpawnTransform(AimRot, SpawnLocation);
-
-				AYggProjectileActor* Projectile = MeshComp->GetWorld()->SpawnActorDeferred<AYggProjectileActor>(
-					ProjectileClass,
-					SpawnTransform,
-					Actor,
-					nullptr,
-					ESpawnActorCollisionHandlingMethod::AlwaysSpawn
-				);
-
-				if (!Projectile) return;
-				Projectile->SetTargetLocation(Actor->GetTargetLocation());
-				Projectile->DelayShoot(CastingTime);
-				Projectile->SetOwnerCharacter(Actor);
-				Projectile->SetAimDir(AimDirection);
-
-				UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
-				
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Spawn_Projectile"));
-				CurCount++;
-				
-			}
-			ElapsedTime = 0.0f;
-		}
-	}
 	
 	
 }
@@ -64,6 +100,6 @@ void URevenantRAnimNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAn
 void URevenantRAnimNotifyState::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
-	CurCount = 0;
+	//CurCount = 0;
 	
 }

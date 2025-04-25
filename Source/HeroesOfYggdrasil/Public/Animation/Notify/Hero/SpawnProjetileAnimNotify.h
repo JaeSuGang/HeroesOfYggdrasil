@@ -20,6 +20,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
 	TSubclassOf<class AYggProjectileActor> ProjectileClass;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggHeroRevenant")
 	FName SocketName;
 };

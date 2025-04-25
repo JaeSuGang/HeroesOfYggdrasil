@@ -161,16 +161,6 @@ void AYggHero::Tick(float DeltaTime)
 	FRotator CamRot = GetControlRotation();
 
 	MiniMapCaptureComponent->SetWorldRotation(FRotator(-90.f, CamRot.Yaw, 0.0f));
-	HeroAttributeComponent;
-	if (HeroAttributeComponent)
-	{
-		for (auto& Tag : HeroAttributeComponent->GameplayTags)
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, Tag.GetTagName().ToString());
-		}
-		int RollCount = HeroAttributeComponent->CurRollCount;
-		GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("RollCount : %d"), RollCount));
-	}
 
 }
 

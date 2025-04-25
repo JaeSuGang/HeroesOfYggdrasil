@@ -132,7 +132,18 @@ void AYggHeroRevenant::SkillR(const FInputActionValue& Value)
 	}
 	FVector NewAimDir = Local_GetAimDirection(TEXT("None"));
 	Server_SetAimDirection(NewAimDir);
+	bIsUsingSkillR = true;
 	Super::SkillR(Value);
+}
+
+void AYggHeroRevenant::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	if (bAimMode)
+	{
+		FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
+		Server_SetAimDirection(NewAimDir);
+	}
 }
 
 

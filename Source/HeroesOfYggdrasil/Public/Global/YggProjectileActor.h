@@ -95,6 +95,9 @@ public:
 	UFUNCTION()
 	void LaunchTo();
 
+	UFUNCTION()
+	void StartDestroy();
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	EProjectileType ProjectileType;

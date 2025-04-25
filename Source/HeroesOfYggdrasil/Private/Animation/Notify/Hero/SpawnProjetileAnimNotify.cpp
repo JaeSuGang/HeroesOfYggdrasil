@@ -7,6 +7,7 @@
 #include "Global/YggProjectileActor.h"
 #include "Player/YggHero.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/YggHeroRevenant.h"
 void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	if (!MeshComp || !ProjectileClass) return;
@@ -15,29 +16,85 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 	if (!IsValid(Actor)) return;
 	if ((Actor->HasAuthority()))
 	{
-		const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(SocketName);
-		const FVector AimDirection = Cast<AYggHero>(Actor)->GetAimDirection();
-		const FRotator AimRot = AimDirection.Rotation();
 
-		FTransform SpawnTransform(AimRot, SpawnLocation);
+		{
+			const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(SocketName);
+			const FVector AimDirection = Cast<AYggHero>(Actor)->GetAimDirection();
+			const FRotator AimRot = AimDirection.Rotation();
 
-		AYggProjectileActor* Projectile = MeshComp->GetWorld()->SpawnActorDeferred<AYggProjectileActor>(
-			ProjectileClass,
-			SpawnTransform,
-			Actor,
-			nullptr,
-			ESpawnActorCollisionHandlingMethod::AlwaysSpawn
-		);
+			FTransform SpawnTransform(AimRot, SpawnLocation);
 
-		if (!Projectile) return;
+			AYggProjectileActor* Projectile = MeshComp->GetWorld()->SpawnActorDeferred<AYggProjectileActor>(
+				ProjectileClass,
+				SpawnTransform,
+				Actor,
+				nullptr,
+				ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+			);
 
-		Projectile->SetOwnerCharacter(Actor);
-		Projectile->SetAimDir(AimDirection);
+			if (!Projectile) return;
 
-		UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Spawn_Projectile"));
+			Projectile->SetOwnerCharacter(Actor);
+			Projectile->SetAimDir(AimDirection);
+
+			UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
+		}
+		if (AYggHeroRevenant* Revenant = Cast<AYggHeroRevenant>(Actor))
+		{
+			if (Revenant->GetIsUsingSkillR())
+			{
+				{
+					const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(TEXT("R_Pos_Left"));
+					const FVector AimDirection = Cast<AYggHero>(Actor)->GetAimDirection();
+					const FRotator AimRot = AimDirection.Rotation();
+
+					FTransform SpawnTransform(AimRot, SpawnLocation);
+
+					AYggProjectileActor* Projectile = MeshComp->GetWorld()->SpawnActorDeferred<AYggProjectileActor>(
+						ProjectileClass,
+						SpawnTransform,
+						Actor,
+						nullptr,
+						ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+					);
+
+					if (!Projectile) return;
+
+					Projectile->SetOwnerCharacter(Actor);
+					Projectile->SetAimDir(AimDirection);
+
+					UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
+				}
+				{
+					const FVector SpawnLocation = Actor->GetMesh()->GetSocketLocation(TEXT("R_Pos_Right"));
+					const FVector AimDirection = Cast<AYggHero>(Actor)->GetAimDirection();
+					const FRotator AimRot = AimDirection.Rotation();
+
+					FTransform SpawnTransform(AimRot, SpawnLocation);
+
+					AYggProjectileActor* Projectile = MeshComp->GetWorld()->SpawnActorDeferred<AYggProjectileActor>(
+						ProjectileClass,
+						SpawnTransform,
+						Actor,
+						nullptr,
+						ESpawnActorCollisionHandlingMethod::AlwaysSpawn
+					);
+
+					if (!Projectile) return;
+
+					Projectile->SetOwnerCharacter(Actor);
+					Projectile->SetAimDir(AimDirection);
+
+					UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
+				}
+
+			}
+		}
+
+
+
 	}
 
-	
+
 }
 
