@@ -24,6 +24,7 @@ class UYggDeathPopupUserWidget;
 class UYggStatusUserWidget;
 class UTextBlock;
 class UStageBase;
+class UYggFuelBarUserWidget;
 
 /**
  * 
@@ -108,6 +109,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> StatusWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> FuelBarWidgetClass;
+
 	UPROPERTY()
 	UYggPlayerStatusUserWidget* PlayerStatusWidget;
 
@@ -131,4 +135,7 @@ private:
 
 	UPROPERTY()
 	UYggStatusUserWidget* StatusWidget;
+
+	UPROPERTY()
+	UYggFuelBarUserWidget* FuelBarWidget;
 };

@@ -27,15 +27,6 @@ void UYggFuelBarUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-    APlayerController* PC = GetOwningPlayer();
-
-    AYggHeroAurora* Hero = PC->GetPawn<AYggHeroAurora>();
-
-    if (!IsValid(Hero))
-    {
-        RemoveFromParent();
-        SetVisibility(ESlateVisibility::Hidden);
-    }
 }
 
 void UYggFuelBarUserWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)

@@ -23,6 +23,8 @@
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
 
+#include "Player/YggHeroAurora.h"
+
 #include "Attribute/HeroAttributeComponent.h"
 #include "UpgradeSystem/UpgradeSystem.h"
 #include "UpgradeSystem/UpgradeDataAsset.h"
@@ -120,6 +122,28 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 		}
 	}
 	
+	APlayerController* PC = GetOwningPlayer();
+
+	AYggHeroAurora* Aurora = PC->GetPawn<AYggHeroAurora>();
+
+	if (IsValid(Aurora))
+	{
+		FuelBarWidget = CreateWidget<UYggFuelBarUserWidget>(GetWorld(), FuelBarWidgetClass);
+		if (!FuelBarWidgetClass)
+			UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+		if (IsValid(FuelBarWidget))
+		{
+			MainGamePanel->AddChild(FuelBarWidget);
+
+			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(FuelBarWidget->Slot))
+			{
+				CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+				CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+				CanvasSlot->SetPosition(FVector2D(300.0f, 0.0f));
+			}
+		}
+	}
 }
 
 void UYggMainGameUserWidget::NativeConstruct()
