@@ -15,6 +15,8 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#include "Actors/AuroraFrostCatalyst.h"
+
 AYggHeroAurora::AYggHeroAurora()
 {
 	AttackCapsuleComponentMap.Reset();
@@ -304,6 +306,7 @@ void AYggHeroAurora::MagicCircleOn()
 
 	// 5. TargetPoint 결정
 	FVector TargetPoint = bHit ? Hit.ImpactPoint : TraceEnd;
+	MagicTargetPoint = TargetPoint;
 
 	// 6. 데칼 스폰 또는 위치 갱신
 	if (!IsValid(SkillEDecal))
