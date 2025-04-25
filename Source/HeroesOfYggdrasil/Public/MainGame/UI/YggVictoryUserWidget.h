@@ -4,31 +4,33 @@
 
 #include "CoreMinimal.h"
 #include "MainGame/UI/YggUserWidget.h"
-#include "YggFuelBarUserWidget.generated.h"
+#include "YggVictoryUserWidget.generated.h"
 
-class UProgressBar;
+class UTextBlock;
+class UTexture2D;
 
 /**
  * 
  */
 UCLASS()
-class HEROESOFYGGDRASIL_API UYggFuelBarUserWidget : public UYggUserWidget
+class HEROESOFYGGDRASIL_API UYggVictoryUserWidget : public UYggUserWidget
 {
 	GENERATED_BODY()
-
+	
 public:
-	UFUNCTION(BlueprintCallable)
-	void UpdateFuelBar();
 
 
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeDestruct() override;
+
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* FuelBar;
+	UTextBlock* sdf;
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* sdfsdfdf;
 
 };

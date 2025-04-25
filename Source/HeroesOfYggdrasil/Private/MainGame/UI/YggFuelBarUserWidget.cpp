@@ -11,11 +11,6 @@
 #include "Components/ProgressBar.h"
 
 
-UYggFuelBarUserWidget::UYggFuelBarUserWidget()
-{
-    
-}
-
 void UYggFuelBarUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
