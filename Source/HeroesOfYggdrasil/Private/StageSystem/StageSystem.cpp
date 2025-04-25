@@ -42,11 +42,6 @@ void UStageSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 	Timer -= DeltaTime;
 	if (Timer < 0.0f)
 		Timer = 0.0f;
-}
-
-void UStageSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (bIsGameStarted)
 	{
