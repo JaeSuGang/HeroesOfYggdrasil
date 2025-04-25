@@ -9,6 +9,7 @@
 /**
  * 
  */
+class AAuroraFrostCatalyst;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AYggHeroAurora : public AYggHero
@@ -52,7 +53,7 @@ private:
 	UPROPERTY()
 	UDecalComponent* SkillEDecal;
 
-public:
+public:	// Jump
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
 	TObjectPtr<class UYggAttackCapsuleComponent> SkillQAttackCapsuleComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
@@ -77,4 +78,13 @@ public:
 	void JetpackOn(const FInputActionValue& Value);
 	UFUNCTION()
 	void JetpackOff(const FInputActionValue& Value);
+
+public:
+	/** SpawnNotify 에서 찍어둘 Catalyst 인스턴스*/
+	UPROPERTY()
+	AAuroraFrostCatalyst* PendingCatalyst = nullptr;
+
+	/** MagicCircleOn() 으로 계산한 최종 타겟 위치*/
+	UPROPERTY()
+	FVector MagicTargetPoint;
 };

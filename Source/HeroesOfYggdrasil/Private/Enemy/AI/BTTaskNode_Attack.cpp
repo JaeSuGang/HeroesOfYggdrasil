@@ -54,7 +54,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		return;
 	}
 
-	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")) && !EnemyCharacter->GetDataKey().StartsWith(TEXT("Dragon"))) {
 		
 		ChangeState(_OwnerComp, EEnemyAIState::Hit);
 		return;
@@ -80,7 +80,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 	FTimerHandle TimerHandle;
 
 	TWeakObjectPtr<AEnemyCharacter> WeakEnemy = EnemyCharacter;
-	FWeakObjectPtr WeakOwner = &_OwnerComp;
+	TWeakObjectPtr<UBehaviorTreeComponent> WeakOwner = Cast<UBehaviorTreeComponent>(&_OwnerComp);
 	FVector StoredTargetLocation = TargetRangeLocation;
 
 	TimerDel.BindLambda([this, WeakOwner, WeakEnemy, StoredTargetLocation, TargetActor]() {
@@ -99,7 +99,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 			return;
 		}
 
-		if (EnemyChar->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+		if (EnemyChar->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")) && !EnemyChar->GetDataKey().StartsWith(TEXT("Dragon"))) {
 			EnemyChar->ClearHitState();
 			ChangeState(*Comp, EEnemyAIState::Hit);
 			return;
@@ -150,7 +150,7 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 		ChangeState(_OwnerComp, EEnemyAIState::Idle);
 	}
 
-	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")) && !EnemyCharacter->GetDataKey().StartsWith(TEXT("Dragon"))) {
 		
 		ChangeState(_OwnerComp, EEnemyAIState::Hit);
 		return;
