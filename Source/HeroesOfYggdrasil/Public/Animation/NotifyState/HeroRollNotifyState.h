@@ -21,4 +21,7 @@ class HEROESOFYGGDRASIL_API UHeroRollNotifyState : public UAnimNotifyState
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float RollRate = 3.0f;
+
+	float RollSpeed;
+	FVector RollDirection;
 };

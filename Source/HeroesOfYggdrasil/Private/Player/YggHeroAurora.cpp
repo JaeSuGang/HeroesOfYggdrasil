@@ -97,6 +97,14 @@ void AYggHeroAurora::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
+		if (ActionMap.Contains(FName("Look")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Look")], ETriggerEvent::Triggered, this, &AYggHeroAurora::Look);
+		}
+		if (ActionMap.Contains(FName("Roll")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("Roll")], ETriggerEvent::Started, this, &AYggHeroAurora::Roll);
+		}
 		if (ActionMap.Contains(FName("Attack")))
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("Attack")], ETriggerEvent::Triggered, this, &AYggHeroAurora::Attack);
@@ -135,6 +143,44 @@ void AYggHeroAurora::PossessedBy(AController* NewController)
 	{
 		SetAimMode(true);
 	}, 2.0f, false);
+}
+
+void AYggHeroAurora::Look(const FInputActionValue& Value)
+{
+	if (GetController()->IsLookInputIgnored() || bIsUIMode)
+	{
+		return;
+	}
+	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	FRotator CurrentRotation = GetControlRotation();
+	float ClampedPitch = FMath::ClampAngle(CurrentRotation.Pitch + LookAxisVector.Y, -70.0f, 60.0f);
+	GetController()->SetControlRotation(FRotator(ClampedPitch, CurrentRotation.Yaw, CurrentRotation.Roll));
+	AddControllerYawInput(LookAxisVector.X);
+}
+
+void AYggHeroAurora::Roll(const FInputActionValue& Value)
+{
+	if (!GetCharacterMovement()->IsMovingOnGround()) return;
+
+	if (HeroAttributeComponent->CurRollCount <= 0)
+	{
+		return;
+	}
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotRollable")))
+	{
+		return;
+	}
+	HeroAttributeComponent->CurRollCount -= 1;
+	if (HasAuthority())
+	{
+		MulticastRoll(Value);
+		return;
+	}
+	else
+	{
+		ServerRoll(Value);
+		return;
+	}
 }
 
 void AYggHeroAurora::Attack(const FInputActionValue& Value)
@@ -200,13 +246,6 @@ void AYggHeroAurora::SkillR(const FInputActionValue& Value)
 	Super::SkillR(Value);
 
 	HeroAttributeComponent->RemoveTag(TEXT("Character.State.NotMoveable"));
-}
-
-void AYggHeroAurora::Roll(const FInputActionValue& Value)
-{
-	Super::Roll(Value);
-
-
 }
 
 void AYggHeroAurora::Jump()
