@@ -35,7 +35,7 @@ void AEnemyManager::BeginPlay()
 
 	NetSyncMonster();
 
-	
+	DeadEnemyCount = 0;
 }
 
 void AEnemyManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -43,6 +43,7 @@ void AEnemyManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AEnemyManager, CachedEnemyCount);
+	DOREPLIFETIME(AEnemyManager, DeadEnemyCount);
 	DOREPLIFETIME(AEnemyManager, AllEnemyCharacter);
 }
 
@@ -104,10 +105,19 @@ void AEnemyManager::RemoveEnemyCharacter(AEnemyCharacter* Enemy)
 	if (!AllEnemyCharacter.Contains(Enemy)) return;
 
 	AllEnemyCharacter.Remove(Enemy);
+
 	Server_RequestEnemyCount();
+	
 	if (HasAuthority())
 	{
 		OnRep_AllEnemyCharacter();
+	}
+
+	DeadEnemyCount++;
+
+	if (HasAuthority())
+	{
+		OnRep_DeadEnemyCount();
 	}
 }
 
@@ -115,7 +125,6 @@ void AEnemyManager::Server_RequestEnemyCount_Implementation()
 {
 	CachedEnemyCount = AllEnemyCharacter.Num();
 
-	// 또는 OnEnemyCountReady 직접 호출
 	OnEnemyCountReady(CachedEnemyCount);
 }
 
@@ -133,4 +142,9 @@ void AEnemyManager::OnEnemyCountReady(int Count)
 void AEnemyManager::OnRep_EnemyCount()
 {
 	OnEnemyCountReady(CachedEnemyCount);
+}
+
+void AEnemyManager::OnRep_DeadEnemyCount()
+{
+	OnEnemyRemovedDelegate.Broadcast(this);;
 }
