@@ -15,6 +15,13 @@
 
 void UHeroRollNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
+	if (!MeshComp || !MeshComp->GetOwner()) return;
+
+	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
+	if (!Hero) return;
+
+	RollSpeed = Hero->GetHeroAttributeComponent()->MaxMoveSpeed * RollRate;
+	RollDirection = Hero->GetActorForwardVector();
 }
 
 void UHeroRollNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float FrameDeltaTime, const FAnimNotifyEventReference& EventReference)
@@ -24,8 +31,6 @@ void UHeroRollNotifyState::NotifyTick(USkeletalMeshComponent* MeshComp, UAnimSeq
 	AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
 	if (!Hero) return;
 
-	const float RollSpeed = Hero->GetHeroAttributeComponent()->MaxMoveSpeed * RollRate;
-	FVector RollDirection = Hero->GetActorForwardVector();
 	FVector Movement = RollDirection * RollSpeed * FrameDeltaTime;
 
 	if (UCharacterMovementComponent* MoveComp = Hero->GetCharacterMovement())

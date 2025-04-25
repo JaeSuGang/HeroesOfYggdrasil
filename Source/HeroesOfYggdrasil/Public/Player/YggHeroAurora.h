@@ -25,6 +25,9 @@ protected:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	virtual void Look(const FInputActionValue& Value) override;
+	virtual void Roll(const FInputActionValue& Value) override;
+
 	virtual void Attack(const FInputActionValue& Value) override;
 	virtual void EndAttack(const FInputActionValue& Value) override;
 
@@ -32,7 +35,6 @@ protected:
 	virtual void SkillE(const FInputActionValue& Value) override;
 	virtual void SkillR(const FInputActionValue& Value) override;
 
-	virtual void Roll(const FInputActionValue& Value) override;
 
 	virtual void Jump() override;
 
@@ -65,7 +67,7 @@ public:
 	/** 제트팩 추진력 (Upward Acceleration) */
 	float JetpackThrust = 2000.0f;
 	/** 연료 소모 속도 (초당) */
-	float FuelConsumptionRate = 1.0f;
+	float FuelConsumptionRate = 1.5f;
 	/** 연료 충전 속도 (초당) */
 	float FuelRechargeRate = 0.5f;
 	/** 제트팩 사용 중 플래그 */

@@ -45,11 +45,6 @@
 
 #include "Data/YggStructData.h"
 
-#include "Attribute/AttributeComponent.h"
-
-
-
-
 AYggHero::AYggHero()
 {
 	bUseControllerRotationPitch = false;
@@ -444,6 +439,8 @@ void AYggHero::HandleMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 
 void AYggHero::Roll(const FInputActionValue& Value)
 {
+	if (GetCharacterMovement()->IsFalling()) return;
+
 	if (HeroAttributeComponent->CurRollCount <= 0)
 	{
 		return;
