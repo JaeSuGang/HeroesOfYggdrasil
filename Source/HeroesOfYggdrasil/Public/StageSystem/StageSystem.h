@@ -141,4 +141,10 @@ public:
 
 	UPROPERTY(Replicated, VisibleAnywhere)
 	float Timer;
+
+	UPROPERTY(VisibleAnywhere)
+	bool bIsGameStarted;
+
+	UPROPERTY(VisibleAnywhere)
+	float ElapsedTimeFromStart;
 };
