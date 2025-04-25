@@ -264,6 +264,7 @@ FVector AYggHero::Local_GetAimDirection(FName _SocketName)
 		Hit, CamLoc, TraceEnd, ECC_Visibility, Params);
 
 	const FVector TargetLoc = Hit.bBlockingHit ? Hit.ImpactPoint : TraceEnd;
+	TargetLocation = Hit.GetActor() ? Hit.GetActor()->GetActorLocation() : TargetLoc+GetActorForwardVector()*1000.0f;
 
 	// 3. 총구 위치
 	const FVector MuzzleLoc = GetMesh()->GetSocketLocation(_SocketName);

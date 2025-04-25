@@ -105,15 +105,21 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 			return;
 		}
 
-		if (Type == EEnemyType::Minion_Archer)
+		switch (Type)
 		{
+		case EEnemyType::Minion_Archer:
 			EnemyChar->SpawnAndFireArrow(TargetActor);
 			EnemyChar->HideArrow();
-		}
-		else if (Type == EEnemyType::Minion_Witch)
-		{
+			break;
+		case EEnemyType::Minion_Witch:
 			EnemyChar->SpawnEnemySkillAttack(StoredTargetLocation, TargetActor);
+			break;
+		default:
+			break;
 		}
+		
+
+		EnemyChar->AttackPlaySound();
 
 		ChangeState(*Comp, EEnemyAIState::Await);
 		});

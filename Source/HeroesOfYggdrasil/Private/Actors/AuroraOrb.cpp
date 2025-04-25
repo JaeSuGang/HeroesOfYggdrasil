@@ -106,11 +106,13 @@ void AAuroraOrb::BeginPlay()
     }
 
     // 파괴 타이머
-    FTimerHandle OrbTimer;
-    GetWorld()->GetTimerManager().SetTimer(OrbTimer, [this]() {
-        this->Destroy();
+    TWeakObjectPtr<AAuroraOrb> WeakThis(this);
+    GetWorld()->GetTimerManager().SetTimer(OrbTimer, [WeakThis]() {
+        if (WeakThis.IsValid())
+        {
+            WeakThis->Destroy();
         }
-    , 3.0f, false);
+    }, 3.0f, false);
     
     if (PSTrail)
     {
@@ -126,10 +128,23 @@ void AAuroraOrb::BeginPlay()
     }
 
     // 호밍 타이머
-    GetWorld()->GetTimerManager().SetTimer(HomingTimer,[this]() { 
-        bCanHoming = true; 
+    GetWorld()->GetTimerManager().SetTimer(HomingTimer, [WeakThis]() {
+        if (WeakThis.IsValid())
+        {
+            WeakThis->bCanHoming = true;
         }
-    ,HomingStartDelay, false);
+    }, HomingStartDelay, false);
+}
+
+void AAuroraOrb::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    if (UWorld* World = GetWorld())
+    {
+        World->GetTimerManager().ClearTimer(OrbTimer);
+        World->GetTimerManager().ClearTimer(HomingTimer);
+    }
+
+    Super::EndPlay(EndPlayReason);
 }
 
 // Called every frame

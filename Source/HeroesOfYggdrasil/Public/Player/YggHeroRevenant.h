@@ -25,6 +25,7 @@ protected:
 
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	virtual void SkillE(const FInputActionValue& Value) override;
+	virtual void SkillR(const FInputActionValue& Value) override;
 
 
 public:

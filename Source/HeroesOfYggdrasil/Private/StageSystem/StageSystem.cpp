@@ -44,6 +44,16 @@ void UStageSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 		Timer = 0.0f;
 }
 
+void UStageSystem::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (bIsGameStarted)
+	{
+		ElapsedTimeFromStart += DeltaTime;
+	}
+}
+
 void UStageSystem::BeginPlay()
 {
 	Super::BeginPlay();
@@ -136,6 +146,8 @@ void UStageSystem::StartGame()
 void UStageSystem::BroadcastGameStart_Implementation(FOnGameStartParams OnGameStartParams)
 {
 	OnGameStarted.Broadcast(OnGameStartParams);
+
+	bIsGameStarted = true;
 }
 
 void UStageSystem::EnterNextStage()

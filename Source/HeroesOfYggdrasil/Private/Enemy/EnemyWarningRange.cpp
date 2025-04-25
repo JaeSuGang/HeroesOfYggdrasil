@@ -36,6 +36,7 @@ AEnemyWarningRange::AEnemyWarningRange()
         RangeAttackCollision = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("CapsuleCollision"));
         RangeAttackCollision->SetupAttachment(PlaneMesh);
         RangeAttackCollision->CollisionOff();
+        RangeAttackCollision->SetCollisionProfileName("MonsterAttackCollision");
         RangeAttackCollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyWarningRange::OverLap);
     }
 
@@ -92,8 +93,8 @@ void AEnemyWarningRange::Tick(float DeltaTime)
     if (TimeElapsed > Duration)
     {
         SpawnRangeEffect();
-        RangeAttackCollision->SetCapsuleSize(100.0f, 100.0f);
         RangeAttackCollision->CollisionOn();
+        RangeAttackCollision->SetCapsuleSize(100.0f, 100.0f);
         Destroy();
         return;
     }
@@ -185,7 +186,6 @@ void AEnemyWarningRange::OverLap(UPrimitiveComponent* OverlappedComponent, AActo
             {
                 if (IsValid(YggCharacterEnemy))
                 {
-
                     AYggCharacter* YggCharacter = Cast<AYggCharacter>(Hero);
                     YggCharacterEnemy->OnHeroEnteredRange.Broadcast(YggCharacter);
                 }

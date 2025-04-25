@@ -49,6 +49,10 @@ void AYggHeroRevenant::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		{
 			EnhancedInput->BindAction(ActionMap[TEXT("SkillQ")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::SkillQ);
 		}
+		if (ActionMap.Contains(FName("SkillR")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillR")], ETriggerEvent::Triggered, this, &AYggHeroRevenant::SkillR);
+		}
 	}
 }
 
@@ -118,6 +122,17 @@ void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
 	FVector NewAimDir = Local_GetAimDirection(RightSocketName);
 	Server_SetAimDirection(NewAimDir);
 	Super::SkillE(Value);
+}
+
+void AYggHeroRevenant::SkillR(const FInputActionValue& Value)
+{
+	if (bAimMode == false)
+	{
+		SetAimMode(true);
+	}
+	FVector NewAimDir = Local_GetAimDirection(TEXT("None"));
+	Server_SetAimDirection(NewAimDir);
+	Super::SkillR(Value);
 }
 
 

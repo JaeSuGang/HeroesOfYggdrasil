@@ -9,6 +9,10 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyCountDelegate, AEnemyManager*, _Manager);
 
+
+class AEnemyCharacter;
+
+
 /**
  * 담당 : 김경민, 장시혁
  */
@@ -56,7 +60,7 @@ public:
 	AActor* CreateMonster(const FString& _MonsterName, FVector _OriginPos);
 
 	UPROPERTY(ReplicatedUsing = OnRep_AllEnemyCharacter, VisibleAnywhere)
-	TArray<class AEnemyCharacter*> AllEnemyCharacter;
+	TArray<AEnemyCharacter*> AllEnemyCharacter;
 
 	UPROPERTY(ReplicatedUsing = OnRep_EnemyCount)
 	int32 CachedEnemyCount;

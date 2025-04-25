@@ -11,6 +11,7 @@
 #include "Core/YggCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
+
 // Sets default values
 AYggProjectileActor::AYggProjectileActor()
 {
@@ -80,7 +81,7 @@ void AYggProjectileActor::BeginPlay()
 void AYggProjectileActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	DrawDebugSphere(GetWorld(), GetActorLocation(), 10.f, 12, FColor::Red);
+	//DrawDebugSphere(GetWorld(), GetActorLocation(), 10.f, 12, FColor::Red);
 }
 
 void AYggProjectileActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -140,6 +141,16 @@ void AYggProjectileActor::SetMaxSpeed(float _MaxSpeed)
 	}
 }
 
+void AYggProjectileActor::DelayShoot(float _DelayTime)
+{
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
+		{
+			ComputeAndLaunch();
+			AttackCapsuleComponent->CollisionOn();
+		}, _DelayTime, false);
+}
+
 void AYggProjectileActor::Server_SetAimDir_Implementation(FVector _AimDirection)
 {
 	MultiCast_SetAimDir(_AimDirection);
@@ -148,6 +159,51 @@ void AYggProjectileActor::Server_SetAimDir_Implementation(FVector _AimDirection)
 void AYggProjectileActor::MultiCast_SetAimDir_Implementation(FVector _AimDirection)
 {
 	AimDirection = _AimDirection;
+}
+
+bool AYggProjectileActor::ComputeAndLaunch()
+{
+	const FVector Start = GetActorLocation();
+	const FVector Target = TargetLocation;
+	const double  g = FMath::Abs(GetWorld()->GetGravityZ());
+	if (g < KINDA_SMALL_NUMBER) return false;
+
+	const double ApexZ = bAbsoluteApexZ ? ApexOffsetZ
+		: (Start.Z + ApexOffsetZ);
+	const double HighestZ = FMath::Max(Start.Z, Target.Z);
+	if (ApexZ <= HighestZ + 1.0) return false;
+
+	/* ─── 포물선 3-식 ─── */
+	const double Vz = FMath::Sqrt(2.0 * g * (ApexZ - Start.Z));
+	const double tUp = Vz / g;
+	const double tDown = FMath::Sqrt(2.0 * (ApexZ - Target.Z) / g);
+	const double tTot = tUp + tDown;
+
+	FVector ToTargetXY = Target - Start;  ToTargetXY.Z = 0;
+	const double DistXY = ToTargetXY.Size();
+	if (DistXY < KINDA_SMALL_NUMBER) return false;
+
+	const FVector DirXY = ToTargetXY / DistXY;
+	const double  Vxy = DistXY / tTot;
+
+	const FVector LaunchVel = DirXY * Vxy + FVector(0, 0, Vz);
+
+	/* ─── 바로 적용 & 발사 ─── */
+	if (!ProjectileMovement) return false;
+
+	ProjectileMovement->StopMovementImmediately();
+	ProjectileMovement->Velocity = LaunchVel;
+	ProjectileMovement->ProjectileGravityScale = 1.f;
+	ProjectileMovement->bRotationFollowsVelocity = true;
+	ProjectileMovement->Activate(true);
+
+	return true;
+}
+
+/*——— 발사 ———*/
+void AYggProjectileActor::LaunchTo()
+{
+
 }
 
 void AYggProjectileActor::LineMode()
@@ -165,24 +221,7 @@ void AYggProjectileActor::ParabolaMode()
 
 void AYggProjectileActor::TargetParabolaMode()
 {
-	if (!ProjectileMovement) return;
 
-	FVector StartLocation = GetActorLocation();
-	FVector TossVelocity;
-
-	// 고정된 발사 속도로 포물선 궤적 계산
-	bool bHasSolution = UGameplayStatics::SuggestProjectileVelocity_CustomArc(
-		this,
-		TossVelocity,
-		StartLocation,
-		TargetLocation,
-		0.5f // Arc parameter: 0.0 = flat shot, 1.0 = high arc (0.5은 보통 느낌)
-	);
-
-	if (bHasSolution)
-	{
-		ProjectileMovement->Velocity += TossVelocity;
-	}
 }
 
 void AYggProjectileActor::HomingMode()

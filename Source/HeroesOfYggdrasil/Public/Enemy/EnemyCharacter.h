@@ -19,6 +19,7 @@ class UMHPBarComponent;
 class UWidgetComponent;
 class AYggCharacter;
 class AYggTickActor;
+class USoundCue;
 
 /**
  * 담당 : 장시혁
@@ -123,6 +124,22 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void DragonBreath();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void AttackPlaySound();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void HitPlaySound();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DeathPlaySound();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DragonRangeAttackPlaySound();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DragonBreathPlaySound();
+
+
 	UFUNCTION()
 	void DragonBreathDamage(AYggCharacter* _Target);
 
@@ -160,6 +177,22 @@ public:
 	UPROPERTY(EditAnywhere, Replicated, Category = "Effects")
 	TSoftObjectPtr<UParticleSystem> BloodParticle;
 
+	// Sound
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundCue* AttackSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundCue* HitSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundCue* DeathSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundCue* DragonBreathSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+	USoundCue* DragonRangeAttackSound;
+
 private:
 	// 몬스터 이름 데이터
 	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -195,6 +228,7 @@ private:
 
 	UPROPERTY(EditAnywhere, Replicated, Category = "AttackCapsule")
 	UYggAttackCapsuleComponent* DragonBreathCapsule;
+
 };
 
 

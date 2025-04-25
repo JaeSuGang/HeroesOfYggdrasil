@@ -117,7 +117,7 @@ void AYggTickActor::LoadEffectFromDataTable()
 
 
 	TSoftObjectPtr<UDataTable> TableRef = TSoftObjectPtr<UDataTable>(
-		FSoftObjectPath("/Game/Data/StatusTickActorDataTable.StatusTickActorDataTable"));
+		FSoftObjectPath("/Game/Data/DT_StatusTickActorDataTable.DT_StatusTickActorDataTable"));
 
 	if (!TableRef.IsValid())
 	{

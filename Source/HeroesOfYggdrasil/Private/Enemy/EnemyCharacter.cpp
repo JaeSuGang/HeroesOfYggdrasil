@@ -4,6 +4,8 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
+#include "Sound/SoundCue.h"
+
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "MainGame/MainGameState.h"
@@ -74,6 +76,8 @@ void AEnemyCharacter::BeginPlay()
 
 	
 	const FMonsterDataRow FindData = UGlobalDataTable::GetMonsterData(GetWorld(), DataKey);
+
+
 	MonsterData = &FindData;
 	EnemyType = ConvertStringToEnemyType(DataKey);
 
@@ -142,6 +146,13 @@ void AEnemyCharacter::BeginPlay()
 	TickParticle = FindData.TickParticle;
 	TickNiagaraSystem = FindData.TickNiagaraSystem;
 	BloodParticle = FindData.BloodParticle;
+
+	AttackSound = FindData.AttackSound;
+	HitSound = FindData.HitSound;
+	DeathSound = FindData.DeathSound;
+	DragonBreathSound = FindData.DragonBreathSound;
+	DragonRangeAttackSound = FindData.DragonRangeAttackSound;
+
 
 	// AttributeComponent 세팅
 	if (CharacterAttributeComponent != nullptr)
@@ -496,7 +507,8 @@ void AEnemyCharacter::SpawnWarningOutRange(AActor* _Actor)
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 
-	GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
+	AEnemyWarningRange* Range = GetWorld()->SpawnActor<AEnemyWarningRange>(WarningOutRangeClass, SpawnLocation, SpawnRotation, SpawnParams);
+	Range->SetOwner(this);
 }
 
 void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _TargetActor)
@@ -527,7 +539,8 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 	if (RangeAttack)
 	{
 		RangeAttack->SetOwner(this);
-		if (_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+
+		if (!_TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
 		{
 			FVector Direction = FVector::ZeroVector;
 			FVector Axis = FVector::ZeroVector;
@@ -549,14 +562,16 @@ void AEnemyCharacter::SpawnEnemySkillAttack(FVector _TargetLocation, AActor* _Ta
 			
 
 			RangeAttack->GetProjectileMovement()->Velocity = FinalVelocity;
+
+			AYggCharacter* TargetCharacter = Cast<AYggCharacter>(_TargetActor);
+			WarpToRandomPoint(TargetCharacter);
 		}
 		else
 		{
 			RangeAttack->GetProjectileMovement()->Velocity = (_TargetLocation - SpawnLocation).GetSafeNormal() * 2000.f;
 		}
 	}
-	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(_TargetActor);
-	WarpToRandomPoint(TargetCharacter);
+	
 }
 
 void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
@@ -582,7 +597,7 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect, Att);
 }
 
-void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
+void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter * _Target)
 {
 	if (!IsValid(_Target) || !DataKey.StartsWith("Minion_Witch")) return;
 
@@ -598,12 +613,31 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 	Center.Z = GetActorLocation().Z;
 	const float Radius = 1300.0f;
 
-	// 정확히 원형 테두리 위의 지점 계산
 	const FVector RandUnitDir = UKismetMathLibrary::RandomUnitVector();
 	const FVector Offset = FVector(RandUnitDir.X, RandUnitDir.Y, 0.f) * Radius;
-	const FVector Destination = Center + Offset;
+	FVector Destination = Center + Offset;
 
-	// Particle 이펙트
+	// 지면 체크용 라인트레이스
+	FHitResult HitResult;
+	const FVector TraceStart = Destination + FVector(0, 0, 1000.f);
+	const FVector TraceEnd = Destination + FVector(0, 0, -1000.f);
+	FCollisionQueryParams TraceParams;
+	TraceParams.bTraceComplex = false;
+	TraceParams.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, ECC_Visibility, TraceParams);
+
+	if (bHit)
+	{
+		Destination.Z = HitResult.ImpactPoint.Z;
+	}
+	else
+	{
+		// 안전장치: 너무 낮은 곳으로 워프 방지
+		const float MinZ = -500.f;
+		Destination.Z = FMath::Max(Destination.Z, MinZ);
+	}
+
 	UParticleSystemComponent* ParticleComp = NewObject<UParticleSystemComponent>(this);
 	if (IsValid(ParticleComp))
 	{
@@ -614,17 +648,12 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 		ParticleComp->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::KeepRelativeTransform);
 	}
 
-	// 숨기기 & Niagara 준비
-	
-
 	TWeakObjectPtr<AEnemyCharacter> WeakEnemy = this;
 	if (!WeakEnemy.IsValid()) return;
 
-	// Niagara 이후 실제 워프
 	FTimerHandle SpawnTimerHandle;
 
-
-	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemy, Destination]()
+	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemy]()
 		{
 			if (!WeakEnemy.IsValid()) return;
 
@@ -635,13 +664,13 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter* _Target)
 	GetWorld()->GetTimerManager().SetTimer(SpawnTimerHandle, FTimerDelegate::CreateLambda([this, WeakEnemy, Destination]()
 		{
 			if (!WeakEnemy.IsValid()) return;
-			
-			// 실제 텔레포트
+
 			WeakEnemy->SetActorLocation(Destination);
 			WeakEnemy->SetActorHiddenInGame(false);
 
 		}), 1.0f, false);
 }
+
 
 
 
@@ -756,4 +785,44 @@ void AEnemyCharacter::DragonBreathDamage(AYggCharacter*_Target)
 	if (DataKey != FString(TEXT("Dragon"))) return;
 
 	HandleHeroEnteredRange(_Target);
+}
+
+void AEnemyCharacter::AttackPlaySound_Implementation()
+{
+	if (AttackSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, AttackSound, GetActorLocation());
+	}
+}
+
+void AEnemyCharacter::HitPlaySound_Implementation()
+{
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, GetActorLocation());
+	}
+}
+
+void AEnemyCharacter::DeathPlaySound_Implementation()
+{
+	if (DeathSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	}
+}
+
+void AEnemyCharacter::DragonRangeAttackPlaySound_Implementation()
+{
+	if (DragonRangeAttackSound && DataKey.StartsWith(TEXT("Dragon")))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DragonRangeAttackSound, GetActorLocation());
+	}
+}
+
+void AEnemyCharacter::DragonBreathPlaySound_Implementation()
+{
+	if (DragonBreathSound && DataKey.StartsWith(TEXT("Dragon")))
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DragonBreathSound, GetActorLocation());
+	}
 }

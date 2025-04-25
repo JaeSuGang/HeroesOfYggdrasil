@@ -49,6 +49,8 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 		float Duration = FMath::Max(0.3f, 0.1f);
 		FTimerDelegate TimerDel;
 		FTimerHandle TimerHandle;
+		
+		Enemy->HitPlaySound();
 
 		TWeakObjectPtr<AEnemyCharacter> WeakEnemy = Enemy;
 		FWeakObjectPtr WeakOwner = &_OwnerComp;

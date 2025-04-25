@@ -114,16 +114,16 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 				if (!EnemyChar || !Comp) return;
 
 				float HealthPercent = EnemyChar->GetAttributeComponent()->GetHP() / EnemyChar->GetAttributeComponent()->MaxHP;
-				FPlayAIData& LocalData = UEnemyBTTaskNode::GetPlayAIData(*Comp);
+				FPlayAIData& LocaAIlData = UEnemyBTTaskNode::GetPlayAIData(*Comp);
 
 				if (EnemyChar->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
 					ChangeState(*Comp, EEnemyAIState::Idle);
 					return;
 				}
 
-				if (HealthPercent <= 0.5f && !LocalData.bUsedBreathAttack)
+				if (HealthPercent <= 0.5f && !LocaAIlData.bUsedBreathAttack)
 				{
-					LocalData.bUsedBreathAttack = true;
+					LocaAIlData.bUsedBreathAttack = true;
 					ChangeState(*Comp, EEnemyAIState::DragonBreath);
 				}
 				else
@@ -132,7 +132,7 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 					RandStream.GenerateNewSeed();
 					float Rand = RandStream.FRand();
 
-					if (Rand <= 0.5f)
+					if (Rand <= 0.6f)
 					{
 						ChangeState(*Comp, EEnemyAIState::Attack);
 					}
