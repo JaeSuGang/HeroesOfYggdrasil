@@ -7,7 +7,7 @@
 #include "YggVictoryUserWidget.generated.h"
 
 class UTextBlock;
-class UTexture2D;
+class UWidgetAnimation;
 
 /**
  * 
@@ -18,6 +18,8 @@ class HEROESOFYGGDRASIL_API UYggVictoryUserWidget : public UYggUserWidget
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION(BlueprintCallable)
+	void Init();
 
 
 protected:
@@ -28,9 +30,20 @@ protected:
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* sdf;
+	UTextBlock* PlayTime;
+	
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* CurWave;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* sdfsdfdf;
+	UTextBlock* WaveProgress;
 
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* MDeathCount;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* PDeathCount;
+
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* FirstAnim;
 };

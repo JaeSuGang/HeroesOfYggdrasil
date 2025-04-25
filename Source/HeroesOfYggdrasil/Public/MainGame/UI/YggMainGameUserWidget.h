@@ -25,6 +25,8 @@ class UYggStatusUserWidget;
 class UTextBlock;
 class UStageBase;
 class UYggFuelBarUserWidget;
+class UYggVictoryUserWidget;
+class UYggDefeatedUserWidget;
 
 /**
  * 
@@ -71,6 +73,12 @@ public:
 	UFUNCTION()
 	void ChildWidgetHidden(FOnDefeatedParams OnDefeatedParams);
 
+	UFUNCTION()
+	void CreateVictoryWidget();
+
+	UFUNCTION()
+	void CreateDefeatedWidget();
+
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
@@ -112,6 +120,12 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> FuelBarWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> VictoryWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> DefeatedWidgetClass;
+
 	UPROPERTY()
 	UYggPlayerStatusUserWidget* PlayerStatusWidget;
 
@@ -138,4 +152,10 @@ private:
 
 	UPROPERTY()
 	UYggFuelBarUserWidget* FuelBarWidget;
+
+	UPROPERTY()
+	UYggVictoryUserWidget* VictoryWidget;
+
+	UPROPERTY()
+	UYggDefeatedUserWidget* DefeatedWidget;
 };
