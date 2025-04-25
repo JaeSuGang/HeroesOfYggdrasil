@@ -63,6 +63,10 @@ void AYggHeroKhaimera::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInput)
 	{
+		if (ActionMap.Contains(FName("SkillQ")))
+		{
+			EnhancedInput->BindAction(ActionMap[TEXT("SkillQ")], ETriggerEvent::Triggered, this, &AYggHeroKhaimera::SkillQ);
+		}
 	}
 }
 
@@ -84,7 +88,26 @@ void AYggHeroKhaimera::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+void AYggHeroKhaimera::SkillQ(const FInputActionValue& Value)
+{
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+	if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
+	if (HasAuthority())
+	{
+		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+		MulticastHeroSkillQ(Value);
+	}
+	else
+	{
+		ServerHeroSkillQ(Value);
+	}
 
+	float CoolTime = HeroAttributeComponent->SkillQMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
+	OnSkillQ.Broadcast(FName("SkillQ"), CoolTime);
+}
 
 
 

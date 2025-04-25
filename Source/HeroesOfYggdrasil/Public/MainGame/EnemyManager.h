@@ -8,7 +8,7 @@
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyCountDelegate, AEnemyManager*, _Manager);
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnEnemyRemovedDelegate, AEnemyManager*, Manager);
 
 class AEnemyCharacter;
 
@@ -51,6 +51,9 @@ public:
 	void OnRep_AllEnemyCharacter();
 
 	UFUNCTION()
+	void OnRep_DeadEnemyCount();
+
+	UFUNCTION()
 	void OnRep_EnemyCount();
 
 protected:
@@ -65,9 +68,12 @@ public:
 	UPROPERTY(ReplicatedUsing = OnRep_EnemyCount)
 	int32 CachedEnemyCount;
 
-	
-
+	UPROPERTY(ReplicatedUsing = OnRep_DeadEnemyCount)
+	int32 DeadEnemyCount;
 
 	UPROPERTY(BlueprintAssignable, Category = "EnemyManager")
 	FOnEnemyCountDelegate OnEnemyCountDelegate;
+
+	UPROPERTY(BlueprintAssignable, Category = "EnemyManager")
+	FOnEnemyRemovedDelegate OnEnemyRemovedDelegate;
 };

@@ -20,14 +20,5 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class AYggProjectileActor> ProjectileClass;
-
-	int32 Count = 10;
-	int32 CurCount = 0;
-
-	float Delay = 0.1f;
-	float ElapsedTime = 0.0f;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float CastingTime;
-
+	TSubclassOf<class AActor> ActorClass;
 };

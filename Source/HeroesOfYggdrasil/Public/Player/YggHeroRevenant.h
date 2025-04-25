@@ -26,12 +26,22 @@ protected:
 	virtual void SkillQ(const FInputActionValue& Value) override;
 	virtual void SkillE(const FInputActionValue& Value) override;
 	virtual void SkillR(const FInputActionValue& Value) override;
+	
+	virtual void Tick(float DeltaTime) override;
+
+	
 
 
 public:
+	UFUNCTION()
+	void SetIsUsingSkillR(bool bIsUsing) { bIsUsingSkillR = bIsUsing; }
+	UFUNCTION()
+	bool GetIsUsingSkillR() { return bIsUsingSkillR; }
+
 	
 
 protected:
+	bool bIsUsingSkillR = false;
 
 
 

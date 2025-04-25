@@ -29,5 +29,6 @@ void AYggBombActor::BeginPlay()
 	{
 		ExplosionAttackCapsuleComponent->SetOwnerCharacter(OwnerCharacter);
 	}
+	AttackCapsuleComponent->PlusLogic.RemoveAll(this);
 	AttackCapsuleComponent->PlusLogic.AddDynamic(this, &AYggBombActor::ExplosionOn);
 }

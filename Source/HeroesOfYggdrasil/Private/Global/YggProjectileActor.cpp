@@ -27,7 +27,7 @@ AYggProjectileActor::AYggProjectileActor()
 
 	AttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("AttackCapsuleComponent"));
 	AttackCapsuleComponent->SetupAttachment(RootComponent);
-
+	AttackCapsuleComponent->PlusLogic.AddDynamic(this, &AYggProjectileActor::StartDestroy);
 }
 
 // Called when the game starts or when spawned
@@ -204,6 +204,11 @@ bool AYggProjectileActor::ComputeAndLaunch()
 void AYggProjectileActor::LaunchTo()
 {
 
+}
+
+void AYggProjectileActor::StartDestroy()
+{
+	Destroy();
 }
 
 void AYggProjectileActor::LineMode()
