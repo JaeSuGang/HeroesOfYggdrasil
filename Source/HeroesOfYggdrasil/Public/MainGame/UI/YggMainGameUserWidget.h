@@ -27,6 +27,7 @@ class UStageBase;
 class UYggFuelBarUserWidget;
 class UYggVictoryUserWidget;
 class UYggDefeatedUserWidget;
+class UYggHasAbilityUserWidget;
 
 /**
  * 
@@ -35,7 +36,7 @@ UCLASS()
 class HEROESOFYGGDRASIL_API UYggMainGameUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
 	UYggPlayerStatusUserWidget* GetPlayerStatusWidget()
 	{
@@ -50,6 +51,11 @@ public:
 	UYggSkillBarUserWidget* GetSkillBarWidget()
 	{
 		return SkillBarWidget;
+	}
+
+	UYggHasAbilityUserWidget* GetHasAbilityWidget()
+	{
+		return HasAbilityWidget;
 	}
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
@@ -74,7 +80,7 @@ public:
 	void ChildWidgetHidden(FOnDefeatedParams OnDefeatedParams);
 
 	UFUNCTION()
-	void CreateVictoryWidget();
+	void CreateVictoryWidget(FOnVictoryParams OnVictoryParams);
 
 	UFUNCTION()
 	void CreateDefeatedWidget();
@@ -126,6 +132,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> DefeatedWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> HasAbilityWidgetClass;
+
 	UPROPERTY()
 	UYggPlayerStatusUserWidget* PlayerStatusWidget;
 
@@ -158,4 +167,7 @@ private:
 
 	UPROPERTY()
 	UYggDefeatedUserWidget* DefeatedWidget;
+
+	UPROPERTY()
+	UYggHasAbilityUserWidget* HasAbilityWidget;
 };

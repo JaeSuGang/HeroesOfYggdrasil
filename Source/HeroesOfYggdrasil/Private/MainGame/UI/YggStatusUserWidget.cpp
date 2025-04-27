@@ -13,6 +13,9 @@
 #include "Attribute/CharacterAttributeComponent.h"
 #include "MainGame/UI/YggStatusEffectUserWidget.h"
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
+#include "MainGame/UI/MainGameHUD.h"
+#include "MainGame/UI/YggMainGameUserWidget.h"
+#include "MainGame/UI/YggHasAbilityUserWidget.h"
 #include "Core/YggPlayerState.h"
 #include "Player/YggHero.h"
 
@@ -259,7 +262,11 @@ void UYggStatusUserWidget::EndStatus()
 
 void UYggStatusUserWidget::ShowAbility()
 {
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 
+	AMainGameHUD* HUD = PC->GetHUD<AMainGameHUD>();
+
+	HUD->GetMainGameWidget()->GetHasAbilityWidget()->SetVisibility(ESlateVisibility::Visible);
 }
 
 

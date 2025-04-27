@@ -15,6 +15,7 @@
 #include "MainGame/UI/YggFuelBarUserWidget.h"
 #include "MainGame/UI/YggVictoryUserWidget.h"
 #include "MainGame/UI/YggDefeatedUserWidget.h"
+#include "MainGame/UI/YggHasAbilityUserWidget.h"
 #include "MainGame/EnemyManager.h"
 
 #include "Components/CanvasPanel.h"
@@ -146,6 +147,23 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 			}
 		}
 	}
+
+	HasAbilityWidget = CreateWidget<UYggHasAbilityUserWidget>(GetWorld(), HasAbilityWidgetClass);
+	if (!HasAbilityWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	if (IsValid(HasAbilityWidget))
+	{
+		MainGamePanel->AddChild(HasAbilityWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(HasAbilityWidget->Slot))
+		{
+			//CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f));
+			//CanvasSlot->SetOffsets(FMargin(0.0f));
+			//CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+			CanvasSlot->SetPosition(FVector2D(650.0f, 525.0f));
+		}
+	}
 }
 
 void UYggMainGameUserWidget::NativeConstruct()
@@ -160,6 +178,7 @@ void UYggMainGameUserWidget::NativeConstruct()
 	StageSystem->OnStageStartedDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateWaveCount);
 
 	StageSystem->OnDefeated.AddDynamic(this, &UYggMainGameUserWidget::ChildWidgetHidden);
+	StageSystem->OnVictory.AddDynamic(this, &UYggMainGameUserWidget::CreateVictoryWidget);
 
 	StageSystem->LevelSequenceActor->GetSequencePlayer()->OnFinished.AddDynamic(this, &UYggMainGameUserWidget::CreateDefeatedWidget);
 
@@ -219,6 +238,11 @@ void UYggMainGameUserWidget::StatusVisibility()
 	else
 	{
 		StatusWidget->EndStatus();
+		
+		if (HasAbilityWidget)
+		{
+			HasAbilityWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
 
@@ -247,11 +271,9 @@ void UYggMainGameUserWidget::ChildWidgetHidden(FOnDefeatedParams OnDefeatedParam
 	MainGamePanel->ClearChildren();
 }
 
-void UYggMainGameUserWidget::CreateVictoryWidget()
+void UYggMainGameUserWidget::CreateVictoryWidget(FOnVictoryParams OnVictoryParams)
 {
-	SetVisibility(ESlateVisibility::Visible);
-
-	MainGamePanel->SetVisibility(ESlateVisibility::Visible);
+	MainGamePanel->ClearChildren();
 
 	VictoryWidget = CreateWidget<UYggVictoryUserWidget>(GetWorld(), VictoryWidgetClass);
 	if (!VictoryWidgetClass)
@@ -272,10 +294,6 @@ void UYggMainGameUserWidget::CreateVictoryWidget()
 
 void UYggMainGameUserWidget::CreateDefeatedWidget()
 {
-	SetVisibility(ESlateVisibility::Visible);
-
-	MainGamePanel->SetVisibility(ESlateVisibility::Visible);
-
 	DefeatedWidget = CreateWidget<UYggDefeatedUserWidget>(GetWorld(), DefeatedWidgetClass);
 	if (!DefeatedWidgetClass)
 		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);

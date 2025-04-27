@@ -8,6 +8,7 @@
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
 #include "MainGame/MainGamePlayerState.h"
 #include "MainGame/PlayerManager.h"
+#include "MainGame/UI/YggHasAbilityUserWidget.h"
 
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
@@ -166,9 +167,11 @@ void AMainGameHUD::CloseCurrentWidget()
 
 void AMainGameHUD::AbilitySelectEvent()
 {
-	if (MainGameWidgetClass)
+	if (MainGameUserWidget)
 	{
 		MainGameUserWidget = Cast<UYggMainGameUserWidget>(CurrentWidget);
+
+		MainGameUserWidget->GetHasAbilityWidget()->UpdateWidget();
 
 		MainGameUserWidget->DelSelectAbility();
 	}
@@ -176,7 +179,7 @@ void AMainGameHUD::AbilitySelectEvent()
 
 void AMainGameHUD::EnableCrossHair(bool bIsVisible)
 {
-	if (MainGameWidgetClass)
+	if (MainGameUserWidget)
 	{
 		if (bIsVisible)
 		{
@@ -199,4 +202,14 @@ void AMainGameHUD::OnUpgradePointChange(FOnUpgradePointsChangedParams OnUpgradeP
 	{
 		MainGameUserWidget->EndAbilityPlus();
 	}
+}
+
+void AMainGameHUD::AddAbility(FName AbilityName, UTexture2D* Texture, FName Description)
+{
+	FHasAbilityInfo NewInfo;
+	NewInfo.Texture = Texture;
+	NewInfo.Description = Description;
+
+	HasAbilityName.Add(AbilityName);
+	HasAbilityInfo.Add(AbilityName, NewInfo);
 }

@@ -69,21 +69,6 @@ void UYggAbilityUserWidget::AbilityInit(FPrimaryAssetId& AssetId)
 
 	UUpgradeSystem* UpgradeSystem = UUpgradeSystem::Get(GetWorld());
 
-	//PS->AvailableUpgradeIds[0];
-
-	//UpgradeSystem->Upgrade(nullptr, UpgradeDataAsset);
-
-	//PS->AvailableUpgradeIds.Num() > 2;
-			
-	//for (FPrimaryAssetId& AssetId : PS->AvailableUpgradeIds)
-	//{
-	//	FPrimaryAssetId{ "Upgrade::1" };
-	//	UUpgradeDataAsset* UpgradeData = UpgradeSystem->GetDataAssetFromPrimaryAssetId<UUpgradeDataAsset>(AssetId);
-	//	UpgradeData->UpgradeImage;
-	//	UpgradeData->UpgradeName;
-	//	UpgradeData->UpgradeDescription;
-	//}
-
 	UpgradeDataAsset = UpgradeSystem->GetDataAssetFromPrimaryAssetId<UUpgradeDataAsset>(AssetId);
 
 	if (IsValid(UpgradeDataAsset))
@@ -101,6 +86,11 @@ void UYggAbilityUserWidget::AbilitySelectEvent()
 	UHeroAttributeComponent* CAC = PC->GetPawn()->GetComponentByClass<UHeroAttributeComponent>();
 	
 	UUpgradeSystem* UpgradeSystem = UUpgradeSystem::Get(GetWorld());
+		
+	if (AMainGameHUD* HUD = PC->GetHUD<AMainGameHUD>())
+	{
+		HUD->AddAbility(UpgradeDataAsset->UpgradeName, UpgradeDataAsset->UpgradeImage, UpgradeDataAsset->UpgradeDescription);
+	}
 
 	UpgradeSystem->Upgrade(CAC, UpgradeDataAsset);
 }

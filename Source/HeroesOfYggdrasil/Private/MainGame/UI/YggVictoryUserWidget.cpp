@@ -23,7 +23,7 @@ void UYggVictoryUserWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	Init();
-	//PlayAnimation(FirstAnim);
+	PlayAnimation(FirstAnim);
 }
 
 void UYggVictoryUserWidget::NativeDestruct()
