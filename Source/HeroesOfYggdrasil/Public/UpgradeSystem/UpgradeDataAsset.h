@@ -14,7 +14,7 @@ enum class EUpgradeRarity : uint8
 {
 	Common UMETA(DisplayName = "노말"),
 	Epic UMETA(DisplayName = "에픽"),
-	Legandary UMETA(DisplayName = "레전더리")
+	Legendary UMETA(DisplayName = "레전더리")
 };
 
 /**

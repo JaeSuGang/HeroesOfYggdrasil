@@ -258,6 +258,12 @@ void UYggStatusUserWidget::EndStatus()
 		PlayAnimationReverse(PopupAnim);
 	}
 	SetVisibility(ESlateVisibility::HitTestInvisible);
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	AMainGameHUD* HUD = PC->GetHUD<AMainGameHUD>();
+
+	HUD->GetMainGameWidget()->GetHasAbilityWidget()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UYggStatusUserWidget::ShowAbility()
@@ -266,7 +272,14 @@ void UYggStatusUserWidget::ShowAbility()
 
 	AMainGameHUD* HUD = PC->GetHUD<AMainGameHUD>();
 
-	HUD->GetMainGameWidget()->GetHasAbilityWidget()->SetVisibility(ESlateVisibility::Visible);
+	if (ESlateVisibility::Visible != HUD->GetMainGameWidget()->GetHasAbilityWidget()->GetVisibility())
+	{
+		HUD->GetMainGameWidget()->GetHasAbilityWidget()->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		HUD->GetMainGameWidget()->GetHasAbilityWidget()->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 

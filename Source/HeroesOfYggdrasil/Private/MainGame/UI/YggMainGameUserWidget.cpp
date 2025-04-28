@@ -198,6 +198,7 @@ void UYggMainGameUserWidget::CreateAbility()
 {
 	if (nullptr != SelectAbilityWidget)
 	{
+		SelectAbilityWidget->PlayPopupAnim();
 		SelectAbilityWidget->SetVisibility(ESlateVisibility::Visible);
 		return;
 	}
