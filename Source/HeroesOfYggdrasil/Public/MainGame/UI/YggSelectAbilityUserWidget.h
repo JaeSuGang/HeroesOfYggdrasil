@@ -22,6 +22,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void ExitButtonEvent();
 
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void PlayPopupAnim();
+
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void PlayRPopupAnim();
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -47,6 +52,7 @@ private:
 	UPROPERTY()
 	UYggAbilityUserWidget* Ability_2;
 
-	
+	UPROPERTY(meta = (BindWidgetAnim), Transient)
+	UWidgetAnimation* PopupAnim;
 
 };

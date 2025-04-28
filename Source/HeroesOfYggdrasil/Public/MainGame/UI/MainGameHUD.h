@@ -17,6 +17,15 @@ class AEnemyCharacter;
 class AYggdrasil;
 class UYggMiniMapManager;
 
+USTRUCT()
+struct FHasAbilityInfo
+{
+	GENERATED_BODY()
+
+	UTexture2D* Texture;
+	FName Description;
+};
+
 /**
  * 
  */
@@ -61,6 +70,9 @@ public:
 	UFUNCTION()
 	void OnUpgradePointChange(FOnUpgradePointsChangedParams OnUpgradePointsChangedParams);
 
+	UFUNCTION(BlueprintCallable)
+	void AddAbility(FName AbilityName, UTexture2D* Texture, FName Description);
+
 	UYggMainGameUserWidget* GetMainGameWidget()
 	{
 		return MainGameUserWidget;
@@ -69,6 +81,16 @@ public:
 	AYggdrasil* GetYggdrasil()
 	{
 		return Yggdrasil;
+	}
+
+	const TArray<FName>& GetHasAbilityName() const
+	{
+		return HasAbilityName;
+	}
+	
+	const TMap<FName, FHasAbilityInfo>& GetHasAbilityInfo() const
+	{
+		return HasAbilityInfo;
 	}
 
 public:
@@ -110,4 +132,7 @@ public:
 
 	UPROPERTY()
 	UYggMiniMapManager* MiniMapManager;
+
+	TArray<FName> HasAbilityName;
+	TMap<FName, FHasAbilityInfo> HasAbilityInfo;
 };
