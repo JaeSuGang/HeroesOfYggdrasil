@@ -270,6 +270,8 @@ public:
 	FTransform StartTransform;
 
 	FVector GetTargetLocation() const { return TargetLocation; }
+
+	
 protected:
 	UPROPERTY(Replicated)
 	int32 DeathCount = 0;

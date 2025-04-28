@@ -15,6 +15,8 @@
 
 #include "Kismet/GameplayStatics.h"
 
+#include "Actors/AuroraFrostCatalyst.h"
+
 AYggHeroAurora::AYggHeroAurora()
 {
 	AttackCapsuleComponentMap.Reset();
@@ -234,6 +236,9 @@ void AYggHeroAurora::SkillQ(const FInputActionValue& Value)
 
 void AYggHeroAurora::SkillE(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+	if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
+
 	Super::SkillE(Value);
 
 	bIsSkillE = true;
@@ -304,6 +309,7 @@ void AYggHeroAurora::MagicCircleOn()
 
 	// 5. TargetPoint 결정
 	FVector TargetPoint = bHit ? Hit.ImpactPoint : TraceEnd;
+	MagicTargetPoint = TargetPoint;
 
 	// 6. 데칼 스폰 또는 위치 갱신
 	if (!IsValid(SkillEDecal))
@@ -334,6 +340,16 @@ void AYggHeroAurora::MagicCircleOff()
 		SkillEDecal->DestroyComponent();
 		SkillEDecal = nullptr;
 	}
+
+	UAnimMontage* CurrentMontage = HeroAnimInstance->GetCurrentActiveMontage();
+	if (!CurrentMontage) return;
+
+	FString MontageName = CurrentMontage->GetName();
+
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Emerald, MontageName);
+
+	HeroAnimInstance->Montage_Resume(CurrentMontage);
+
 }
 
 void AYggHeroAurora::JetpackOn(const FInputActionValue& Value)
