@@ -6,6 +6,13 @@
 #include "Components/CapsuleComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Particles/Emitter.h"
+#include "Particles/ParticleEmitter.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Particles/ParticleLODLevel.h"
+#include "Particles/ParticleModuleRequired.h"
+
 #include "Attribute/HeroAttributeComponent.h"
 #include "Enemy/EnemyCharacter.h"
 #include "Player/YggHeroAurora.h"
@@ -121,13 +128,61 @@ void AAuroraFrostMeteor::SpawnMeteorShower()
 {
     if (MeteorShower)
     {
-        UGameplayStatics::SpawnEmitterAtLocation(
+        UParticleSystemComponent* ParticleComp = UGameplayStatics::SpawnEmitterAtLocation(
             GetWorld(),
             MeteorShower,
             GetActorTransform(),
             true
         );
+
+        // 지우기 타이머 설정.
+        if (ParticleComp && ParticleComp->Template)
+        {
+            float MaxDuration = 0.f;
+            bool bHasInfinite = false;
+
+            for (const FParticleEmitterInstance* EmitterInst : ParticleComp->EmitterInstances)
+            {
+                if (EmitterInst && EmitterInst->SpriteTemplate)
+                {
+                    UParticleLODLevel* LODLevel = EmitterInst->SpriteTemplate->GetLODLevel(0);
+                    if (LODLevel && LODLevel->RequiredModule)
+                    {
+                        const float EmitterDuration = LODLevel->RequiredModule->EmitterDuration;
+
+                        const int32 EmitterLoops = LODLevel->RequiredModule->EmitterLoops;
+
+                        if (EmitterLoops == 0 || EmitterDuration <= 0)
+                        {
+                            bHasInfinite = true;
+                            break;
+                        }
+
+                        MaxDuration = FMath::Max(MaxDuration, EmitterDuration);
+                    }
+                }
+            }
+
+            // 루프가 있는 경우 3초 뒤 파괴
+            if (bHasInfinite)
+            {
+                MaxDuration = 3.f;
+            }
+
+            GetWorld()->GetTimerManager().SetTimer(
+                DestroyTimerHandle,
+                this,
+                &AAuroraFrostMeteor::DestroyMeteor,
+                MaxDuration,
+                false
+            );
+        }
     }
+}
+
+void AAuroraFrostMeteor::DestroyMeteor()
+{
+    Destroy();
 }
 
 float AAuroraFrostMeteor::DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit, float Coefficient)

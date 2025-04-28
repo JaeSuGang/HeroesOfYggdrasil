@@ -29,7 +29,11 @@ public:
 	UFUNCTION()
 	void OnMeteorOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
 	void SpawnMeteorShower();
+
+	UFUNCTION()
+	void DestroyMeteor();
 
 	float DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit, float Coefficient);
 
@@ -43,6 +47,8 @@ public:
 	TObjectPtr<UParticleSystem> MeteorPortal;
 
 	FTimerHandle MeteorTimerHandle;
+
+	FTimerHandle DestroyTimerHandle;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	UCapsuleComponent* MeteorCapsule;
