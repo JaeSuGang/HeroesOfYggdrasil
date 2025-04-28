@@ -236,6 +236,9 @@ void AYggHeroAurora::SkillQ(const FInputActionValue& Value)
 
 void AYggHeroAurora::SkillE(const FInputActionValue& Value)
 {
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable"))) return;
+	if (HeroAttributeComponent->SkillECurCoolTime > 0.0f) return;
+
 	Super::SkillE(Value);
 
 	bIsSkillE = true;
@@ -337,6 +340,16 @@ void AYggHeroAurora::MagicCircleOff()
 		SkillEDecal->DestroyComponent();
 		SkillEDecal = nullptr;
 	}
+
+	UAnimMontage* CurrentMontage = HeroAnimInstance->GetCurrentActiveMontage();
+	if (!CurrentMontage) return;
+
+	FString MontageName = CurrentMontage->GetName();
+
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Emerald, MontageName);
+
+	HeroAnimInstance->Montage_Resume(CurrentMontage);
+
 }
 
 void AYggHeroAurora::JetpackOn(const FInputActionValue& Value)

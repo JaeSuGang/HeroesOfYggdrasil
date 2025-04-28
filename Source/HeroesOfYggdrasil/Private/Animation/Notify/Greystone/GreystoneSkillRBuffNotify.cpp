@@ -25,7 +25,9 @@ void UGreystoneSkillRBuffNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimS
         AYggHero* OverlappedHero = Cast<AYggHero>(Actor);
         if (IsValid(OverlappedHero))
         {
-            OverlappedHero->GetHeroAttributeComponent()->Server_TakeDamage(-50.0f);
+            float Heal = Greystone->GetHeroAttributeComponent()->SkillRInfo.SkillCoefficient * -10.0f;
+
+            OverlappedHero->GetHeroAttributeComponent()->Server_TakeDamage(Heal);
         }
     }
 }

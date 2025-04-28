@@ -23,6 +23,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	void SpawnMeteorShower();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particle")
-	TObjectPtr<UParticleSystem> PSTemplate;
+	TObjectPtr<UParticleSystem> MeteorShower;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particle")
+	TObjectPtr<UParticleSystem> MeteorPortal;
+
+	FTimerHandle MeteorTimerHandle;
 };
