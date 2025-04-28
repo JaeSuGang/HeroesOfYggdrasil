@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "AuroraFrostMeteor.generated.h"
 
+class UCapsuleComponent;
+
 UCLASS()
 class HEROESOFYGGDRASIL_API AAuroraFrostMeteor : public AActor
 {
@@ -23,7 +25,18 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION()
+	void OnMeteorOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 	void SpawnMeteorShower();
+
+	void SetAttPower(float Value)
+	{
+		AttPower = Value;
+	}
+
+	UPROPERTY (VisibleAnywhere)
+	USceneComponent* RootScene;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Particle")
 	TObjectPtr<UParticleSystem> MeteorShower;
@@ -32,4 +45,10 @@ public:
 	TObjectPtr<UParticleSystem> MeteorPortal;
 
 	FTimerHandle MeteorTimerHandle;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	UCapsuleComponent* MeteorCapsule;
+
+	UPROPERTY()
+	float AttPower;
 };

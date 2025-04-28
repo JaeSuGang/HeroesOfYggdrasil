@@ -69,7 +69,11 @@ void AAuroraFrostCatalyst::OnCatalystHit(UPrimitiveComponent* HitComp, AActor* O
 		FVector SpawnLoc = Hit.ImpactPoint;
 		FRotator SpawnRot = FRotator::ZeroRotator;
 		
-		AAuroraFrostMeteor* Meteor = GetWorld()->SpawnActor<AAuroraFrostMeteor>(MeteorClass, SpawnLoc, SpawnRot);
+		FActorSpawnParameters Params;
+		Params.Owner = GetOwner();
+		Params.Instigator = Cast<APawn>(GetOwner());
+
+		AAuroraFrostMeteor* Meteor = GetWorld()->SpawnActor<AAuroraFrostMeteor>(MeteorClass, SpawnLoc, SpawnRot, Params);
 		if (!Meteor) return;
 	}
 
