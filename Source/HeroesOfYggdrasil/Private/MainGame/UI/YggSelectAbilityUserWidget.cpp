@@ -77,6 +77,8 @@ void UYggSelectAbilityUserWidget::NativeOnInitialized()
 		}
 	}
 	Ability_2->AbilityInit(PS->AvailableUpgradeIds[2]);
+
+	PlayPopupAnim();
 }
 
 void UYggSelectAbilityUserWidget::NativeConstruct()
@@ -101,6 +103,16 @@ void UYggSelectAbilityUserWidget::NativeDestruct()
 
 void UYggSelectAbilityUserWidget::ExitButtonEvent()
 {
-	SetVisibility(ESlateVisibility::Hidden);
+	PlayRPopupAnim();
+	//SetVisibility(ESlateVisibility::Hidden);
 }
 
+void UYggSelectAbilityUserWidget::PlayPopupAnim()
+{
+	PlayAnimation(PopupAnim);
+}
+
+void UYggSelectAbilityUserWidget::PlayRPopupAnim()
+{
+	PlayAnimationReverse(PopupAnim);
+}

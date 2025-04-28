@@ -4,31 +4,31 @@
 
 #include "CoreMinimal.h"
 #include "MainGame/UI/YggUserWidget.h"
-#include "YggFuelBarUserWidget.generated.h"
+#include "YggTooltipUserWidget.generated.h"
 
-class UProgressBar;
+class UTextBlock;
 
 /**
  * 
  */
 UCLASS()
-class HEROESOFYGGDRASIL_API UYggFuelBarUserWidget : public UYggUserWidget
+class HEROESOFYGGDRASIL_API UYggTooltipUserWidget : public UYggUserWidget
 {
 	GENERATED_BODY()
-
 public:
 	UFUNCTION(BlueprintCallable)
-	void UpdateFuelBar();
+	void SetTipText(const FText& NameText, const FText& DescriptionText);
 
 
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual void NativeDestruct() override;
+	
 
 private:
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* FuelBar;
+	UTextBlock* Tooltip;
 
 
 };
