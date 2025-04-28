@@ -130,8 +130,7 @@ void UYggAttackCapsuleComponent::CollisionOn()
 		}
 
 		Coefficient = 1.f;
-	}
-	
+	}	
 }
 
 float UYggAttackCapsuleComponent::DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit)

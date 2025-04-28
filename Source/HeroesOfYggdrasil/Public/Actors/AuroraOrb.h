@@ -7,6 +7,7 @@
 #include "AuroraOrb.generated.h"
 
 class UCapsuleComponent;
+class UCharacterAttributeComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AAuroraOrb : public AActor
@@ -36,11 +37,6 @@ public:
 		bool bFromSweep,
 		const FHitResult& SweepResult
 	);
-
-	void SetAttPower(float Value)
-	{
-		AttPower = Value;
-	}
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* MeshComp;
@@ -92,4 +88,6 @@ private:
 
 	bool bCanHoming = false;
 	AActor* TargetEnemy = nullptr;
+
+	float DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit, float Coefficient);
 };

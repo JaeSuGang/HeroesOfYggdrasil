@@ -7,6 +7,7 @@
 #include "AuroraFrostMeteor.generated.h"
 
 class UCapsuleComponent;
+class UCharacterAttributeComponent;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AAuroraFrostMeteor : public AActor
@@ -30,10 +31,7 @@ public:
 
 	void SpawnMeteorShower();
 
-	void SetAttPower(float Value)
-	{
-		AttPower = Value;
-	}
+	float DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit, float Coefficient);
 
 	UPROPERTY (VisibleAnywhere)
 	USceneComponent* RootScene;
