@@ -208,7 +208,7 @@ void AYggProjectileActor::LaunchTo()
 
 void AYggProjectileActor::StartDestroy()
 {
-	Destroy();
+	AttackCapsuleComponent->CollisionOff();
 }
 
 void AYggProjectileActor::LineMode()
