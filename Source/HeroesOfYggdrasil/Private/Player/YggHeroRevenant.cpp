@@ -139,11 +139,11 @@ void AYggHeroRevenant::SkillR(const FInputActionValue& Value)
 void AYggHeroRevenant::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (bAimMode)
+	/*if (bAimMode)
 	{
 		FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
 		Server_SetAimDirection(NewAimDir);
-	}
+	}*/
 }
 
 
