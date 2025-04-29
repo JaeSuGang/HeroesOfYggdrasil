@@ -35,8 +35,8 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 			if (!Projectile) return;
 
 			Projectile->SetOwnerCharacter(Actor);
-			UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
 			Projectile->SetAimDir(AimDirection);
+			UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
 		}
 
 		if (AYggHeroRevenant* Revenant = Cast<AYggHeroRevenant>(Actor))
@@ -61,9 +61,9 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 					if (!Projectile) return;
 
 					Projectile->SetOwnerCharacter(Actor);
+					Projectile->SetAimDir(AimDirection);
 
 					UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
-					Projectile->SetAimDir(AimDirection);
 				}
 
 				{
@@ -84,9 +84,9 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 					if (!Projectile) return;
 
 					Projectile->SetOwnerCharacter(Actor);
+					Projectile->SetAimDir(AimDirection);
 
 					UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
-					Projectile->SetAimDir(AimDirection);
 				}
 
 			}
