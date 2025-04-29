@@ -47,9 +47,9 @@ void UYggWavePopupUserWidget::UpdateWidget(UStageBase* NewStage, int NewRound)
 	{
 		if (UReinforceStage* CastedStage = Cast<UReinforceStage>(NewStage))
 		{
-			if (0 != (CastedStage->StageSystem->CurrentRound - 1))
+			if (0 != (NewRound - 1))
 			{
-				FString String = FString::Printf(TEXT("WAVE  %d CLEAR"), (CastedStage->StageSystem->CurrentRound - 1));
+				FString String = FString::Printf(TEXT("WAVE  %d CLEAR"), (NewRound - 1));
 
 				Wave->SetText(FText::FromString(String));
 			}
@@ -57,7 +57,7 @@ void UYggWavePopupUserWidget::UpdateWidget(UStageBase* NewStage, int NewRound)
 
 		if (UBattleStage* CastedStage = Cast<UBattleStage>(NewStage))
 		{
-			FString String = FString::Printf(TEXT("WAVE  %d"), CastedStage->StageSystem->CurrentRound);
+			FString String = FString::Printf(TEXT("WAVE  %d"), NewRound);
 
 			Wave->SetText(FText::FromString(String));
 		}
