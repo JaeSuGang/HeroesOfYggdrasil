@@ -91,11 +91,6 @@ public:
 	void DelayShoot(float _DelayTime);
 
 	UFUNCTION()
-	bool ComputeAndLaunch();
-	UFUNCTION()
-	void LaunchTo();
-
-	UFUNCTION()
 	void StartDestroy();
 
 protected:

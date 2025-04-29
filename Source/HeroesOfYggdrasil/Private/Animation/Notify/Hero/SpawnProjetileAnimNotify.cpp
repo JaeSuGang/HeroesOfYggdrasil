@@ -36,9 +36,9 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 
 			Projectile->SetOwnerCharacter(Actor);
 			Projectile->SetAimDir(AimDirection);
-
 			UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
 		}
+
 		if (AYggHeroRevenant* Revenant = Cast<AYggHeroRevenant>(Actor))
 		{
 			if (Revenant->GetIsUsingSkillR())
