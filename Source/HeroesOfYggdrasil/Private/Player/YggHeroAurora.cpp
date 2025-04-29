@@ -147,6 +147,20 @@ void AYggHeroAurora::PossessedBy(AController* NewController)
 	}, 2.0f, false);
 }
 
+void AYggHeroAurora::OnRep_Controller()
+{
+	Super::OnRep_Controller();
+
+	if (IsLocallyControlled())
+	{
+		FTimerHandle InitTimer;
+		GetWorld()->GetTimerManager().SetTimer(InitTimer, [this]()
+			{
+				SetAimMode(true);
+			}, 2.0f, false);
+	}
+}
+
 void AYggHeroAurora::Look(const FInputActionValue& Value)
 {
 	if (GetController()->IsLookInputIgnored() || bIsUIMode)

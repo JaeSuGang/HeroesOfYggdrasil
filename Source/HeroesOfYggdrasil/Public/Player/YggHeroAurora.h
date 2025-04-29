@@ -25,6 +25,7 @@ protected:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_Controller() override;
 
 	virtual void Look(const FInputActionValue& Value) override;
 	virtual void Roll(const FInputActionValue& Value) override;

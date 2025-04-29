@@ -174,8 +174,13 @@ void AYggHero::SetAimMode(bool Value)
 	bAimMode = Value;
 	bUseControllerRotationYaw = bAimMode;
 
-	AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	MainGameHUD->EnableCrossHair(bAimMode);
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC && PC->IsLocalController())
+	{
+		AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PC->GetHUD());
+		if(MainGameHUD)
+			MainGameHUD->EnableCrossHair(bAimMode);
+	}
 
 	if (bUseControllerRotationYaw)
 	{
