@@ -172,6 +172,11 @@ void UYggStatusUserWidget::StatusInit()
 		Nickname->SetText(FText::FromString(Name));
 	}
 
+	if (IsValid(MoveSpeed))
+	{
+		MoveSpeed->SetText(FText::AsNumber(HAC->MaxMoveSpeed));
+	}
+
 }
 
 void UYggStatusUserWidget::UpdateStatus()
@@ -239,6 +244,11 @@ void UYggStatusUserWidget::UpdateStatus()
 		FText HealthText = FText::Format(FText::FromString("{0} / {1}"), FText::AsNumber(HAC->HP), FText::AsNumber(HAC->MaxHP));
 
 		HP->SetText(HealthText);
+	}
+
+	if (IsValid(MoveSpeed))
+	{
+		MoveSpeed->SetText(FText::AsNumber(HAC->MaxMoveSpeed));
 	}
 }
 
