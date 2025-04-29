@@ -249,11 +249,14 @@ void UYggMainGameUserWidget::StatusVisibility()
 
 void UYggMainGameUserWidget::UpdateWaveCount(UStageBase* NewStage)
 {
-	UBattleStage* BattleStage = NewStage->StageSystem->GetBattleStage();
-	
-	FString String = FString::Printf(TEXT("WAVE %d / %d"), NewStage->StageSystem->CurrentStageIndex, BattleStage->WaveTableAsArray.Num());
+	if (IsValid(NewStage))
+	{
+		UBattleStage* BattleStage = NewStage->StageSystem->GetBattleStage();
 
-	WaveCount->SetText(FText::FromString(String));
+		FString String = FString::Printf(TEXT("WAVE %d / %d"), NewStage->StageSystem->CurrentRound, BattleStage->WaveTableAsArray.Num());
+
+		WaveCount->SetText(FText::FromString(String));
+	}
 }
 
 void UYggMainGameUserWidget::ChildWidgetHidden(FOnDefeatedParams OnDefeatedParams)
