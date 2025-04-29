@@ -72,8 +72,8 @@ public:
 	void DefeatInternal();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_BroadcastStageStart(UStageBase* NewStage);
-	void Multicast_BroadcastStageStart_Implementation(UStageBase* NewStage);
+	void Multicast_BroadcastStageStart(UStageBase* NewStage, int NewRound);
+	void Multicast_BroadcastStageStart_Implementation(UStageBase* NewStage, int NewRound);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastDefeated(FOnDefeatedParams OnDefeatedParams);
