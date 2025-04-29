@@ -177,7 +177,7 @@ void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, f
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 
-	if (!OwningPawn || !TargetActor || !TargetCharacter) return;
+	if (!IsValid(OwningPawn) || !IsValid(TargetActor)|| !IsValid(TargetCharacter)) return;
 
 	const FString TargetName = TargetActor->GetName();
 
