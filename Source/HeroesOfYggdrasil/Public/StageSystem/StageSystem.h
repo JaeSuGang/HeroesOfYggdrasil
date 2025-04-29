@@ -36,7 +36,7 @@ struct FOnDefeatedParams
 
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnStageStartedDelegate, UStageBase*, NewStage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStageStartedDelegate, UStageBase*, NewStage, int, NewRound);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameStarted, FOnGameStartParams, OnGameStartParams);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnVictory, FOnVictoryParams, OnVictoryParams);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDefeated, FOnDefeatedParams, OnDefeatedParams);

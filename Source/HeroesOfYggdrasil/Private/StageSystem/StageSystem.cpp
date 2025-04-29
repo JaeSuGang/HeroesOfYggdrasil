@@ -115,7 +115,7 @@ void UStageSystem::DefeatInternal()
 
 void UStageSystem::Multicast_BroadcastStageStart_Implementation(UStageBase* NewStage)
 {
-	OnStageStartedDelegate.Broadcast(NewStage);
+	OnStageStartedDelegate.Broadcast(NewStage, CurrentRound);
 }
 
 void UStageSystem::MulticastDefeated_Implementation(FOnDefeatedParams OnDefeatedParams)
