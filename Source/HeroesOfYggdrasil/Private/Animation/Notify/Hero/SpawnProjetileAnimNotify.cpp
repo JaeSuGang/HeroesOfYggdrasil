@@ -39,6 +39,7 @@ void USpawnProjetileAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 
 			UGameplayStatics::FinishSpawningActor(Projectile, SpawnTransform);
 		}
+
 		if (AYggHeroRevenant* Revenant = Cast<AYggHeroRevenant>(Actor))
 		{
 			if (Revenant->GetIsUsingSkillR())

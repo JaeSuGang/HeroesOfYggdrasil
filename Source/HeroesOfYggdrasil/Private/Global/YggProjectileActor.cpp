@@ -96,12 +96,22 @@ void AYggProjectileActor::SetAimDir(FVector _AimDirection)
 
 	if (HasAuthority())
 	{
-		AimDirection = _AimDirection;
+		MultiCast_SetAimDir(_AimDirection);
 	}
 	else
 	{
 		Server_SetAimDir(_AimDirection);
 	}
+}
+
+void AYggProjectileActor::Server_SetAimDir(FVector _AimDirection)
+{
+	MultiCast_SetAimDir(_AimDirection);
+}
+
+void AYggProjectileActor::MultiCast_SetAimDir(FVector _AimDirection)
+{
+	AimDirection = _AimDirection;
 }
 
 void AYggProjectileActor::SetHomingTarget(AActor* Target)
