@@ -11,6 +11,7 @@
 class UProgressBar;
 class UTextBlock;
 class UCharacterAttributeComponent;
+class AEnemyManager;
 
 /**
  * 
@@ -25,7 +26,7 @@ public:
 	void UpdateWidget();
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
-	void Init(UStageBase* NewStage);
+	void Init(AEnemyManager* EnemyManager);
 
 protected:
 	virtual void NativeOnInitialized() override;

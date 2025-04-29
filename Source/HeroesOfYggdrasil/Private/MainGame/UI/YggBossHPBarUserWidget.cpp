@@ -9,22 +9,25 @@
 #include "Enemy/EnemyCharacter.h"
 #include "Attribute/CharacterAttributeComponent.h"
 
+#include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
+
 
 
 void UYggBossHPBarUserWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
 
-
+	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UYggBossHPBarUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
+	AEnemyManager* EnemyManager = AEnemyManager::Get(GetWorld());
 
-	StageSystem->OnStageStartedDelegate.AddDynamic(this, UYggBossHPBarUserWidget::Init);
+	EnemyManager->OnEnemyCountDelegate.AddDynamic(this, &UYggBossHPBarUserWidget::Init);
 }
 
 void UYggBossHPBarUserWidget::NativeDestruct()
@@ -35,23 +38,57 @@ void UYggBossHPBarUserWidget::NativeDestruct()
 
 void UYggBossHPBarUserWidget::UpdateWidget()
 {
+	
+	if (IsValid(HPBar) && IsValid(HPText))
+	{
+		float Percent = CAC->HP / CAC->MaxHP;
+		FText HealthText = FText::Format(FText::FromString("{0} / {1}"), FText::AsNumber(CAC->HP), FText::AsNumber(CAC->MaxHP));
 
+		if (0 >= Percent)
+		{
+			SetVisibility(ESlateVisibility::Hidden);
+		}
+
+		HPBar->SetPercent(Percent);
+		HPText->SetText(HealthText);
+	}
 }
 
-void UYggBossHPBarUserWidget::Init(UStageBase* NewStage)
+void UYggBossHPBarUserWidget::Init(AEnemyManager* EnemyManager)
 {
-	AEnemyManager* EnemyManager = AEnemyManager::Get(GetWorld());
+	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
+	
+	if (!IsValid(StageSystem) || !IsValid(EnemyManager))
+		return;
+
+	if (IsValid(CAC))
+		return;
+
+	if (!(5 == StageSystem->CurrentRound || 10 == StageSystem->CurrentRound))
+	{
+		CAC = nullptr;
+		if (ESlateVisibility::Visible == GetVisibility())
+		{
+			SetVisibility(ESlateVisibility::Hidden);
+		}
+		return;
+	}
 
 	for (AEnemyCharacter* Enemy : EnemyManager->AllEnemyCharacter)
 	{
 		if (!IsValid(Enemy))
-			return;
+			continue;
 
 		FString EnemyName = Enemy->GetDataKey();
 
 		if (EnemyName.Contains(TEXT("Dragon"), ESearchCase::IgnoreCase))
 		{
 			CAC = Enemy->GetAttributeComponent();
+			CAC->ClientDelegate_OnStatusChanged.RemoveDynamic(this, &UYggBossHPBarUserWidget::UpdateWidget);
+			CAC->ClientDelegate_OnStatusChanged.AddDynamic(this, &UYggBossHPBarUserWidget::UpdateWidget);
+			SetVisibility(ESlateVisibility::Visible);
+			UpdateWidget();
+			break;
 		}
 	}
 }
