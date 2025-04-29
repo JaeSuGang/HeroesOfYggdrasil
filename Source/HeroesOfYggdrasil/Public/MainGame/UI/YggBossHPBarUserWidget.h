@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "MainGame/UI/YggUserWidget.h"
+#include "StageSystem/StageSystem.h"
+
 #include "YggBossHPBarUserWidget.generated.h"
 
 class UProgressBar;
 class UTextBlock;
+class UCharacterAttributeComponent;
 
 /**
  * 
@@ -18,7 +21,11 @@ class HEROESOFYGGDRASIL_API UYggBossHPBarUserWidget : public UYggUserWidget
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void UpdateWidget();
 
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void Init(UStageBase* NewStage);
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -32,4 +39,6 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* HPText;
+
+	UCharacterAttributeComponent* CAC;
 };
