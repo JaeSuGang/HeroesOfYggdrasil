@@ -8,6 +8,7 @@
 
 class APlayerSelectZone;
 class UHeroUpgradeBase;
+class UAttributeComponent;
 
 USTRUCT()
 struct FOnUpgradePointsChangedParams
@@ -32,6 +33,10 @@ protected:
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 public:
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void Request_Upgrade(UAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId);
+	void Request_Upgrade_Implementation(UAttributeComponent* AttributeComponent, FPrimaryAssetId AssetId);
+
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerSetPlayerName(const FString& name);
 
