@@ -80,7 +80,7 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
-	Server_SetAimDirection(NewAimDir);
+	SetAimDirection(NewAimDir);
 	Super::Attack(Value);
 }
 
@@ -98,7 +98,7 @@ void AYggHeroRevenant::SkillQ(const FInputActionValue& Value)
 		return;
 	}
 	FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
-	Server_SetAimDirection(NewAimDir);
+	SetAimDirection(NewAimDir);
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 	if (HasAuthority())
 	{
@@ -120,7 +120,7 @@ void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	FVector NewAimDir = Local_GetAimDirection(RightSocketName);
-	Server_SetAimDirection(NewAimDir);
+	SetAimDirection(NewAimDir);
 	Super::SkillE(Value);
 }
 
@@ -131,7 +131,7 @@ void AYggHeroRevenant::SkillR(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	FVector NewAimDir = Local_GetAimDirection(TEXT("None"));
-	Server_SetAimDirection(NewAimDir);
+	SetAimDirection(NewAimDir);
 	bIsUsingSkillR = true;
 	Super::SkillR(Value);
 }
@@ -139,11 +139,7 @@ void AYggHeroRevenant::SkillR(const FInputActionValue& Value)
 void AYggHeroRevenant::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	/*if (bAimMode)
-	{
-		FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
-		Server_SetAimDirection(NewAimDir);
-	}*/
+	
 }
 
 

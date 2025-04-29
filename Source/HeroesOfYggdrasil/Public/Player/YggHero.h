@@ -240,6 +240,11 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_SetAimDirection(const FVector& InAimDir);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_SetAimDirection(const FVector& InAimDir);
+
+	virtual void SetAimDirection(const FVector& InAimDir);
+
 	UFUNCTION()
 	FVector Local_GetAimDirection(FName SocketName);
 
