@@ -46,14 +46,14 @@ void UYggVictoryUserWidget::Init()
 		}
 		
 		{
-			CurWave->SetText(FText::AsNumber(StageSystem->CurrentStageIndex));
+			CurWave->SetText(FText::AsNumber(StageSystem->CurrentRound));
 			CurWave->SetVisibility(ESlateVisibility::Hidden);
 		}
 
 		{
 			UBattleStage* BattleStage = StageSystem->GetBattleStage();
 
-			float Percent = static_cast<float>(StageSystem->CurrentStageIndex) / BattleStage->WaveTableAsArray.Num();
+			float Percent = static_cast<float>(StageSystem->CurrentRound) / BattleStage->WaveTableAsArray.Num();
 
 			FString String = FString::Printf(TEXT("%1.f%%"), Percent * 100);
 

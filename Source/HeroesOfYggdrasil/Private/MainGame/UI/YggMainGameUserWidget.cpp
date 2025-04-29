@@ -173,7 +173,7 @@ void UYggMainGameUserWidget::NativeConstruct()
 	AbilityPlusButton->OnClicked.AddDynamic(this, &UYggMainGameUserWidget::CreateAbility);
 
 	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
-	UpdateWaveCount(StageSystem->GetBattleStage(), StageSystem->CurrentRound);
+	UpdateWaveCount(StageSystem->GetBattleStage(), 0);
 
 	StageSystem->OnStageStartedDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateWaveCount);
 
@@ -249,6 +249,9 @@ void UYggMainGameUserWidget::StatusVisibility()
 
 void UYggMainGameUserWidget::UpdateWaveCount(UStageBase* NewStage, int NewRound)
 {
+	if (!IsValid(NewStage))
+		return;
+	
 	UBattleStage* BattleStage = NewStage->StageSystem->GetBattleStage();
 	
 	FString String = FString::Printf(TEXT("WAVE %d / %d"), NewRound, BattleStage->WaveTableAsArray.Num());
