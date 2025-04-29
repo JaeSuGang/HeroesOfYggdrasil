@@ -104,12 +104,12 @@ void AYggProjectileActor::SetAimDir(FVector _AimDirection)
 	}
 }
 
-void AYggProjectileActor::Server_SetAimDir(FVector _AimDirection)
+void AYggProjectileActor::Server_SetAimDir_Implementation(FVector _AimDirection)
 {
 	MultiCast_SetAimDir(_AimDirection);
 }
 
-void AYggProjectileActor::MultiCast_SetAimDir(FVector _AimDirection)
+void AYggProjectileActor::MultiCast_SetAimDir_Implementation(FVector _AimDirection)
 {
 	AimDirection = _AimDirection;
 }
@@ -156,65 +156,11 @@ void AYggProjectileActor::DelayShoot(float _DelayTime)
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 		{
-			ComputeAndLaunch();
+			
 			AttackCapsuleComponent->CollisionOn();
 		}, _DelayTime, false);
 }
 
-void AYggProjectileActor::Server_SetAimDir_Implementation(FVector _AimDirection)
-{
-	MultiCast_SetAimDir(_AimDirection);
-}
-
-void AYggProjectileActor::MultiCast_SetAimDir_Implementation(FVector _AimDirection)
-{
-	AimDirection = _AimDirection;
-}
-
-bool AYggProjectileActor::ComputeAndLaunch()
-{
-	const FVector Start = GetActorLocation();
-	const FVector Target = TargetLocation;
-	const double  g = FMath::Abs(GetWorld()->GetGravityZ());
-	if (g < KINDA_SMALL_NUMBER) return false;
-
-	const double ApexZ = bAbsoluteApexZ ? ApexOffsetZ
-		: (Start.Z + ApexOffsetZ);
-	const double HighestZ = FMath::Max(Start.Z, Target.Z);
-	if (ApexZ <= HighestZ + 1.0) return false;
-
-	/* ─── 포물선 3-식 ─── */
-	const double Vz = FMath::Sqrt(2.0 * g * (ApexZ - Start.Z));
-	const double tUp = Vz / g;
-	const double tDown = FMath::Sqrt(2.0 * (ApexZ - Target.Z) / g);
-	const double tTot = tUp + tDown;
-
-	FVector ToTargetXY = Target - Start;  ToTargetXY.Z = 0;
-	const double DistXY = ToTargetXY.Size();
-	if (DistXY < KINDA_SMALL_NUMBER) return false;
-
-	const FVector DirXY = ToTargetXY / DistXY;
-	const double  Vxy = DistXY / tTot;
-
-	const FVector LaunchVel = DirXY * Vxy + FVector(0, 0, Vz);
-
-	/* ─── 바로 적용 & 발사 ─── */
-	if (!ProjectileMovement) return false;
-
-	ProjectileMovement->StopMovementImmediately();
-	ProjectileMovement->Velocity = LaunchVel;
-	ProjectileMovement->ProjectileGravityScale = 1.f;
-	ProjectileMovement->bRotationFollowsVelocity = true;
-	ProjectileMovement->Activate(true);
-
-	return true;
-}
-
-/*——— 발사 ———*/
-void AYggProjectileActor::LaunchTo()
-{
-
-}
 
 void AYggProjectileActor::StartDestroy()
 {
