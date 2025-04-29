@@ -13,6 +13,9 @@
 #include "MainGame/UI/YggStatusUserWidget.h"
 #include "MainGame/UI/YggStatusEffectUserWidget.h"
 #include "MainGame/UI/YggFuelBarUserWidget.h"
+#include "MainGame/UI/YggVictoryUserWidget.h"
+#include "MainGame/UI/YggDefeatedUserWidget.h"
+#include "MainGame/UI/YggHasAbilityUserWidget.h"
 #include "MainGame/EnemyManager.h"
 
 #include "Components/CanvasPanel.h"
@@ -144,6 +147,23 @@ void UYggMainGameUserWidget::NativeOnInitialized()
 			}
 		}
 	}
+
+	HasAbilityWidget = CreateWidget<UYggHasAbilityUserWidget>(GetWorld(), HasAbilityWidgetClass);
+	if (!HasAbilityWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	if (IsValid(HasAbilityWidget))
+	{
+		MainGamePanel->AddChild(HasAbilityWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(HasAbilityWidget->Slot))
+		{
+			//CanvasSlot->SetAnchors(FAnchors(0.0f, 0.0f));
+			//CanvasSlot->SetOffsets(FMargin(0.0f));
+			//CanvasSlot->SetAlignment(FVector2D(0.0f, 0.0f));
+			CanvasSlot->SetPosition(FVector2D(650.0f, 525.0f));
+		}
+	}
 }
 
 void UYggMainGameUserWidget::NativeConstruct()
@@ -153,13 +173,15 @@ void UYggMainGameUserWidget::NativeConstruct()
 	AbilityPlusButton->OnClicked.AddDynamic(this, &UYggMainGameUserWidget::CreateAbility);
 
 	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
-	UpdateWaveCount(StageSystem->GetBattleStage());
+	UpdateWaveCount(StageSystem->GetBattleStage(), StageSystem->CurrentRound);
 
 	StageSystem->OnStageStartedDelegate.AddDynamic(this, &UYggMainGameUserWidget::UpdateWaveCount);
 
 	StageSystem->OnDefeated.AddDynamic(this, &UYggMainGameUserWidget::ChildWidgetHidden);
+	StageSystem->OnVictory.AddDynamic(this, &UYggMainGameUserWidget::CreateVictoryWidget);
 
-	//StageSystem->LevelSequenceActor->GetSequencePlayer()->OnFinished.AddDynamic(this, &UYggMainGameUserWidget::StatusVisibility);
+	StageSystem->LevelSequenceActor->GetSequencePlayer()->OnFinished.AddDynamic(this, &UYggMainGameUserWidget::CreateDefeatedWidget);
+
 }
 
 void UYggMainGameUserWidget::StartAbilityPlus()
@@ -176,6 +198,7 @@ void UYggMainGameUserWidget::CreateAbility()
 {
 	if (nullptr != SelectAbilityWidget)
 	{
+		SelectAbilityWidget->PlayPopupAnim();
 		SelectAbilityWidget->SetVisibility(ESlateVisibility::Visible);
 		return;
 	}
@@ -216,28 +239,75 @@ void UYggMainGameUserWidget::StatusVisibility()
 	else
 	{
 		StatusWidget->EndStatus();
+		
+		if (HasAbilityWidget)
+		{
+			HasAbilityWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
 
-void UYggMainGameUserWidget::UpdateWaveCount(UStageBase* NewStage)
+void UYggMainGameUserWidget::UpdateWaveCount(UStageBase* NewStage, int NewRound)
 {
 	UBattleStage* BattleStage = NewStage->StageSystem->GetBattleStage();
 	
-	FString String = FString::Printf(TEXT("WAVE %d / %d"), NewStage->StageSystem->CurrentStageIndex, BattleStage->WaveTableAsArray.Num());
+	FString String = FString::Printf(TEXT("WAVE %d / %d"), NewRound, BattleStage->WaveTableAsArray.Num());
 
 	WaveCount->SetText(FText::FromString(String));
 }
 
 void UYggMainGameUserWidget::ChildWidgetHidden(FOnDefeatedParams OnDefeatedParams)
 {
-	TArray<UWidget*> children;
-	WidgetTree->GetAllWidgets(children);
+	//TArray<UWidget*> children;
+	//WidgetTree->GetAllWidgets(children);
+	//
+	//for (UWidget* widget : children)
+	//{
+	//	if (widget)
+	//	{
+	//		widget->SetVisibility(ESlateVisibility::Hidden);
+	//	}
+	//}
 
-	for (UWidget* widget : children)
+	MainGamePanel->ClearChildren();
+}
+
+void UYggMainGameUserWidget::CreateVictoryWidget(FOnVictoryParams OnVictoryParams)
+{
+	MainGamePanel->ClearChildren();
+
+	VictoryWidget = CreateWidget<UYggVictoryUserWidget>(GetWorld(), VictoryWidgetClass);
+	if (!VictoryWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	if (IsValid(VictoryWidget))
 	{
-		if (widget)
+		MainGamePanel->AddChild(VictoryWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(VictoryWidget->Slot))
 		{
-			widget->SetVisibility(ESlateVisibility::Hidden);
+			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+			CanvasSlot->SetPosition(FVector2D(0.0f, 0.0f));
+		}
+	}
+}
+
+void UYggMainGameUserWidget::CreateDefeatedWidget()
+{
+	DefeatedWidget = CreateWidget<UYggDefeatedUserWidget>(GetWorld(), DefeatedWidgetClass);
+	if (!DefeatedWidgetClass)
+		UE_LOG(LogTemp, Warning, TEXT("%S (%u) 대상을 블루프린트에서 설정하지 않음"), __FUNCTION__, __LINE__);
+
+	if (IsValid(DefeatedWidget))
+	{
+		MainGamePanel->AddChild(DefeatedWidget);
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(DefeatedWidget->Slot))
+		{
+			CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
+			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
+			CanvasSlot->SetPosition(FVector2D(0.0f, 0.0f));
 		}
 	}
 }

@@ -16,6 +16,9 @@ class HEROESOFYGGDRASIL_API UYggCheatManager : public UCheatManager
 	
 public:
 	UFUNCTION(Exec)
+	void EnterBattleStage(int RoundNumber);
+
+	UFUNCTION(Exec)
 	void Upgrade(int index);
 
 	UFUNCTION(Exec)

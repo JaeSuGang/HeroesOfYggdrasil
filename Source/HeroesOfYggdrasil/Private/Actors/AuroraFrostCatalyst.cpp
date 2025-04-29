@@ -36,11 +36,13 @@ AAuroraFrostCatalyst::AAuroraFrostCatalyst()
 
 	CatalystCapsule->SetCollisionProfileName(TEXT("Custom"));
 	CatalystCapsule->SetCollisionObjectType(ECC_WorldDynamic);
-	CatalystCapsule->SetCollisionResponseToAllChannels(ECR_Overlap);
-	CatalystCapsule->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Overlap); // 땅과 Overlap
-	CatalystCapsule->SetCollisionResponseToChannel(ECC_GameTraceChannel5, ECR_Overlap); // 벽과 Overlap
+	CatalystCapsule->SetCollisionResponseToAllChannels(ECR_Ignore);
 
-	CatalystCapsule->OnComponentBeginOverlap.AddDynamic(this, &AAuroraFrostCatalyst::OnCatalystOverlapBegin);
+	CatalystCapsule->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block); // 땅
+	CatalystCapsule->SetCollisionResponseToChannel(ECC_GameTraceChannel5, ECR_Block); // 벽
+	CatalystCapsule->SetCollisionResponseToChannel(ECC_GameTraceChannel6, ECR_Block); // 나무
+
+	CatalystCapsule->OnComponentHit.AddDynamic(this, &AAuroraFrostCatalyst::OnCatalystHit);
 }
 
 // Called when the game starts or when spawned
@@ -57,25 +59,23 @@ void AAuroraFrostCatalyst::Tick(float DeltaTime)
 
 }
 
-void AAuroraFrostCatalyst::OnCatalystOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AAuroraFrostCatalyst::OnCatalystHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherComp && (
-		OtherComp->GetCollisionObjectType() == ECC_WorldStatic ||
-		OtherComp->GetCollisionObjectType() == ECC_GameTraceChannel5))
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString("zfzfzf"));
+		
+	// 충돌 지점에 메테오 스폰
+	if (MeteorClass)
 	{
-		UWorld* World = GetWorld();
-		if (World && MeteorClass)
-		{
-			FVector SpawnLoc = SweepResult.ImpactPoint;
-			FRotator SpawnRot = GetActorRotation();
+		FVector SpawnLoc = Hit.ImpactPoint;
+		FRotator SpawnRot = FRotator::ZeroRotator;
+		
+		FActorSpawnParameters Params;
+		Params.Owner = GetOwner();
+		Params.Instigator = Cast<APawn>(GetOwner());
 
-			World->SpawnActor<AAuroraFrostMeteor>(
-				MeteorClass,
-				SpawnLoc,
-				SpawnRot
-			);
-		}
-
-		Destroy();
+		AAuroraFrostMeteor* Meteor = GetWorld()->SpawnActor<AAuroraFrostMeteor>(MeteorClass, SpawnLoc, SpawnRot, Params);
+		if (!Meteor) return;
 	}
+
+	Destroy();	
 }

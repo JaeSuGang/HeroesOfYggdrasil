@@ -25,7 +25,7 @@ public:
 	void PlayBGM(int SoundIndex);
 
 	UFUNCTION()
-	void OnStartStage(UStageBase* NewStage);
+	void OnStartStage(UStageBase* NewStage, int NewRound);
 
 	UFUNCTION()
 	void OnGameVictory(FOnVictoryParams OnVictoryParams);

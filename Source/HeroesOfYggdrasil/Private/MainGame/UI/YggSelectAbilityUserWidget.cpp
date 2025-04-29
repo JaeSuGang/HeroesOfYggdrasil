@@ -36,7 +36,7 @@ void UYggSelectAbilityUserWidget::NativeOnInitialized()
 			{
 				CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
 				CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
-				CanvasSlot->SetPosition(FVector2D(-500.0f, 0.0f));
+				CanvasSlot->SetPosition(FVector2D(-500.0f, -50.0f));
 			}
 		}
 	}
@@ -54,7 +54,7 @@ void UYggSelectAbilityUserWidget::NativeOnInitialized()
 			{
 				CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
 				CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
-				CanvasSlot->SetPosition(FVector2D(0.0f, 0.0f));
+				CanvasSlot->SetPosition(FVector2D(0.0f, -50.0f));
 			}
 		}
 	}
@@ -72,11 +72,13 @@ void UYggSelectAbilityUserWidget::NativeOnInitialized()
 			{
 				CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
 				CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
-				CanvasSlot->SetPosition(FVector2D(500.0f, 0.0f));
+				CanvasSlot->SetPosition(FVector2D(500.0f, -50.0f));
 			}
 		}
 	}
 	Ability_2->AbilityInit(PS->AvailableUpgradeIds[2]);
+
+	PlayPopupAnim();
 }
 
 void UYggSelectAbilityUserWidget::NativeConstruct()
@@ -101,6 +103,16 @@ void UYggSelectAbilityUserWidget::NativeDestruct()
 
 void UYggSelectAbilityUserWidget::ExitButtonEvent()
 {
-	SetVisibility(ESlateVisibility::Hidden);
+	PlayRPopupAnim();
+	//SetVisibility(ESlateVisibility::Hidden);
 }
 
+void UYggSelectAbilityUserWidget::PlayPopupAnim()
+{
+	PlayAnimation(PopupAnim);
+}
+
+void UYggSelectAbilityUserWidget::PlayRPopupAnim()
+{
+	PlayAnimationReverse(PopupAnim);
+}

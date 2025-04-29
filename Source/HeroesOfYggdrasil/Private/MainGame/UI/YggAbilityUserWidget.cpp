@@ -7,6 +7,7 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Components/WidgetComponent.h"
 
 #include "MainGame/MainGamePlayerState.h"
 
@@ -14,7 +15,8 @@
 #include "UpgradeSystem/UpgradeDataAsset.h"
 #include "Attribute/HeroAttributeComponent.h"
 
-
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 
 void UYggAbilityUserWidget::NativeOnInitialized()
 {
@@ -30,6 +32,8 @@ void UYggAbilityUserWidget::NativeOnInitialized()
 	{
 		SelectButton->OnClicked.AddDynamic(this, &UYggAbilityUserWidget::AbilitySelectEvent);
 		SelectButton->OnClicked.AddDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
+		SelectButton->OnHovered.AddDynamic(this, &UYggAbilityUserWidget::PlayHoverAnim);
+		SelectButton->OnUnhovered.AddDynamic(this, &UYggAbilityUserWidget::PlayUnHoverAnim);
 	}
 }
 
@@ -47,6 +51,8 @@ void UYggAbilityUserWidget::NativeDestruct()
 		{
 			SelectButton->OnClicked.RemoveDynamic(this, &UYggAbilityUserWidget::AbilitySelectEvent);
 			SelectButton->OnClicked.RemoveDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
+			SelectButton->OnHovered.RemoveDynamic(this, &UYggAbilityUserWidget::PlayHoverAnim);
+			SelectButton->OnUnhovered.RemoveDynamic(this, &UYggAbilityUserWidget::PlayUnHoverAnim);
 		}
 	}
 }
@@ -69,21 +75,6 @@ void UYggAbilityUserWidget::AbilityInit(FPrimaryAssetId& AssetId)
 
 	UUpgradeSystem* UpgradeSystem = UUpgradeSystem::Get(GetWorld());
 
-	//PS->AvailableUpgradeIds[0];
-
-	//UpgradeSystem->Upgrade(nullptr, UpgradeDataAsset);
-
-	//PS->AvailableUpgradeIds.Num() > 2;
-			
-	//for (FPrimaryAssetId& AssetId : PS->AvailableUpgradeIds)
-	//{
-	//	FPrimaryAssetId{ "Upgrade::1" };
-	//	UUpgradeDataAsset* UpgradeData = UpgradeSystem->GetDataAssetFromPrimaryAssetId<UUpgradeDataAsset>(AssetId);
-	//	UpgradeData->UpgradeImage;
-	//	UpgradeData->UpgradeName;
-	//	UpgradeData->UpgradeDescription;
-	//}
-
 	UpgradeDataAsset = UpgradeSystem->GetDataAssetFromPrimaryAssetId<UUpgradeDataAsset>(AssetId);
 
 	if (IsValid(UpgradeDataAsset))
@@ -91,6 +82,7 @@ void UYggAbilityUserWidget::AbilityInit(FPrimaryAssetId& AssetId)
 		AbilityImage->SetBrush(MakeBrush(UpgradeDataAsset->UpgradeImage, Size));
 		AbilityName->SetText(FText::FromName(UpgradeDataAsset->UpgradeName));
 		AbilityInfo->SetText(FText::FromName(UpgradeDataAsset->UpgradeDescription));
+		ApplyRarityEffect(UpgradeDataAsset->Rarity);
 		AbilityInfo->SetAutoWrapText(true);
 	}
 }
@@ -101,7 +93,47 @@ void UYggAbilityUserWidget::AbilitySelectEvent()
 	UHeroAttributeComponent* CAC = PC->GetPawn()->GetComponentByClass<UHeroAttributeComponent>();
 	
 	UUpgradeSystem* UpgradeSystem = UUpgradeSystem::Get(GetWorld());
+		
+	if (AMainGameHUD* HUD = PC->GetHUD<AMainGameHUD>())
+	{
+		HUD->AddAbility(UpgradeDataAsset->UpgradeName, UpgradeDataAsset->UpgradeImage, UpgradeDataAsset->UpgradeDescription);
+	}
 
 	UpgradeSystem->Upgrade(CAC, UpgradeDataAsset);
 }
 
+void UYggAbilityUserWidget::ApplyRarityEffect(EUpgradeRarity Rarity)
+{
+	UMaterialInstanceDynamic* EdgeMat = UMaterialInstanceDynamic::Create(EdgeMaterial, this);
+
+	switch (Rarity)
+	{
+	case EUpgradeRarity::Common:
+		EdgeMat->SetVectorParameterValue("Color1", FLinearColor(1.0f, 1.0f, 1.0f));
+		EdgeMat->SetVectorParameterValue("Color2", FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
+		Edge->SetBrushFromMaterial(EdgeMat);
+		break;
+	case EUpgradeRarity::Epic:
+		EdgeMat->SetVectorParameterValue("Color1", FLinearColor(0.27451f, 0.14902f, 0.47451f));
+		EdgeMat->SetVectorParameterValue("Color2", FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
+		Edge->SetBrushFromMaterial(EdgeMat);
+		break;
+	case EUpgradeRarity::Legendary:
+		EdgeMat->SetVectorParameterValue("Color1", FLinearColor(1.0f, 0.843137f, 0.0f));
+		EdgeMat->SetVectorParameterValue("Color2", FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
+		Edge->SetBrushFromMaterial(EdgeMat);
+		break;
+	default:
+		break;
+	}
+}
+
+void UYggAbilityUserWidget::PlayHoverAnim()
+{
+	PlayAnimation(HoverAnim);
+}
+
+void UYggAbilityUserWidget::PlayUnHoverAnim()
+{
+	PlayAnimationReverse(HoverAnim);
+}

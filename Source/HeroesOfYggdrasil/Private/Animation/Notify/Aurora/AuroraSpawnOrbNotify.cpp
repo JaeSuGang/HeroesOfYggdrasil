@@ -21,9 +21,9 @@ void UAuroraSpawnOrbNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequen
 
     AYggHero* Hero = Cast<AYggHero>(MeshComp->GetOwner());
     if (!IsValid(Hero)) return;
-    float AttPower = Hero->GetHeroAttributeComponent()->AttackInfo.SkillCoefficient * Hero->GetHeroAttributeComponent()->AttackPoints;
+    // float AttPower = Hero->GetHeroAttributeComponent()->AttackInfo.SkillCoefficient * Hero->GetHeroAttributeComponent()->AttackPoints;
 
     AAuroraOrb* Orb = GetWorld()->SpawnActor<AAuroraOrb>(OrbClass, SpawnLoc, SpawnRot, Params);
     if (!IsValid(Orb)) return;
-    Orb->SetAttPower(AttPower);
+    // Orb->SetAttPower(AttPower);
 }

@@ -13,6 +13,9 @@
 #include "Attribute/CharacterAttributeComponent.h"
 #include "MainGame/UI/YggStatusEffectUserWidget.h"
 #include "MainGame/UI/YggNicknameBarUserWidget.h"
+#include "MainGame/UI/MainGameHUD.h"
+#include "MainGame/UI/YggMainGameUserWidget.h"
+#include "MainGame/UI/YggHasAbilityUserWidget.h"
 #include "Core/YggPlayerState.h"
 #include "Player/YggHero.h"
 
@@ -169,6 +172,11 @@ void UYggStatusUserWidget::StatusInit()
 		Nickname->SetText(FText::FromString(Name));
 	}
 
+	if (IsValid(MoveSpeed))
+	{
+		MoveSpeed->SetText(FText::AsNumber(HAC->MaxMoveSpeed));
+	}
+
 }
 
 void UYggStatusUserWidget::UpdateStatus()
@@ -237,6 +245,11 @@ void UYggStatusUserWidget::UpdateStatus()
 
 		HP->SetText(HealthText);
 	}
+
+	if (IsValid(MoveSpeed))
+	{
+		MoveSpeed->SetText(FText::AsNumber(HAC->MaxMoveSpeed));
+	}
 }
 
 void UYggStatusUserWidget::ShowStatus()
@@ -255,11 +268,28 @@ void UYggStatusUserWidget::EndStatus()
 		PlayAnimationReverse(PopupAnim);
 	}
 	SetVisibility(ESlateVisibility::HitTestInvisible);
+
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+
+	AMainGameHUD* HUD = PC->GetHUD<AMainGameHUD>();
+
+	HUD->GetMainGameWidget()->GetHasAbilityWidget()->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UYggStatusUserWidget::ShowAbility()
 {
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 
+	AMainGameHUD* HUD = PC->GetHUD<AMainGameHUD>();
+
+	if (ESlateVisibility::Visible != HUD->GetMainGameWidget()->GetHasAbilityWidget()->GetVisibility())
+	{
+		HUD->GetMainGameWidget()->GetHasAbilityWidget()->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		HUD->GetMainGameWidget()->GetHasAbilityWidget()->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 

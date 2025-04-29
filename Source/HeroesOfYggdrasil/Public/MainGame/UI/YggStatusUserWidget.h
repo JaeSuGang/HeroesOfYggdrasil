@@ -99,7 +99,7 @@ private:
 	UTextBlock* Nickname;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* MonsterCount;
+	UTextBlock* MoveSpeed;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* ExitButton;

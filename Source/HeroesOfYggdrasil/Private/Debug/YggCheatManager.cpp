@@ -7,6 +7,18 @@
 #include "UpgradeSystem/UpgradeSystem.h"
 #include "Attribute/HeroAttributeComponent.h"
 #include "MainGame/MainGamePlayerState.h"
+#include "StageSystem/StageSystem.h"
+
+void UYggCheatManager::EnterBattleStage(int RoundNumber)
+{
+	if (UStageSystem* StageSystem = UStageSystem::Get(this))
+	{
+		ensure(StageSystem->GetOwner()->HasAuthority());
+		
+		StageSystem->CurrentRound = RoundNumber;
+		StageSystem->EnterStage(1);
+	}
+}
 
 void UYggCheatManager::Upgrade(int index)
 {

@@ -25,6 +25,9 @@ class UYggStatusUserWidget;
 class UTextBlock;
 class UStageBase;
 class UYggFuelBarUserWidget;
+class UYggVictoryUserWidget;
+class UYggDefeatedUserWidget;
+class UYggHasAbilityUserWidget;
 
 /**
  * 
@@ -33,7 +36,7 @@ UCLASS()
 class HEROESOFYGGDRASIL_API UYggMainGameUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
 	UYggPlayerStatusUserWidget* GetPlayerStatusWidget()
 	{
@@ -48,6 +51,11 @@ public:
 	UYggSkillBarUserWidget* GetSkillBarWidget()
 	{
 		return SkillBarWidget;
+	}
+
+	UYggHasAbilityUserWidget* GetHasAbilityWidget()
+	{
+		return HasAbilityWidget;
 	}
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
@@ -66,10 +74,16 @@ public:
 	void StatusVisibility();
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
-	void UpdateWaveCount(UStageBase* NewStage);
+	void UpdateWaveCount(UStageBase* NewStage, int NewRound);
 
 	UFUNCTION()
 	void ChildWidgetHidden(FOnDefeatedParams OnDefeatedParams);
+
+	UFUNCTION()
+	void CreateVictoryWidget(FOnVictoryParams OnVictoryParams);
+
+	UFUNCTION()
+	void CreateDefeatedWidget();
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -112,6 +126,15 @@ private:
 	UPROPERTY(EditAnywhere, Category = YGG)
 	TSubclassOf<UUserWidget> FuelBarWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> VictoryWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> DefeatedWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	TSubclassOf<UUserWidget> HasAbilityWidgetClass;
+
 	UPROPERTY()
 	UYggPlayerStatusUserWidget* PlayerStatusWidget;
 
@@ -138,4 +161,13 @@ private:
 
 	UPROPERTY()
 	UYggFuelBarUserWidget* FuelBarWidget;
+
+	UPROPERTY()
+	UYggVictoryUserWidget* VictoryWidget;
+
+	UPROPERTY()
+	UYggDefeatedUserWidget* DefeatedWidget;
+
+	UPROPERTY()
+	UYggHasAbilityUserWidget* HasAbilityWidget;
 };

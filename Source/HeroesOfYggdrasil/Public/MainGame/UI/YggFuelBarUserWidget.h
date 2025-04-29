@@ -15,7 +15,6 @@ UCLASS()
 class HEROESOFYGGDRASIL_API UYggFuelBarUserWidget : public UYggUserWidget
 {
 	GENERATED_BODY()
-	UYggFuelBarUserWidget();
 
 public:
 	UFUNCTION(BlueprintCallable)

@@ -20,7 +20,7 @@ class HEROESOFYGGDRASIL_API UYggWavePopupUserWidget : public UYggUserWidget
 	
 public:
 	UFUNCTION()
-	void UpdateWidget(UStageBase* NewStage);
+	void UpdateWidget(UStageBase* NewStage, int NewRound);
 
 	UFUNCTION()
 	void EndAnim();

@@ -14,10 +14,15 @@ void UAuroraSpawnCatalystNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimS
 
     const FTransform SpawnTM = MeshComp->GetSocketTransform(TEXT("Muzzle_02"), RTS_World);
 
+    FActorSpawnParameters Params;
+    Params.Owner = Aurora;
+    Params.Instigator = Cast<APawn>(Aurora);
+
     AAuroraFrostCatalyst* Catalyst = GetWorld()->SpawnActor<AAuroraFrostCatalyst>(
         BPCatalyst,
         SpawnTM.GetLocation(),
-        SpawnTM.GetRotation().Rotator()
+        SpawnTM.GetRotation().Rotator(),
+        Params
     );
     if (!Catalyst) return;
 
