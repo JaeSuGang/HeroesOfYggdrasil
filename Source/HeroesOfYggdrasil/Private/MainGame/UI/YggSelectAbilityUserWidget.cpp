@@ -36,7 +36,7 @@ void UYggSelectAbilityUserWidget::NativeOnInitialized()
 			{
 				CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
 				CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
-				CanvasSlot->SetPosition(FVector2D(-500.0f, 0.0f));
+				CanvasSlot->SetPosition(FVector2D(-500.0f, -50.0f));
 			}
 		}
 	}
@@ -54,7 +54,7 @@ void UYggSelectAbilityUserWidget::NativeOnInitialized()
 			{
 				CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
 				CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
-				CanvasSlot->SetPosition(FVector2D(0.0f, 0.0f));
+				CanvasSlot->SetPosition(FVector2D(0.0f, -50.0f));
 			}
 		}
 	}
@@ -72,7 +72,7 @@ void UYggSelectAbilityUserWidget::NativeOnInitialized()
 			{
 				CanvasSlot->SetAlignment(FVector2D(0.5f, 0.5f));
 				CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
-				CanvasSlot->SetPosition(FVector2D(500.0f, 0.0f));
+				CanvasSlot->SetPosition(FVector2D(500.0f, -50.0f));
 			}
 		}
 	}

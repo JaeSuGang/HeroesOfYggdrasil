@@ -39,7 +39,7 @@ void UYggWavePopupUserWidget::NativeDestruct()
 
 }
 
-void UYggWavePopupUserWidget::UpdateWidget(UStageBase* NewStage)
+void UYggWavePopupUserWidget::UpdateWidget(UStageBase* NewStage, int NewRound)
 {
 	SetVisibility(ESlateVisibility::Visible);
 

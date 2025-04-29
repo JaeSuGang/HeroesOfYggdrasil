@@ -74,7 +74,7 @@ public:
 	void StatusVisibility();
 
 	UFUNCTION(BlueprintCallable, Category = YGG)
-	void UpdateWaveCount(UStageBase* NewStage);
+	void UpdateWaveCount(UStageBase* NewStage, int NewRound);
 
 	UFUNCTION()
 	void ChildWidgetHidden(FOnDefeatedParams OnDefeatedParams);
