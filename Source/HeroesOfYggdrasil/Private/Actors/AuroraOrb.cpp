@@ -12,6 +12,8 @@
 #include "Particles/ParticleSystem.h"
 
 #include "Enemy/EnemyCharacter.h"
+#include "Player/YggHeroAurora.h"
+#include "Attribute/HeroAttributeComponent.h"
 
 // Sets default values
 AAuroraOrb::AAuroraOrb()
@@ -275,6 +277,12 @@ void AAuroraOrb::OnOrbOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
     {
         if (IsValid(Enemy))
         {
+            AYggHeroAurora* Aurora = Cast<AYggHeroAurora>(GetOwner());
+            if (!Aurora) return;
+
+            float Coefficient = Aurora->GetHeroAttributeComponent()->AttackInfo.SkillCoefficient;
+            AttPower = DamageLogic(Aurora->GetAttributeComponent(), Enemy->GetAttributeComponent(), Coefficient);
+
             Enemy->GetAttributeComponent()->Server_TakeDamage(AttPower);
             bShouldDestroy = true;
         }
@@ -294,4 +302,21 @@ void AAuroraOrb::OnOrbOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 
         Destroy();
     }
+}
+
+float AAuroraOrb::DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit, float Coefficient)
+{	
+	UCharacterAttributeComponent* AttackAttributeComponent = Attack;
+	UCharacterAttributeComponent* HitAttributeComponent = Hit;
+	float Damage;
+	// 공격력 계산
+	Damage = AttackAttributeComponent->AttackPoints * Coefficient;
+	// 방어력 계산
+	Damage = Damage * (100 / (100 + HitAttributeComponent->DefensePoints));
+	// 크리티컬 확률 계산 
+	if (FMath::FRand() <= AttackAttributeComponent->CriticalChance)
+	{
+		Damage = Damage * (1 + AttackAttributeComponent->CriticalDamageRate);
+	}
+	return Damage;	
 }

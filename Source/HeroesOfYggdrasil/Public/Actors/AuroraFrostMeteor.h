@@ -7,6 +7,9 @@
 #include "AuroraFrostMeteor.generated.h"
 
 class UCapsuleComponent;
+class UCharacterAttributeComponent;
+class AEnemyCharacter;
+class AYggHeroAurora;
 
 UCLASS()
 class HEROESOFYGGDRASIL_API AAuroraFrostMeteor : public AActor
@@ -28,12 +31,16 @@ public:
 	UFUNCTION()
 	void OnMeteorOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void OnMeteorOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
 	void SpawnMeteorShower();
 
-	void SetAttPower(float Value)
-	{
-		AttPower = Value;
-	}
+	UFUNCTION()
+	void DestroyMeteor();
+
+	float DamageLogic(UCharacterAttributeComponent* Attack, UCharacterAttributeComponent* Hit);
 
 	UPROPERTY (VisibleAnywhere)
 	USceneComponent* RootScene;
@@ -46,9 +53,24 @@ public:
 
 	FTimerHandle MeteorTimerHandle;
 
+	FTimerHandle DestroyTimerHandle;
+
+	UPROPERTY()
+	TMap<AEnemyCharacter*, FTimerHandle> EnemyDamageTimers;
+
+	UFUNCTION()
+	void ApplyPeriodicDamage(AEnemyCharacter* Enemy);
+
+	
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	UCapsuleComponent* MeteorCapsule;
 
 	UPROPERTY()
+	float Coefficient;
+
+	UPROPERTY()
 	float AttPower;
+
+private:
+	TWeakObjectPtr<AYggHeroAurora> CachedOwner;
 };
