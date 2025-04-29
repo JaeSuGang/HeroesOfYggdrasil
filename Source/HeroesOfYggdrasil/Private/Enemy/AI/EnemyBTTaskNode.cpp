@@ -45,6 +45,7 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OwningPawn);
+	AActor* TargetActor = PlayAIData.TargetActor;
 
 	DeathCheckTime -= _DeltaSeconds;
 
