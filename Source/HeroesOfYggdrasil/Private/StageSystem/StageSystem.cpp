@@ -113,9 +113,9 @@ void UStageSystem::DefeatInternal()
 	}
 }
 
-void UStageSystem::Multicast_BroadcastStageStart_Implementation(UStageBase* NewStage)
+void UStageSystem::Multicast_BroadcastStageStart_Implementation(UStageBase* NewStage, int NewRound)
 {
-	OnStageStartedDelegate.Broadcast(NewStage);
+	OnStageStartedDelegate.Broadcast(NewStage, NewRound);
 }
 
 void UStageSystem::MulticastDefeated_Implementation(FOnDefeatedParams OnDefeatedParams)
@@ -185,7 +185,7 @@ void UStageSystem::EnterStageInternal(int NewStageIndex)
 	NewStage->Local_OnEnterStage(CurrentRound);
 
 	/* 델리게이트 Broadcast */
-	Multicast_BroadcastStageStart(NewStage);
+	Multicast_BroadcastStageStart(NewStage, CurrentRound);
 }
 
 UBattleStage* UStageSystem::GetBattleStage() const

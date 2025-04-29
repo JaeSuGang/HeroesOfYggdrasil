@@ -38,20 +38,20 @@ void ABGMPlayer::PlayBGM(int SoundIndex)
 	AudioComponent->Play();
 }
 
-void ABGMPlayer::OnStartStage(UStageBase* NewStage)
+void ABGMPlayer::OnStartStage(UStageBase* NewStage, int NewRound)
 {
 	if (UReinforceStage* NewReinforceStage = Cast<UReinforceStage>(NewStage))
 	{
-		if (NewStage->StageSystem->CurrentRound == 1)
+		if (NewRound == 1)
 			PlayBGM(1);
 
-		else if (NewStage->StageSystem->CurrentRound == 4)
+		else if (NewRound == 4)
 			PlayBGM(2);
 
-		else if (NewStage->StageSystem->CurrentRound == 7)
+		else if (NewRound == 7)
 			PlayBGM(3);
 
-		else if (NewStage->StageSystem->CurrentRound == 10)
+		else if (NewRound == 10)
 			PlayBGM(4);
 	}
 }
