@@ -67,6 +67,8 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 		TWeakObjectPtr<AEnemyCharacter> WeakEnemy = EnemyCharacter;
 		TWeakObjectPtr<UBehaviorTreeComponent> WeakOwner = Cast<UBehaviorTreeComponent>(&_OwnerComp);
 
+		if (!IsValid(TargetCharacter)) return;
+
 		float HeroDefense = TargetCharacter->GetAttributeComponent()->DefensePoints;
 
 		double HeroDefenseRate = (HeroDefense / (HeroDefense + 100.f));

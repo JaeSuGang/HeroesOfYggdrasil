@@ -176,9 +176,13 @@ void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, f
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 
-	if (!OwningPawn || !TargetActor) return;
+	if (!OwningPawn || !TargetActor || !TargetCharacter) return;
 
 	const FString TargetName = TargetActor->GetName();
+
+	UCharacterAttributeComponent* TargetAttributecom =  TargetCharacter->GetAttributeComponent();
+
+	if (!IsValid(TargetAttributecom)) return;
 
 	if (TargetName.StartsWith(TEXT("BP_YggHero")) || TargetName.StartsWith(TEXT("BP_Yggdrasil")) || TargetCharacter->GetAttributeComponent()->HasTag(TEXT("Character")))
 	{

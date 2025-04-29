@@ -84,7 +84,11 @@ void AEnemyWarningRange::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
     
-    if (!IsValid(YggCharacterEnemy)) return;
+    if (!IsValid(YggCharacterEnemy)) 
+    {
+        Destroy();
+        return;
+    }
 
     TimeElapsed += DeltaTime;
 
