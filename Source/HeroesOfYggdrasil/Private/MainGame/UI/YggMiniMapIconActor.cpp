@@ -38,10 +38,8 @@ void AYggMiniMapIconActor::BeginPlay()
 
     TryAddMiniMap();
 
-    if (HasAuthority())
-    {
-        SetReplicates(true);
-    }
+    bReplicates = true;
+    bAlwaysRelevant = true;
 
     OnDestroyed.AddDynamic(this, &AYggMiniMapIconActor::OnIconDestroyed);
 }
@@ -50,6 +48,10 @@ void AYggMiniMapIconActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Super::EndPlay(EndPlayReason);
 
+    //if (IsValid(PaperSpriteComponent))
+    //{
+    //    DestroyIcon(); // 모든 클라이언트에서 파괴
+    //}
     //if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
     //{
     //    if (AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD()))
@@ -144,4 +146,10 @@ void AYggMiniMapIconActor::OnIconDestroyed(AActor* DestroyedActor)
             }
         }
     }
+}
+
+
+void AYggMiniMapIconActor::DestroyIcon_Implementation()
+{
+    Destroy();
 }

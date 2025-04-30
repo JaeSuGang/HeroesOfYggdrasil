@@ -175,10 +175,16 @@ void AEnemyCharacter::BeginPlay()
 	// 충돌 설정
 	//GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 
-	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	//MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+
+	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass, SpawnParams);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
-	
+	MiniMapIcon->SetOwner(this); // ← 중요
 	
 	PreviousHp = CharacterAttributeComponent->HP;
 
@@ -202,11 +208,11 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	
 	if (IsValid(MiniMapIcon))
 	{
-		MiniMapIcon->Destroy();
+		MiniMapIcon->DestroyIcon();
 	}
+	
 
 	AEnemyManager* EnemyManager = AEnemyManager::Get(GetWorld());
 	if (IsValid(EnemyManager) && EnemyManager->AllEnemyCharacter.Contains(this))
