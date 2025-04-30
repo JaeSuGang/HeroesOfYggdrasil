@@ -574,7 +574,8 @@ void AYggHero::ServerHeroSkillQ_Implementation(const FInputActionValue& Value)
 void AYggHero::MulticastHeroSkillQ_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillQ");
-	HeroAnimInstance->PlayMontage(MontageName);
+	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
+	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);
 	HeroAttributeComponent->SkillQCurCoolTime = HeroAttributeComponent->SkillQMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 }
 
@@ -608,7 +609,8 @@ void AYggHero::ServerHeroSkillE_Implementation(const FInputActionValue& Value)
 void AYggHero::MulticastHeroSkillE_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillE");
-	HeroAnimInstance->PlayMontage(MontageName);
+	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
+	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);
 	HeroAttributeComponent->SkillECurCoolTime = HeroAttributeComponent->SkillEMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 }
 
@@ -642,7 +644,8 @@ void AYggHero::ServerHeroSkillR_Implementation(const FInputActionValue& Value)
 void AYggHero::MulticastHeroSkillR_Implementation(const FInputActionValue& Value)
 {
 	FName MontageName = TEXT("SkillR");
-	HeroAnimInstance->PlayMontage(MontageName);
+	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
+	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);
 	HeroAttributeComponent->SkillRCurCoolTime = HeroAttributeComponent->SkillRMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 }
 
