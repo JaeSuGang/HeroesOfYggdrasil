@@ -35,6 +35,8 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	const float KnockBackDistance = 100.0f; 
 
+	if (!IsValid(SelfActor) || !IsValid(TargetActor)) return;
+
 	FVector KnockBackDirection = (SelfActor->GetActorLocation() - TargetActor->GetActorLocation());
 	KnockBackDirection.Z = 0.0f;
 	KnockBackDirection.Normalize();

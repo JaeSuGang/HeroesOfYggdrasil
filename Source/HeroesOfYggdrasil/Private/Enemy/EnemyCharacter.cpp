@@ -216,7 +216,11 @@ void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	MiniMapIcon->Destroy();
 
-	Super::EndPlay(EndPlayReason);
+	if (!IsPendingKillPending())
+	{
+		Super::EndPlay(EndPlayReason);
+	}
+	
 
 	// 타이머 정리
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
