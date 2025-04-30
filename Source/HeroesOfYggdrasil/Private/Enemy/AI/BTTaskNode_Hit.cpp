@@ -21,15 +21,20 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OwningPawn);
+
+	if (!IsValid(SelfActor)) return;
+	
 	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
 
 	TargetCheck(_OwnerComp);
+
 	if (nullptr != PlayAIData.SelfAnimPawn)
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
 	const float KnockBackDistance = 100.0f; 
+
 	FVector KnockBackDirection = (SelfActor->GetActorLocation() - TargetActor->GetActorLocation());
 	KnockBackDirection.Z = 0.0f;
 	KnockBackDirection.Normalize();
@@ -85,11 +90,11 @@ void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNode
 	DeathCheck(_OwnerComp);
 
 
-	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
+	/*FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	AActor* TargetActor = PlayAIData.TargetActor;
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);*/
 
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
 

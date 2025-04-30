@@ -38,6 +38,8 @@ void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfPawn = PlayAIData.SelfPawn;
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfPawn);
+	EnemyCharacter->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 
 	DeathTime -= _DeltaSeconds;
 

@@ -11,6 +11,9 @@ AYggCharacter::AYggCharacter(const FObjectInitializer& ObjectInitializer)
 	:
 	Super(ObjectInitializer)
 {
+	bReplicates = true;
+	SetReplicateMovement(true);
+
 	PrimaryActorTick.bCanEverTick = true;
 	SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 }
