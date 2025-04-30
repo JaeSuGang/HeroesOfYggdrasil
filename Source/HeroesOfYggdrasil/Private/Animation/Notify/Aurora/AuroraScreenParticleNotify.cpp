@@ -12,15 +12,12 @@ void UAuroraScreenParticleNotify::Notify(USkeletalMeshComponent* MeshComp, UAnim
     if (!ParticleTemplate || !MeshComp) return;
     
     UWorld* World = MeshComp->GetWorld();
-    if (!World) return;
-    
+    if (!World) return; 
 
-    APlayerController* PC = World->GetFirstPlayerController();
-    if (!PC) return;
-    
-
-    APawn* Pawn = PC->GetPawn();
+    APawn* Pawn = Cast<APawn>(MeshComp->GetOwner());
     if (!Pawn) return;    
+
+    if (!Pawn->IsLocallyControlled()) return;
 
     UCameraComponent* CameraComp = Pawn->FindComponentByClass<UCameraComponent>();
     UParticleSystemComponent* PSC = nullptr;

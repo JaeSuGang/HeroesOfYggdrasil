@@ -60,8 +60,6 @@ public:	// Jump
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
 	TObjectPtr<class UYggAttackCapsuleComponent> SkillQAttackCapsuleComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
-	TObjectPtr<class UYggAttackCapsuleComponent> SkillEAttackCapsuleComponent;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
 	TObjectPtr<class UYggAttackCapsuleComponent> SkillRAttackCapsuleComponent;
 
 	/** 최대 제트팩 연료량(초 단위) */

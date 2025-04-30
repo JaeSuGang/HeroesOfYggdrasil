@@ -27,12 +27,7 @@ AYggHeroAurora::AYggHeroAurora()
 	SkillQAttackCapsuleComponent->SetupAttachment(GetMesh());
 	SkillQAttackCapsuleComponent->SetOwnerCharacter(this);
 	AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), SkillQAttackCapsuleComponent);
-		
-	SkillEAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillEAttack"));
-	SkillEAttackCapsuleComponent->SetupAttachment(GetMesh());
-	SkillEAttackCapsuleComponent->SetOwnerCharacter(this);
-	AttackCapsuleComponentMap.Add(TEXT("SkillEAttack"), SkillEAttackCapsuleComponent);
-		
+	
 	SkillRAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
 	SkillRAttackCapsuleComponent->SetupAttachment(GetMesh());
 	SkillRAttackCapsuleComponent->SetOwnerCharacter(this);
