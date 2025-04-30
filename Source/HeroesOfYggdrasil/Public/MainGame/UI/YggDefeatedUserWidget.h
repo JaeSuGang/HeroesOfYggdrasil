@@ -8,6 +8,7 @@
 
 class UTextBlock;
 class UWidgetAnimation;
+class UButton;
 
 /**
  * 
@@ -20,6 +21,9 @@ class HEROESOFYGGDRASIL_API UYggDefeatedUserWidget : public UYggUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void Init();
+
+	UFUNCTION(BlueprintCallable)
+	void OnClickSound();
 
 protected:
 	virtual void NativeOnInitialized() override;
@@ -42,6 +46,12 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* PDeathCount;
 
+	UPROPERTY(meta = (BindWidget))
+	UButton* ExitGameButton;
+
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* FirstAnim;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	USoundBase* ClickSound;
 };

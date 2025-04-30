@@ -3,6 +3,8 @@
 
 #include "MainGame/UI/YggStatusUserWidget.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -80,6 +82,14 @@ FSlateBrush UYggStatusUserWidget::MakeBrush(UTexture2D* Tex, FVector2D Size, flo
 	Brush.TintColor = FLinearColor(Brightness, Brightness, Brightness, 1.0f);
 	Brush.DrawAs = ESlateBrushDrawType::Image;
 	return Brush;
+}
+
+void UYggStatusUserWidget::OnClickSound()
+{
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound, 0.1f);
+	}
 }
 
 void UYggStatusUserWidget::StatusInit()
@@ -254,6 +264,8 @@ void UYggStatusUserWidget::UpdateStatus()
 
 void UYggStatusUserWidget::ShowStatus()
 {
+	OnClickSound();
+
 	SetVisibility(ESlateVisibility::Visible);
 	if (PopupAnim)
 	{
@@ -263,6 +275,8 @@ void UYggStatusUserWidget::ShowStatus()
 
 void UYggStatusUserWidget::EndStatus()
 {
+	OnClickSound();
+
 	if (PopupAnim)
 	{		
 		PlayAnimationReverse(PopupAnim);
@@ -278,6 +292,8 @@ void UYggStatusUserWidget::EndStatus()
 
 void UYggStatusUserWidget::ShowAbility()
 {
+	OnClickSound();
+
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 
 	AMainGameHUD* HUD = PC->GetHUD<AMainGameHUD>();
@@ -291,7 +307,6 @@ void UYggStatusUserWidget::ShowAbility()
 		HUD->GetMainGameWidget()->GetHasAbilityWidget()->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
-
 
 UTexture2D* UYggStatusUserWidget::SetTexture(FName Hero)
 {
