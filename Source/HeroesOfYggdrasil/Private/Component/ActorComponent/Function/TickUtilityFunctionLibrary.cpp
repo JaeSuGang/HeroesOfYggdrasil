@@ -38,7 +38,7 @@ EStatusEffectType UTickUtilityFunctionLibrary::FindStatusEffectType(AEnemyCharac
 	if (Key == TEXT("Dragon_Small"))   return EStatusEffectType::Burn;
 	if (Key == TEXT("Dragon_Large"))   return EStatusEffectType::Burn;
 
-	return EStatusEffectType::MAX;
+	return EStatusEffectType::Burn;
 }
 
 FName UTickUtilityFunctionLibrary::ConvertStatusEffectTypeToName(EStatusEffectType Type)
