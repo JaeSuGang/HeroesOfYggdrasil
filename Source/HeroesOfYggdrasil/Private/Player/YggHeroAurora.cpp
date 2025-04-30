@@ -5,6 +5,8 @@
 #include "Attribute/HeroAttributeComponent.h"
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 #include "Components/DecalComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -285,6 +287,8 @@ void AYggHeroAurora::Jump()
 
 void AYggHeroAurora::MagicCircleOn()
 {
+	if (!IsLocallyControlled()) return;
+
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	if (!PC || !PC->GetPawn())
 		return;
@@ -340,6 +344,7 @@ void AYggHeroAurora::MagicCircleOn()
 			FRotator(-90.0f, 0.0f, 0.0f),
 			0.f
 		);
+		SkillEDecal->SetIsReplicated(false);
 	}
 	else
 	{
@@ -412,36 +417,89 @@ void AYggHeroAurora::DoJetpackOff()
 
 void AYggHeroAurora::Server_ThrowCatalyst_Implementation()
 {
-	if (PendingCatalyst)
+	if (!PendingCatalyst) return;
+
+	MagicCircleOff();
+
+	AAuroraFrostCatalyst* Catalyst = PendingCatalyst;
+	FVector TargetPos = MagicTargetPoint;
+
+	PendingCatalyst = nullptr;
+
+	Catalyst->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	Catalyst->SetReplicatingMovement(true);
+
+	UProjectileMovementComponent* ProjMove = Catalyst->FindComponentByClass<UProjectileMovementComponent>();
+	if (ProjMove)
 	{
-		MagicCircleOff();
+		FVector Start = Catalyst->GetActorLocation();
 
-		AAuroraFrostCatalyst* Catalyst = PendingCatalyst;
-		PendingCatalyst = nullptr;
+		FVector LaunchVel;
+		bool bHaveVel = UGameplayStatics::SuggestProjectileVelocity_CustomArc(
+			this,
+			LaunchVel,
+			Start,
+			TargetPos,
+			0.f,
+			0.75f
+		);
 
-		Catalyst->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-		UProjectileMovementComponent* ProjMove = Catalyst->FindComponentByClass<UProjectileMovementComponent>();
-		if (ProjMove)
+		if (bHaveVel)
 		{
-			FVector Start = Catalyst->GetActorLocation();
-			FVector Target = MagicTargetPoint;
-
-			FVector LaunchVel;
-			bool bHaveVel = UGameplayStatics::SuggestProjectileVelocity_CustomArc(
-				this,
-				LaunchVel,
-				Start,
-				Target,
-				0.f,
-				0.75f
-			);
-
-			if (bHaveVel)
-			{
-				ProjMove->Velocity = LaunchVel * 1.2f;
-				ProjMove->Activate(true);
-			}
+			ProjMove->Velocity = LaunchVel * 1.2f;
+			ProjMove->SetUpdatedComponent(Catalyst->GetRootComponent());
+			ProjMove->Activate(true);
 		}
 	}
+
+	Multicast_ThrowCatalyst(Catalyst, TargetPos);
+}
+
+void AYggHeroAurora::Multicast_ThrowCatalyst_Implementation(AAuroraFrostCatalyst* Catalyst, const FVector& TargetPoint)
+{
+	if (!Catalyst) return;
+
+	MagicCircleOff();
+
+	Catalyst->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+	if (auto* ProjMove = Catalyst->FindComponentByClass<UProjectileMovementComponent>())
+	{
+		FVector Start = Catalyst->GetActorLocation();
+		FVector LaunchVel;
+		if (UGameplayStatics::SuggestProjectileVelocity_CustomArc(
+			this, LaunchVel, Start, TargetPoint, 0.f, 0.75f))
+		{
+			ProjMove->Velocity = LaunchVel * 1.2f;
+			ProjMove->SetUpdatedComponent(Catalyst->GetRootComponent());
+			ProjMove->Activate(true);
+		}
+	}
+}
+
+void AYggHeroAurora::Server_SpawnCatalyst_Implementation()
+{
+	if (PendingCatalyst != nullptr) return;
+
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	if (!MeshComp) return;
+
+	const FTransform SpawnTM = MeshComp->GetSocketTransform(TEXT("Muzzle_02"), RTS_World);
+
+	FActorSpawnParameters Params;
+	Params.Owner = this;
+	Params.Instigator = this;
+	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	AAuroraFrostCatalyst* Catalyst = GetWorld()->SpawnActor<AAuroraFrostCatalyst>(
+		BPCatalyst,
+		SpawnTM.GetLocation(),
+		SpawnTM.GetRotation().Rotator(),
+		Params
+	);
+	if (!Catalyst) return;
+
+	Catalyst->AttachToComponent(MeshComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Muzzle_02"));
+
+	PendingCatalyst = Catalyst;
 }

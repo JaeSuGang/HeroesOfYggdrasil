@@ -12,25 +12,36 @@ void UAuroraSpawnCatalystNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimS
     AYggHeroAurora* Aurora = Cast<AYggHeroAurora>(MeshComp->GetOwner());
     if (!Aurora) return;
 
-    const FTransform SpawnTM = MeshComp->GetSocketTransform(TEXT("Muzzle_02"), RTS_World);
+    if (Aurora->HasAuthority())
+    {
+        if (Aurora->PendingCatalyst != nullptr) return;
 
-    FActorSpawnParameters Params;
-    Params.Owner = Aurora;
-    Params.Instigator = Cast<APawn>(Aurora);
+        const FTransform SpawnTM = MeshComp->GetSocketTransform(TEXT("Muzzle_02"), RTS_World);
 
-    AAuroraFrostCatalyst* Catalyst = GetWorld()->SpawnActor<AAuroraFrostCatalyst>(
-        BPCatalyst,
-        SpawnTM.GetLocation(),
-        SpawnTM.GetRotation().Rotator(),
-        Params
-    );
-    if (!Catalyst) return;
+        FActorSpawnParameters Params;
+        Params.Owner = Aurora;
+        Params.Instigator = Cast<APawn>(Aurora);
+        Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-    Catalyst->AttachToComponent(
-        MeshComp,
-        FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-        TEXT("Muzzle_02")
-    );
+        AAuroraFrostCatalyst* Catalyst = GetWorld()->SpawnActor<AAuroraFrostCatalyst>(
+            BPCatalyst,
+            SpawnTM.GetLocation(),
+            SpawnTM.GetRotation().Rotator(),
+            Params
+        );
 
-    Aurora->PendingCatalyst = Catalyst;
+        if (!Catalyst) return;
+        
+        Catalyst->AttachToComponent(MeshComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Muzzle_02"));
+
+        Aurora->PendingCatalyst = Catalyst;
+    }
+    else
+    {
+        // 클라이언트는 서버에 단 한 번만 RPC 호출
+        if (Aurora->PendingCatalyst == nullptr)
+        {
+            Aurora->Server_SpawnCatalyst();
+        }
+    }
 }
