@@ -26,6 +26,8 @@ AYggMiniMapIconActor::AYggMiniMapIconActor()
 	PaperSpriteComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	PaperSpriteComponent->bVisibleInSceneCaptureOnly = true;
     
+
+
 	RootComponent = DefaultScene;
 }
 
@@ -48,6 +50,7 @@ void AYggMiniMapIconActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
         {
             if (HUD->MiniMapManager)
             {
+                PaperSpriteComponent->SetVisibility(false);
                 HUD->MiniMapManager->RemoveMiniMapIcon(this);
             }
         }
