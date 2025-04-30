@@ -76,9 +76,6 @@ void UGetTargetActorAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSe
 			// Bomb에 전달
 			Bomb->SetActorRotation(AimRot);
 			Bomb->SetAimDir(AimDirection);
-			Bomb->SetTargetLocation(TargetLocation); 
-
-			
 			UGameplayStatics::FinishSpawningActor(Bomb, SpawnTransform);
 		}
 	}
