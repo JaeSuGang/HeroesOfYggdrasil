@@ -36,8 +36,16 @@ void UYggStatusEffectUserWidget::NativeDestruct()
 void UYggStatusEffectUserWidget::UpdateDebuff(FOnTagsChangedParams OnTagsChangedParams)
 {
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (!PC)
+		return;
+
 	AYggHero* Hero = PC->GetPawn<AYggHero>();
+	if (!Hero)
+		return;
+
 	UCharacterAttributeComponent* HAC = Hero->GetAttributeComponent();
+	if (!HAC)
+		return;
 
 	if (HAC->HasTag("Character.DeBuff.Poison"))
 	{

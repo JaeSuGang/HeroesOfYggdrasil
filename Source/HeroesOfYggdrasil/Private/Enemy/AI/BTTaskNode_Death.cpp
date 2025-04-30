@@ -2,6 +2,7 @@
 
 
 #include "Enemy/AI/BTTaskNode_Death.h"
+#include "Components/CapsuleComponent.h"
 
 UBTTaskNode_Death::UBTTaskNode_Death()
 {
@@ -20,9 +21,11 @@ void UBTTaskNode_Death::Start(UBehaviorTreeComponent& _OwnerComp)
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
+
 	RotateToTargetActor(_OwnerComp, 0.1f);
 
 	DeathTime = 2.0f;
+
 	if (IsValid(EnemyCharacter))
 	{
 		EnemyCharacter->DeathPlaySound();
@@ -39,13 +42,20 @@ void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	APawn* SelfPawn = PlayAIData.SelfPawn;
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfPawn);
 
+	UCapsuleComponent* Capsule = EnemyCharacter->GetCapsuleComponent();
+	if (IsValid(Capsule) && IsValid(EnemyCharacter))
+	{
+		Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		EnemyCharacter->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	
 	DeathTime -= _DeltaSeconds;
 
 	if (DeathTime < 0.0f)
 	{
 		if (!IsValid(EnemyCharacter)) return;
 		
-		EnemyCharacter->DestroyAllComponents();
+		EnemyCharacter->Destroy();
 	}
 
 

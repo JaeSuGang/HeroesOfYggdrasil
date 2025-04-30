@@ -80,7 +80,7 @@ void AYggHeroRevenant::Attack(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
-	Server_SetAimDirection(NewAimDir);
+	SetAimDirection(NewAimDir);
 	Super::Attack(Value);
 }
 
@@ -97,8 +97,9 @@ void AYggHeroRevenant::SkillQ(const FInputActionValue& Value)
 	{
 		return;
 	}
+	if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
 	FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
-	Server_SetAimDirection(NewAimDir);
+	SetAimDirection(NewAimDir);
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
 	if (HasAuthority())
 	{
@@ -120,7 +121,7 @@ void AYggHeroRevenant::SkillE(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	FVector NewAimDir = Local_GetAimDirection(RightSocketName);
-	Server_SetAimDirection(NewAimDir);
+	SetAimDirection(NewAimDir);
 	Super::SkillE(Value);
 }
 
@@ -131,19 +132,38 @@ void AYggHeroRevenant::SkillR(const FInputActionValue& Value)
 		SetAimMode(true);
 	}
 	FVector NewAimDir = Local_GetAimDirection(TEXT("None"));
-	Server_SetAimDirection(NewAimDir);
-	bIsUsingSkillR = true;
+	SetAimDirection(NewAimDir);
+	SetIsUsingSkillR(true);
 	Super::SkillR(Value);
 }
 
 void AYggHeroRevenant::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	/*if (bAimMode)
+	
+}
+
+void AYggHeroRevenant::SetIsUsingSkillR(bool bIsUsing)
+{
+	if (HasAuthority())
 	{
-		FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
-		Server_SetAimDirection(NewAimDir);
-	}*/
+		MulticastSetIsUsingSkillR(bIsUsing);
+	}
+	else
+	{
+		ServerSetIsUsingSkillR(bIsUsing);
+	}	
+}
+
+void AYggHeroRevenant::ServerSetIsUsingSkillR_Implementation(bool bIsUsing)
+{
+	bIsUsingSkillR = bIsUsing;
+	MulticastSetIsUsingSkillR(bIsUsingSkillR);
+}
+
+void AYggHeroRevenant::MulticastSetIsUsingSkillR_Implementation(bool bIsUsing)
+{
+	bIsUsingSkillR = bIsUsing;
 }
 
 

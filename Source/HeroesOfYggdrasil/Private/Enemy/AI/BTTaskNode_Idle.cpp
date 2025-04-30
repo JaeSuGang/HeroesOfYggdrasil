@@ -25,7 +25,7 @@ void UBTTaskNode_Idle::Start(UBehaviorTreeComponent& _OwnerComp)
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
-	if (Enemy->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")))
+	if (Enemy->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")) && IsValid(Enemy))
 	{
 
 		float Duration = FMath::Max(0.5f, 0.1f);
@@ -71,7 +71,28 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 
 	APawn* SelfActor = AIData.SelfPawn;
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
-	
+	AActor* TargetActor = AIData.TargetActor;
+
+	if (IsValid(TargetActor))
+	{
+		if (TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+		{
+			AYggCharacter* Yggdrasil = Cast<AYggCharacter>(TargetActor);
+			if (IsValid(Yggdrasil))
+			{
+				UCharacterAttributeComponent* YggdarsilAttri = Yggdrasil->GetAttributeComponent();
+				if (IsValid(YggdarsilAttri))
+				{
+					if (YggdarsilAttri->GetHP() < 0.0f)
+					{
+						return;
+					}
+				}
+			}
+		}
+	}
+
+
 
 	if (!Enemy->GetAttributeComponent()->HasTag("Enemy.DeBuff.Stunned") && !Enemy->GetAttributeComponent()->HasTag("Enemy.State.Hit"))
 	{
@@ -80,7 +101,7 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 
 
 
-	if (SelfController)
+	if (IsValid(SelfController))
 	{
 		SelfController->StopMovement();
 	}

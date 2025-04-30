@@ -55,7 +55,6 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 public:
 	AYggHero();
 
-
 	UFUNCTION(BlueprintCallable)
 	UHeroAttributeComponent* GetHeroAttributeComponent()
 	{
@@ -239,6 +238,11 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void Server_SetAimDirection(const FVector& InAimDir);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_SetAimDirection(const FVector& InAimDir);
+
+	virtual void SetAimDirection(const FVector& InAimDir);
 
 	UFUNCTION()
 	FVector Local_GetAimDirection(FName SocketName);

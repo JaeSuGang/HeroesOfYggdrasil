@@ -45,6 +45,7 @@ void UEnemyBTTaskNode::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
 	AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OwningPawn);
+	AActor* TargetActor = PlayAIData.TargetActor;
 
 	DeathCheckTime -= _DeltaSeconds;
 
@@ -146,6 +147,9 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 
 void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 {
+
+	if (!_OwnerComp.IsValidLowLevel()) return;
+
 	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
@@ -170,35 +174,42 @@ void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 
 void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
 {
+	if (!_OwnerComp.IsValidLowLevel()) return;
+
 	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
 
 	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 
-	if (!OwningPawn || !TargetActor || !TargetCharacter) return;
+	if (!IsValid(OwningPawn) || !IsValid(TargetActor)|| !IsValid(TargetCharacter)) return;
 
 	const FString TargetName = TargetActor->GetName();
 
-	UCharacterAttributeComponent* TargetAttributecom =  TargetCharacter->GetAttributeComponent();
-
-	if (!IsValid(TargetAttributecom)) return;
-
-	if (TargetName.StartsWith(TEXT("BP_YggHero")) || TargetName.StartsWith(TEXT("BP_Yggdrasil")) || TargetCharacter->GetAttributeComponent()->HasTag(TEXT("Character")))
+	if (IsValid(TargetCharacter))
 	{
-		const FVector PawnLoc = OwningPawn->GetActorLocation();
-		const FVector TargetLoc = TargetActor->GetActorLocation();
+		UCharacterAttributeComponent* TargetAttributecom = TargetCharacter->GetAttributeComponent();
 
-		const FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(PawnLoc, TargetLoc);
+		if (!IsValid(TargetAttributecom)) return;
 
-		FRotator CurrentRot = OwningPawn->GetActorRotation();
-		FRotator TargetRot = FMath::RInterpTo(CurrentRot, LookAtRot, _DeltaSeconds, RotationInterSpeed);
+		if (TargetName.StartsWith(TEXT("BP_YggHero")) || TargetName.StartsWith(TEXT("BP_Yggdrasil")) || TargetCharacter->GetAttributeComponent()->HasTag(TEXT("Character")))
+		{
+			const FVector PawnLoc = OwningPawn->GetActorLocation();
+			const FVector TargetLoc = TargetActor->GetActorLocation();
 
-		TargetRot.Pitch = 0.f;
-		TargetRot.Roll = 0.f;
+			const FRotator LookAtRot = UKismetMathLibrary::FindLookAtRotation(PawnLoc, TargetLoc);
 
-		OwningPawn->SetActorRotation(TargetRot);
+			FRotator CurrentRot = OwningPawn->GetActorRotation();
+			FRotator TargetRot = FMath::RInterpTo(CurrentRot, LookAtRot, _DeltaSeconds, RotationInterSpeed);
+
+			TargetRot.Pitch = 0.f;
+			TargetRot.Roll = 0.f;
+
+			OwningPawn->SetActorRotation(TargetRot);
+		}
 	}
+
+	
 }
 
 void UEnemyBTTaskNode::DeathCheck(UBehaviorTreeComponent& _OwnerComp)

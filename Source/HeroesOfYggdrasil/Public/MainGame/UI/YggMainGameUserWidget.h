@@ -85,6 +85,9 @@ public:
 	UFUNCTION()
 	void CreateDefeatedWidget();
 
+	UFUNCTION(BlueprintCallable)
+	void OnClickSound();
+
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
@@ -170,4 +173,7 @@ private:
 
 	UPROPERTY()
 	UYggHasAbilityUserWidget* HasAbilityWidget;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	USoundBase* ClickSound;
 };

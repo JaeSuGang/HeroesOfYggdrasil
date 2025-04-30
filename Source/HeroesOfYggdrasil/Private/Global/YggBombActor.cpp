@@ -20,6 +20,7 @@ AYggBombActor::AYggBombActor()
 void AYggBombActor::ExplosionOn()
 {
 	ExplosionAttackCapsuleComponent->CollisionOn();
+	AttackCapsuleComponent->CollisionOff();
 	if (HasAuthority())
 	{
 		NetMultiExplosionOn();

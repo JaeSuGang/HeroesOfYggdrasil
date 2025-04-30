@@ -35,9 +35,10 @@ EStatusEffectType UTickUtilityFunctionLibrary::FindStatusEffectType(AEnemyCharac
 	if (Key == TEXT("Minion_Witch_1")) return EStatusEffectType::Slow;
 	if (Key == TEXT("Minion_Witch_2")) return EStatusEffectType::Stunned;
 	if (Key == TEXT("Minion_Witch_3")) return EStatusEffectType::Burn;
-	if (Key == TEXT("Dragon"))		   return EStatusEffectType::Burn;
+	if (Key == TEXT("Dragon_Small"))   return EStatusEffectType::Burn;
+	if (Key == TEXT("Dragon_Large"))   return EStatusEffectType::Burn;
 
-	return EStatusEffectType::MAX;
+	return EStatusEffectType::Burn;
 }
 
 FName UTickUtilityFunctionLibrary::ConvertStatusEffectTypeToName(EStatusEffectType Type)

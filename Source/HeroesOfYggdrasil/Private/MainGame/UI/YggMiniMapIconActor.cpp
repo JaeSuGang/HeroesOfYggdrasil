@@ -11,6 +11,7 @@
 #include "PaperSpriteComponent.h"
 #include "Attribute/HeroAttributeComponent.h"
 #include "Component/CaptureComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AYggMiniMapIconActor::AYggMiniMapIconActor()
@@ -36,22 +37,31 @@ void AYggMiniMapIconActor::BeginPlay()
 	Super::BeginPlay();
 
     TryAddMiniMap();
+
+    bReplicates = true;
+    bAlwaysRelevant = true;
+
+    OnDestroyed.AddDynamic(this, &AYggMiniMapIconActor::OnIconDestroyed);
 }
 
 void AYggMiniMapIconActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Super::EndPlay(EndPlayReason);
 
-    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-    {
-        if (AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD()))
-        {
-            if (HUD->MiniMapManager)
-            {
-                HUD->MiniMapManager->RemoveMiniMapIcon(this);
-            }
-        }
-    }
+    //if (IsValid(PaperSpriteComponent))
+    //{
+    //    DestroyIcon(); // 모든 클라이언트에서 파괴
+    //}
+    //if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    //{
+    //    if (AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD()))
+    //    {
+    //        if (HUD->MiniMapManager)
+    //        {
+    //            HUD->MiniMapManager->RemoveMiniMapIcon(this);
+    //        }
+    //    }
+    //}
 }
 
 // Called every frame
@@ -73,6 +83,13 @@ void AYggMiniMapIconActor::Tick(float DeltaTime)
         SetActorRotation(FRotator(0.f, CamRot.Yaw, 0.f));
     }
 }
+
+void AYggMiniMapIconActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME(AYggMiniMapIconActor, PaperSpriteComponent);
+}
+
 
 void AYggMiniMapIconActor::SetPaperSprite(FName IConName)
 {
@@ -115,4 +132,24 @@ void AYggMiniMapIconActor::AddToCaptureComponent()
             MinMapCapture->SetupMiniMapCapture(this);
         }
     }
+}
+
+void AYggMiniMapIconActor::OnIconDestroyed(AActor* DestroyedActor)
+{
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    {
+        if (AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD()))
+        {
+            if (HUD->MiniMapManager)
+            {
+                HUD->MiniMapManager->RemoveMiniMapIcon(this);
+            }
+        }
+    }
+}
+
+
+void AYggMiniMapIconActor::DestroyIcon_Implementation()
+{
+    Destroy();
 }

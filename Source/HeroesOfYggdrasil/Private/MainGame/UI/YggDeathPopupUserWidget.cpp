@@ -12,16 +12,22 @@
 
 void UYggDeathPopupUserWidget::NativeOnInitialized()
 {
-    Super::NativeOnInitialized();
+	Super::NativeOnInitialized();
 
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UYggDeathPopupUserWidget::NativeConstruct()
 {
-    Super::NativeConstruct();
+	Super::NativeConstruct();
 
-	APawn* Pawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	/*APawn* Pawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);*/
+	APlayerController* PlayerController = GetOwningPlayer();
+	if (!PlayerController)
+	{
+		return;
+	}
+	APawn* Pawn = PlayerController->GetPawn();
 	if (!Pawn) return;
 
 	AYggHero* Hero = Cast<AYggHero>(Pawn);

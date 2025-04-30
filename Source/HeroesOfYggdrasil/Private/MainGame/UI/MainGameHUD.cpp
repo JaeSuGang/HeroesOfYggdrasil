@@ -213,3 +213,8 @@ void AMainGameHUD::AddAbility(FName AbilityName, UTexture2D* Texture, FName Desc
 	HasAbilityName.Add(AbilityName);
 	HasAbilityInfo.Add(AbilityName, NewInfo);
 }
+
+void AMainGameHUD::EndGameButton()
+{
+	UKismetSystemLibrary::QuitGame(GetWorld(), PC, EQuitPreference::Quit, false);
+}

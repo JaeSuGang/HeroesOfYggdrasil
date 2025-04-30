@@ -18,6 +18,9 @@
 #include "MainGame/UI/YggHasAbilityUserWidget.h"
 #include "MainGame/EnemyManager.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/Button.h"
@@ -196,6 +199,8 @@ void UYggMainGameUserWidget::EndAbilityPlus()
 
 void UYggMainGameUserWidget::CreateAbility()
 {
+	OnClickSound();
+
 	if (nullptr != SelectAbilityWidget)
 	{
 		SelectAbilityWidget->PlayPopupAnim();
@@ -312,5 +317,13 @@ void UYggMainGameUserWidget::CreateDefeatedWidget()
 			CanvasSlot->SetAnchors(FAnchors(0.5f, 0.5f));
 			CanvasSlot->SetPosition(FVector2D(0.0f, 0.0f));
 		}
+	}
+}
+
+void UYggMainGameUserWidget::OnClickSound()
+{
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound, 0.1f);
 	}
 }

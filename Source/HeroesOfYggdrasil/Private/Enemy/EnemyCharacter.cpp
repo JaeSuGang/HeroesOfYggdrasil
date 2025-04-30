@@ -175,12 +175,16 @@ void AEnemyCharacter::BeginPlay()
 	// 충돌 설정
 	//GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
 
-	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	//MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
+	
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = this;
+
+	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass, SpawnParams);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
-	//MiniMapIcon->SetAttachedCharacter(this);
-	//MiniMapIcon->AddToCaptureComponent();
-	
+	MiniMapIcon->SetOwner(this); // ← 중요
 	
 	PreviousHp = CharacterAttributeComponent->HP;
 
@@ -204,24 +208,22 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	// Enemy 정리
-	AEnemyManager* EnemyManager = AEnemyManager::Get(GetWorld());
+	if (IsValid(MiniMapIcon))
+	{
+		MiniMapIcon->DestroyIcon();
+	}
 	
+
+	AEnemyManager* EnemyManager = AEnemyManager::Get(GetWorld());
 	if (IsValid(EnemyManager) && EnemyManager->AllEnemyCharacter.Contains(this))
 	{
 		if (HasAuthority())
 		{
 			EnemyManager->RemoveEnemyCharacter(this);
 		}
-		
 	}
 
-	MiniMapIcon->Destroy();
-
-	Super::EndPlay(EndPlayReason);
-
-	// 타이머 정리
-	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+	Super::EndPlay(EndPlayReason); 
 }
 
 
@@ -338,6 +340,8 @@ void AEnemyCharacter::AttackEnd()
 
 void AEnemyCharacter::DestroyAllComponents_Implementation()
 {
+	
+	
 	TArray<UActorComponent*> Components;
 	GetComponents(Components);
 
@@ -348,12 +352,7 @@ void AEnemyCharacter::DestroyAllComponents_Implementation()
 			Component->DestroyComponent();
 		}
 	}
-
-	//if (MiniMapIcon)
-	//{
-	//	MiniMapIcon->Destroy();
-	//}
-
+	
 	Destroy();
 }
 
@@ -593,6 +592,16 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 		Att /= 10.f;
 	}
 
+	if (DataKey.StartsWith(FString("Dragon")))
+	{
+		Att /= 3.f;
+	}
+
+	if (IsValid(Hero))
+	{
+		Hero->GetAttributeComponent()->Server_TakeDamage(Att);
+	}
+	
 	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
 	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect, Att);
 }
@@ -679,7 +688,7 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter * _Target)
 
 void AEnemyCharacter::DragonRangeAttack_Implementation(AActor* _Actor)
 {
-	if (!WarningOutRangeClass || !_Actor || DataKey != FString(TEXT("Dragon"))) return;
+	if (!WarningOutRangeClass || !_Actor || !DataKey.StartsWith(TEXT("Dragon"))) return;
 
 	TWeakObjectPtr<AEnemyCharacter> WeakEnemey = this;
 
@@ -742,7 +751,7 @@ void AEnemyCharacter::DragonRangeAttack_Implementation(AActor* _Actor)
 void AEnemyCharacter::DragonBreath_Implementation()
 {
 	
-	if (DataKey != FString(TEXT("Dragon"))) return;
+	if (!DataKey.StartsWith(TEXT("Dragon"))) return;
 
 	if (!TickNiagaraSystem.IsValid())
 	{
@@ -782,7 +791,7 @@ void AEnemyCharacter::DragonBreathDamage(AYggCharacter*_Target)
 {
 	if (!IsValid(_Target)) return;
 
-	if (DataKey != FString(TEXT("Dragon"))) return;
+	if (!DataKey.StartsWith(TEXT("Dragon"))) return;
 
 	HandleHeroEnteredRange(_Target);
 }

@@ -98,7 +98,14 @@ void UBattleStage::Local_OnEnemyCountChanged(AEnemyManager* EnemyManager)
 	{
 		if (EnemyManager->AllEnemyCharacter.Num() <= 0)
 		{
-			EnterNextStage();
+			if (StageSystem->CurrentRound == 10)
+			{
+				StageSystem->VictoryInternal();
+			}
+			else
+			{
+				EnterNextStage();
+			}
 		}
 	}
 }

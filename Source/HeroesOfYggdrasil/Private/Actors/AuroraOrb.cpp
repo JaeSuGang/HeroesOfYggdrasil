@@ -46,67 +46,53 @@ void AAuroraOrb::BeginPlay()
 {
     Super::BeginPlay();
 
-    APlayerController* PC = GetWorld()->GetFirstPlayerController();
-    if (PC && PC->GetPawn())
+    ACharacter* OwnerCharacter = Cast<ACharacter>(GetOwner());
+    if (!OwnerCharacter)
     {
-        // 1. 카메라 위치 & 회전 획득
-        FVector CameraLoc;
-        FRotator CameraRot;
-        PC->GetPlayerViewPoint(CameraLoc, CameraRot);
-
-        // 2. 뷰포트 중앙 좌표 계산
-        int32 ViewportSizeX, ViewportSizeY;
-        PC->GetViewportSize(ViewportSizeX, ViewportSizeY);
-        FVector2D ScreenCenter = FVector2D(ViewportSizeX * 0.5f, ViewportSizeY * 0.5f);
-
-        // 3. 화면 중앙 → 월드 방향 변환
-        FVector WorldDirection;
-        FVector DummyVector;
-        PC->DeprojectScreenPositionToWorld(
-            ScreenCenter.X,
-            ScreenCenter.Y,
-            DummyVector,
-            WorldDirection
-        );
-
-        // 4. Line Trace 파라미터 설정
-        FVector TraceStart = CameraLoc;
-        FVector TraceEnd = TraceStart + (WorldDirection * 10000.f);
-        FHitResult HitResult;
-        FCollisionQueryParams TraceParams;
-        TraceParams.AddIgnoredActor(PC->GetPawn());
-        TraceParams.AddIgnoredActor(this);
-
-        // 5. Line Trace 수행
-        bool bHit = GetWorld()->LineTraceSingleByChannel(
-            HitResult,
-            TraceStart,
-            TraceEnd,
-            ECC_Visibility,
-            TraceParams
-        );
-
-        // 6. 타겟 포인트 결정
-        TargetPoint = bHit ? HitResult.Location : TraceStart + (WorldDirection * 10000.f);
-
-        // 7. 이동 방향 계산 (오브 현재 위치 → 타겟 포인트)
-        MoveDirection = (TargetPoint - GetActorLocation()).GetSafeNormal();
-        
-        if (!MoveDirection.IsNearlyZero())
-        {
-            FRotator NewRotation = FRotationMatrix::MakeFromYZ(
-                MoveDirection,
-                FVector::UpVector
-            ).Rotator();
-
-            SetActorRotation(NewRotation + FRotator(0, 0, 90.f));
-        }
-
-        // 디버그
-        // DrawDebugLine(GetWorld(), CameraLoc, TargetPoint, FColor::Green, false, 2.f);
-        // DrawDebugSphere(GetWorld(), TargetPoint, 30.f, 12, FColor::Red, false, 2.f);
+        Destroy();
+        return;
     }
 
+    // Get the owner's view point using character's eyes view
+    FVector TraceStart;
+    FRotator TraceRotation;
+    OwnerCharacter->GetActorEyesViewPoint(TraceStart, TraceRotation);
+    FVector TraceEnd = TraceStart + (TraceRotation.Vector() * 10000.f);
+    
+    FCollisionQueryParams TraceParams;
+    TraceParams.AddIgnoredActor(GetOwner());
+    TraceParams.AddIgnoredActor(this);
+     
+    // Line Trace 수행
+    FHitResult HitResult;
+    bool bHit = GetWorld()->LineTraceSingleByChannel(
+        HitResult,
+        TraceStart,
+        TraceEnd,
+        ECC_Visibility,
+        TraceParams
+    );
+
+    // 타겟 포인트 결정
+    TargetPoint = bHit ? HitResult.Location : TraceEnd;
+
+    // 이동 방향 계산 (오브 현재 위치 → 타겟 포인트)
+    MoveDirection = (TargetPoint - GetActorLocation()).GetSafeNormal();
+        
+    if (!MoveDirection.IsNearlyZero())
+    {
+        FRotator NewRotation = FRotationMatrix::MakeFromYZ(
+            MoveDirection,
+            FVector::UpVector
+        ).Rotator();
+
+        SetActorRotation(NewRotation + FRotator(0, 0, 90.f));
+    }
+
+    // 디버그
+    // DrawDebugLine(GetWorld(), TraceStart, TargetPoint, FColor::Green, false, 2.f);
+    // DrawDebugSphere(GetWorld(), TargetPoint, 30.f, 12, FColor::Red, false, 2.f);
+    
     // 파괴 타이머
     TWeakObjectPtr<AAuroraOrb> WeakThis(this);
     GetWorld()->GetTimerManager().SetTimer(OrbTimer, [WeakThis]() {

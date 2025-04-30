@@ -60,7 +60,24 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		return;
 	}
 
-
+	if (IsValid(TargetActor))
+	{
+		if (TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+		{
+			AYggCharacter* Yggdrasil = Cast<AYggCharacter>(TargetActor);
+			if (IsValid(Yggdrasil))
+			{
+				UCharacterAttributeComponent* YggdarsilAttri = Yggdrasil->GetAttributeComponent();
+				if (IsValid(YggdarsilAttri))
+				{
+					if (YggdarsilAttri->GetHP() < 0.0f)
+					{
+						ChangeState(_OwnerComp, EEnemyAIState::Idle);
+					}
+				}
+			}
+		}
+	}
 
 	if (IsValid(TargetActor))
 	{
@@ -156,7 +173,7 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 		return;
 	}
 
-	if (SelfController)
+	if (IsValid(SelfController))
 	{
 		SelfController->StopMovement();
 	}
