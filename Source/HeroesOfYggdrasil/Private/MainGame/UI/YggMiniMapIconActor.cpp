@@ -11,6 +11,7 @@
 #include "PaperSpriteComponent.h"
 #include "Attribute/HeroAttributeComponent.h"
 #include "Component/CaptureComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AYggMiniMapIconActor::AYggMiniMapIconActor()
@@ -80,6 +81,13 @@ void AYggMiniMapIconActor::Tick(float DeltaTime)
         SetActorRotation(FRotator(0.f, CamRot.Yaw, 0.f));
     }
 }
+
+void AYggMiniMapIconActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+    DOREPLIFETIME(AYggMiniMapIconActor, PaperSpriteComponent);
+}
+
 
 void AYggMiniMapIconActor::SetPaperSprite(FName IConName)
 {
