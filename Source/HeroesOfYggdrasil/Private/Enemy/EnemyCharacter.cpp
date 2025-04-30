@@ -202,12 +202,7 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	if (IsPendingKillPending())
-	{
-		Super::EndPlay(EndPlayReason);
-		return;
-	}
-
+	
 	if (IsValid(MiniMapIcon))
 	{
 		MiniMapIcon->Destroy();

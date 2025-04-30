@@ -55,7 +55,7 @@ void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	{
 		if (!IsValid(EnemyCharacter)) return;
 		
-		EnemyCharacter->DestroyAllComponents();
+		EnemyCharacter->Destroy();
 	}
 
 
