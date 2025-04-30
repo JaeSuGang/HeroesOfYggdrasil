@@ -46,11 +46,11 @@ void URevenantRAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 					}
 					if (AYggHeroRevenant* Revenant = Cast<AYggHeroRevenant>(Actor)) 
 					{
-						Revenant->SetIsUsingSkillR(false);
+					Revenant->SetIsUsingSkillR(false);
 					}
 					
 				},
-				15.0f,                                              
+				10.0f,                                              
 				false                                              
 			);
 
@@ -81,7 +81,7 @@ void URevenantRAnimNotifyState::NotifyBegin(USkeletalMeshComponent* MeshComp, UA
 						WeakSpawned->Destroy();
 					}
 				},
-				15.0f,
+				10.0f,
 				false
 			);
 		}

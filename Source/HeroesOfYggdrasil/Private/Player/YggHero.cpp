@@ -178,7 +178,7 @@ void AYggHero::SetAimMode(bool Value)
 	if (PC && PC->IsLocalController())
 	{
 		AMainGameHUD* MainGameHUD = Cast<AMainGameHUD>(PC->GetHUD());
-		if(MainGameHUD)
+		if (MainGameHUD)
 			MainGameHUD->EnableCrossHair(bAimMode);
 	}
 
@@ -246,11 +246,11 @@ void AYggHero::Server_SetAimDirection_Implementation(const FVector& InAimDir)
 
 void AYggHero::SetAimDirection(const FVector& InAimDir)
 {
-	if (HasAuthority()) 
+	if (HasAuthority())
 	{
 		NetMulticast_SetAimDirection(InAimDir);
 	}
-	else 
+	else
 	{
 		Server_SetAimDirection(InAimDir);
 	}
@@ -268,7 +268,7 @@ FVector AYggHero::Local_GetAimDirection(FName _SocketName)
 	const float TraceRange = 10000.f;
 	FVector TraceEnd = CamLoc + CamRot.Vector() * TraceRange;
 
-	FHitResult Hit;
+	/*FHitResult Hit;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
@@ -284,12 +284,12 @@ FVector AYggHero::Local_GetAimDirection(FName _SocketName)
 		ObjectQueryParams,
 		FCollisionShape::MakeBox(BoxHalfSize),
 		Params
-	);
+	);*/
 
 	//GetWorld()->LineTraceSingleByChannel(
 	//	Hit, CamLoc, TraceEnd, ECC_Visibility, Params);
 
-	TargetLocation = Hit.bBlockingHit ? Hit.ImpactPoint : TraceEnd;
+	TargetLocation = /*Hit.bBlockingHit ? Hit.ImpactPoint : */TraceEnd;
 
 	// 3. 총구 위치
 	const FVector MuzzleLoc = GetMesh()->GetSocketLocation(_SocketName);
@@ -493,7 +493,7 @@ void AYggHero::Roll(const FInputActionValue& Value)
 
 void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)
 {
-	
+
 	MulticastRoll(Value);
 }
 
@@ -621,10 +621,10 @@ void AYggHero::SkillR(const FInputActionValue& Value)
 		return;
 	}
 	if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
 		MulticastHeroSkillR(Value);
 	}
 	else
@@ -654,12 +654,13 @@ void AYggHero::Die(float Delegate)
 	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.Death"))) return;
 	if (HeroAttributeComponent->HP > 0.0f) return;
 
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.Death"));
+
 	if (HasAuthority())
 	{
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
-		HeroAttributeComponent->AddTag(TEXT("Character.State.NotRollable"));
-		HeroAttributeComponent->AddTag(TEXT("Character.State.Death"));
 		DeathCount++;
 		MulticastDie(Delegate);
 	}
