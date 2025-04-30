@@ -43,8 +43,12 @@ void UBTTaskNode_Death::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfPawn);
 
 	UCapsuleComponent* Capsule = EnemyCharacter->GetCapsuleComponent();
-	Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+	if (IsValid(Capsule) && IsValid(EnemyCharacter))
+	{
+		Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		EnemyCharacter->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	
 	DeathTime -= _DeltaSeconds;
 
 	if (DeathTime < 0.0f)
