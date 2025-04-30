@@ -213,13 +213,8 @@ void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		}
 		
 	}
-
+	
 	MiniMapIcon->Destroy();
-
-	if (!IsPendingKillPending())
-	{
-		GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
-	}
 	
 	Super::EndPlay(EndPlayReason);
 
