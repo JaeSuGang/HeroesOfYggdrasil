@@ -265,7 +265,7 @@ FVector AYggHero::Local_GetAimDirection(FName _SocketName)
 	FRotator CamRot;
 	PC->GetPlayerViewPoint(CamLoc, CamRot);
 
-	const float TraceRange = 5000.f;
+	const float TraceRange = 10000.f;
 	FVector TraceEnd = CamLoc + CamRot.Vector() * TraceRange;
 
 	FHitResult Hit;
