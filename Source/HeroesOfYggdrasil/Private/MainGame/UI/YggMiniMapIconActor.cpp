@@ -36,22 +36,29 @@ void AYggMiniMapIconActor::BeginPlay()
 	Super::BeginPlay();
 
     TryAddMiniMap();
+
+    if (HasAuthority())
+    {
+        SetReplicates(true);
+    }
+
+    OnDestroyed.AddDynamic(this, &AYggMiniMapIconActor::OnIconDestroyed);
 }
 
 void AYggMiniMapIconActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
     Super::EndPlay(EndPlayReason);
 
-    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-    {
-        if (AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD()))
-        {
-            if (HUD->MiniMapManager)
-            {
-                HUD->MiniMapManager->RemoveMiniMapIcon(this);
-            }
-        }
-    }
+    //if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    //{
+    //    if (AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD()))
+    //    {
+    //        if (HUD->MiniMapManager)
+    //        {
+    //            HUD->MiniMapManager->RemoveMiniMapIcon(this);
+    //        }
+    //    }
+    //}
 }
 
 // Called every frame
@@ -113,6 +120,20 @@ void AYggMiniMapIconActor::AddToCaptureComponent()
         if (UCaptureComponent* MinMapCapture = Hero->GetMiniMapCaptureComponent())
         {
             MinMapCapture->SetupMiniMapCapture(this);
+        }
+    }
+}
+
+void AYggMiniMapIconActor::OnIconDestroyed(AActor* DestroyedActor)
+{
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    {
+        if (AMainGameHUD* HUD = Cast<AMainGameHUD>(PC->GetHUD()))
+        {
+            if (HUD->MiniMapManager)
+            {
+                HUD->MiniMapManager->RemoveMiniMapIcon(this);
+            }
         }
     }
 }
