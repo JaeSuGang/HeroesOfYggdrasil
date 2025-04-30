@@ -47,7 +47,7 @@ void UCharacterAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimePr
 
 void UCharacterAttributeComponent::GenerateHpInternal()
 {
-	if (HPGeneration > 0 && HP > 0)
+	if (HPGeneration != 0 && HP > 0)
 	{
 		float HpToApply{};
 

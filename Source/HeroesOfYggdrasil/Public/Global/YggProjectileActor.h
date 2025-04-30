@@ -118,4 +118,6 @@ protected:
 	void TargetParabolaMode();
 	void HomingMode();
 
+	float CurTime = 0.f;
+
 };

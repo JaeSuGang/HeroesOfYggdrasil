@@ -46,6 +46,11 @@ void AYggProjectileActor::Tick(float DeltaTime)
 	{
 		SetInit();
 	}
+	CurTime += DeltaTime;
+	if (CurTime >= ProjectileDataRow.DestroyTime)
+	{
+		Destroy();
+	}
 }
 
 void AYggProjectileActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -85,12 +90,8 @@ void AYggProjectileActor::SetInit()
 void AYggProjectileActor::Server_SetInit_Implementation()
 {
 	MultiCast_SetInit();
-	FTimerHandle TimerHandle;
-	TWeakObjectPtr<AYggProjectileActor> WeakThis = this;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [WeakThis]()
-		{
-			WeakThis->Destroy();
-		}, ProjectileDataRow.DestroyTime, false);
+	
+	
 	bIsInit = true;
 }
 
