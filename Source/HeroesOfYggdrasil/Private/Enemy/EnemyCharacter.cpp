@@ -214,7 +214,11 @@ void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		
 	}
 	
-	MiniMapIcon->Destroy();
+	if (IsValid(MiniMapIcon))
+	{
+		MiniMapIcon->Destroy();
+	}
+	
 	
 	Super::EndPlay(EndPlayReason);
 
@@ -345,11 +349,6 @@ void AEnemyCharacter::DestroyAllComponents_Implementation()
 			Component->DestroyComponent();
 		}
 	}
-
-	//if (MiniMapIcon)
-	//{
-	//	MiniMapIcon->Destroy();
-	//}
 
 	Destroy();
 }
