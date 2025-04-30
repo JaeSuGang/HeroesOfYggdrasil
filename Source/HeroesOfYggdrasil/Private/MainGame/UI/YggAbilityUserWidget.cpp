@@ -9,6 +9,8 @@
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "MainGame/MainGamePlayerState.h"
 
 #include "UpgradeSystem/UpgradeSystem.h"
@@ -32,6 +34,7 @@ void UYggAbilityUserWidget::NativeOnInitialized()
 	{
 		SelectButton->OnClicked.AddDynamic(this, &UYggAbilityUserWidget::AbilitySelectEvent);
 		SelectButton->OnClicked.AddDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
+		SelectButton->OnClicked.AddDynamic(this, &UYggAbilityUserWidget::OnClickSound);
 		SelectButton->OnHovered.AddDynamic(this, &UYggAbilityUserWidget::PlayHoverAnim);
 		SelectButton->OnUnhovered.AddDynamic(this, &UYggAbilityUserWidget::PlayUnHoverAnim);
 	}
@@ -51,6 +54,7 @@ void UYggAbilityUserWidget::NativeDestruct()
 		{
 			SelectButton->OnClicked.RemoveDynamic(this, &UYggAbilityUserWidget::AbilitySelectEvent);
 			SelectButton->OnClicked.RemoveDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
+			SelectButton->OnClicked.RemoveDynamic(this, &UYggAbilityUserWidget::OnClickSound);
 			SelectButton->OnHovered.RemoveDynamic(this, &UYggAbilityUserWidget::PlayHoverAnim);
 			SelectButton->OnUnhovered.RemoveDynamic(this, &UYggAbilityUserWidget::PlayUnHoverAnim);
 		}
@@ -112,17 +116,14 @@ void UYggAbilityUserWidget::ApplyRarityEffect(EUpgradeRarity Rarity)
 	{
 	case EUpgradeRarity::Common:
 		EdgeMat->SetVectorParameterValue("Color1", FLinearColor(1.0f, 1.0f, 1.0f));
-		EdgeMat->SetVectorParameterValue("Color2", FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
 		Edge->SetBrushFromMaterial(EdgeMat);
 		break;
 	case EUpgradeRarity::Epic:
 		EdgeMat->SetVectorParameterValue("Color1", FLinearColor(0.27451f, 0.14902f, 0.47451f));
-		EdgeMat->SetVectorParameterValue("Color2", FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
 		Edge->SetBrushFromMaterial(EdgeMat);
 		break;
 	case EUpgradeRarity::Legendary:
 		EdgeMat->SetVectorParameterValue("Color1", FLinearColor(1.0f, 0.843137f, 0.0f));
-		EdgeMat->SetVectorParameterValue("Color2", FLinearColor(1.0f, 1.0f, 1.0f, 0.0f));
 		Edge->SetBrushFromMaterial(EdgeMat);
 		break;
 	default:
@@ -138,4 +139,12 @@ void UYggAbilityUserWidget::PlayHoverAnim()
 void UYggAbilityUserWidget::PlayUnHoverAnim()
 {
 	PlayAnimationReverse(HoverAnim);
+}
+
+void UYggAbilityUserWidget::OnClickSound()
+{
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound, 0.1f);
+	}
 }

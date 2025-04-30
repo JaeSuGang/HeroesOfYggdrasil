@@ -28,6 +28,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = YGG)
 	void PlayRPopupAnim();
 
+	UFUNCTION(BlueprintCallable, Category = YGG)
+	void OnClickSound();
+
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
@@ -55,4 +58,6 @@ private:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* PopupAnim;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	USoundBase* ClickSound;
 };
