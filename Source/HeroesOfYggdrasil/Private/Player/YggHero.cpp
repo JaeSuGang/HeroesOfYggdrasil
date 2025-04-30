@@ -116,8 +116,8 @@ void AYggHero::BeginPlay()
 	if (HasAuthority())
 	{
 		HeroAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::TakeDamageEffect);
-		HeroAttributeComponent->ServerDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::Die);
 	}
+
 
 	if (FaceCaptureComponent)
 	{
@@ -208,7 +208,8 @@ void AYggHero::TakeDamageEffect_Implementation(float Att)
 void AYggHero::OnRep_Controller()
 {
 	Super::OnRep_Controller();
-
+	this;
+	HeroAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(this, &AYggHero::Die);
 	if (HasLocalNetOwner())
 	{
 		if (APlayerController* PC = Cast<APlayerController>(GetController()))
@@ -225,6 +226,8 @@ void AYggHero::OnRep_Controller()
 void AYggHero::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	
+
 
 	if (HasAuthority())
 	{

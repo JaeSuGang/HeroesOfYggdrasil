@@ -55,7 +55,6 @@ class HEROESOFYGGDRASIL_API AYggHero : public AYggCharacter
 public:
 	AYggHero();
 
-
 	UFUNCTION(BlueprintCallable)
 	UHeroAttributeComponent* GetHeroAttributeComponent()
 	{
