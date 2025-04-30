@@ -97,6 +97,7 @@ void AYggHeroRevenant::SkillQ(const FInputActionValue& Value)
 	{
 		return;
 	}
+	if (HeroAttributeComponent->SkillQCurCoolTime > 0.0f) return;
 	FVector NewAimDir = Local_GetAimDirection(LeftSocketName);
 	SetAimDirection(NewAimDir);
 	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
