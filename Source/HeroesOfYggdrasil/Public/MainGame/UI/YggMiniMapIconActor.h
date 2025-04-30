@@ -45,7 +45,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YGG", meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* DefaultScene = nullptr;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "YGG", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Replicated, BlueprintReadOnly, Category = "YGG", meta = (AllowPrivateAccess = "true"))
 	class UPaperSpriteComponent* PaperSpriteComponent = nullptr;
 	
 	UPROPERTY(EditAnywhere)
