@@ -6,6 +6,8 @@
 #include "Component/SceneComponent/YggAttackCapsuleComponent.h"
 #include "Components/DecalComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Input System Modules
 #include "EnhancedInputComponent.h"
@@ -134,6 +136,13 @@ void AYggHeroAurora::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInput->BindAction(*ActionMap.Find(FName("Roll")), ETriggerEvent::Triggered, this, &AYggHeroAurora::Roll);
 		}
 	}
+}
+
+void AYggHeroAurora::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AYggHeroAurora, bIsSkillE);
+	DOREPLIFETIME(AYggHeroAurora, bIsJetpacking);
 }
 
 void AYggHeroAurora::PossessedBy(AController* NewController)
@@ -383,9 +392,61 @@ void AYggHeroAurora::JetpackOn(const FInputActionValue& Value)
 
 void AYggHeroAurora::JetpackOff(const FInputActionValue& Value)
 {
+	if (!HasAuthority())
+		Server_JetpackOff();
+	else
+		DoJetpackOff();
+	
+}
+
+void AYggHeroAurora::Server_JetpackOff_Implementation()
+{
+	DoJetpackOff();
+}
+
+void AYggHeroAurora::DoJetpackOff()
+{
 	bIsJetpacking = false;
-	if (GetCharacterMovement()->MovementMode == MOVE_Flying)
+
+	GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+	/*if (GetCharacterMovement()->MovementMode == MOVE_Flying)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+	}*/
+}
+
+void AYggHeroAurora::Server_ThrowCatalyst_Implementation()
+{
+	if (PendingCatalyst)
+	{
+		MagicCircleOff();
+
+		AAuroraFrostCatalyst* Catalyst = PendingCatalyst;
+		PendingCatalyst = nullptr;
+
+		Catalyst->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+		UProjectileMovementComponent* ProjMove = Catalyst->FindComponentByClass<UProjectileMovementComponent>();
+		if (ProjMove)
+		{
+			FVector Start = Catalyst->GetActorLocation();
+			FVector Target = MagicTargetPoint;
+
+			FVector LaunchVel;
+			bool bHaveVel = UGameplayStatics::SuggestProjectileVelocity_CustomArc(
+				this,
+				LaunchVel,
+				Start,
+				Target,
+				0.f,
+				0.75f
+			);
+
+			if (bHaveVel)
+			{
+				ProjMove->Velocity = LaunchVel * 1.2f;
+				ProjMove->Activate(true);
+			}
+		}
 	}
 }

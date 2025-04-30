@@ -24,6 +24,8 @@ protected:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_Controller() override;
 
@@ -45,7 +47,7 @@ public:
 	void MagicCircleOff();
 
 private:
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	bool bIsSkillE = false;
 
 	UPROPERTY(EditAnywhere)
@@ -73,19 +75,27 @@ public:	// Jump
 	/** 연료 충전 속도 (초당) */
 	float FuelRechargeRate = 0.5f;
 	/** 제트팩 사용 중 플래그 */
+	UPROPERTY(Replicated)
 	bool bIsJetpacking = false;
 
 	UFUNCTION()
 	void JetpackOn(const FInputActionValue& Value);
 	UFUNCTION()
 	void JetpackOff(const FInputActionValue& Value);
+	UFUNCTION(Server, Reliable)
+	void Server_JetpackOff();
+	UFUNCTION()
+	void DoJetpackOff();
 
 public:
 	/** SpawnNotify 에서 찍어둘 Catalyst 인스턴스*/
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	AAuroraFrostCatalyst* PendingCatalyst = nullptr;
 
 	/** MagicCircleOn() 으로 계산한 최종 타겟 위치*/
 	UPROPERTY()
 	FVector MagicTargetPoint;
+
+	UFUNCTION(Server, Reliable)
+	void Server_ThrowCatalyst();
 };
