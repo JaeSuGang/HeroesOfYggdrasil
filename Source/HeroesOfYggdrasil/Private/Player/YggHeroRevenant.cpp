@@ -132,7 +132,7 @@ void AYggHeroRevenant::SkillR(const FInputActionValue& Value)
 	}
 	FVector NewAimDir = Local_GetAimDirection(TEXT("None"));
 	SetAimDirection(NewAimDir);
-	bIsUsingSkillR = true;
+	SetIsUsingSkillR(true);
 	Super::SkillR(Value);
 }
 
@@ -140,6 +140,28 @@ void AYggHeroRevenant::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+}
+
+void AYggHeroRevenant::SetIsUsingSkillR(bool bIsUsing)
+{
+	if (HasAuthority())
+	{
+		MulticastSetIsUsingSkillR(bIsUsing);
+	}
+	else
+	{
+		ServerSetIsUsingSkillR(bIsUsing);
+	}	
+}
+
+void AYggHeroRevenant::ServerSetIsUsingSkillR_Implementation(bool bIsUsing)
+{
+	MulticastSetIsUsingSkillR(bIsUsing);
+}
+
+void AYggHeroRevenant::MulticastSetIsUsingSkillR_Implementation(bool bIsUsing)
+{
+	bIsUsingSkillR = bIsUsing;
 }
 
 

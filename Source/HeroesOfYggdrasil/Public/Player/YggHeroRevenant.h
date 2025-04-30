@@ -34,7 +34,14 @@ protected:
 
 public:
 	UFUNCTION()
-	void SetIsUsingSkillR(bool bIsUsing) { bIsUsingSkillR = bIsUsing; }
+	void SetIsUsingSkillR(bool bIsUsing);
+	UFUNCTION(Reliable, Server)
+	void ServerSetIsUsingSkillR(bool bIsUsing);
+	UFUNCTION(Reliable, NetMulticast)
+	void MulticastSetIsUsingSkillR(bool bIsUsing);
+	
+
+
 	UFUNCTION()
 	bool GetIsUsingSkillR() { return bIsUsingSkillR; }
 

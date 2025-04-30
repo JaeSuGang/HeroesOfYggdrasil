@@ -239,7 +239,8 @@ void AYggHero::NetMulticast_SetAimDirection_Implementation(const FVector& InAimD
 
 void AYggHero::Server_SetAimDirection_Implementation(const FVector& InAimDir)
 {
-	NetMulticast_SetAimDirection(InAimDir);
+	AimDirection = InAimDir;
+	NetMulticast_SetAimDirection(AimDirection);
 }
 
 
@@ -281,8 +282,6 @@ FVector AYggHero::Local_GetAimDirection(FName _SocketName)
 
 	FVector AimDir = (TargetLocation - MuzzleLoc).GetSafeNormal();
 
-	DrawDebugLine(GetWorld(), MuzzleLoc, TargetLocation, FColor::Red, false, 1.0f);
-	
 	return AimDir;
 }
 
