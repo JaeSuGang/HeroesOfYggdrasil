@@ -29,6 +29,7 @@ public:
 
 	void AddToCaptureComponent();
 
+	UFUNCTION(BlueprintCallable)
 	void OnIconDestroyed(AActor* DestroyedActor);
 
 protected:
