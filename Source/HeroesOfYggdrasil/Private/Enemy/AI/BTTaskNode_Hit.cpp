@@ -80,9 +80,6 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 			false
 		);
 	}
-	
-
-
 }
 
 void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNodeMemory, float _DeltaSeconds)
