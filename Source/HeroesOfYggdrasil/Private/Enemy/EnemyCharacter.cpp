@@ -202,23 +202,27 @@ void AEnemyCharacter::Tick(float DeltaTime)
 
 void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	// Enemy 정리
-	MiniMapIcon->Destroy();
-	
+	if (IsPendingKillPending())
+	{
+		Super::EndPlay(EndPlayReason);
+		return;
+	}
+
+	if (IsValid(MiniMapIcon))
+	{
+		MiniMapIcon->Destroy();
+	}
+
 	AEnemyManager* EnemyManager = AEnemyManager::Get(GetWorld());
-	
 	if (IsValid(EnemyManager) && EnemyManager->AllEnemyCharacter.Contains(this))
 	{
 		if (HasAuthority())
 		{
 			EnemyManager->RemoveEnemyCharacter(this);
 		}
-		
 	}
-	
-	Super::EndPlay(EndPlayReason);
 
-	// 타이머 정리
+	Super::EndPlay(EndPlayReason); 
 }
 
 
