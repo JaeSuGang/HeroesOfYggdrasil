@@ -672,7 +672,7 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter * _Target)
 
 void AEnemyCharacter::DragonRangeAttack_Implementation(AActor* _Actor)
 {
-	if (!WarningOutRangeClass || !_Actor || DataKey != FString(TEXT("Dragon"))) return;
+	if (!WarningOutRangeClass || !_Actor || !DataKey.StartsWith(TEXT("Dragon"))) return;
 
 	TWeakObjectPtr<AEnemyCharacter> WeakEnemey = this;
 
@@ -735,7 +735,7 @@ void AEnemyCharacter::DragonRangeAttack_Implementation(AActor* _Actor)
 void AEnemyCharacter::DragonBreath_Implementation()
 {
 	
-	if (DataKey != FString(TEXT("Dragon"))) return;
+	if (!DataKey.StartsWith(TEXT("Dragon"))) return;
 
 	if (!TickNiagaraSystem.IsValid())
 	{
@@ -775,7 +775,7 @@ void AEnemyCharacter::DragonBreathDamage(AYggCharacter*_Target)
 {
 	if (!IsValid(_Target)) return;
 
-	if (DataKey != FString(TEXT("Dragon"))) return;
+	if (!DataKey.StartsWith(TEXT("Dragon"))) return;
 
 	HandleHeroEnteredRange(_Target);
 }
