@@ -15,7 +15,7 @@ void UBTTaskNode_TraceYggdrasil::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
-	if (nullptr != PlayAIData.SelfAnimPawn)
+	if (IsValid(PlayAIData.SelfAnimPawn))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
@@ -46,6 +46,8 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 	TargetDir.Z = 0.0f;
 	
+	if (!IsValid(SelfActor)) return;
+
 	AEnemyAIController* SelfController = SelfActor->GetController<AEnemyAIController>();
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 
@@ -55,12 +57,12 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 	// 이동 중 플레이어 타겟 체크
 	TargetCheck(_OwnerComp);
 
-	// 이그드라실 null(죽음) -> 추후 수정
-	if (nullptr == TargetActor)
-	{
-		ChangeState(_OwnerComp, EEnemyAIState::Idle);
-		return;
-	}
+	//// 이그드라실 null(죽음) -> 추후 수정
+	//if (!IsValid(TargetActor))
+	//{
+	//	ChangeState(_OwnerComp, EEnemyAIState::Idle);
+	//	return;
+	//}
 	
 
 	// 감지 범위 안에 플레이어 들어오면 플레이어 추적
@@ -81,6 +83,9 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 		
 	}
 
+
+	if (!IsValid(EnemyCharacter)) return;
+	
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
 		ChangeState(_OwnerComp, EEnemyAIState::Idle);
 		return;

@@ -147,6 +147,9 @@ void UEnemyBTTaskNode::TargetCheck(UBehaviorTreeComponent& _OwnerComp)
 
 void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 {
+
+	if (!_OwnerComp.IsValidLowLevel()) return;
+
 	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
@@ -171,6 +174,8 @@ void UEnemyBTTaskNode::YggdrasilCheck(UBehaviorTreeComponent& _OwnerComp)
 
 void UEnemyBTTaskNode::RotateToTargetActor(UBehaviorTreeComponent& _OwnerComp, float _DeltaSeconds)
 {
+	if (!_OwnerComp.IsValidLowLevel()) return;
+
 	FPlayAIData& PlayAIData = GetPlayAIData(_OwnerComp);
 
 	APawn* OwningPawn = _OwnerComp.GetAIOwner()->GetPawn();

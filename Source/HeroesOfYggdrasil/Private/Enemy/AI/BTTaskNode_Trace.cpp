@@ -15,7 +15,8 @@ void UBTTaskNode_Trace::Start(UBehaviorTreeComponent& _OwnerComp)
 	Super::Start(_OwnerComp);
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-	if (nullptr != PlayAIData.SelfAnimPawn)
+
+	if (IsValid(PlayAIData.SelfAnimPawn))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
@@ -38,12 +39,10 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	
-	if (!IsValid(TargetCharacter))
-	{
-		return;
-	}
+	if (!IsValid(TargetCharacter))	return;
 
 	UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+	
 	// 히어로 사망 체크
 	if (IsValid(TargetAttributeComponent))
 	{
@@ -59,9 +58,14 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 
 	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
+	
+	if (!IsValid(SelfCharacter)) return;
+	
 	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.TraceSpeed;
 
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+
+	if (!IsValid(EnemyCharacter)) return;
 
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
 		ChangeState(_OwnerComp, EEnemyAIState::Idle);
@@ -82,8 +86,9 @@ void UBTTaskNode_Trace::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNo
 	}
 
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
+
 	// 추적
-	if (SelfController != nullptr && TargetActor!= nullptr && CheckTime < 0.0f)
+	if (IsValid(SelfController) && IsValid(TargetActor) && CheckTime < 0.0f)
 	{
 		SelfController->MoveToActor(TargetActor);
 		CheckTime = PlayAIData.Data.TargetCheckTime;

@@ -173,7 +173,7 @@ void UBTTaskNode_Attack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 		return;
 	}
 
-	if (SelfController)
+	if (IsValid(SelfController))
 	{
 		SelfController->StopMovement();
 	}

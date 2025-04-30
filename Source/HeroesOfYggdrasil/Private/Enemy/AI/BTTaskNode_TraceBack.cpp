@@ -15,7 +15,7 @@ void UBTTaskNode_TraceBack::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 
-	if (nullptr != PlayAIData.SelfAnimPawn)
+	if (IsValid(PlayAIData.SelfAnimPawn))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
@@ -30,6 +30,9 @@ void UBTTaskNode_TraceBack::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	APawn* SelfActor = PlayAIData.SelfPawn;
 	ACharacter* SelfCharacter = Cast<ACharacter>(SelfActor);
+
+	if (!IsValid(SelfActor) || !IsValid(SelfCharacter)) return;
+
 	FVector OrigninDir = PlayAIData.OriginPos - SelfActor->GetActorLocation();
 
 	SelfCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.TraceBackSpeed;

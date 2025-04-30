@@ -17,12 +17,14 @@ void UBTTaskNode_DragonMeteor::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	
+	if (!IsValid(SelfActor)) return;
+
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
 
 	
 
 	// 이동 중지
-	if (SelfController)
+	if (IsValid(SelfController))
 	{
 		SelfController->StopMovement();
 	}

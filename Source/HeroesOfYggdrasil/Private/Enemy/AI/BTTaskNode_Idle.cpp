@@ -25,7 +25,7 @@ void UBTTaskNode_Idle::Start(UBehaviorTreeComponent& _OwnerComp)
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
 
-	if (Enemy->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")))
+	if (Enemy->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")) && IsValid(Enemy))
 	{
 
 		float Duration = FMath::Max(0.5f, 0.1f);
@@ -101,7 +101,7 @@ void UBTTaskNode_Idle::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNod
 
 
 
-	if (SelfController)
+	if (IsValid(SelfController))
 	{
 		SelfController->StopMovement();
 	}

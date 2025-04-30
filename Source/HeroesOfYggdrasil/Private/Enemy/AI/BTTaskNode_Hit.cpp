@@ -28,7 +28,7 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 
 	TargetCheck(_OwnerComp);
 
-	if (nullptr != PlayAIData.SelfAnimPawn)
+	if (IsValid(PlayAIData.SelfAnimPawn))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));
 	}
@@ -48,7 +48,7 @@ void UBTTaskNode_Hit::Start(UBehaviorTreeComponent& _OwnerComp)
 	}
 
 
-	if (Enemy->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")))
+	if (Enemy->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")) && IsValid(Enemy))
 	{
 		
 		float Duration = FMath::Max(0.3f, 0.1f);
@@ -89,15 +89,7 @@ void UBTTaskNode_Hit::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pNode
 
 	DeathCheck(_OwnerComp);
 
-
-	/*FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
-
-	APawn* SelfActor = PlayAIData.SelfPawn;
-	AActor* TargetActor = PlayAIData.TargetActor;
-	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);*/
-
 	RotateToTargetActor(_OwnerComp, _DeltaSeconds);
-
 }
 
 

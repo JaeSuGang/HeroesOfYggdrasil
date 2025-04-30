@@ -33,19 +33,15 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	FPlayAIData& PlayAIData = UEnemyBTTaskNode::GetPlayAIData(_OwnerComp);
 	
 	APawn* SelfActor = PlayAIData.SelfPawn;
-
 	AActor* TargetActor = PlayAIData.TargetActor;
+
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
-
-	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
-
 	AAIController* SelfController = SelfActor->GetController<AAIController>();
 
-	// 타겟 히어로 null(죽음)
-	if (!IsValid(TargetCharacter))
-	{
-		return;
-	}
+	if (!IsValid(TargetActor)) return;
+	if (!IsValid(TargetCharacter)) return;
+	
+	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 
 	UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
 
@@ -64,19 +60,18 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
 	
 
+	if (!IsValid(EnemyCharacter)) return;
 
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
 		ChangeState(_OwnerComp, EEnemyAIState::Idle);
 		return;
 	}
 
-
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")) && !EnemyCharacter->GetDataKey().StartsWith(TEXT("Dragon"))) {
 		
 		ChangeState(_OwnerComp, EEnemyAIState::Hit);
 		return;
 	}
-
 
 	EnemyCharacter->GetCharacterMovement()->MaxWalkSpeed = PlayAIData.Data.ApproachSpeed;
 	
@@ -85,7 +80,6 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 	{
 		ChangeState(_OwnerComp, EEnemyAIState::Await);
 		return;
-		
 	}
 
 	float Size = TargetDir.Size();
@@ -96,7 +90,7 @@ void UBTTaskNode_ApproachToAttack::TickTask(UBehaviorTreeComponent& _OwnerComp, 
 		return;
 	}
 
-	if (SelfController != nullptr && TargetActor != nullptr)
+	if (IsValid(SelfController) && IsValid(TargetActor))
 	{
 		SelfController->MoveToActor(TargetActor, PlayAIData.Data.AttackRange / 2.0f);
 	}
