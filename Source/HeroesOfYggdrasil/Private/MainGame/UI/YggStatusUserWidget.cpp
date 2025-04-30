@@ -88,7 +88,7 @@ void UYggStatusUserWidget::OnClickSound()
 {
 	if (ClickSound)
 	{
-		UGameplayStatics::PlaySound2D(this, ClickSound);
+		UGameplayStatics::PlaySound2D(this, ClickSound, 0.1f);
 	}
 }
 
@@ -264,6 +264,8 @@ void UYggStatusUserWidget::UpdateStatus()
 
 void UYggStatusUserWidget::ShowStatus()
 {
+	OnClickSound();
+
 	SetVisibility(ESlateVisibility::Visible);
 	if (PopupAnim)
 	{

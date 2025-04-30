@@ -47,6 +47,9 @@ public:
 	void ExitRoomButton();
 
 	UFUNCTION(BlueprintCallable)
+	void EndGameButton();
+
+	UFUNCTION(BlueprintCallable)
 	void StartButton();
 
 	UFUNCTION(BlueprintCallable)

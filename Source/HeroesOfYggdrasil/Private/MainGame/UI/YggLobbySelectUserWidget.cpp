@@ -37,7 +37,7 @@ void UYggLobbySelectUserWidget::LeftButtonEvent()
 
 	if (ClickSound)
 	{
-		UGameplayStatics::PlaySound2D(this, ClickSound);
+		UGameplayStatics::PlaySound2D(this, ClickSound, 0.1f);
 	}
 }
 
@@ -50,7 +50,7 @@ void UYggLobbySelectUserWidget::RightButtonEvent()
 
 	if (ClickSound)
 	{
-		UGameplayStatics::PlaySound2D(this, ClickSound);
+		UGameplayStatics::PlaySound2D(this, ClickSound, 0.1f);
 	}
 }
 

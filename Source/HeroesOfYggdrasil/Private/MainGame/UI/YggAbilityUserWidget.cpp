@@ -143,6 +143,6 @@ void UYggAbilityUserWidget::OnClickSound()
 {
 	if (ClickSound)
 	{
-		UGameplayStatics::PlaySound2D(this, ClickSound);
+		UGameplayStatics::PlaySound2D(this, ClickSound, 0.1f);
 	}
 }
