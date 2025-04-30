@@ -4,6 +4,9 @@
 #include "MainGame/UI/YggLobbySelectUserWidget.h"
 #include "MainGame/PlayerSelectZone.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 #include "Components/Button.h"
 #include "Components/EditableTextBox.h"
 
@@ -31,6 +34,11 @@ void UYggLobbySelectUserWidget::LeftButtonEvent()
 	{
 		SelectZone->SpawnNextSelectable(-1);
 	}
+
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound);
+	}
 }
 
 void UYggLobbySelectUserWidget::RightButtonEvent()
@@ -38,6 +46,11 @@ void UYggLobbySelectUserWidget::RightButtonEvent()
 	if (APlayerSelectZone* SelectZone = Cast<APlayerSelectZone>(GetOwningPlayerPawn()))
 	{
 		SelectZone->SpawnNextSelectable(1);
+	}
+
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound);
 	}
 }
 

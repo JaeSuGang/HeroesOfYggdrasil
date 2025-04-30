@@ -41,4 +41,7 @@ protected:
 
 private:
 	APlayerController* OwnerPlayer;
+
+	UPROPERTY(EditAnywhere, Category = YGG)
+	USoundBase* ClickSound;
 };

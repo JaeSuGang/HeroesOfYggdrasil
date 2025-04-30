@@ -44,6 +44,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "YGG")
 	FSlateBrush MakeBrush(UTexture2D* Tex, FVector2D Size, float Brightness = 1.0f);
 
+	UFUNCTION(BlueprintCallable, Category = "YGG")
+	void OnClickSound();
+
 	//UFUNCTION(BlueprintCallable, Category = "YGG")
 	//void EndAbility();
 
@@ -124,6 +127,8 @@ private:
 
 	UHeroAttributeComponent* HAC;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	USoundBase* ClickSound;
 	//bool IsDrag = false;
 	//
 	//FVector2D DragOffset;

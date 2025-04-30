@@ -10,6 +10,8 @@
 #include "Components/Button.h"
 
 #include "MainGame/MainGamePlayerState.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 #include "UpgradeSystem/UpgradeSystem.h"
 #include "UpgradeSystem/UpgradeDataAsset.h"
@@ -103,6 +105,7 @@ void UYggSelectAbilityUserWidget::NativeDestruct()
 
 void UYggSelectAbilityUserWidget::ExitButtonEvent()
 {
+	OnClickSound();
 	PlayRPopupAnim();
 	//SetVisibility(ESlateVisibility::Hidden);
 }
@@ -115,4 +118,12 @@ void UYggSelectAbilityUserWidget::PlayPopupAnim()
 void UYggSelectAbilityUserWidget::PlayRPopupAnim()
 {
 	PlayAnimationReverse(PopupAnim);
+}
+
+void UYggSelectAbilityUserWidget::OnClickSound()
+{
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound);
+	}
 }

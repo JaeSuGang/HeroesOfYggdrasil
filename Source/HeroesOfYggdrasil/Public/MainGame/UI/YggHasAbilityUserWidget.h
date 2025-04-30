@@ -110,6 +110,9 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UButton* ExitButton;
 
+	UPROPERTY(EditAnywhere, Category = YGG)
+	USoundBase* ClickSound;
+
 	TArray<UImage*> Abilitys;
 	TArray<UButton*> AbilityButtons;
 

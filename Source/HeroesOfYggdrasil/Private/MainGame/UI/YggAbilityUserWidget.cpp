@@ -9,6 +9,8 @@
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "MainGame/MainGamePlayerState.h"
 
 #include "UpgradeSystem/UpgradeSystem.h"
@@ -32,6 +34,7 @@ void UYggAbilityUserWidget::NativeOnInitialized()
 	{
 		SelectButton->OnClicked.AddDynamic(this, &UYggAbilityUserWidget::AbilitySelectEvent);
 		SelectButton->OnClicked.AddDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
+		SelectButton->OnClicked.AddDynamic(this, &UYggAbilityUserWidget::OnClickSound);
 		SelectButton->OnHovered.AddDynamic(this, &UYggAbilityUserWidget::PlayHoverAnim);
 		SelectButton->OnUnhovered.AddDynamic(this, &UYggAbilityUserWidget::PlayUnHoverAnim);
 	}
@@ -51,6 +54,7 @@ void UYggAbilityUserWidget::NativeDestruct()
 		{
 			SelectButton->OnClicked.RemoveDynamic(this, &UYggAbilityUserWidget::AbilitySelectEvent);
 			SelectButton->OnClicked.RemoveDynamic(MainGameHUD, &AMainGameHUD::AbilitySelectEvent);
+			SelectButton->OnClicked.RemoveDynamic(this, &UYggAbilityUserWidget::OnClickSound);
 			SelectButton->OnHovered.RemoveDynamic(this, &UYggAbilityUserWidget::PlayHoverAnim);
 			SelectButton->OnUnhovered.RemoveDynamic(this, &UYggAbilityUserWidget::PlayUnHoverAnim);
 		}
@@ -133,4 +137,12 @@ void UYggAbilityUserWidget::PlayHoverAnim()
 void UYggAbilityUserWidget::PlayUnHoverAnim()
 {
 	PlayAnimationReverse(HoverAnim);
+}
+
+void UYggAbilityUserWidget::OnClickSound()
+{
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound);
+	}
 }

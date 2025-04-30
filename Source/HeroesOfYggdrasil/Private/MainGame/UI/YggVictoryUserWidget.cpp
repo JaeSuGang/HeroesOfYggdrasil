@@ -4,13 +4,16 @@
 #include "MainGame/UI/YggVictoryUserWidget.h"
 #include "MainGame/EnemyManager.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 #include "StageSystem/StageSystem.h"
 #include "StageSystem/Stages/BattleStage.h"
 
 #include "Player/YggHero.h"
 
 #include "Components/TextBlock.h"
-
+#include "Components/Button.h"
 
 void UYggVictoryUserWidget::NativeOnInitialized()
 {
@@ -21,6 +24,8 @@ void UYggVictoryUserWidget::NativeOnInitialized()
 void UYggVictoryUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	ExitGameButton->OnClicked.AddDynamic(this, &UYggVictoryUserWidget::OnClickSound);
 
 	Init();
 	PlayAnimation(FirstAnim);
@@ -74,5 +79,13 @@ void UYggVictoryUserWidget::Init()
 	{
 		PDeathCount->SetText(FText::AsNumber(Hero->GetDeathCount()));
 		PDeathCount->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UYggVictoryUserWidget::OnClickSound()
+{
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound);
 	}
 }

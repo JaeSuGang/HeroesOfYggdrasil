@@ -6,10 +6,12 @@
 
 #include "StageSystem/StageSystem.h"
 #include "StageSystem/Stages/BattleStage.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Player/YggHero.h"
 
 #include "Components/TextBlock.h"
+#include "Components/Button.h"
 
 void UYggDefeatedUserWidget::NativeOnInitialized()
 {
@@ -23,6 +25,7 @@ void UYggDefeatedUserWidget::NativeConstruct()
 
 	Init();
 	PlayAnimation(FirstAnim);
+	ExitGameButton->OnClicked.AddDynamic(this, &UYggDefeatedUserWidget::OnClickSound);
 }
 
 void UYggDefeatedUserWidget::NativeDestruct()
@@ -73,5 +76,13 @@ void UYggDefeatedUserWidget::Init()
 	{
 		PDeathCount->SetText(FText::AsNumber(Hero->GetDeathCount()));
 		PDeathCount->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void UYggDefeatedUserWidget::OnClickSound()
+{
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound);
 	}
 }

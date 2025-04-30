@@ -5,6 +5,9 @@
 #include "MainGame/UI/MainGameHUD.h"
 #include "MainGame/UI/YggTooltipUserWidget.h"
 
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
@@ -84,6 +87,11 @@ void UYggHasAbilityUserWidget::NativeTick(const FGeometry& MyGeometry, float InD
 void UYggHasAbilityUserWidget::EndHasAbility()
 {
 	SetVisibility(ESlateVisibility::Hidden);
+
+	if (ClickSound)
+	{
+		UGameplayStatics::PlaySound2D(this, ClickSound);
+	}
 }
 
 void UYggHasAbilityUserWidget::UpdateWidget()

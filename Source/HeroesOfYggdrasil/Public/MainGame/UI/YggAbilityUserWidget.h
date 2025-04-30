@@ -44,6 +44,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayUnHoverAnim();
 
+	UFUNCTION(BlueprintCallable)
+	void OnClickSound();
+
 protected:
 	virtual void NativeOnInitialized() override;
 	virtual void NativeDestruct() override;
@@ -79,5 +82,6 @@ private:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	UWidgetAnimation* HoverAnim;
 
-
+	UPROPERTY(EditAnywhere, Category = YGG)
+	USoundBase* ClickSound;
 };
