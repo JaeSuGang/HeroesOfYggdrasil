@@ -66,7 +66,7 @@ void UYggAttackCapsuleComponent::OverLapBegin(UPrimitiveComponent* OverlappedCom
 {
 	if (!OwnerCharacter || !OwnerCharacter->HasAuthority()) { return; }
 	if (!IsValid(OtherActor)) { return; }
-	OverlappedActors.Add(OtherActor);
+	OverlappedActors.AddUnique(OtherActor);
 
 	AYggCharacter* DamageCharacter = Cast<AYggCharacter>(OtherActor);
 	if (!DamageCharacter) return;

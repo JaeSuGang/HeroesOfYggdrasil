@@ -203,6 +203,8 @@ void AEnemyCharacter::Tick(float DeltaTime)
 void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	// Enemy 정리
+	MiniMapIcon->Destroy();
+	
 	AEnemyManager* EnemyManager = AEnemyManager::Get(GetWorld());
 	
 	if (IsValid(EnemyManager) && EnemyManager->AllEnemyCharacter.Contains(this))
@@ -213,12 +215,6 @@ void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		}
 		
 	}
-	
-	if (IsValid(MiniMapIcon))
-	{
-		MiniMapIcon->Destroy();
-	}
-	
 	
 	Super::EndPlay(EndPlayReason);
 
@@ -339,6 +335,8 @@ void AEnemyCharacter::AttackEnd()
 
 void AEnemyCharacter::DestroyAllComponents_Implementation()
 {
+	
+	
 	TArray<UActorComponent*> Components;
 	GetComponents(Components);
 
@@ -349,7 +347,7 @@ void AEnemyCharacter::DestroyAllComponents_Implementation()
 			Component->DestroyComponent();
 		}
 	}
-
+	
 	Destroy();
 }
 

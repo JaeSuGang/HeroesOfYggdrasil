@@ -16,6 +16,9 @@ class HEROESOFYGGDRASIL_API UYggCheatManager : public UCheatManager
 	
 public:
 	UFUNCTION(Exec)
+	void InvincibleAll();
+
+	UFUNCTION(Exec)
 	void EnterBattleStage(int RoundNumber);
 
 	UFUNCTION(Exec)
