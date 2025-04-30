@@ -592,6 +592,16 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 		Att /= 10.f;
 	}
 
+	if (DataKey.StartsWith(FString("Dragon")))
+	{
+		Att /= 3.f;
+	}
+
+	if (IsValid(Hero))
+	{
+		Hero->GetAttributeComponent()->Server_TakeDamage(Att);
+	}
+	
 	EStatusEffectType Effect = UTickUtilityFunctionLibrary::FindStatusEffectType(this);
 	AYggTickActor::SpawnTickEffectIfNotExist(this, _Target, Effect, Att);
 }
