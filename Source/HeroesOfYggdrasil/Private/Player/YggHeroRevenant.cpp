@@ -156,7 +156,8 @@ void AYggHeroRevenant::SetIsUsingSkillR(bool bIsUsing)
 
 void AYggHeroRevenant::ServerSetIsUsingSkillR_Implementation(bool bIsUsing)
 {
-	MulticastSetIsUsingSkillR(bIsUsing);
+	bIsUsingSkillR = bIsUsing;
+	MulticastSetIsUsingSkillR(bIsUsingSkillR);
 }
 
 void AYggHeroRevenant::MulticastSetIsUsingSkillR_Implementation(bool bIsUsing)
