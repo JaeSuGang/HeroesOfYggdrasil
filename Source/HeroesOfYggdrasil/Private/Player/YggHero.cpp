@@ -272,8 +272,22 @@ FVector AYggHero::Local_GetAimDirection(FName _SocketName)
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
-	GetWorld()->LineTraceSingleByChannel(
-		Hit, CamLoc, TraceEnd, ECC_Visibility, Params);
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel1);
+
+	FVector BoxHalfSize(50.f, 50.f, 50.f);
+	GetWorld()->SweepSingleByObjectType(
+		Hit,
+		CamLoc,
+		TraceEnd,
+		FQuat(),
+		ObjectQueryParams,
+		FCollisionShape::MakeBox(BoxHalfSize),
+		Params
+	);
+
+	//GetWorld()->LineTraceSingleByChannel(
+	//	Hit, CamLoc, TraceEnd, ECC_Visibility, Params);
 
 	TargetLocation = Hit.bBlockingHit ? Hit.ImpactPoint : TraceEnd;
 
