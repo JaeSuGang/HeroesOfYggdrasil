@@ -49,7 +49,7 @@ void AEnemyProjectile::BeginPlay()
 
 
     AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(GetOwner());
-    
+    if (!IsValid(EnemyCharacter)) return;
     FString EnemyDataKey = EnemyCharacter->GetDataKey();
     if (!EnemyDataKey.StartsWith("Minion_Archer"))
     {
