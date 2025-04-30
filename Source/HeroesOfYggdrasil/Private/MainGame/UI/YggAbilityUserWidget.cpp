@@ -95,15 +95,17 @@ void UYggAbilityUserWidget::AbilitySelectEvent()
 {
 	APlayerController* PC = GetWorld()->GetFirstPlayerController();
 	UHeroAttributeComponent* CAC = PC->GetPawn()->GetComponentByClass<UHeroAttributeComponent>();
-	
-	UUpgradeSystem* UpgradeSystem = UUpgradeSystem::Get(GetWorld());
+
 		
 	if (AMainGameHUD* HUD = PC->GetHUD<AMainGameHUD>())
 	{
 		HUD->AddAbility(UpgradeDataAsset->UpgradeName, UpgradeDataAsset->UpgradeImage, UpgradeDataAsset->UpgradeDescription);
 	}
 
-	UpgradeSystem->Upgrade(CAC, UpgradeDataAsset);
+	if (AMainGamePlayerState* MPS = GetOwningPlayerState<AMainGamePlayerState>())
+	{
+		MPS->Request_Upgrade(CAC, UpgradeDataAsset->GetPrimaryAssetId());
+	}
 }
 
 void UYggAbilityUserWidget::ApplyRarityEffect(EUpgradeRarity Rarity)

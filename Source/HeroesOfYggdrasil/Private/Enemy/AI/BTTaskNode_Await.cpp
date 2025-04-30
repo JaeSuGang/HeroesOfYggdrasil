@@ -57,7 +57,25 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 		}
 	}
 
-	
+	if (IsValid(TargetActor))
+	{
+		if (TargetActor->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+		{
+			AYggCharacter* Yggdrasil = Cast<AYggCharacter>(TargetActor);
+			if (IsValid(Yggdrasil))
+			{
+				UCharacterAttributeComponent* YggdarsilAttri = Yggdrasil->GetAttributeComponent();
+				if (IsValid(YggdarsilAttri))
+				{
+					if (YggdarsilAttri->GetHP() < 0.0f)
+					{
+						ChangeState(_OwnerComp, EEnemyAIState::Idle);
+					}
+				}
+			}
+		}
+	}
+
 
 
 
@@ -66,6 +84,8 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 		FString DataKeyStr = EnemyCharacter->GetDataKey();
 		TWeakObjectPtr<AEnemyCharacter> WeakEnemy = EnemyCharacter;
 		TWeakObjectPtr<UBehaviorTreeComponent> WeakOwner = Cast<UBehaviorTreeComponent>(&_OwnerComp);
+
+		if (!IsValid(TargetCharacter)) return;
 
 		float HeroDefense = TargetCharacter->GetAttributeComponent()->DefensePoints;
 

@@ -69,31 +69,20 @@ public:
 	UFUNCTION(Reliable, NetMulticast)
 	void MultiCast_SetAimDir(FVector _AimDirection);
 
+	UFUNCTION()
+	void SetInit();
+	UFUNCTION(Reliable, Server)
+	void Server_SetInit();
+
+	UFUNCTION(Reliable, NetMulticast)
+	void MultiCast_SetInit();
+
 
 	UFUNCTION()
 	void SetOwnerCharacter(class AYggCharacter* _OwnerCharacter) { OwnerCharacter = _OwnerCharacter; }
 
-	UFUNCTION()
-	void SetTargetLocation(FVector _TargetLocation) { TargetLocation = _TargetLocation; }
 	UFUNCTION(BlueprintCallable)
 	void SetHomingTarget(AActor* Target);
-
-	UFUNCTION()
-	void SetVelocity(FVector _Velocity);
-
-	UFUNCTION()
-	void SetInitialSpeed(float _InitialSpeed);
-
-	UFUNCTION()
-	void SetMaxSpeed(float _MaxSpeed);
-
-	UFUNCTION()
-	void DelayShoot(float _DelayTime);
-
-	UFUNCTION()
-	bool ComputeAndLaunch();
-	UFUNCTION()
-	void LaunchTo();
 
 	UFUNCTION()
 	void StartDestroy();
@@ -102,7 +91,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AYggProjectileActor")
 	EProjectileType ProjectileType;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor", meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor", meta = (AllowPrivateAccess = "true"),Replicated)
 	TObjectPtr<class UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor", meta = (AllowPrivateAccess = "true"))
@@ -116,29 +105,13 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor")
 	class AYggCharacter* OwnerCharacter;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parabola")
-	float ApexOffsetZ = 800.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Parabola")
-	bool bAbsoluteApexZ = false;
-	
-	FVector TargetLocation;
-
-	UPROPERTY(Replicated)
-	TWeakObjectPtr<AActor> HomingTargetActor;
 
 	FSpawnProjectileDataRow ProjectileDataRow;
 
 	UPROPERTY(Replicated)
 	FVector AimDirection;
 
-	
-
-
-
-
-
+	bool bIsInit = false;
 
 	void LineMode();
 	void ParabolaMode();

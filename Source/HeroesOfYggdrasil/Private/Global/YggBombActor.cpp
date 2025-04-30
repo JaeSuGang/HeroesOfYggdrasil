@@ -13,12 +13,30 @@ AYggBombActor::AYggBombActor()
 	ExplosionAttackCapsuleComponent->SetupAttachment(RootComponent);
 	ExplosionParticle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ExplosionParticle"));
 	ExplosionParticle->SetupAttachment(RootComponent);
+	ExplosionParticle->SetIsReplicated(true);
 	ExplosionParticle->bAutoActivate = false;
 }
 
 void AYggBombActor::ExplosionOn()
 {
 	ExplosionAttackCapsuleComponent->CollisionOn();
+	AttackCapsuleComponent->CollisionOff();
+	if (HasAuthority())
+	{
+		NetMultiExplosionOn();
+	}
+	else
+	{
+		ServerExplosionOn();
+	}
+}
+void AYggBombActor::ServerExplosionOn_Implementation()
+{
+	NetMultiExplosionOn();
+}
+
+void AYggBombActor::NetMultiExplosionOn_Implementation()
+{
 	ExplosionParticle->Activate(true);
 }
 

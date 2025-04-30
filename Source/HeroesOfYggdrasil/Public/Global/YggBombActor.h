@@ -20,6 +20,14 @@ public:
 
 	UFUNCTION()
 	void ExplosionOn();
+
+	UFUNCTION(Reliable, Server)
+	void ServerExplosionOn();
+
+	UFUNCTION(Reliable, NetMulticast)
+	void NetMultiExplosionOn();
+
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AYggProjectileActor", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UYggAttackCapsuleComponent> ExplosionAttackCapsuleComponent;

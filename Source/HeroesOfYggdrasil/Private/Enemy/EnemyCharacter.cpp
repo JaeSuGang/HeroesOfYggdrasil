@@ -178,8 +178,6 @@ void AEnemyCharacter::BeginPlay()
 	MiniMapIcon = GetWorld()->SpawnActor<AYggMiniMapIconActor>(MiniMapIconClass);
 	MiniMapIcon->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	MiniMapIcon->SetPaperSprite(FName("Monster"));
-	//MiniMapIcon->SetAttachedCharacter(this);
-	//MiniMapIcon->AddToCaptureComponent();
 	
 	
 	PreviousHp = CharacterAttributeComponent->HP;
@@ -215,13 +213,16 @@ void AEnemyCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		}
 		
 	}
-
-	MiniMapIcon->Destroy();
-
+	
+	if (IsValid(MiniMapIcon))
+	{
+		MiniMapIcon->Destroy();
+	}
+	
+	
 	Super::EndPlay(EndPlayReason);
 
 	// 타이머 정리
-	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 }
 
 
@@ -348,11 +349,6 @@ void AEnemyCharacter::DestroyAllComponents_Implementation()
 			Component->DestroyComponent();
 		}
 	}
-
-	//if (MiniMapIcon)
-	//{
-	//	MiniMapIcon->Destroy();
-	//}
 
 	Destroy();
 }

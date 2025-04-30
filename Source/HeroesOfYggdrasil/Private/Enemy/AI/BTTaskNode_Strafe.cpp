@@ -39,12 +39,10 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 
-	if (!IsValid(TargetCharacter))
-	{
-		return;
-	}
+	if (!IsValid(TargetCharacter)) return;
 
 	UCharacterAttributeComponent* TargetAttributeComponent = TargetCharacter->GetAttributeComponent();
+
 	if (IsValid(TargetAttributeComponent))
 	{
 		if (TargetAttributeComponent->HasTag(TargetHeroDeath))
@@ -56,6 +54,8 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	
 
 	APawn* SelfActor = PlayAIData.SelfPawn;
+	
+	if (!IsValid(TargetActor) || !IsValid(SelfActor)) return;
 	
 	FVector TargetDir = TargetActor->GetActorLocation() - SelfActor->GetActorLocation();
 	FVector TargetAxis = FVector{ (0.0, 0.0f, 1.0f) };
@@ -71,6 +71,8 @@ void UBTTaskNode_Strafe::TickTask(UBehaviorTreeComponent& _OwnerComp, uint8* _pN
 	
 
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+
+	if (!IsValid(EnemyCharacter)) return;
 
 	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.Debuff.Stunned"))) {
 		ChangeState(_OwnerComp, EEnemyAIState::Idle);
