@@ -6,6 +6,7 @@
 #include "Attribute/CharacterAttributeComponent.h"
 // #include <Kismet/GameplayStatics.h>
 #include "StageSystem/StageSystem.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 #include "MainGame/UI/YggMiniMapIconActor.h"
 
@@ -21,6 +22,9 @@ AYggdrasil::AYggdrasil()
 void AYggdrasil::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
+	GetCharacterMovement()->Deactivate();
 
 	CharacterAttributeComponent->ClientDelegate_OnTakeDamage.AddDynamic(this, &AYggdrasil::CheckHP);
 
