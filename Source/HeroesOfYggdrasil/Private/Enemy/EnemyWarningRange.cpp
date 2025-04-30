@@ -215,7 +215,8 @@ FName AEnemyWarningRange::GetMeshNameByKey(const FString& _DataString)
         {TEXT("Minion_Witch_1"), FName("Snow")},
         {TEXT("Minion_Witch_2"), FName("Lightning")},
         {TEXT("Minion_Witch_3"), FName("Fire")},
-        {TEXT("Dragon"), FName("Explosion")}
+        {TEXT("Dragon_Samll"), FName("Explosion")},
+        {TEXT("Dragon_Large"), FName("Explosion")}
     };
 
     if (const FName* Found = SectionMap.Find(_DataString))
@@ -223,5 +224,5 @@ FName AEnemyWarningRange::GetMeshNameByKey(const FString& _DataString)
         return *Found;
     }
 
-    return FName("Poison");
+    return FName("Explosion");
 }

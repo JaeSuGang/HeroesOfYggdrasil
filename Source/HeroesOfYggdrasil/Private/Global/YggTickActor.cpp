@@ -379,7 +379,7 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 	{
 		if (IsValid(Hero))
 		{
-			TickActor->Tag = FName(*("Character.DeBuff." + TickActor->StatusRowName.ToString()));
+			TickActor->Tag = FName(*("Character.DeBuff." + ConvertStatusEnumToRowName(TickActor->TickEffectType).ToString()));
 			Hero->GetAttributeComponent()->AddTag(TickActor->Tag);
 		}
 	}
@@ -387,7 +387,7 @@ AYggTickActor* AYggTickActor::SpawnTickEffectIfNotExist(AYggCharacter* Owner, AY
 	{
 		if (IsValid(Enemy))
 		{
-			TickActor->Tag = FName(*("Enemy.DeBuff." + TickActor->StatusRowName.ToString()));
+			TickActor->Tag = FName(*("Enemy.DeBuff." + ConvertStatusEnumToRowName(TickActor->TickEffectType).ToString()));
 			Enemy->GetAttributeComponent()->AddTag(TickActor->Tag);
 		}
 	}
