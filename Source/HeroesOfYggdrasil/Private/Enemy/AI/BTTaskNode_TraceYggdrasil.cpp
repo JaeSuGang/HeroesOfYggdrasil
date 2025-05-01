@@ -77,10 +77,8 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 				PlayAIData.OriginPos = SelfActor->GetActorLocation();
 				ChangeState(_OwnerComp, EEnemyAIState::Trace);
 				return;
-
 			}
 		}
-		
 	}
 
 
