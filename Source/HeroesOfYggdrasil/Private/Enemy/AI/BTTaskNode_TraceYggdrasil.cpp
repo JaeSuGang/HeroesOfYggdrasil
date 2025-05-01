@@ -91,7 +91,9 @@ void UBTTaskNode_TraceYggdrasil::TickTask(UBehaviorTreeComponent& _OwnerComp, ui
 		return;
 	}
 
-	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit")) && !EnemyCharacter->GetDataKey().StartsWith(TEXT("Dragon"))) {
+
+
+	if (EnemyCharacter->GetAttributeComponent()->HasTag(TEXT("Enemy.State.Hit"))) {
 		
 		ChangeState(_OwnerComp, EEnemyAIState::Hit);
 		return;

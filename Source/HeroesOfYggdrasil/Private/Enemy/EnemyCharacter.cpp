@@ -432,13 +432,13 @@ void AEnemyCharacter::SpawnAndFireArrow(AActor* _TargetActor)
 			FVector Direction = (_TargetActor->GetActorLocation() - SpawnLocation).GetSafeNormal();
 			FVector Axis = FVector::CrossProduct(Direction, FVector::UpVector).GetSafeNormal();
 
-			FVector FinalVelocity = Direction.RotateAngleAxis(10.f, Axis) * 2000.f;
+			FVector FinalVelocity = Direction.RotateAngleAxis(6.f, Axis) * 6000.f;
 
 			Arrow->GetProjectileMovement()->Velocity = FinalVelocity;
 		}
 		else
 		{
-			Arrow->GetProjectileMovement()->Velocity = GetActorForwardVector() * 2000.f;
+			Arrow->GetProjectileMovement()->Velocity = GetActorForwardVector() * 6000.f;
 		}
 		
 	}
@@ -628,8 +628,8 @@ void AEnemyCharacter::WarpToRandomPoint_Implementation(AYggCharacter * _Target)
 
 	// 지면 체크용 라인트레이스
 	FHitResult HitResult;
-	const FVector TraceStart = Destination + FVector(0, 0, 1000.f);
-	const FVector TraceEnd = Destination + FVector(0, 0, -1000.f);
+	const FVector TraceStart = Destination + FVector(0, 0, 200.f);
+	const FVector TraceEnd = Destination + FVector(0, 0, -200.f);
 	FCollisionQueryParams TraceParams;
 	TraceParams.bTraceComplex = false;
 	TraceParams.AddIgnoredActor(this);
