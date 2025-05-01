@@ -469,7 +469,7 @@ void AYggHero::Roll(const FInputActionValue& Value)
 {
 	if (GetCharacterMovement()->IsFalling()) return;
 
-	if (HeroAttributeComponent->RollCurCoolTime >= 0)
+	if (HeroAttributeComponent->RollCurCoolTime > 0)
 	{
 		return;
 	}

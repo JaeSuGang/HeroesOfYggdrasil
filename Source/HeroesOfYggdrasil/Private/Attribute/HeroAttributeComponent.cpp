@@ -30,17 +30,8 @@ void UHeroAttributeComponent::TickComponent(float DeltaTime, ELevelTick TickType
 		SkillECurCoolTime -= DeltaTime;
 	if (SkillRCurCoolTime > 0.0f)
 		SkillRCurCoolTime -= DeltaTime;
-
-	if (CurRollCount < MaxRollCount)
-	{
-		RollCurCoolTime += DeltaTime;
-
-		if (RollCurCoolTime >= RollMaxCoolTime)
-		{
-			RollCurCoolTime = 0.0f;
-			CurRollCount++;
-		}
-	}
+	if (RollCurCoolTime > 0.0f)
+		RollCurCoolTime -= DeltaTime;
 }
 
 void UHeroAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -76,6 +67,7 @@ void UHeroAttributeComponent::ServerSetBaseData_Implementation(const FName& Name
 			AttackSpeedRate = Data->AttackSpeedRate;
 			CriticalChance = Data->CriticalChance;
 			CriticalDamageRate = Data->CriticalDamageRate;
+			RollCurCoolTime = 0.0f;
 		
 			AttackInfo = Data->AttackInfo;
 			SkillQInfo = Data->SkillQInfo;
