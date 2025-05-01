@@ -272,7 +272,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("MOUNTAIN_DRAGON_-R-Hand")
 		);
-		RightAttackCapsule->SetCapsuleSize(300.0f, 600.0f); 
+		RightAttackCapsule->SetCapsuleSize(500.0f, 800.0f); 
 		RightAttackCapsule->SetWorldRotation(FRotator(45.f, 0.f, 0.f));
 		RightAttackCapsule->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
 	}
@@ -295,7 +295,7 @@ void AEnemyCharacter::AttackCollisionInit()
 			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
 			TEXT("MOUNTAIN_DRAGON_-L-Hand")
 		);
-		LeftAttackCapsule->SetCapsuleSize(300.0f, 600.0f);
+		LeftAttackCapsule->SetCapsuleSize(500.0f, 800.0f);
 		LeftAttackCapsule->SetWorldRotation(FRotator(45.f, 0.f, 0.f));
 		LeftAttackCapsule->SetRelativeLocation(FVector(100.f, 0.f, 0.f));
 	}
@@ -321,7 +321,7 @@ void AEnemyCharacter::AttackCollisionInit()
 		TEXT("MOUNTAIN_DRAGON_-Breath")
 	);
 
-	DragonBreathCapsule->SetCapsuleSize(80.0f, 1500.0f);
+	DragonBreathCapsule->SetCapsuleSize(150.0f, 3000.0f);
 	DragonBreathCapsule->SetWorldRotation(FRotator(90.f, 0.f, 0.f));
 	DragonBreathCapsule->SetRelativeLocation(FVector(700.f, 380.f, 0.f)); 
 	DragonBreathCapsule->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
@@ -590,11 +590,6 @@ void AEnemyCharacter::HandleHeroEnteredRange(AYggCharacter* _Target)
 	if (DataKey.StartsWith(FString("Minion_Witch")))
 	{
 		Att /= 10.f;
-	}
-
-	if (DataKey.StartsWith(FString("Dragon")))
-	{
-		Att /= 3.f;
 	}
 
 	if (IsValid(Hero))
