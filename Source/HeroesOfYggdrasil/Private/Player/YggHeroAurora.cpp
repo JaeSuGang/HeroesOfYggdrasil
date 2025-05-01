@@ -140,6 +140,7 @@ void AYggHeroAurora::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AYggHeroAurora, bIsSkillE);
 	DOREPLIFETIME(AYggHeroAurora, bIsJetpacking);
+	DOREPLIFETIME(AYggHeroAurora, MagicTargetPoint);
 }
 
 void AYggHeroAurora::PossessedBy(AController* NewController)
@@ -350,6 +351,11 @@ void AYggHeroAurora::MagicCircleOn()
 	{
 		SkillEDecal->SetWorldLocation(TargetPoint);
 	}
+
+	if (!HasAuthority())
+		Server_SetMagicTargetPoint(TargetPoint);
+	else
+		MagicTargetPoint = TargetPoint;
 }
 
 void AYggHeroAurora::MagicCircleOff()
@@ -506,4 +512,9 @@ void AYggHeroAurora::Server_SpawnCatalyst_Implementation()
 	Catalyst->AttachToComponent(MeshComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Muzzle_02"));
 
 	PendingCatalyst = Catalyst;
+}
+
+void AYggHeroAurora::Server_SetMagicTargetPoint_Implementation(const FVector& NewTarget)
+{
+	MagicTargetPoint = NewTarget;
 }
