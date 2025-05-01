@@ -18,6 +18,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSkillCast, float, Duration);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillQ, FName, SkillName, float, CoolTime);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillE, FName, SkillName, float, CoolTime);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillR, FName, SkillName, float, CoolTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSkillShift, FName, SkillName, float, CoolTime);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRespawn, float, RespawnTime);
 
@@ -263,6 +264,11 @@ public:
 	FOnSkillE OnSkillE;
 	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
 	FOnSkillR OnSkillR;
+
+	UPROPERTY(BlueprintAssignable, Category = "Widget Skill")
+	FOnSkillShift OnSkillShift;
+
+
 
 	UPROPERTY(BlueprintAssignable, Category = "Widget Respawn")
 	FOnRespawn OnRespawn;

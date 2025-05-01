@@ -96,4 +96,13 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void Server_ThrowCatalyst();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ThrowCatalyst(AAuroraFrostCatalyst* Catalyst, const FVector& TargetPoint);
+
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnCatalyst();
+
+	UPROPERTY(EditAnywhere, Category = "Aurora")
+	TSubclassOf<AAuroraFrostCatalyst> BPCatalyst;
 };

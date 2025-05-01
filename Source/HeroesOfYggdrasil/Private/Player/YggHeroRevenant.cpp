@@ -133,8 +133,25 @@ void AYggHeroRevenant::SkillR(const FInputActionValue& Value)
 	}
 	FVector NewAimDir = Local_GetAimDirection(TEXT("None"));
 	SetAimDirection(NewAimDir);
+	if (HeroAttributeComponent->HasTagExact(TEXT("Character.State.NotAttackable")))
+	{
+		return;
+	}
+	if (HeroAttributeComponent->SkillRCurCoolTime > 0.0f) return;
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotAttackable"));
+	HeroAttributeComponent->AddTag(TEXT("Character.State.NotMoveable"));
+	if (HasAuthority())
+	{
+		MulticastHeroSkillR(Value);
+	}
+	else
+	{
+		ServerHeroSkillR(Value);
+	}
+
+	float CoolTime = HeroAttributeComponent->SkillRMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
+	OnSkillR.Broadcast(FName("SkillR"), CoolTime);
 	SetIsUsingSkillR(true);
-	Super::SkillR(Value);
 }
 
 void AYggHeroRevenant::Tick(float DeltaTime)

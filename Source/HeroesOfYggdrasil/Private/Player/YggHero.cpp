@@ -485,13 +485,14 @@ void AYggHero::Roll(const FInputActionValue& Value)
 	if (HasAuthority())
 	{
 		MulticastRoll(Value);
-		return;
+		
 	}
 	else
 	{
 		ServerRoll(Value);
-		return;
+		
 	}
+	OnSkillShift.Broadcast(FName("Roll"), HeroAttributeComponent->RollCurCoolTime);
 }
 
 void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)

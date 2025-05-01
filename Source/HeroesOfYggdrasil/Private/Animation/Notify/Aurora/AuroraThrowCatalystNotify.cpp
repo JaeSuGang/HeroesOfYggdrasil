@@ -13,6 +13,16 @@ void UAuroraThrowCatalystNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimS
     AYggHeroAurora* Aurora = Cast<AYggHeroAurora>(MeshComp->GetOwner());
     if (!Aurora || !Aurora->PendingCatalyst) return;
 
+    if (Aurora->HasAuthority())
+    {
+        Aurora->Multicast_ThrowCatalyst(Aurora->PendingCatalyst, Aurora->MagicTargetPoint);
+    }
+    else
+    {
+        Aurora->Server_ThrowCatalyst();
+    }
+    /*Aurora->MagicCircleOff();
+
     AAuroraFrostCatalyst* Catalyst = Aurora->PendingCatalyst;
     Aurora->PendingCatalyst = nullptr;
 
@@ -42,5 +52,5 @@ void UAuroraThrowCatalystNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimS
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("Failed to calculate projectile velocity!"));
-    }
+    }*/
 }
