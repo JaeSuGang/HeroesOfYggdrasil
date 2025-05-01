@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MainGame/UI/YggUserWidget.h"
+#include "StageSystem/StageBase.h"
 #include "YggStageTimerUserWidget.generated.h"
 
 class UTextBlock;
@@ -21,14 +22,16 @@ public:
 	UTextBlock* StageTimer;
 
 	UFUNCTION(BlueprintCallable)
-	void UpdateTimer();
+	void UpdateTimer(UStageBase* NewStage, int NewRound);
 
 	void GetStageTimer();
 
 	//void SetPlayerName();
 
 protected:
-	void NativeOnInitialized() override;
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
+
 
 private:
 	//bool bIsVisible = true;

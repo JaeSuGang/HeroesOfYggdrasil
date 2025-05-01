@@ -26,7 +26,17 @@ void UYggStageTimerUserWidget::NativeOnInitialized()
 	}
 }
 
-void UYggStageTimerUserWidget::UpdateTimer()
+void UYggStageTimerUserWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	if (UStageSystem* StageSystem = UStageSystem::Get(GetWorld()))
+	{
+		StageSystem->OnStageStartedDelegate.AddDynamic(this, &UYggStageTimerUserWidget::UpdateTimer);
+	}
+}
+
+void UYggStageTimerUserWidget::UpdateTimer(UStageBase* NewStage, int NewRound)
 {
 	UStageSystem* StageSystem = UStageSystem::Get(GetWorld());
 	
