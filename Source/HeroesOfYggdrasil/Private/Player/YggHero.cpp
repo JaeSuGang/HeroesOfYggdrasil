@@ -469,7 +469,7 @@ void AYggHero::Roll(const FInputActionValue& Value)
 {
 	if (GetCharacterMovement()->IsFalling()) return;
 
-	if (HeroAttributeComponent->CurRollCount <= 0)
+	if (HeroAttributeComponent->RollCurCoolTime >= 0)
 	{
 		return;
 	}
@@ -481,7 +481,6 @@ void AYggHero::Roll(const FInputActionValue& Value)
 	{
 		return;
 	}
-	HeroAttributeComponent->CurRollCount -= 1;
 	if (HasAuthority())
 	{
 		MulticastRoll(Value);
@@ -492,6 +491,8 @@ void AYggHero::Roll(const FInputActionValue& Value)
 		ServerRoll(Value);
 		
 	}
+
+	HeroAttributeComponent->RollCurCoolTime = HeroAttributeComponent->RollMaxCoolTime;
 	OnSkillShift.Broadcast(FName("SkillShift"), HeroAttributeComponent->RollCurCoolTime);
 }
 
