@@ -413,8 +413,8 @@ void AYggHeroGreystone::MagicCircleOff()
 
 		SkillRDecal->DestroyComponent();
 		SkillRDecal = nullptr;
-		
-		if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+
+		if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 		{
 			GetCharacterMovement()->bOrientRotationToMovement = true;
 

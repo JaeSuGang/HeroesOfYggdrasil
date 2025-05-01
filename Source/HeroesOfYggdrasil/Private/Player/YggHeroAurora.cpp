@@ -24,12 +24,12 @@
 AYggHeroAurora::AYggHeroAurora()
 {
 	AttackCapsuleComponentMap.Reset();
-		
+
 	SkillQAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
 	SkillQAttackCapsuleComponent->SetupAttachment(GetMesh());
 	SkillQAttackCapsuleComponent->SetOwnerCharacter(this);
 	AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), SkillQAttackCapsuleComponent);
-	
+
 	SkillRAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
 	SkillRAttackCapsuleComponent->SetupAttachment(GetMesh());
 	SkillRAttackCapsuleComponent->SetOwnerCharacter(this);
@@ -161,9 +161,9 @@ void AYggHeroAurora::OnRep_Controller()
 	{
 		FTimerHandle InitTimer;
 		GetWorld()->GetTimerManager().SetTimer(InitTimer, [this]()
-			{
-				SetAimMode(true);
-			}, 2.0f, false);
+		{
+			SetAimMode(true);
+		}, 2.0f, false);
 	}
 }
 
@@ -396,7 +396,7 @@ void AYggHeroAurora::JetpackOff(const FInputActionValue& Value)
 		Server_JetpackOff();
 	else
 		DoJetpackOff();
-	
+
 }
 
 void AYggHeroAurora::Server_JetpackOff_Implementation()
@@ -425,6 +425,10 @@ void AYggHeroAurora::Server_ThrowCatalyst_Implementation()
 	FVector TargetPos = MagicTargetPoint;
 
 	PendingCatalyst = nullptr;
+	if (GetNetMode() != NM_Standalone)
+	{
+		PendingCatalyst = nullptr;
+	}
 
 	Catalyst->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	Catalyst->SetReplicatingMovement(true);
