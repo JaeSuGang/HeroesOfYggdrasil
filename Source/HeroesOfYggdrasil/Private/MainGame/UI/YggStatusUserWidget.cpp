@@ -154,8 +154,8 @@ void UYggStatusUserWidget::StatusInit()
 
 	if (IsValid(HealthRegen))
 	{
-		int HPGenInt = HAC->HPGeneration;
-		FString String = FString::Printf(TEXT("1초당 %d 회복"), HPGenInt);
+		float HPGenInt = HAC->HPGeneration;
+		FString String = FString::Printf(TEXT("1초당 %.2f 회복"), HPGenInt);
 
 		HealthRegen->SetText(FText::FromString(String));
 	}
@@ -243,8 +243,8 @@ void UYggStatusUserWidget::UpdateStatus()
 
 	if (IsValid(HealthRegen))
 	{
-		int HPGenInt = HAC->HPGeneration;
-		FString String = FString::Printf(TEXT("1초당 %d 회복"), HPGenInt);
+		float HPGenInt = HAC->HPGeneration;
+		FString String = FString::Printf(TEXT("1초당 %.2f 회복"), HPGenInt);
 
 		HealthRegen->SetText(FText::FromString(String));
 	}

@@ -21,7 +21,6 @@ void UYggDeathPopupUserWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	/*APawn* Pawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);*/
 	APlayerController* PlayerController = GetOwningPlayer();
 	if (!PlayerController)
 	{

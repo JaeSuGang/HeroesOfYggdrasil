@@ -48,10 +48,12 @@ void UYggSkillBarUserWidget::NativeConstruct()
             Hero->OnSkillQ.RemoveDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
             Hero->OnSkillE.RemoveDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
             Hero->OnSkillR.RemoveDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
+            Hero->OnSkillShift.RemoveDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
 
             Hero->OnSkillQ.AddDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
             Hero->OnSkillE.AddDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
             Hero->OnSkillR.AddDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
+            Hero->OnSkillShift.AddDynamic(this, &UYggSkillBarUserWidget::StartCoolTime);
         }
     }
 }

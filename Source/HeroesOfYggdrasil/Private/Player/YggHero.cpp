@@ -492,7 +492,7 @@ void AYggHero::Roll(const FInputActionValue& Value)
 		ServerRoll(Value);
 		
 	}
-	OnSkillShift.Broadcast(FName("Roll"), HeroAttributeComponent->RollCurCoolTime);
+	OnSkillShift.Broadcast(FName("SkillShift"), HeroAttributeComponent->RollCurCoolTime);
 }
 
 void AYggHero::ServerRoll_Implementation(const FInputActionValue& Value)
