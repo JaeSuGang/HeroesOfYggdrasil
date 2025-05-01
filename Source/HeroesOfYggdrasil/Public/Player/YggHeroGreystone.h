@@ -94,4 +94,11 @@ public:
 	TObjectPtr<class UYggAttackCapsuleComponent> SkillEAttackCapsuleComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "YggHero")
 	TObjectPtr<class UYggAttackCapsuleComponent> SkillRAttackCapsuleComponent;
+
+
+	UFUNCTION(Server, Reliable)
+	void Server_DoSkillQLeap();
+
+	UFUNCTION()
+	void DoSkillQLeap();
 };
