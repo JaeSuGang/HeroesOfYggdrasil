@@ -364,6 +364,8 @@ void AYggHeroGreystone::MulticastRFall_Implementation()
 
 void AYggHeroGreystone::MagicCircleOn()
 {
+	if (!IsLocallyControlled()) return;
+
 	FVector WorldLocation, WorldDirection;
 	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
 

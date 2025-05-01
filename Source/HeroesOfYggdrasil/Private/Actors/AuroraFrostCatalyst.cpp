@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 
 #include "Actors/AuroraFrostMeteor.h"
+#include "Player/YggHeroAurora.h"
 
 // Sets default values
 AAuroraFrostCatalyst::AAuroraFrostCatalyst()
@@ -43,6 +44,9 @@ AAuroraFrostCatalyst::AAuroraFrostCatalyst()
 	CatalystCapsule->SetCollisionResponseToChannel(ECC_GameTraceChannel6, ECR_Block); // 나무
 
 	CatalystCapsule->OnComponentHit.AddDynamic(this, &AAuroraFrostCatalyst::OnCatalystHit);
+
+	bReplicates = true;
+	SetReplicateMovement(true);
 }
 
 // Called when the game starts or when spawned
@@ -77,5 +81,11 @@ void AAuroraFrostCatalyst::OnCatalystHit(UPrimitiveComponent* HitComp, AActor* O
 		if (!Meteor) return;
 	}
 
-	Destroy();	
+	if (HasAuthority())
+	{
+		AYggHeroAurora* Aurora = Cast<AYggHeroAurora>(GetOwner());
+		if (!Aurora) return;
+		Aurora->PendingCatalyst = nullptr;
+		Destroy();
+	}
 }
