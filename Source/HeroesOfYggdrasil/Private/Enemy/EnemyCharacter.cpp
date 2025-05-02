@@ -321,10 +321,13 @@ void AEnemyCharacter::AttackCollisionInit()
 		TEXT("MOUNTAIN_DRAGON_-Breath")
 	);
 
-	DragonBreathCapsule->SetCapsuleSize(150.0f, 3000.0f);
+	DragonBreathCapsule->SetCapsuleSize(1000.0f, 3000.0f);
 	DragonBreathCapsule->SetWorldRotation(FRotator(90.f, 0.f, 0.f));
 	DragonBreathCapsule->SetRelativeLocation(FVector(700.f, 380.f, 0.f)); 
 	DragonBreathCapsule->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OverLap);
+	DragonBreathCapsule->SetHiddenInGame(false);       // 게임 중에도 보이게
+	DragonBreathCapsule->SetVisibility(true);
+
 }
 
 
