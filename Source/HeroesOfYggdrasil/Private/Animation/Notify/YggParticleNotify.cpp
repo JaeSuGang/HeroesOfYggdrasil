@@ -193,7 +193,7 @@ void UYggParticleNotify::EndParticle(UParticleSystemComponent* PSComp, const TAr
 		PSComp->SetEmitterEnable(EmitterFName, bShouldEnable);
 
 		// 활성화 되어있는 Emitter의 LODLevel 0의 EmitterDuration을 Get.
-		if (bShouldEnable && Emitter->LODLevels.Num() > 0)
+		if (bShouldEnable && Emitter->LODLevels.Num() > 0 && !IsValid(Emitter))
 		{
 			UParticleLODLevel* LODLevel = Emitter->LODLevels[0];
 			if (LODLevel && LODLevel->RequiredModule)
