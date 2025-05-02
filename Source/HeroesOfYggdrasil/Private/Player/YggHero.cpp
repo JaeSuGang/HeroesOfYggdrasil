@@ -615,7 +615,7 @@ void AYggHero::MulticastHeroSkillE_Implementation(const FInputActionValue& Value
 {
 	FName MontageName = TEXT("SkillE");
 	float AttackSpeed = HeroAttributeComponent->AttackSpeedRate;
-	HeroAnimInstance->PlayMontage(MontageName, AttackSpeed);
+	HeroAnimInstance->PlayMontage(MontageName);
 	HeroAttributeComponent->SkillECurCoolTime = HeroAttributeComponent->SkillEMaxCoolTime * (1 - HeroAttributeComponent->CooldownReduction);
 }
 
