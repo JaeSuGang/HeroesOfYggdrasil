@@ -31,7 +31,6 @@ void UYggCheatManager::InvincibleAll()
 			UAC->Server_SetMaxHP(999999.0f);
 			UAC->Server_SetHP(999999.0f);
 			UAC->Server_SetAttackPoints(300.0f);
-			break;
 		}
 	}
 }
