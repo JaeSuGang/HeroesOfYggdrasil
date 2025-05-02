@@ -91,7 +91,7 @@ public:
 	AAuroraFrostCatalyst* PendingCatalyst = nullptr;
 
 	/** MagicCircleOn() 으로 계산한 최종 타겟 위치*/
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	FVector MagicTargetPoint;
 
 	UFUNCTION(Server, Reliable)
@@ -105,4 +105,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Aurora")
 	TSubclassOf<AAuroraFrostCatalyst> BPCatalyst;
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetMagicTargetPoint(const FVector& NewTarget);
 };

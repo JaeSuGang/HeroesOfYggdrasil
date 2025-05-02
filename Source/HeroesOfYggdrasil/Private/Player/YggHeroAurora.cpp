@@ -24,12 +24,12 @@
 AYggHeroAurora::AYggHeroAurora()
 {
 	AttackCapsuleComponentMap.Reset();
-		
+
 	SkillQAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillQAttack"));
 	SkillQAttackCapsuleComponent->SetupAttachment(GetMesh());
 	SkillQAttackCapsuleComponent->SetOwnerCharacter(this);
 	AttackCapsuleComponentMap.Add(TEXT("SkillQAttack"), SkillQAttackCapsuleComponent);
-	
+
 	SkillRAttackCapsuleComponent = CreateDefaultSubobject<UYggAttackCapsuleComponent>(TEXT("SkillRAttack"));
 	SkillRAttackCapsuleComponent->SetupAttachment(GetMesh());
 	SkillRAttackCapsuleComponent->SetOwnerCharacter(this);
@@ -140,6 +140,7 @@ void AYggHeroAurora::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AYggHeroAurora, bIsSkillE);
 	DOREPLIFETIME(AYggHeroAurora, bIsJetpacking);
+	DOREPLIFETIME(AYggHeroAurora, MagicTargetPoint);
 }
 
 void AYggHeroAurora::PossessedBy(AController* NewController)
@@ -161,9 +162,9 @@ void AYggHeroAurora::OnRep_Controller()
 	{
 		FTimerHandle InitTimer;
 		GetWorld()->GetTimerManager().SetTimer(InitTimer, [this]()
-			{
-				SetAimMode(true);
-			}, 2.0f, false);
+		{
+			SetAimMode(true);
+		}, 2.0f, false);
 	}
 }
 
@@ -350,6 +351,11 @@ void AYggHeroAurora::MagicCircleOn()
 	{
 		SkillEDecal->SetWorldLocation(TargetPoint);
 	}
+
+	if (!HasAuthority())
+		Server_SetMagicTargetPoint(TargetPoint);
+	else
+		MagicTargetPoint = TargetPoint;
 }
 
 void AYggHeroAurora::MagicCircleOff()
@@ -396,7 +402,7 @@ void AYggHeroAurora::JetpackOff(const FInputActionValue& Value)
 		Server_JetpackOff();
 	else
 		DoJetpackOff();
-	
+
 }
 
 void AYggHeroAurora::Server_JetpackOff_Implementation()
@@ -425,6 +431,10 @@ void AYggHeroAurora::Server_ThrowCatalyst_Implementation()
 	FVector TargetPos = MagicTargetPoint;
 
 	PendingCatalyst = nullptr;
+	if (GetNetMode() != NM_Standalone)
+	{
+		PendingCatalyst = nullptr;
+	}
 
 	Catalyst->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	Catalyst->SetReplicatingMovement(true);
@@ -502,4 +512,9 @@ void AYggHeroAurora::Server_SpawnCatalyst_Implementation()
 	Catalyst->AttachToComponent(MeshComp, FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("Muzzle_02"));
 
 	PendingCatalyst = Catalyst;
+}
+
+void AYggHeroAurora::Server_SetMagicTargetPoint_Implementation(const FVector& NewTarget)
+{
+	MagicTargetPoint = NewTarget;
 }

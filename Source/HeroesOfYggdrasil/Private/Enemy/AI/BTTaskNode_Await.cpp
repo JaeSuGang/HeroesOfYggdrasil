@@ -19,7 +19,16 @@ void UBTTaskNode_Await::Start(UBehaviorTreeComponent& _OwnerComp)
 	AActor* TargetActor = PlayAIData.TargetActor;
 	AYggCharacter* TargetCharacter = Cast<AYggCharacter>(TargetActor);
 	AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(SelfActor);
+	
+	if (IsValid(TargetCharacter))
+	{
+		if (TargetCharacter->GetName().StartsWith(TEXT("BP_Yggdrasil")))
+		{
+			ChangeState(_OwnerComp, EEnemyAIState::TraceYggdrasil);
+		}
 
+	}
+	
 	if (IsValid(PlayAIData.SelfAnimPawn))
 	{
 		PlayAIData.SelfAnimPawn->ChangeAnimation_Multicast(static_cast<int>(EnemyAIStateValue));

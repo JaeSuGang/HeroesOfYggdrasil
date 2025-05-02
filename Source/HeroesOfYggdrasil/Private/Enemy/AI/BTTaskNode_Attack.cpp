@@ -85,7 +85,7 @@ void UBTTaskNode_Attack::Start(UBehaviorTreeComponent& _OwnerComp)
 		if (!IsValid(TargetCharacter)) return;
 
 		UCharacterAttributeComponent* TargetAttributecomponent = TargetCharacter->GetAttributeComponent();
-		if (IsValid(TargetAttributecomponent) && TargetAttributecomponent->HasTag(TargetHeroDeath))
+		if ((IsValid(TargetAttributecomponent) && TargetAttributecomponent->HasTag(TargetHeroDeath)))
 		{
 			ChangeState(_OwnerComp, EEnemyAIState::TraceYggdrasil);
 			return;
